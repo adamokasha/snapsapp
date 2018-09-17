@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
   googleId: String,
   displayName: String,
+  displayNameLowerC: String,
   albums: [{ type: Schema.Types.ObjectId, ref: 'Album'}],
   favs: [{ type: Schema.Types.ObjectId, ref: 'Photo'}]
 });

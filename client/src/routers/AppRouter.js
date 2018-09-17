@@ -6,7 +6,7 @@ import createBrowserHistory from 'history/createBrowserHistory';
 import PrivateRoute from './PrivateRoute';
 import PublicRoute from './PublicRoute';
 import LandingPage from '../pages/LandingPage';
-import SignUpPage from '../pages/SignUpPage';
+import RegistrationPage from '../pages/RegistrationPage';
 import DashboardPage from '../pages/DashboardPage';
 import { fetchUser } from '../actions/auth';
 
@@ -22,7 +22,7 @@ export class AppRouter extends React.Component {
       <Router history={history}>
         <Switch>
           <Route exact path="/" component={LandingPage} />
-          <PublicRoute path="/signup" component={SignUpPage} />
+          <Route path="/register" component={RegistrationPage} />
           <PrivateRoute path="/dashboard" component={DashboardPage} />
         </Switch>
       </Router>
