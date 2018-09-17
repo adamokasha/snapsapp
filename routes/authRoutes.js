@@ -19,7 +19,7 @@ module.exports = app => {
       if(!req.user.displayName) {
         return res.redirect('/register');
       }
-      return res.redirect('/dashboard');
+      res.redirect('/dashboard');
     }
   );
 

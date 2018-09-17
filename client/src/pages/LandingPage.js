@@ -5,7 +5,6 @@ import HeroUnit from '../components/HeroUnit';
 
 export const LandingPage = () => (
   <React.Fragment>
-    <NavBar />
     <HeroUnit />
   </React.Fragment>
 ) 

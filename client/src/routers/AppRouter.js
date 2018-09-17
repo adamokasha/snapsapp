@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory';
 
 import PrivateRoute from './PrivateRoute';
@@ -19,13 +19,13 @@ export class AppRouter extends React.Component {
 
   render() {
     return (
-      <Router history={history}>
+      <BrowserRouter>
         <Switch>
-          <Route exact path="/" component={LandingPage} />
-          <Route path="/register" component={RegistrationPage} />
+          <PublicRoute exact path="/" component={LandingPage} />
+          <PrivateRoute path="/register" component={RegistrationPage} />
           <PrivateRoute path="/dashboard" component={DashboardPage} />
         </Switch>
-      </Router>
+      </BrowserRouter>
     );
   }
 }

@@ -9,7 +9,7 @@ export const PublicRoute = ({ isAuth, component: Component, ...rest }) => (
     {...rest}
     render={props =>
       isAuth ? (
-        <Redirect to="/" />
+        <Redirect to="/dashboard" />
       ) : (
         <div>
           <NavBar />

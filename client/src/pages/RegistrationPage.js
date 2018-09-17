@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 
 import { registerUser } from '../actions/auth';
 
-import NavBar from '../components/NavBar';
 import DisplayNameForm from '../components/DisplayNameForm';
 
 export class RegistrationPage extends React.Component {
@@ -18,7 +18,6 @@ export class RegistrationPage extends React.Component {
   render() {
     return (
       <div>
-        <NavBar />
         <DisplayNameForm onSubmit={this.onSubmit} />
       </div>
     );
@@ -28,4 +27,4 @@ export class RegistrationPage extends React.Component {
 export default connect(
   null,
   { registerUser }
-)(RegistrationPage);
+)(withRouter(RegistrationPage));
