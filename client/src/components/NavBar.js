@@ -25,8 +25,12 @@ const styles = theme => ({
     marginLeft: -12,
     marginRight: 20
   },
-  gradientButton: {
-    background: 'linear-gradient(-120deg, #4285f4, #34a853, #ea4335)'
+  googleGradient: {
+    background: 'linear-gradient(#dd4b39, #ea4335)'
+  },
+  facebookGradient: {
+    marginRight: theme.spacing.unit,
+    background: 'linear-gradient(#4c69ba, #3b55a0)'
   },
   leftIcon: {
     fontSize: '18px',
@@ -97,11 +101,24 @@ class NavBar extends React.Component {
       </div>
     ) : (
       <div>
+      <Button
+      href="/auth/facebook"
+      variant="contained"
+      color="primary"
+      className={classes.facebookGradient}
+    >
+      <ion-icon
+        name="logo-facebook"
+        class={classes.leftIcon}
+        size="medium"
+      />
+      &nbsp;Login
+    </Button>
         <Button
           href="/auth/google"
           variant="contained"
           color="primary"
-          className={classes.gradientButton}
+          className={classes.googleGradient}
         >
           <ion-icon
             name="logo-googleplus"

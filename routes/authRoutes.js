@@ -16,25 +16,48 @@ module.exports = app => {
     '/auth/google/callback',
     passport.authenticate('google'),
     (req, res) => {
-      if(!req.user.displayName) {
+      if (!req.user.displayName) {
         return res.redirect('/register');
       }
       res.redirect('/dashboard');
     }
   );
 
-  app.post('/auth/register', requireAuth, async (req,res) => {
+  app.get('/auth/facebook', passport.authenticate('facebook'));
+
+  app.get(
+    '/auth/facebook/callback',
+    passport.authenticate('facebook'),
+    (req, res) => {
+      if (!req.user.displayName) {
+        return res.redirect('/register');
+      }
+      res.redirect('/dashboard');
+    }
+  );
+
+  app.post('/auth/register', requireAuth, async (req, res) => {
     try {
-     const existingUser = await User.findOne({ displayNameLowerC: req.body.displayName.toLowerCase()});
+      const existingUser = await User.findOne({
+        displayNameLowerC: req.body.displayName.toLowerCase()
+      });
 
-     if(existingUser) {
-      return res.status(400).send({error: 'Display name already in use. Please choose another.'});
-     }
+      if (existingUser) {
+        return res.status(400).send({
+          error: 'Display name already in use. Please choose another.'
+        });
+      }
 
-     await User.findByIdAndUpdate({_id: req.user.id}, {displayName: req.body.displayName, displayNameLowerC: req.body.displayName.toLowerCase()});
-     res.redirect('/dashboard');
-    } catch(e) {
-      res.send({error: 'Something went wrong. Please try again'});
+      await User.findByIdAndUpdate(
+        { _id: req.user.id },
+        {
+          displayName: req.body.displayName,
+          displayNameLowerC: req.body.displayName.toLowerCase()
+        }
+      );
+      res.redirect('/dashboard');
+    } catch (e) {
+      res.send({ error: 'Something went wrong. Please try again' });
     }
   });
 
@@ -46,4 +69,4 @@ module.exports = app => {
   app.get('/api/current_user', (req, res) => {
     res.send(req.user);
   });
-}
+};

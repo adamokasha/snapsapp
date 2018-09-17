@@ -22,7 +22,7 @@ export class AppRouter extends React.Component {
       <BrowserRouter>
         <Switch>
           <PublicRoute exact path="/" component={LandingPage} />
-          <PrivateRoute path="/register" component={RegistrationPage} />
+          <Route path="/register" component={RegistrationPage} />
           <PrivateRoute path="/dashboard" component={DashboardPage} />
         </Switch>
       </BrowserRouter>
