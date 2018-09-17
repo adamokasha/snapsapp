@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 
 import NavBar from '../components/NavBar';
 
-export const PrivateRoute = ({ auth, component: Component, ...rest }) => (
+export const PrivateRoute = ({ isAuth, component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      auth ? (
+      isAuth ? (
         <div>
           <NavBar />
           <Component {...props} />
@@ -21,7 +21,7 @@ export const PrivateRoute = ({ auth, component: Component, ...rest }) => (
 );
 
 const mapStateToProps = ({ auth }) => ({
-  auth
+  isAuth: auth
 });
 
 export default connect(mapStateToProps)(PrivateRoute);

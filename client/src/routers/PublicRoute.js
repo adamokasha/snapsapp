@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 
 import NavBar from '../components/NavBar';
 
-export const PublicRoute = ({ auth, component: Component, ...rest }) => (
+export const PublicRoute = ({ isAuth, component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      auth ? (
+      isAuth ? (
         <Redirect to="/" />
       ) : (
         <div>
@@ -21,7 +21,7 @@ export const PublicRoute = ({ auth, component: Component, ...rest }) => (
 );
 
 const mapStateToProps = ({ auth }) => ({
-  auth
+  isAuth: auth
 });
 
 export default connect(mapStateToProps)(PublicRoute);
