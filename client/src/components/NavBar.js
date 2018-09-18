@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
-import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -58,7 +57,6 @@ class NavBar extends React.Component {
 
   handleClose = () => {
     this.setState({ anchorEl: null });
-    this.props.history.push('/dashboard');
   };
 
   renderNavButtons() {
@@ -90,7 +88,12 @@ class NavBar extends React.Component {
           open={open}
           onClose={this.handleClose}
         >
-          <MenuItem onClick={this.handleClose}>Dashboard</MenuItem>
+          <MenuItem to="/dashboard" component={Link} onClick={this.handleClose}>
+            Dashboard
+          </MenuItem>
+          <MenuItem to="upload" component={Link} onClick={this.handleClose}>
+              Add Image
+          </MenuItem>
           <MenuItem onClick={this.handleClose}>My Profile</MenuItem>
           <MenuItem onClick={this.handleClose}>
             <a href="/auth/logout" className={classes.aTag}>
@@ -101,19 +104,19 @@ class NavBar extends React.Component {
       </div>
     ) : (
       <div>
-      <Button
-      href="/auth/facebook"
-      variant="contained"
-      color="primary"
-      className={classes.facebookGradient}
-    >
-      <ion-icon
-        name="logo-facebook"
-        class={classes.leftIcon}
-        size="medium"
-      />
-      &nbsp;Login
-    </Button>
+        <Button
+          href="/auth/facebook"
+          variant="contained"
+          color="primary"
+          className={classes.facebookGradient}
+        >
+          <ion-icon
+            name="logo-facebook"
+            class={classes.leftIcon}
+            size="medium"
+          />
+          &nbsp;Login
+        </Button>
         <Button
           href="/auth/google"
           variant="contained"
@@ -163,6 +166,5 @@ const mapStateToProps = ({ auth }) => ({
 
 export default compose(
   withStyles(styles),
-  withRouter,
   connect(mapStateToProps)
 )(NavBar);
