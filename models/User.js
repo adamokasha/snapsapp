@@ -8,7 +8,8 @@ const userSchema = new Schema({
   displayName: String,
   displayNameLowerC: String,
   albums: [{ type: Schema.Types.ObjectId, ref: 'Album'}],
-  favs: [{ type: Schema.Types.ObjectId, ref: 'Photo'}]
+  favs: [{ type: Schema.Types.ObjectId, ref: 'Photo'}],
+  registered: {type: Boolean, default: false}
 });
 
 mongoose.model('User', userSchema);

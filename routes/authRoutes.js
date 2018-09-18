@@ -38,6 +38,11 @@ module.exports = app => {
 
   app.post('/auth/register', requireAuth, async (req, res) => {
     try {
+      if(req.user.registered === true) {
+        return res.status(400).send({
+          error: 'You have already registered.'
+        });
+      }
       const existingUser = await User.findOne({
         displayNameLowerC: req.body.displayName.toLowerCase()
       });
@@ -52,7 +57,8 @@ module.exports = app => {
         { _id: req.user.id },
         {
           displayName: req.body.displayName,
-          displayNameLowerC: req.body.displayName.toLowerCase()
+          displayNameLowerC: req.body.displayName.toLowerCase(),
+          registered: true
         }
       );
       res.redirect('/dashboard');
