@@ -1,4 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+import compose from 'recompose/compose';
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
@@ -9,6 +12,8 @@ import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
 import Close from '@material-ui/icons/Close';
 import withStyles from '@material-ui/core/styles/withStyles';
+
+import { submitPost } from '../actions/post';
 
 const styles = theme => ({
   layout: {
@@ -28,21 +33,21 @@ const styles = theme => ({
   paper: {
     position: 'relative',
     minHeight: '300px',
+    // Adds vertical scroll to modal
+    maxHeight: '90vh',
+    overflowY: 'auto',
     marginTop: theme.spacing.unit * 8,
     marginBottom: theme.spacing.unit * 8,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
-      .spacing.unit * 3}px`,
-    [theme.breakpoints.down('md')]: {
-      maxHeight: '90vh',
-      overflowY: 'auto'
-    }
+      .spacing.unit * 3}px`
   },
   closeIcon: {
     position: 'absolute',
-    right: '4%'
+    right: '4%',
+    cursor: 'pointer'
   },
   avatar: {
     margin: `${theme.spacing.unit}px auto`,
@@ -67,27 +72,41 @@ const styles = theme => ({
 
 class ImageUploadForm extends React.Component {
   state = {
-    title: '',
-    tags: null,
-    description: '',
-    previewImage: ''
+    post: {
+      title: '',
+      tags: null,
+      description: ''
+    },
+    previewImage: '',
+    file: null
   };
 
   onFileSelect = e => {
-    const src = URL.createObjectURL(e.target.files[0]);
+    const src = URL.createObjectURL(e.target.files[0]) || '';
     this.setState({ previewImage: src });
+    this.setState({ file: e.target.files[0] });
   };
 
   onTitleChange = e => {
-    this.setState({ title: e.target.value });
+    this.setState({ post: { ...this.state.post, title: e.target.value } });
   };
 
   onTagsChange = e => {
-    this.setState({ tags: e.target.value });
+    this.setState({ post: { ...this.state.post, tags: e.target.value } });
   };
 
   onDescChange = e => {
-    this.setState({ description: e.target.value });
+    this.setState({
+      post: { ...this.state.post, description: e.target.value }
+    });
+  };
+
+  onSubmit = async e => {
+    e.preventDefault();
+    console.log('Called onSubmit');
+    const { post, file } = this.state;
+
+    await this.props.submitPost(post, file, this.props.history);
   };
 
   render() {
@@ -107,7 +126,7 @@ class ImageUploadForm extends React.Component {
               className={classes.closeIcon}
               onClick={this.props.handleClose}
             />
-            <form>
+            <form onSubmit={this.onSubmit}>
               <div>
                 <img
                   src={this.state.previewImage}
@@ -161,6 +180,7 @@ class ImageUploadForm extends React.Component {
                 variant="contained"
                 size="large"
                 className={classes.button}
+                type="submit"
               >
                 Save Post
               </Button>
@@ -176,4 +196,16 @@ ImageUploadForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(ImageUploadForm);
+// export default withStyles(styles)(ImageUploadForm);
+
+const mapStateToProps = state => ({
+  id: state.auth._id
+});
+
+export default compose(
+  withStyles(styles),
+  connect(
+    mapStateToProps,
+    { submitPost }
+  )
+)(withRouter(ImageUploadForm));

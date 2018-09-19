@@ -7,7 +7,7 @@ const keys = require('./config/keys');
 
 require('./models/User');
 require('./models/Album');
-require('./models/Photos');
+require('./models/Post');
 require('./services/passport');
 
 mongoose.Promise = global.Promise;
@@ -26,6 +26,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 require('./routes/authRoutes')(app);
+require('./routes/uploadRoutes')(app);
+require('./routes/postRoutes')(app);
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
