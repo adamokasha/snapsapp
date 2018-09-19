@@ -1,10 +1,12 @@
 import React from 'react';
 
 import HeroUnit from '../components/HeroUnit';
+import ImageGrid from '../components/ImageGrid';
 
 export const LandingPage = () => (
   <React.Fragment>
-    <HeroUnit />
+    <HeroUnit />    
+    <ImageGrid />
   </React.Fragment>
 ) 
 
