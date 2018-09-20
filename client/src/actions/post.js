@@ -1,20 +1,12 @@
-import axios from 'axios';
-
 export const submitPost = (post, file, history) => async dispatch => {
-  console.log('called submitPost');
-  console.log(history);
+  const data = new FormData();
+    // name must match multer upload('name')
+    data.append('image', file);
+  data.append('data', JSON.stringify(post));
 
-  // Get pre-signed url
-  const uploadConfig = await axios.get('/api/upload');
-
-  // PUT to S3 bucket
-  await axios.put(uploadConfig.data.url, file, {
-    'Content-Type': file.type
-  });
-
-  await axios.post('/api/posts', {
-    ...post,
-    imgUrl: uploadConfig.data.key,
-  });
-  history.push('/');
+  fetch('/api/upload', {
+    mode: 'no-cors',
+    method: "POST",
+    body: data
+  }).then(res => console.log(res)).catch(e => console.log(e))
 }

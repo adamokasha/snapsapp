@@ -12,7 +12,7 @@ const styles = theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.paper
   },
   gridList: {
     width: '100%',
@@ -20,16 +20,14 @@ const styles = theme => ({
   },
   gridTileRoot: {
     height: 'auto !important',
-    width:'100% !important',
+    width: '100% !important',
     [theme.breakpoints.up('sm')]: {
       width: '45% !important',
-      marginLeft: '2.5%',
-      marginRight: '2.5%'
+      margin: '0 auto'
     },
     [theme.breakpoints.up('lg')]: {
       width: '30% !important',
-      marginLeft: '1.5%',
-      marginRight: '1.5%'
+      margin: '0 auto'
     }
   },
   // Inner div that wraps children
@@ -41,13 +39,7 @@ const styles = theme => ({
   }
 });
 
-/*
-profilePhoto,
-displayName,
-imageUrl,
-title,
-description
-*/
+
 function ImageGridList(props) {
   const { classes } = props;
 
@@ -63,20 +55,20 @@ function ImageGridList(props) {
             description
           } = data;
           return (
-            <GridListTile 
-            key={imageData.imageUrl} 
-            cols={1}
-            classes={{
-              root: classes.gridTileRoot,
-              tile: classes.tile
-            }}
+            <GridListTile
+              key={imageData.imageUrl} 
+              cols={1}
+              classes={{
+                root: classes.gridTileRoot,
+                tile: classes.tile
+              }}
             >
-              <ImageCard 
-              profilePhoto={profilePhoto}
-              displayName={displayName}
-              imageUrl={imageUrl}
-              title={title}
-              description={description} 
+              <ImageCard
+                profilePhoto={profilePhoto}
+                displayName={displayName}
+                imageUrl={imageUrl}
+                title={title}
+                description={description}
               />
             </GridListTile>
           );

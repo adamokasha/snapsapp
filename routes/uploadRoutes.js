@@ -1,6 +1,10 @@
 const AWS = require('aws-sdk');
 const uuid = require('uuid');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const mongoose = require('mongoose');
 
+const Post = mongoose.model('Post');
 const keys = require('../config/keys');
 const requireAuth = require('../middlewares/requireAuth');
 
@@ -12,20 +16,42 @@ const s3 = new AWS.S3({
   region: 'us-east-1'
 });
 
-module.exports = app => {
-  app.get('/api/upload', requireAuth, (req, res) => {
-    const key = `${req.user.id}/${uuid()}.jpeg`;
 
-    s3.getSignedUrl(
-      'putObject',
-      {
-        Bucket: keys.bucketName,
-        ContentType: 'image/jpeg',
-        Key: key
-      },
-      (err, url) => {
-        res.send({ key, url });
-      }
-    );
-  });
+const upload = multer({
+  limits: {
+    fileSize: 1000000
+  },
+  storage: multerS3({
+    s3,
+    bucket: 'img-share-kasho',
+    metadata: function(req, file, cb) {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key: function(req, file, cb) {
+      cb(null, `${req.user.id}/${uuid()}.jpeg`);
+    }
+  })
+});
+
+module.exports = app => {
+  app.post(
+    '/api/upload',
+    requireAuth,
+    upload.single('image'),
+    async (req, res) => {
+        let data = JSON.parse(req.body.data);
+        const {title, tags, description} = data;
+        const post = await new Post({
+          _user: req.user.id,
+          title,
+          description,
+          createdAt: Date.now(),
+          // ! key and other file props available on req.file/files
+          imgUrl: req.file.key,
+          tags
+        });
+        await post.save();
+        res.status(200).send({success: 'Post has been added!'})
+    }
+  );
 };

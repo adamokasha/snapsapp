@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import createBrowserHistory from 'history/createBrowserHistory';
 
 import PrivateRoute from './PrivateRoute';
 import PublicRoute from './PublicRoute';
@@ -10,8 +9,6 @@ import RegistrationPage from '../pages/RegistrationPage';
 import DashboardPage from '../pages/DashboardPage';
 import ImageUploadPage from '../pages/ImageUploadPage';
 import { fetchUser } from '../actions/auth';
-
-const history = createBrowserHistory();
 
 export class AppRouter extends React.Component {
   componentDidMount() {

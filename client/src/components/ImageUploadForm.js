@@ -110,7 +110,7 @@ class ImageUploadForm extends React.Component {
   };
 
   render() {
-    const { classes, children } = this.props;
+    const { classes } = this.props;
 
     return (
       <React.Fragment>
@@ -126,7 +126,12 @@ class ImageUploadForm extends React.Component {
               className={classes.closeIcon}
               onClick={this.props.handleClose}
             />
-            <form onSubmit={this.onSubmit}>
+            <form 
+            method="post"
+            action=""
+            encType="multipart/form-data"
+            onSubmit={this.onSubmit}
+            >
               <div>
                 <img
                   src={this.state.previewImage}
@@ -137,6 +142,7 @@ class ImageUploadForm extends React.Component {
                 accept="image/*"
                 className={classes.fileInput}
                 id="hidden-file-input"
+                name="image"
                 type="file"
                 onChange={this.onFileSelect}
               />
