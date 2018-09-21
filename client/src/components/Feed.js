@@ -38,36 +38,88 @@ export class Feed extends React.Component {
       showNavToTop: false
     };
 
-    // Prevent loadImages 'this' context being window in onScroll window event
+    // // Prevent loadImages 'this' context being window in onScroll window event
+    // const loadImages = this.loadImages.bind(this);
+    // const boundSetState = this.setState.bind(this);
+
+    // let throttledEvent;
+
+    // window.onscroll = function() {
+    //   // Clear throttled event on scroll
+    //   if (throttledEvent) {
+    //     window.clearTimeout(throttledEvent);
+    //   }
+
+    //   // Optimize scrolling by having scroll events fire only every 100ms for rendering navtotop button
+    //   throttledEvent = window.setTimeout(function() {
+    //     if (
+    //       window.innerHeight + window.pageYOffset >=
+    //       document.body.offsetHeight
+    //     ) {
+    //       loadImages();
+    //     }
+    //   }, 100);
+
+    //   // The loadImages check is not throttled to ensure that it is not in throttled state if we reach bottom
+    //   if (window.pageYOffset > window.innerHeight) {
+    //     boundSetState({ showNavToTop: true });
+    //   }
+    //   if (window.pageYOffset < window.innerHeight) {
+    //     boundSetState({ showNavToTop: false });
+    //   }
+    // }
+
+
+
+    window.addEventListener('scroll', onScroll, false);
+
+    const raf = window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    window.oRequestAnimationFrame;
+
     const loadImages = this.loadImages.bind(this);
     const boundSetState = this.setState.bind(this);
 
-    let throttledEvent;
+    /* global pageYOffset, innerHeight, docoffsetHeight */
+    let pageYOffset = 0;
+    let innerHeight = 0;
+    let docOffsetHeight = 0;
+    let ticking = false;
 
-    window.onscroll = function() {
-      // Clear throttled event on scroll
-      if (throttledEvent) {
-        window.clearTimeout(throttledEvent);
+    function onScroll() {
+      pageYOffset = window.pageYOffset;
+      innerHeight = window.innerHeight;
+      docOffsetHeight = document.body.offsetHeight;
+      requestTick();
+    }
+
+    function requestTick() {
+      if (!ticking) {
+        raf(update);
       }
+      ticking = true;
+    }
 
-      // Optimize scrolling by having scroll events fire only every 100ms for rendering navtotop button
-      throttledEvent = window.setTimeout(function() {
-        if (window.pageYOffset > window.innerHeight) {
-          boundSetState({ showNavToTop: true });
-        }
-        if (window.pageYOffset < window.innerHeight) {
-          boundSetState({ showNavToTop: false });
-        }
-      }, 100);
+    function update() {
+      ticking = false;
 
-      // The loadImages check is not throttled to ensure that it is not in throttled state if we reach bottom
-      if (
-        window.innerHeight + window.pageYOffset >=
-        document.body.offsetHeight
-      ) {
+      const currentPageYOffset = pageYOffset;
+      const currentInnerHeight = innerHeight
+      const currentDocOffsetHeight = docOffsetHeight;
+
+      if (currentPageYOffset > currentInnerHeight) {
+        boundSetState({ showNavToTop: true });
+      }
+      if (currentPageYOffset < currentInnerHeight) {
+        boundSetState({ showNavToTop: false });
+      }
+      if (currentInnerHeight + currentPageYOffset >= currentDocOffsetHeight) {
         loadImages();
       }
-    };
+    }
+
   }
 
   loadImages = async () => {
@@ -102,7 +154,7 @@ export class Feed extends React.Component {
 
   goTop = () => {
     window.scrollTo(0, 0);
-  }
+  };
 
   render() {
     const { classes } = this.props;
