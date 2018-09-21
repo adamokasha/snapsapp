@@ -30,11 +30,6 @@ require('./routes/authRoutes')(app);
 require('./routes/uploadRoutes')(app);
 require('./routes/postRoutes')(app);
 
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
 if (['production', 'ci'].includes(process.env.NODE_ENV)) {
   app.use(express.static('client/build'));
 
