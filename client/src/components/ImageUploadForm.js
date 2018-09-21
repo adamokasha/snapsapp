@@ -13,7 +13,7 @@ import Input from '@material-ui/core/Input';
 import Close from '@material-ui/icons/Close';
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import { submitPost } from '../actions/post';
+import { submitPost } from '../actions/posts';
 
 const styles = theme => ({
   layout: {
@@ -152,7 +152,7 @@ class ImageUploadForm extends React.Component {
                   component="span"
                   className={classes.button}
                 >
-                  Click to Pick an Image File
+                  Click to Choose an Image File
                 </Button>
               </label>{' '}
               <TextField

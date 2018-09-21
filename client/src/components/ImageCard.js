@@ -34,7 +34,7 @@ class ImageCard extends React.Component {
       classes,
       profilePhoto,
       displayName,
-      imageUrl,
+      imgUrl,
       title,
       description
     } = this.props;
@@ -52,7 +52,7 @@ class ImageCard extends React.Component {
         />
         <CardMedia
           className={classes.media}
-          image={imageUrl || 'https://i.imgur.com/KAXz5AG.jpg'}
+          image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}` || 'https://i.imgur.com/KAXz5AG.jpg'}
           title={title || 'Image Title'}
         />
         <CardContent>

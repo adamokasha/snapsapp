@@ -18,5 +18,20 @@ module.exports = app => {
     } catch (e) {
       res.status(400).send(e);
     }
+  });
+
+  app.get('/api/posts/:page', (req, res) => {
+    const { page } = req.params;
+
+    Post.find({})
+      .limit(12)
+      .skip(12 * page)
+      .exec((err, posts) => {
+        if(err) {
+          res.send(err)
+        } else {
+          res.send(posts);
+        }
+      })
   })
 }

@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const submitPost = (post, file, history) => async dispatch => {
   const data = new FormData();
     // name must match multer upload('name')
@@ -9,4 +11,11 @@ export const submitPost = (post, file, history) => async dispatch => {
     method: "POST",
     body: data
   }).then(res => console.log(res)).catch(e => console.log(e))
+}
+
+export const fetchPosts = (page) => async dispatch => {
+  const res = await axios.get(`/api/posts/${page}`);
+  console.log(res.data.length);
+  if(!res.data.length) {return}
+  dispatch({ type: 'FETCH_POSTS', payload: res.data});
 }
