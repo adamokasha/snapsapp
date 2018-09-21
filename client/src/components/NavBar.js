@@ -15,7 +15,7 @@ import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   grow: {
     flexGrow: 1
@@ -139,7 +139,7 @@ class NavBar extends React.Component {
 
     return (
       <div className={classes.root}>
-        <AppBar position="static">
+        <AppBar position="fixed">
           <Toolbar>
             <Typography
               variant="title"
