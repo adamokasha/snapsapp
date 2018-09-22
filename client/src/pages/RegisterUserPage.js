@@ -6,12 +6,7 @@ import { registerUser } from '../actions/auth';
 import DisplayNameForm from '../components/DisplayNameForm';
 import NavBar from '../components/NavBar';
 
-export class RegistrationPage extends React.Component {
-  // componentDidUpdate() {
-  //   if(this.props.alreadyRegistered) {
-  //     this.props.history.push('/dashboard');
-  //   }
-  // }
+export class RegisterUser extends React.Component {
   onSubmit = async (displayName) => {
     try {
       await this.props.registerUser(displayName);
@@ -37,4 +32,4 @@ const mapStateToProps = (state) => ({
 export default connect(
   mapStateToProps,
   { registerUser }
-)(withRouter(RegistrationPage));
+)(withRouter(RegisterUser));

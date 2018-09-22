@@ -17,7 +17,7 @@ module.exports = app => {
     passport.authenticate('google'),
     (req, res) => {
       if (!req.user.displayName) {
-        return res.redirect('/register');
+        return res.redirect('/register_user');
       }
       res.redirect('/dashboard');
     }
@@ -30,7 +30,7 @@ module.exports = app => {
     passport.authenticate('facebook'),
     (req, res) => {
       if (!req.user.displayName) {
-        return res.redirect('/register');
+        return res.redirect('/register_user');
       }
       res.redirect('/dashboard');
     }

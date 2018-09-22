@@ -76,7 +76,6 @@ class DisplayNameForm extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log(this.props.onSubmit);
 
     return (
       <React.Fragment>

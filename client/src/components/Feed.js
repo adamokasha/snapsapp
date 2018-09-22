@@ -14,14 +14,14 @@ const styles = theme => ({
     margin: '16px auto',
     display: 'block'
   },
-  button: {
+  toTopButton: {
     margin: theme.spacing.unit,
     position: 'fixed',
     bottom: '5%',
     right: '5%',
     zIndex: 5000
   },
-  goTopBtn: {
+  navIcon: {
     marginRight: theme.spacing.unit
   }
 });
@@ -38,41 +38,9 @@ export class Feed extends React.Component {
       showNavToTop: false
     };
 
-    // // Prevent loadImages 'this' context being window in onScroll window event
-    // const loadImages = this.loadImages.bind(this);
-    // const boundSetState = this.setState.bind(this);
-
-    // let throttledEvent;
-
-    // window.onscroll = function() {
-    //   // Clear throttled event on scroll
-    //   if (throttledEvent) {
-    //     window.clearTimeout(throttledEvent);
-    //   }
-
-    //   // Optimize scrolling by having scroll events fire only every 100ms for rendering navtotop button
-    //   throttledEvent = window.setTimeout(function() {
-    //     if (
-    //       window.innerHeight + window.pageYOffset >=
-    //       document.body.offsetHeight
-    //     ) {
-    //       loadImages();
-    //     }
-    //   }, 100);
-
-    //   // The loadImages check is not throttled to ensure that it is not in throttled state if we reach bottom
-    //   if (window.pageYOffset > window.innerHeight) {
-    //     boundSetState({ showNavToTop: true });
-    //   }
-    //   if (window.pageYOffset < window.innerHeight) {
-    //     boundSetState({ showNavToTop: false });
-    //   }
-    // }
-
-
-
     window.addEventListener('scroll', onScroll, false);
 
+    // Scroll optimization using raf
     const raf = window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
@@ -164,10 +132,10 @@ export class Feed extends React.Component {
           <Button
             variant="extendedFab"
             aria-label="Delete"
-            className={classes.button}
+            className={classes.toTopButton}
             onClick={this.goTop}
           >
-            <NavigationIcon className={classes.goTopBtn} />
+            <NavigationIcon className={classes.navIcon} />
             Go to Top
           </Button>
         ) : null}

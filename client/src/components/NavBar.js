@@ -9,6 +9,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import Camera from '@material-ui/icons/Camera';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
@@ -23,13 +24,6 @@ const styles = theme => ({
   menuButton: {
     marginLeft: -12,
     marginRight: 20
-  },
-  googleGradient: {
-    background: 'linear-gradient(#dd4b39, #ea4335)'
-  },
-  facebookGradient: {
-    marginRight: theme.spacing.unit,
-    background: 'linear-gradient(#4c69ba, #3b55a0)'
   },
   leftIcon: {
     fontSize: '18px',
@@ -105,30 +99,20 @@ class NavBar extends React.Component {
     ) : (
       <div>
         <Button
-          href="/auth/facebook"
-          variant="contained"
-          color="primary"
-          className={classes.facebookGradient}
+          to="/login"
+          component={Link}
+          variant="text"
+          color="inherit"
         >
-          <ion-icon
-            name="logo-facebook"
-            class={classes.leftIcon}
-            size="medium"
-          />
-          &nbsp;Login
+          &nbsp;Sign In
         </Button>
         <Button
-          href="/auth/google"
+          to="/register"
+          component={Link}
           variant="contained"
-          color="primary"
-          className={classes.googleGradient}
+          color="secondary"
         >
-          <ion-icon
-            name="logo-googleplus"
-            class={classes.leftIcon}
-            size="medium"
-          />
-          &nbsp;Login
+          &nbsp;Sign Up
         </Button>
       </div>
     );
@@ -139,14 +123,14 @@ class NavBar extends React.Component {
 
     return (
       <div className={classes.root}>
-        <AppBar position="fixed">
+        <AppBar position="static">
           <Toolbar>
             <Typography
               variant="title"
               color="inherit"
               className={classes.grow}
             >
-              Logo
+              <ion-icon size="large" name="aperture"></ion-icon>
             </Typography>
             {this.renderNavButtons()}
           </Toolbar>
