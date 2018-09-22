@@ -12,6 +12,8 @@ import ImageUploadPage from '../pages/ImageUploadPage';
 import PrivacyPolicy from '../components/PrivacyPolicy';
 import { fetchUser } from '../actions/auth';
 
+import imageModalView from '../components/ImageModalView';
+
 export class AppRouter extends React.Component {
   componentDidMount() {
     this.props.fetchUser();
@@ -28,6 +30,9 @@ export class AppRouter extends React.Component {
           <PublicRoute path="/privacy" component={PrivacyPolicy} />
           <PrivateRoute path="/dashboard" component={DashboardPage} />
           <PrivateRoute path="/upload" component={ImageUploadPage} />
+
+          <Route path="/modalpreview" component={imageModalView} />
+
         </Switch>
       </BrowserRouter>
     );
