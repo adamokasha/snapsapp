@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   root: {
-    width: '100%',
-    height: '100vh',
-    opacity: '.9',
-    background: '#fff'
+    width: '90%',
+    height: '100%',
+    background: '#fff',
+    margin: '0 auto',
+    overflowY: 'auto',
+    borderRadius: '8px'
   },
   content: {
     position: 'relative',
@@ -17,16 +17,16 @@ const styles = theme => ({
     flexDirection: 'column',
     justifyContent: 'center',
     height: '100%',
-    width: '100%%',
+    width: '100%',
     margin: '0 auto',
     overflow: 'hidden'
   },
   headerElement: {
-    height: '5%'
+    height: '10%'
   },
   imageContainer: {
     width: '100%',
-    height: '90%',
+    height: '80%',
     margin: '0',
     position: 'relative',
     display: 'inline-block',
@@ -42,13 +42,13 @@ const styles = theme => ({
     transform: 'translate(-50%, -50%)'
   },
   bottom: {
-    height: '5%'
+    height: '10%'
   }
 });
 
 class ImageModalView extends React.Component {
   render() {
-    const { classes } = this.props;
+    const { classes, imgUrl } = this.props;
 
     return (
       <div className={classes.root}>
@@ -57,7 +57,7 @@ class ImageModalView extends React.Component {
           <div className={classes.imageContainer}>
           <img
             className={classes.image}
-            src="https://i.imgur.com/l3ztqFE.jpeg"
+            src={`https://s3.amazonaws.com/img-share-kasho/${imgUrl}`}
             alt="testing"
           />
           </div>
@@ -69,7 +69,8 @@ class ImageModalView extends React.Component {
 }
 
 ImageModalView.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  imgUrl: PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(ImageModalView);

@@ -11,8 +11,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Divider from '@material-ui/core/Divider';
+import Modal from '@material-ui/core/Modal';
+
+import ImageModalView from './ImageModalView';
 
 const styles = theme => ({
   card: {
@@ -25,10 +27,25 @@ const styles = theme => ({
   },
   actions: {
     display: 'flex'
+  },
+  modalRoot: {
+    top: '3%'
   }
 });
 
 class ImageCard extends React.Component {
+  state = {
+    open: false
+  };
+
+  handleOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
   render() {
     const {
       classes,
@@ -40,37 +57,55 @@ class ImageCard extends React.Component {
     } = this.props;
 
     return (
-      <Card className={classes.card} raised>
-        <CardHeader
-          avatar={
-            <Avatar aria-label="Recipe" className={classes.avatar}>
-              <img src={profilePhoto} />
-            </Avatar>
-          }
-          title={title || 'Aerial Photo'}
-          subheader={displayName || 'September 14, 2016'}
-        />
-        <CardMedia
-          className={classes.media}
-          image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}` || 'https://i.imgur.com/KAXz5AG.jpg'}
-          title={title || 'Image Title'}
-        />
-        <CardContent>
-          <Typography component="p">
-            {description ||
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis varius, orci in faucibus egestas, mi turpis condimentum dui, ac dictum ipsum ante sit amet elit.'}
-          </Typography>
-        </CardContent>
-        <Divider />
-        <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton aria-label="Add to favorites">
-            <FavoriteIcon />
-          </IconButton>
-          <IconButton aria-label="Share">
-            <ShareIcon />
-          </IconButton>
-        </CardActions>
-      </Card>
+      <div>
+        <Card className={classes.card} raised>
+          <CardHeader
+            avatar={
+              <Avatar aria-label="Recipe" className={classes.avatar}>
+                <img src={profilePhoto} />
+              </Avatar>
+            }
+            title={title || 'Aerial Photo'}
+            subheader={displayName || 'September 14, 2016'}
+          />
+          <CardMedia
+            className={classes.media}
+            image={
+              `https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}` ||
+              'https://i.imgur.com/KAXz5AG.jpg'
+            }
+            title={title || 'Image Title'}
+            onClick={this.handleOpen}
+          />
+          <CardContent>
+            <Typography component="p">
+              {description ||
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis varius, orci in faucibus egestas, mi turpis condimentum dui, ac dictum ipsum ante sit amet elit.'}
+            </Typography>
+          </CardContent>
+          <Divider />
+          <CardActions className={classes.actions} disableActionSpacing>
+            <IconButton aria-label="Add to favorites">
+              <FavoriteIcon />
+            </IconButton>
+            <IconButton aria-label="Share">
+              <ShareIcon />
+            </IconButton>
+          </CardActions>
+        </Card>
+        <Modal
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          open={this.state.open}
+          onBackdropClick={this.handleClose}
+          onClose={this.handleClose}
+          classes={{root: classes.modalRoot}}
+        >
+          <ImageModalView
+            imgUrl={imgUrl}
+          />
+        </Modal>
+      </div>
     );
   }
 }
