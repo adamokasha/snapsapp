@@ -1,5 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
+import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import SocialAuth from '../components/SocialAuth';
@@ -21,6 +22,15 @@ export const RegisterOrLogin = (props) => {
         registerOrLogin={registerOrLogin}
       />
       <ToS />
+      <Typography 
+        to="/privacy"
+        component={Link}
+        variant="body2"
+        align="center"
+        style={{marginTop: '8px'}}
+      >
+      Privacy Policy
+      </Typography>
     </div>
   );
 };
