@@ -5,11 +5,15 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = theme => ({
   root: {
     width: '90%',
-    height: '100%',
+    height: '97%',
     background: '#fff',
     margin: '0 auto',
     overflowY: 'auto',
-    borderRadius: '8px'
+    borderRadius: '8px',
+    [theme.breakpoints.down('md')]: {
+      height: '60%'
+    },
+
   },
   content: {
     position: 'relative',
@@ -33,13 +37,17 @@ const styles = theme => ({
     overflow: 'hidden'
   },
   image: {
+    // maintain aspect ratio
+    maxWidth: '100%',
+    maxHeight: '100%',
     width: 'auto',
-    height: '100%',
+    height: 'auto',
     display: 'block',
     position: 'absolute',
     top: '50%',
     left: '50%',
-    transform: 'translate(-50%, -50%)'
+    transform: 'translate(-50%, -50%)',
+    cursor: 'zoom-in'
   },
   bottom: {
     height: '10%'

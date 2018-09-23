@@ -23,13 +23,19 @@ const styles = theme => ({
   },
   media: {
     height: 0,
-    paddingTop: '56.25%' // 16:9
+    paddingTop: '56.25%', // 16:9
+    cursor: 'pointer'
   },
   actions: {
     display: 'flex'
   },
   modalRoot: {
-    top: '3%'
+    top: '3%',
+    width: '100%',
+    height: '100%',
+    [theme.breakpoints.down('md')]: {
+      top: '18%',
+    }
   }
 });
 
@@ -39,11 +45,15 @@ class ImageCard extends React.Component {
   };
 
   handleOpen = () => {
+    let goTopButton = document.getElementById('goTopButton'); 
+    goTopButton ? goTopButton.style.display = 'none' : null;
     this.setState({ open: true });
   };
 
   handleClose = () => {
     this.setState({ open: false });
+    let goTopButton = document.getElementById('goTopButton'); 
+    goTopButton ? goTopButton.style.display = 'inline-flex' : null;
   };
 
   render() {
@@ -94,6 +104,7 @@ class ImageCard extends React.Component {
           </CardActions>
         </Card>
         <Modal
+          id="image-modal-view"
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}

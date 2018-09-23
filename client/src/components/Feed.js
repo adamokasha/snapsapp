@@ -130,8 +130,9 @@ export class Feed extends React.Component {
       <div>
         {this.state.showNavToTop ? (
           <Button
+            id="goTopButton"
             variant="extendedFab"
-            aria-label="Delete"
+            aria-label="go-top"
             className={classes.toTopButton}
             onClick={this.goTop}
           >
