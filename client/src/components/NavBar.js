@@ -82,9 +82,6 @@ class NavBar extends React.Component {
           open={open}
           onClose={this.handleClose}
         >
-          <MenuItem to="/dashboard" component={Link} onClick={this.handleClose}>
-            Dashboard
-          </MenuItem>
           <MenuItem to="upload" component={Link} onClick={this.handleClose}>
               Add Image
           </MenuItem>

@@ -10,7 +10,7 @@ export class RegisterUser extends React.Component {
   onSubmit = async (displayName) => {
     try {
       await this.props.registerUser(displayName);
-      this.props.history.push('/dashboard');
+      this.props.history.push('/');
     } catch (e) {
       console.log(e);
     }

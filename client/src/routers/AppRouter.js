@@ -4,10 +4,9 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import PrivateRoute from './PrivateRoute';
 import PublicRoute from './PublicRoute';
-import LandingPage from '../pages/LandingPage';
+import HomePage from '../pages/HomePage';
 import RegisterOrLogin from '../pages/RegisterOrLogin';
 import RegisterUserPage from '../pages/RegisterUserPage';
-import DashboardPage from '../pages/DashboardPage';
 import ImageUploadPage from '../pages/ImageUploadPage';
 import PrivacyPolicy from '../components/PrivacyPolicy';
 import { fetchUser } from '../actions/auth';
@@ -23,12 +22,11 @@ export class AppRouter extends React.Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Route exact path="/" component={LandingPage} />
+          <Route exact path="/" component={HomePage} />
           <PublicRoute path="/register" component={() => <RegisterOrLogin registerOrLogin="register" />} />
           <Route path="/register_user" component={RegisterUserPage} />
           <PublicRoute path="/login" component={() => <RegisterOrLogin registerOrLogin="login" />} registerOrLogin="login" />
           <PublicRoute path="/privacy" component={PrivacyPolicy} />
-          <PrivateRoute path="/dashboard" component={DashboardPage} />
           <PrivateRoute path="/upload" component={ImageUploadPage} />
 
           <Route path="/modalpreview" component={imageModalView} />

@@ -19,7 +19,7 @@ module.exports = app => {
       if (!req.user.displayName) {
         return res.redirect('/register_user');
       }
-      res.redirect('/dashboard');
+      res.redirect('/');
     }
   );
 
@@ -32,7 +32,7 @@ module.exports = app => {
       if (!req.user.displayName) {
         return res.redirect('/register_user');
       }
-      res.redirect('/dashboard');
+      res.redirect('/');
     }
   );
 
@@ -61,7 +61,7 @@ module.exports = app => {
           registered: true
         }
       );
-      res.redirect('/dashboard');
+      res.redirect('/');
     } catch (e) {
       res.send({ error: 'Something went wrong. Please try again' });
     }
