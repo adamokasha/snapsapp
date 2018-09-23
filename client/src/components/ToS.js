@@ -147,7 +147,6 @@ export const ToS = props => {
               violates, or advocates the infringement or other violation of, any
               third party rights.
             </p>
-            <h2 />
             <Typography variant="body2">Changes</Typography>
             <p>
               We reserve the right, at our sole discretion, to modify or replace

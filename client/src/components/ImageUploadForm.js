@@ -16,8 +16,11 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { submitPost } from '../actions/posts';
 
 const styles = theme => ({
+  root: {
+    margin: `${theme.spacing.unit * 3}px 0`
+  },
   layout: {
-    width: '100%',
+    width: '95%',
     display: 'block',
     margin: '0 auto',
     [theme.breakpoints.up('sm')]: {
@@ -33,11 +36,7 @@ const styles = theme => ({
   paper: {
     position: 'relative',
     minHeight: '300px',
-    // Adds vertical scroll to modal
-    maxHeight: '90vh',
-    overflowY: 'auto',
-    marginTop: theme.spacing.unit * 8,
-    marginBottom: theme.spacing.unit * 8,
+    margin: `${theme.spacing.unit * 3}px auto`,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -53,8 +52,18 @@ const styles = theme => ({
     margin: `${theme.spacing.unit}px auto`,
     backgroundColor: theme.palette.secondary.main
   },
-  previewImage: {
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
     width: '100%'
+  },
+  previewImage: {
+    maxHeight: '250px',
+    maxWidth: '100%',
+    width: 'auto',
+    height: 'auto',
+    margin: '0 auto',
+    display: 'block'
   },
   fileInput: {
     display: 'none'
@@ -82,7 +91,10 @@ class ImageUploadForm extends React.Component {
   };
 
   onFileSelect = e => {
-    const src = URL.createObjectURL(e.target.files[0]) || '';
+    const src = e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null;
+    if(!src) {
+      return;
+    }
     this.setState({ previewImage: src });
     this.setState({ file: e.target.files[0] });
   };
@@ -103,7 +115,6 @@ class ImageUploadForm extends React.Component {
 
   onSubmit = async e => {
     e.preventDefault();
-    console.log('Called onSubmit');
     const { post, file } = this.state;
 
     await this.props.submitPost(post, file, this.props.history);
@@ -113,7 +124,7 @@ class ImageUploadForm extends React.Component {
     const { classes } = this.props;
 
     return (
-      <React.Fragment>
+      <div className={classes.root}>
         <main className={classes.layout}>
           <Paper className={classes.paper}>
             <Avatar className={classes.avatar}>
@@ -135,6 +146,7 @@ class ImageUploadForm extends React.Component {
               <div>
                 <img
                   src={this.state.previewImage}
+                  alt="preview"
                   className={classes.previewImage}
                 />
               </div>
@@ -193,7 +205,7 @@ class ImageUploadForm extends React.Component {
             </form>
           </Paper>
         </main>
-      </React.Fragment>
+      </div>
     );
   }
 }

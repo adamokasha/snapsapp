@@ -55,14 +55,14 @@ class ImageCard extends React.Component {
 
   handleOpen = () => {
     let goTopButton = document.getElementById('goTopButton'); 
-    goTopButton ? goTopButton.style.display = 'none' : null;
+    if (goTopButton) {goTopButton.style.display = 'none'};
     this.setState({ open: true });
   };
 
   handleClose = () => {
     this.setState({ open: false });
     let goTopButton = document.getElementById('goTopButton'); 
-    goTopButton ? goTopButton.style.display = 'inline-flex' : null;
+    if(goTopButton) {goTopButton.style.display = 'inline-flex'};
   };
 
   onFave = async () => {
@@ -93,7 +93,7 @@ class ImageCard extends React.Component {
           <CardHeader
             avatar={
               <Avatar aria-label="Recipe" className={classes.avatar}>
-                <img src={profilePhoto} />
+                <img src={profilePhoto} alt="avatar" />
               </Avatar>
             }
             title={title || 'Aerial Photo'}

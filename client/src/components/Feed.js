@@ -31,10 +31,10 @@ export class Feed extends React.Component {
     super(props);
 
     this.state = {
-      currentPage: 0,
+      currentPage: this.props.posts.length || 0,
       morePagesAvailable: true,
       isFetching: false,
-      pages: [this.props.posts] || [],
+      pages: this.props.posts || [],
       showNavToTop: false
     };
 
@@ -51,7 +51,7 @@ export class Feed extends React.Component {
     const loadImages = this.loadImages.bind(this);
     const boundSetState = this.setState.bind(this);
 
-    /* global pageYOffset, innerHeight, docOffsetHeight */
+    /* global pageYOffset, innerHeight */
     let pageYOffset = 0;
     let innerHeight = 0;
     let docOffsetHeight = 0;
@@ -108,7 +108,7 @@ export class Feed extends React.Component {
       this.setState(
         {
           currentPage: this.state.currentPage + 1,
-          pages: [posts],
+          pages: [...posts],
           isFetching: false
         },
         () => {
@@ -125,7 +125,7 @@ export class Feed extends React.Component {
     this.setState({ isFetching: true }, async () => {
       await this.props.fetchPosts(this.state.currentPage);
       this.setState({
-        pages: [this.props.posts],
+        pages: [...this.props.posts],
         currentPage: this.state.currentPage + 1,
         isFetching: false
       }, () => {
@@ -142,6 +142,7 @@ export class Feed extends React.Component {
 
   render() {
     const { classes } = this.props;
+
     return (
       <div>
         {this.state.showNavToTop ? (
@@ -156,9 +157,7 @@ export class Feed extends React.Component {
             Go to Top
           </Button>
         ) : null}
-        {this.state.pages.map(page => {
-          return page.map(post => <ImageGrid imageData={post} />);
-        })}
+        {this.state.pages.map((page, i) => <ImageGrid key={i} imageData={page} /> )}
         {this.state.isFetching ? (
           <CircularProgress className={classes.circularLoader} size={50} />
         ) : null}
