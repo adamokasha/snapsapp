@@ -46,8 +46,7 @@ const styles = theme => ({
     position: 'absolute',
     top: '50%',
     left: '50%',
-    transform: 'translate(-50%, -50%)',
-    cursor: 'zoom-in'
+    transform: 'translate(-50%, -50%)'
   },
   bottom: {
     height: '10%'

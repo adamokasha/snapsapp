@@ -15,7 +15,7 @@ export const submitPost = (post, file, history) => async dispatch => {
 
 export const fetchPosts = (page) => async dispatch => {
   const res = await axios.get(`/api/posts/${page}`);
-  console.log(res.data.length);
-  if(!res.data.length) {return}
+  // console.log(res.data.length);
   dispatch({ type: 'FETCH_POSTS', payload: res.data});
+  return res.data.length;
 }

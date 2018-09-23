@@ -41,16 +41,17 @@ export class Feed extends React.Component {
     window.addEventListener('scroll', onScroll, false);
 
     // Scroll optimization using raf
-    const raf = window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.msRequestAnimationFrame ||
-    window.oRequestAnimationFrame;
+    const raf =
+      window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.msRequestAnimationFrame ||
+      window.oRequestAnimationFrame;
 
     const loadImages = this.loadImages.bind(this);
     const boundSetState = this.setState.bind(this);
 
-    /* global pageYOffset, innerHeight, docoffsetHeight */
+    /* global pageYOffset, innerHeight, docOffsetHeight */
     let pageYOffset = 0;
     let innerHeight = 0;
     let docOffsetHeight = 0;
@@ -74,7 +75,7 @@ export class Feed extends React.Component {
       ticking = false;
 
       const currentPageYOffset = pageYOffset;
-      const currentInnerHeight = innerHeight
+      const currentInnerHeight = innerHeight;
       const currentDocOffsetHeight = docOffsetHeight;
 
       if (currentPageYOffset > currentInnerHeight) {
@@ -87,25 +88,33 @@ export class Feed extends React.Component {
         loadImages();
       }
     }
-
   }
 
   loadImages = async () => {
     const { posts } = this.props;
-    if (!this.state.morePagesAvailable || this.state.isFetching) {
+    if (this.state.isFetching || !this.state.morePagesAvailable) {
       return;
     }
-    // If last array in posts has length < 12 return
-    if (posts[posts.length - 1].length < 12) {
-      return this.setState({ morePagesAvailable: false });
-    }
 
-    this.setState({ isFetching: true });
-    await this.props.fetchPosts(this.state.currentPage);
-    this.setState({
-      currentPage: this.state.currentPage + 1,
-      pages: [posts],
-      isFetching: false
+    // this.setState is not guaranteed to be synchronous, passing a bc guarantees cb will be called after state update
+    this.setState({ isFetching: true }, async () => {
+      const res = await this.props.fetchPosts(this.state.currentPage);
+      if (!res) {
+        this.setState({ morePagesAvailable: false }, () => {
+          return;
+        });
+      }
+
+      this.setState(
+        {
+          currentPage: this.state.currentPage + 1,
+          pages: [posts],
+          isFetching: false
+        },
+        () => {
+          return;
+        }
+      );
     });
   };
 
@@ -117,7 +126,6 @@ export class Feed extends React.Component {
       currentPage: this.state.currentPage + 1,
       isFetching: false
     });
-    this.state;
   }
 
   goTop = () => {
