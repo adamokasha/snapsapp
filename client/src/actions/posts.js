@@ -27,3 +27,11 @@ export const favePost = (imgId) => async dispatch => {
     console.log(e);
   }
 }
+
+export const unFavePost = (imgId) => async dispatch => {
+  try {
+    await axios.post(`/api/posts/unfave/${imgId}`);
+  } catch (e) {
+    console.log(e);
+  }
+}

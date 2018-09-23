@@ -17,7 +17,7 @@ import Divider from '@material-ui/core/Divider';
 import Modal from '@material-ui/core/Modal';
 
 import ImageModalView from './ImageModalView';
-import {favePost} from '../actions/posts';
+import {favePost, unFavePost} from '../actions/posts';
 
 const styles = theme => ({
   card: {
@@ -39,6 +39,9 @@ const styles = theme => ({
     [theme.breakpoints.down('md')]: {
       top: '18%',
     }
+  },
+  red: {
+    color: 'red'
   }
 });
 
@@ -46,6 +49,7 @@ class ImageCard extends React.Component {
   state = {
     imgId: this.props.imgId,
     faved: false,
+    faveColor: 'default',
     open: false
   };
 
@@ -62,6 +66,13 @@ class ImageCard extends React.Component {
   };
 
   onFave = async () => {
+    if(this.state.faved) {
+      this.setState({faveColor: 'default', faved: false})
+      await this.props.unFavePost(this.state.imgId);
+      console.log('UNFAVE dispatched')
+      return;
+    }
+    this.setState({faveColor: 'secondary', faved: true});
     await this.props.favePost(this.state.imgId);
     console.log('favePost dispatched')
   }
@@ -108,8 +119,10 @@ class ImageCard extends React.Component {
             <IconButton 
             aria-label="Add to favorites"
             onClick={this.onFave}
+            color={this.state.faveColor}
             >
-              <FavoriteIcon />
+              <FavoriteIcon
+              />
             </IconButton>
             <IconButton aria-label="Share">
               <ShareIcon />
@@ -138,9 +151,8 @@ ImageCard.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-// export default withStyles(styles)(ImageCard);
 
 export default compose(
   withStyles(styles),
-  connect(null, {favePost})
+  connect(null, {favePost, unFavePost})
 )(ImageCard)

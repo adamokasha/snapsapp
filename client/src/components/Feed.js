@@ -34,7 +34,7 @@ export class Feed extends React.Component {
       currentPage: 0,
       morePagesAvailable: true,
       isFetching: false,
-      pages: this.props.posts || [],
+      pages: [this.props.posts] || [],
       showNavToTop: false
     };
 
@@ -118,16 +118,24 @@ export class Feed extends React.Component {
     });
   };
 
-  async componentDidMount() {
-    this.setState({ isFetching: true });
-    await this.props.fetchPosts(this.state.currentPage);
-    this.setState({
-      pages: [this.props.posts],
-      currentPage: this.state.currentPage + 1,
-      isFetching: false
+  componentDidMount() {
+    if(this.props.posts.length > 0) {
+      return;
+    }
+    this.setState({ isFetching: true }, async () => {
+      await this.props.fetchPosts(this.state.currentPage);
+      this.setState({
+        pages: [this.props.posts],
+        currentPage: this.state.currentPage + 1,
+        isFetching: false
+      }, () => {
+        return;
+      });
     });
   }
 
+
+  
   goTop = () => {
     window.scrollTo(0, 0);
   };

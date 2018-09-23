@@ -16,7 +16,7 @@ import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
+    flexGrow: 1
   },
   grow: {
     flexGrow: 1
@@ -83,7 +83,7 @@ class NavBar extends React.Component {
           onClose={this.handleClose}
         >
           <MenuItem to="upload" component={Link} onClick={this.handleClose}>
-              Add Image
+            Add Image
           </MenuItem>
           <MenuItem onClick={this.handleClose}>My Profile</MenuItem>
           <MenuItem onClick={this.handleClose}>
@@ -95,12 +95,7 @@ class NavBar extends React.Component {
       </div>
     ) : (
       <div>
-        <Button
-          to="/login"
-          component={Link}
-          variant="text"
-          color="inherit"
-        >
+        <Button to="/login" component={Link} variant="text" color="inherit">
           &nbsp;Sign In
         </Button>
         <Button
@@ -127,7 +122,9 @@ class NavBar extends React.Component {
               color="inherit"
               className={classes.grow}
             >
-              <ion-icon size="large" name="aperture"></ion-icon>
+              <Link to="/" className={classes.aTag}>
+                <ion-icon size="large" name="aperture" />
+              </Link>
             </Typography>
             {this.renderNavButtons()}
           </Toolbar>

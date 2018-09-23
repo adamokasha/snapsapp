@@ -51,4 +51,17 @@ module.exports = app => {
       res.status(400).send(e);
     }
   });
+
+  app.post('/api/posts/unfave/:id', requireAuth, async (req, res) => {
+    try {
+      await Post.findOneAndUpdate(
+        { _id: req.params.id },
+        { $pull: {faved: req.user.id} }
+      );
+      res.status(200).send({ success: 'Fave removed' });
+    } catch (e) {
+      res.status(400).send(e);
+    }
+  });
+
 };
