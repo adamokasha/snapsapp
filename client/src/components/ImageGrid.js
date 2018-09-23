@@ -48,11 +48,11 @@ function ImageGridList(props) {
       <GridList className={classes.gridList} cols={3}>
         {imageData.map(data => {
           const {
-            profilePhoto,
-            displayName,
+            _id,
             imgUrl,
             title,
-            description
+            description,
+            _user
           } = data;
           return (
             <GridListTile
@@ -64,8 +64,9 @@ function ImageGridList(props) {
               }}
             >
               <ImageCard
-                profilePhoto={profilePhoto}
-                displayName={displayName}
+                imgId={_id}
+                profilePhoto={_user.profilePhoto}
+                displayName={_user.displayName}
                 imgUrl={imgUrl}
                 title={title}
                 description={description}

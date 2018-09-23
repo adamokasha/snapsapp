@@ -1,4 +1,6 @@
 import React from 'react';
+import {connect} from 'react-redux';
+import compose from 'recompose/compose';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -15,6 +17,7 @@ import Divider from '@material-ui/core/Divider';
 import Modal from '@material-ui/core/Modal';
 
 import ImageModalView from './ImageModalView';
+import {favePost} from '../actions/posts';
 
 const styles = theme => ({
   card: {
@@ -41,6 +44,8 @@ const styles = theme => ({
 
 class ImageCard extends React.Component {
   state = {
+    imgId: this.props.imgId,
+    faved: false,
     open: false
   };
 
@@ -55,6 +60,11 @@ class ImageCard extends React.Component {
     let goTopButton = document.getElementById('goTopButton'); 
     goTopButton ? goTopButton.style.display = 'inline-flex' : null;
   };
+
+  onFave = async () => {
+    await this.props.favePost(this.state.imgId);
+    console.log('favePost dispatched')
+  }
 
   render() {
     const {
@@ -95,7 +105,10 @@ class ImageCard extends React.Component {
           </CardContent>
           <Divider />
           <CardActions className={classes.actions} disableActionSpacing>
-            <IconButton aria-label="Add to favorites">
+            <IconButton 
+            aria-label="Add to favorites"
+            onClick={this.onFave}
+            >
               <FavoriteIcon />
             </IconButton>
             <IconButton aria-label="Share">
@@ -125,4 +138,9 @@ ImageCard.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(ImageCard);
+// export default withStyles(styles)(ImageCard);
+
+export default compose(
+  withStyles(styles),
+  connect(null, {favePost})
+)(ImageCard)

@@ -23,7 +23,7 @@ export class AppRouter extends React.Component {
     return (
       <BrowserRouter>
         <Switch>
-          <PublicRoute exact path="/" component={LandingPage} />
+          <Route exact path="/" component={LandingPage} />
           <PublicRoute path="/register" component={() => <RegisterOrLogin registerOrLogin="register" />} />
           <Route path="/register_user" component={RegisterUserPage} />
           <PublicRoute path="/login" component={() => <RegisterOrLogin registerOrLogin="login" />} registerOrLogin="login" />

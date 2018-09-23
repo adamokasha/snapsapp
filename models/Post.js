@@ -7,7 +7,7 @@ const PostSchema = new Schema({
   createdAt: Number,
   imgUrl: {type:String, required: true},
   description: String,
-  likes: Array,
+  faved: [{type: Schema.Types.ObjectId, ref: 'User'}],
   comments: Array,
   tags: Array
 });

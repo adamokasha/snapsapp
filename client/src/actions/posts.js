@@ -19,3 +19,11 @@ export const fetchPosts = (page) => async dispatch => {
   dispatch({ type: 'FETCH_POSTS', payload: res.data});
   return res.data.length;
 }
+
+export const favePost = (imgId) => async dispatch => {
+  try {
+    await axios.post(`/api/posts/fave/${imgId}`);
+  } catch (e) {
+    console.log(e);
+  }
+}

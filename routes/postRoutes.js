@@ -10,7 +10,7 @@ module.exports = app => {
       title: req.body.title,
       imgUrl: req.body.imgUrl,
       tags: req.body.tags
-    })
+    });
 
     try {
       await post.save();
@@ -26,12 +26,29 @@ module.exports = app => {
     Post.find({})
       .limit(12)
       .skip(12 * page)
+      .populate({
+        path: '_user',
+        select: 'profilePhoto displayName'
+      })
       .exec((err, posts) => {
-        if(err) {
-          res.send(err)
+        if (err) {
+          res.send(err);
         } else {
           res.send(posts);
         }
-      })
-  })
-}
+      });
+  });
+
+  app.post('/api/posts/fave/:id', requireAuth, async (req, res) => {
+    try {
+      await Post.findOneAndUpdate(
+        { _id: req.params.id },
+        { faved: req.user.id },
+        {upsert: true}
+      );
+      res.status(200).send({ success: 'Post faved!' });
+    } catch (e) {
+      res.status(400).send(e);
+    }
+  });
+};
