@@ -28,38 +28,23 @@ module.exports = app => {
 
   app.post('/api/posts/fave/:id', requireAuth, async (req, res) => {
     try {
-      await Post.findOneAndUpdate(
-        { _id: req.params.id },
-        { $push: { faved: req.user.id } },
-        { upsert: true }
-      );
-
+      const fave = await Faves.findOne({ _owner: req.user.id , _faves: {$in: {_id: req.params.id}}});
+      if(!fave) {
+        await Faves.findOneAndUpdate(
+          {_owner: req.user.id},
+          { $push: { _faves: req.params.id } },
+          { upsert: true }
+        );
+        return res.status(200).send({ success: 'Post faved!' });
+      }
+      
       await Faves.findOneAndUpdate(
-        { _owner: req.user.id },
-        { $push: { _faves: req.params.id } },
-        { upsert: true }
-      )
-
-      res.status(200).send({ success: 'Post faved!' });
-    } catch (e) {
-      res.status(400).send(e);
-    }
-  });
-
-  app.post('/api/posts/unfave/:id', requireAuth, async (req, res) => {
-    try {
-      await Post.findOneAndUpdate(
-        { _id: req.params.id },
-        { $pull: { faved: req.user.id } }
-      );
-
-      await Faves.findOneAndUpdate(
-        { _owner: req.user.id },
+        {_owner: req.user.id},
         { $pull: { _faves: req.params.id } },
         { upsert: true }
       )
 
-      res.status(200).send({ success: 'Fave removed' });
+      res.status(200).send({ success: 'Post unfaved!' });      
     } catch (e) {
       res.status(400).send(e);
     }

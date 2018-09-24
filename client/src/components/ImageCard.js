@@ -66,15 +66,9 @@ class ImageCard extends React.Component {
   };
 
   onFave = async () => {
-    if(this.state.faved) {
-      this.setState({faveColor: 'default', faved: false})
-      await this.props.unFavePost(this.state.imgId);
-      console.log('UNFAVE dispatched')
+      this.setState({faved: !this.state.faved});
+      await this.props.favePost(this.state.imgId);
       return;
-    }
-    this.setState({faveColor: 'secondary', faved: true});
-    await this.props.favePost(this.state.imgId);
-    console.log('favePost dispatched')
   }
 
   render() {
@@ -118,7 +112,7 @@ class ImageCard extends React.Component {
             <IconButton 
             aria-label="Add to favorites"
             onClick={this.onFave}
-            color={this.state.faveColor}
+            color={this.state.faved ? 'secondary' : 'default'}
             >
               <FavoriteIcon
               />
