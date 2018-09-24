@@ -36,15 +36,10 @@ module.exports = app => {
 
       await Faves.findOneAndUpdate(
         { _owner: req.user.id },
-        { $push: { faves: req.params.id } },
+        { $push: { _faves: req.params.id } },
         { upsert: true }
       )
 
-      // await User.findOneAndUpdate(
-      //   { _id: req.user.id },
-      //   { $push: { faves: req.params.id } },
-      //   { upsert: true }
-      // );
       res.status(200).send({ success: 'Post faved!' });
     } catch (e) {
       res.status(400).send(e);
@@ -58,10 +53,12 @@ module.exports = app => {
         { $pull: { faved: req.user.id } }
       );
 
-      await User.findOneAndUpdate(
-        { _id: req.user.id },
-        { $pull: { faves: req.params.id } }
-      );
+      await Faves.findOneAndUpdate(
+        { _owner: req.user.id },
+        { $pull: { _faves: req.params.id } },
+        { upsert: true }
+      )
+
       res.status(200).send({ success: 'Fave removed' });
     } catch (e) {
       res.status(400).send(e);
