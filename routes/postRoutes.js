@@ -48,6 +48,7 @@ module.exports = app => {
           { $push: { _faves: req.params.id } },
           { upsert: true }
         );
+        await Post.findOneAndUpdate({_id: req.params.id}, {$inc: {faveCount: 1}}, {new: true });
         return res.status(200).send({ success: 'Post faved!' });
       }
       
@@ -56,6 +57,7 @@ module.exports = app => {
         { $pull: { _faves: req.params.id } },
         { upsert: true }
       )
+      await Post.findOneAndUpdate({_id: req.params.id}, {$inc: {faveCount: -1}}, {new: true });
 
       res.status(200).send({ success: 'Post unfaved!' });      
     } catch (e) {

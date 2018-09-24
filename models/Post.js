@@ -9,6 +9,7 @@ const PostSchema = new Schema({
   description: String,
   faved: [{type: Schema.Types.ObjectId, ref: 'User'}],
   isFave: {type: Boolean, default: false},
+  faveCount: {type: Number, default: 0 },
   comments: Array,
   tags: Array
 });
