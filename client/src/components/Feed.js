@@ -38,7 +38,18 @@ export class Feed extends React.Component {
       showNavToTop: false
     };
 
-    window.addEventListener('scroll', onScroll, false);
+    /* global pageYOffset, innerHeight */
+    let pageYOffset,
+      innerHeight,
+      docOffsetHeight,
+      ticking = false;
+
+    this.onScroll = function() {
+      pageYOffset = window.pageYOffset;
+      innerHeight = window.innerHeight;
+      docOffsetHeight = document.body.offsetHeight;
+      requestTick();
+    };
 
     // Scroll optimization using raf
     const raf =
@@ -48,28 +59,15 @@ export class Feed extends React.Component {
       window.msRequestAnimationFrame ||
       window.oRequestAnimationFrame;
 
-    const loadImages = this.loadImages.bind(this);
-    const boundSetState = this.setState.bind(this);
-
-    /* global pageYOffset, innerHeight */
-    let pageYOffset = 0;
-    let innerHeight = 0;
-    let docOffsetHeight = 0;
-    let ticking = false;
-
-    function onScroll() {
-      pageYOffset = window.pageYOffset;
-      innerHeight = window.innerHeight;
-      docOffsetHeight = document.body.offsetHeight;
-      requestTick();
-    }
-
     function requestTick() {
       if (!ticking) {
         raf(update);
       }
       ticking = true;
     }
+
+    const loadImages = this.loadImages.bind(this);
+    const boundSetState = this.setState.bind(this);
 
     function update() {
       ticking = false;
@@ -88,6 +86,8 @@ export class Feed extends React.Component {
         loadImages();
       }
     }
+
+    window.addEventListener('scroll', this.onScroll, false);
   }
 
   loadImages = async () => {
@@ -119,23 +119,29 @@ export class Feed extends React.Component {
   };
 
   componentDidMount() {
-    if(this.props.posts.length > 0) {
+    if (this.props.posts.length > 0) {
       return;
     }
     this.setState({ isFetching: true }, async () => {
       await this.props.fetchPosts(this.state.currentPage);
-      this.setState({
-        pages: [...this.props.posts],
-        currentPage: this.state.currentPage + 1,
-        isFetching: false
-      }, () => {
-        return;
-      });
+      this.setState(
+        {
+          pages: [...this.props.posts],
+          currentPage: this.state.currentPage + 1,
+          isFetching: false
+        },
+        () => {
+          return;
+        }
+      );
     });
   }
 
+  componentWillUnmount() {
+    // Prevent memory leak
+    window.removeEventListener('scroll', this.onScroll, false);
+  }
 
-  
   goTop = () => {
     window.scrollTo(0, 0);
   };
@@ -157,7 +163,9 @@ export class Feed extends React.Component {
             Go to Top
           </Button>
         ) : null}
-        {this.state.pages.map((page, i) => <ImageGrid key={i} imageData={page} /> )}
+        {this.state.pages.map((page, i) => (
+          <ImageGrid key={i} imageData={page} />
+        ))}
         {this.state.isFetching ? (
           <CircularProgress className={classes.circularLoader} size={50} />
         ) : null}

@@ -91,8 +91,10 @@ class ImageUploadForm extends React.Component {
   };
 
   onFileSelect = e => {
-    const src = e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null;
-    if(!src) {
+    const src = e.target.files[0]
+      ? URL.createObjectURL(e.target.files[0])
+      : null;
+    if (!src) {
       return;
     }
     this.setState({ previewImage: src });
@@ -137,18 +139,20 @@ class ImageUploadForm extends React.Component {
               className={classes.closeIcon}
               onClick={this.props.handleClose}
             />
-            <form 
-            method="post"
-            action=""
-            encType="multipart/form-data"
-            onSubmit={this.onSubmit}
+            <form
+              method="post"
+              action=""
+              encType="multipart/form-data"
+              onSubmit={this.onSubmit}
             >
               <div>
-                <img
-                  src={this.state.previewImage}
-                  alt="preview"
-                  className={classes.previewImage}
-                />
+                {this.state.previewImage ? (
+                  <img
+                    src={this.state.previewImage}
+                    alt="preview"
+                    className={classes.previewImage}
+                  />
+                ) : null}
               </div>
               <Input
                 accept="image/*"
