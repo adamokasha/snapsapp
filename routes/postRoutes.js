@@ -2,6 +2,7 @@ const requireAuth = require('../middlewares/requireAuth');
 const mongoose = require('mongoose');
 
 const Post = mongoose.model('Post');
+const User = mongoose.model('User');
 
 module.exports = app => {
   app.post('/api/posts', requireAuth, async (req, res) => {
@@ -43,9 +44,15 @@ module.exports = app => {
     try {
       await Post.findOneAndUpdate(
         { _id: req.params.id },
-        { faved: req.user.id },
+        { $push: {faved: req.user.id} },
         {upsert: true}
       );
+
+      await User.findOneAndUpdate(
+        { _id: req.user.id },
+        { $push: {faves: req.params.id} },
+        {upsert: true}
+      )
       res.status(200).send({ success: 'Post faved!' });
     } catch (e) {
       res.status(400).send(e);
@@ -57,6 +64,11 @@ module.exports = app => {
       await Post.findOneAndUpdate(
         { _id: req.params.id },
         { $pull: {faved: req.user.id} }
+      );
+
+      await User.findOneAndUpdate(
+        { _id: req.user.id },
+        { $pull: {faves: req.params.id} }
       );
       res.status(200).send({ success: 'Fave removed' });
     } catch (e) {
