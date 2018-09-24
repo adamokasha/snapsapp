@@ -17,12 +17,29 @@ module.exports = app => {
         path: '_owner',
         select: 'profilePhoto displayName'
       })
-      .exec((err, posts) => {
-        if (err) {
-          res.send(err);
-        } else {
-          res.send(posts);
+      .exec(async (err, posts) => {
+        try {
+          if(req.user) {
+            const doc = await Faves.findOne({_owner: req.user.id}, '_faves', { lean: true });
+            const {_faves} = doc;
+
+            await posts.forEach(post => {
+              if(_faves.toString().includes(post._id)) {
+                console.log('true condition')
+                return post.isFave = true;
+              }
+            });
+          }
+
+          if (err) {
+            res.send(err);
+          } else {
+            res.send(posts);
+          }  
+        } catch(e){
+          console.log(e);
         }
+
       });
   });
 
