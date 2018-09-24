@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 
 const requireAuth = require('../middlewares/requireAuth');
 const User = mongoose.model('User');
+const Faves = mongoose.model('Faves');
+
 
 module.exports = app => {
   app.get(
@@ -61,6 +63,12 @@ module.exports = app => {
           registered: true
         }
       );
+
+      // Create and save new faves document for every newly reg'd user
+      const faves = await new Faves({
+        _owner: req.user.id
+      }).save()
+
       res.redirect('/');
     } catch (e) {
       res.send({ error: 'Something went wrong. Please try again' });

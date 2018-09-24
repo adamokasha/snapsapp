@@ -4,6 +4,7 @@ const { ObjectID } = require('mongodb');
 
 const Post = mongoose.model('Post');
 const User = mongoose.model('User');
+const Faves = mongoose.model('Faves');
 
 module.exports = app => {
   app.get('/api/posts/:page', (req, res) => {
@@ -33,11 +34,17 @@ module.exports = app => {
         { upsert: true }
       );
 
-      await User.findOneAndUpdate(
-        { _id: req.user.id },
+      await Faves.findOneAndUpdate(
+        { _owner: req.user.id },
         { $push: { faves: req.params.id } },
         { upsert: true }
-      );
+      )
+
+      // await User.findOneAndUpdate(
+      //   { _id: req.user.id },
+      //   { $push: { faves: req.params.id } },
+      //   { upsert: true }
+      // );
       res.status(200).send({ success: 'Post faved!' });
     } catch (e) {
       res.status(400).send(e);

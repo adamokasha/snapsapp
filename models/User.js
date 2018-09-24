@@ -8,7 +8,7 @@ const userSchema = new Schema({
   displayName: String,
   displayNameLowerC: String,
   albums: [{ type: Schema.Types.ObjectId, ref: 'Album'}],
-  faves: [{ type: Schema.Types.ObjectId, ref: 'Photo'}],
+  faves: [{ type: Schema.Types.ObjectId, ref: 'Faves'}],
   registered: {type: Boolean, default: false}
 });
 
