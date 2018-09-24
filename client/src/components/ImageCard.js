@@ -11,8 +11,7 @@ import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
+import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
 import Divider from '@material-ui/core/Divider';
 import Modal from '@material-ui/core/Modal';
 
@@ -30,7 +29,16 @@ const styles = theme => ({
     cursor: 'pointer'
   },
   actions: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  actionsLeft: {
     display: 'flex'
+  },
+  iconButtonRoot: {
+    width: '32px',
+    height: '32px'
   },
   modalRoot: {
     top: '3%',
@@ -78,7 +86,7 @@ class ImageCard extends React.Component {
       imgUrl,
       title,
       description,
-      isFave
+      faveCount
     } = this.props.imgData;
 
     return (
@@ -110,20 +118,39 @@ class ImageCard extends React.Component {
           </CardContent>
           <Divider />
           <CardActions className={classes.actions} disableActionSpacing>
+            <div className={classes.actionsLeft}>
+              <Typography variant="caption">{faveCount} Faves</Typography>
+              &nbsp;
+              <Typography variant="caption">15 Comments</Typography>
+            </div>
+            <div className={classes.actionsRight}>
             {this.props.isAuth ? (
+              <React.Fragment>
               <IconButton 
               aria-label="Add to favorites"
               onClick={this.onFave}
               color={this.state.faved ? 'secondary' : 'default'}
+              classes={{
+                root: classes.iconButtonRoot
+              }}
               >
-                <FavoriteIcon
+                <FavoriteTwoToneIcon
                 />
               </IconButton>
+              <IconButton 
+              aria-label="Share"
+              color="default"
+              classes={{
+                root: classes.iconButtonRoot
+              }}
+              >
+              <ion-icon name="share-alt"></ion-icon>
+              </IconButton>
+              </React.Fragment>
             ) : ( null )}
-            <IconButton aria-label="Share">
-              <ShareIcon />
-            </IconButton>
+            </div>
           </CardActions>
+
         </Card>
         <Modal
           id="image-modal-view"
