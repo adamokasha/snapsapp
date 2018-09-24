@@ -48,7 +48,7 @@ function ImageGridList(props) {
         {imgData.map(data => {
           return (
             <GridListTile
-              key={imgData._id} 
+              key={data._id} 
               cols={1}
               classes={{
                 root: classes.gridTileRoot,
@@ -67,7 +67,8 @@ function ImageGridList(props) {
 }
 
 ImageGridList.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  imgData: PropTypes.array.isRequired
 };
 
 export default withStyles(styles)(ImageGridList);

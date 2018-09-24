@@ -47,7 +47,7 @@ const styles = theme => ({
 
 class ImageCard extends React.Component {
   state = {
-    imgId: this.props.imgId,
+    imgId: this.props.imgData._id,
     faved: false,
     faveColor: 'default',
     open: false
@@ -147,7 +147,8 @@ class ImageCard extends React.Component {
 }
 
 ImageCard.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  imgData: PropTypes.object.isRequired
 };
 
 
