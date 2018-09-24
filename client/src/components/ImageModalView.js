@@ -1,4 +1,8 @@
 import React from 'react';
+import Avatar from '@material-ui/core/Avatar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -26,7 +30,39 @@ const styles = theme => ({
     overflow: 'hidden'
   },
   headerElement: {
-    height: '10%'
+    display: 'flex',
+    justifyContent: 'space-between',
+    height: '10%',
+    padding: `${theme.spacing.unit * 2}px`
+  },
+  headerLeft: {
+    display: 'flex'
+  },
+  headerLeftText: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  headerRight: {
+    display: 'flex'
+  },
+  headerRightButtons: {
+
+  },
+  leftIcon: {
+    marginRight: `${theme.spacing.unit}px`
+  },
+  rightMostButton: {
+    marginLeft: `${theme.spacing.unit}px`
+  },
+  ionicon: {
+    fontSize: '24px',
+    marginRight: `${theme.spacing.unit}px`,
+    color: 'rgba(0, 0, 0, 0.54)'
+  },
+  avatar: {
+    width: '50px',
+    height:'50px',
+    marginRight: `${theme.spacing.unit * 2}px`
   },
   imageContainer: {
     width: '100%',
@@ -55,12 +91,38 @@ const styles = theme => ({
 
 class ImageModalView extends React.Component {
   render() {
-    const { classes, imgUrl } = this.props;
+    const { classes } = this.props;
+    const {_owner, imgUrl, title, faveCount, isFave, description } = this.props.imgData;
 
     return (
       <div className={classes.root}>
         <div className={classes.content}>
-          <div className={classes.headerElement}>Header</div>
+          <div className={classes.headerElement}>
+          <div className={classes.headerLeft}>
+            <Avatar
+              src={_owner.profilePhoto}
+              className={classes.avatar}
+            />
+            <div className={classes.headerLeftText}>
+              <Typography variant="body2">{title}</Typography>
+              <Typography variant="caption">{_owner.displayName}</Typography>
+            </div>
+          </div>
+          <div className={classes.headerRight}>
+            <div className={classes.headerRightButtons}>
+              <Button variant="outlined">
+              <FavoriteTwoToneIcon
+              color="disabled"
+              className={classes.leftIcon}
+              />
+              Fave
+              </Button>
+              <Button variant="outlined" className={classes.rightMostButton}>
+              <ion-icon class={classes.ionicon} name="share-alt"></ion-icon>
+              Share</Button>
+            </div>
+          </div>
+          </div>
           <div className={classes.imageContainer}>
           <img
             className={classes.image}
@@ -77,7 +139,7 @@ class ImageModalView extends React.Component {
 
 ImageModalView.propTypes = {
   classes: PropTypes.object.isRequired,
-  imgUrl: PropTypes.string.isRequired
+  imgData: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(ImageModalView);

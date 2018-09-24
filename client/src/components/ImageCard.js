@@ -162,7 +162,7 @@ class ImageCard extends React.Component {
           classes={{root: classes.modalRoot}}
         >
           <ImageModalView
-            imgUrl={imgUrl}
+            imgData={this.props.imgData}
           />
         </Modal>
       </div>
