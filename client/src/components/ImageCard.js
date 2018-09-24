@@ -48,7 +48,7 @@ const styles = theme => ({
 class ImageCard extends React.Component {
   state = {
     imgId: this.props.imgData._id,
-    faved: false,
+    faved: this.props.imgData.isFave,
     faveColor: 'default',
     open: false
   };
@@ -77,7 +77,8 @@ class ImageCard extends React.Component {
       _owner,
       imgUrl,
       title,
-      description
+      description,
+      isFave
     } = this.props.imgData;
 
     return (
@@ -109,14 +110,16 @@ class ImageCard extends React.Component {
           </CardContent>
           <Divider />
           <CardActions className={classes.actions} disableActionSpacing>
-            <IconButton 
-            aria-label="Add to favorites"
-            onClick={this.onFave}
-            color={this.state.faved ? 'secondary' : 'default'}
-            >
-              <FavoriteIcon
-              />
-            </IconButton>
+            {this.props.isAuth ? (
+              <IconButton 
+              aria-label="Add to favorites"
+              onClick={this.onFave}
+              color={this.state.faved ? 'secondary' : 'default'}
+              >
+                <FavoriteIcon
+                />
+              </IconButton>
+            ) : ( null )}
             <IconButton aria-label="Share">
               <ShareIcon />
             </IconButton>
@@ -145,8 +148,11 @@ ImageCard.propTypes = {
   imgData: PropTypes.object.isRequired
 };
 
+const mapStateToProps = ({auth}) => ({
+  isAuth: auth
+})
 
 export default compose(
   withStyles(styles),
-  connect(null, {favePost, unFavePost})
+  connect(mapStateToProps, {favePost, unFavePost})
 )(ImageCard)

@@ -1,6 +1,5 @@
 const requireAuth = require('../middlewares/requireAuth');
 const mongoose = require('mongoose');
-const { ObjectID } = require('mongodb');
 
 const Post = mongoose.model('Post');
 const User = mongoose.model('User');
