@@ -42,7 +42,7 @@ module.exports = app => {
         let data = JSON.parse(req.body.data);
         const {title, tags, description} = data;
         const post = await new Post({
-          _user: req.user.id,
+          _owner: req.user.id,
           title,
           description,
           createdAt: Date.now(),

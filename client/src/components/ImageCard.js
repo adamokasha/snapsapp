@@ -78,14 +78,13 @@ class ImageCard extends React.Component {
   }
 
   render() {
+    const {classes} = this.props;
     const {
-      classes,
-      profilePhoto,
-      displayName,
+      _owner,
       imgUrl,
       title,
       description
-    } = this.props;
+    } = this.props.imgData;
 
     return (
       <div>
@@ -93,11 +92,11 @@ class ImageCard extends React.Component {
           <CardHeader
             avatar={
               <Avatar aria-label="Recipe" className={classes.avatar}>
-                <img src={profilePhoto} alt="avatar" />
+                <img src={_owner.profilePhoto} alt="avatar" />
               </Avatar>
             }
             title={title || 'Aerial Photo'}
-            subheader={displayName || 'September 14, 2016'}
+            subheader={_owner.displayName || 'September 14, 2016'}
           />
           <CardMedia
             className={classes.media}

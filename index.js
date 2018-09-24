@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const keys = require('./config/keys');
 
 require('./models/User');
+require('./models/Faves');
 require('./models/Album');
 require('./models/Post');
 require('./services/passport');

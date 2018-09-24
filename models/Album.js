@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const AlbumSchema = new Schema({
-  _user: String,
+  _owner: {type: Schema.Types.ObjectId, ref: 'User'},
   photos: [{ type: Schema.Types.ObjectId, ref: 'Photo'}]
 });
 

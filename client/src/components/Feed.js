@@ -164,7 +164,7 @@ export class Feed extends React.Component {
           </Button>
         ) : null}
         {this.state.pages.map((page, i) => (
-          <ImageGrid key={i} imageData={page} />
+          <ImageGrid key={i} imgData={page} />
         ))}
         {this.state.isFetching ? (
           <CircularProgress className={classes.circularLoader} size={50} />
