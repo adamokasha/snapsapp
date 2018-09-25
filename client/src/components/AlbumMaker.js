@@ -4,8 +4,8 @@ import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import CheckIcon from '@material-ui/icons/Check';
-import Typography from '@material-ui/core/Typography';
+
+import AlbumMakerImageView from './AlbumMakerImageView';
 
 const styles = theme => ({
   root: {
@@ -99,10 +99,12 @@ const dummyData = [
   }
 ];
 
+const currentAlbumPhotos = [dummyData[1], dummyData[4], dummyData[5]];
+
 class AlbumMaker extends React.Component {
   state = {
     value: 1,
-    currentAlbumPosts: [],
+    currentAlbumPosts: currentAlbumPhotos,
     posts: dummyData,
     selected: []
   };
@@ -111,20 +113,26 @@ class AlbumMaker extends React.Component {
     // retrieve current album from db
       // set album as state.currentAlbumPosts and state.selected
       // do sync
+      const currentAlbumPhotoIds = currentAlbumPhotos.map(img => img.id)
+      this.setState({selected: [...currentAlbumPhotoIds]}, () => {
+        return;
+      });
+  }
+
+  filterAlbumPhotos = () => {
+    const currentAlbumPhotoIds = currentAlbumPhotos.map(img => img.id)
+    return this.state.posts.filter(img => !currentAlbumPhotoIds.includes(img.id))
   }
 
   handleChange = (event, value) => {
     this.setState({ value });
   };
 
-  onImageSelect = e => {
-    const imgId = e.target.attributes['imgid'].nodeValue;
-
+  onImageSelect = (imgId) => {
     if (this.state.selected.includes(imgId)) {
       const filtered = this.state.selected.filter(img => img !== imgId);
       return this.setState({ selected: filtered });
     }
-    // console.log(e.target.attributes['imgid'].nodeValue)
     this.setState({ selected: [...this.state.selected, imgId] });
   };
 
@@ -135,31 +143,26 @@ class AlbumMaker extends React.Component {
     return (
       <div className={classes.root}>
         <AppBar position="static">
-          <Tabs value={value} onChange={this.handleChange}>
+          <Tabs value={value} onChange={this.handleChange} centered>
             <Tab label="All Photos" />
             <Tab label="Non-Album Photos" />
             <Tab label="This Album's Photos" href="#basic-tabs" />
           </Tabs>
         </AppBar>
         <div className={classes.imgView}>
-          {dummyData.map(img => (
-            <div className={classes.imgContainer}>
-              <div className={this.state.selected.includes(img.id)? classes.checkIconContainer : classes.hiddenIconContainer}>
-                <CheckIcon className={classes.checkIcon} />
-              </div>
-              <img
-                key={img.id}
-                imgid={img.id}
-                className={
-                  this.state.selected.includes(img.id)
-                    ? classes.imgSelected
-                    : classes.dummyImg
-                }
-                onClick={this.onImageSelect}
-                src={img.imgUrl}
-              />
-            </div>
-          ))}
+          {this.state.value === 0 ? (
+            <AlbumMakerImageView selected={this.state.selected} onImageSelect={this.onImageSelect} imgData={this.state.posts}/>
+          ) : null }
+          {this.state.value === 1 ? (
+            <AlbumMakerImageView selected={this.state.selected} onImageSelect={this.onImageSelect} imgData={
+              
+              this.filterAlbumPhotos()
+
+            }/>
+          ) : null }
+          {this.state.value === 2 ? (
+            <AlbumMakerImageView selected={this.state.selected} onImageSelect={this.onImageSelect} imgData={this.state.currentAlbumPosts}/>
+          ) : null }
         </div>
       </div>
     );
