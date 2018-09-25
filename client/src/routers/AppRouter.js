@@ -11,7 +11,7 @@ import ImageUploadPage from '../pages/ImageUploadPage';
 import PrivacyPolicy from '../components/PrivacyPolicy';
 import { fetchUser } from '../actions/auth';
 
-import imageModalView from '../components/ImageModalView';
+import AlbumMaker from '../components/AlbumMaker';
 
 export class AppRouter extends React.Component {
   componentDidMount() {
@@ -29,7 +29,7 @@ export class AppRouter extends React.Component {
           <PublicRoute path="/privacy" component={PrivacyPolicy} />
           <PrivateRoute path="/upload" component={ImageUploadPage} />
 
-          <Route path="/modalpreview" component={imageModalView} />
+          <Route path="/album" component={AlbumMaker} />
 
         </Switch>
       </BrowserRouter>
