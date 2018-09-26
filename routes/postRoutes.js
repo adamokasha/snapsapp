@@ -6,8 +6,10 @@ const User = mongoose.model('User');
 const Faves = mongoose.model('Faves');
 
 module.exports = app => {
+  // Feed
   app.get('/api/posts/:page', async (req, res) => {
     try {
+      console.log('server')
       const { page } = req.params;
 
       const posts = await Post.find({})
@@ -38,7 +40,19 @@ module.exports = app => {
     }
   });
 
+  // Get user posts
+  app.get('/api/posts/myposts/all', requireAuth, async (req, res) => {
+    try {
+      console.log('server')
+      const userId = req.user.id;
+      const posts = await Post.find({_owner: userId}, 'imgUrl');
+      res.status(200).send(posts)
+    } catch (e) {
+      console.log(e);
+    }
+  });
 
+  // Fave
   app.post('/api/posts/fave/:id', requireAuth, async (req, res) => {
     try {
       const fave = await Faves.findOne({ _owner: req.user.id , _faves: {$in: {_id: req.params.id}}});

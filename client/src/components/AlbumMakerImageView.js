@@ -14,45 +14,50 @@ const styles = theme => ({
   },
   imgView: {
     maxWidth: '100%',
-    minHeight: '100%',
-    margin: `${theme.spacing.unit * 2}px`,
+    height: '60vh',
+    padding: `${theme.spacing.unit * 2}px`,
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'start',
+    overflowY: 'scroll'
   },
   imgContainer: {
-    position: 'relative'
-  },
-  dummyImg: {
-    height: '200px',
-    width: 'auto',
-    marginLeft: '8px'
+    position: 'relative',
+    width: '75px',
+    height: '75px',
+    margin: '2px',
   },
   checkIconContainer: {
     position: 'absolute',
-    top: '1%',
-    right: '1%',
+    top: '2%',
+    right: '2%',
+    width: '16px',
+    height: '16px',
     backgroundColor: '#fff',
-    width: '28px',
-    height: '28px',
     borderRadius: '5px',
-    opacity: '0.8'
+    opacity: '0.8',
+    display: 'inline-block'
   },
   hiddenIconContainer: {
-    display: 'none'
+    display: 'none',
+    position: 'absolute',
+    top: '2%',
+    right: '2%',
+    width: '16px',
+    height: '16px'
   },
   checkIcon: {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    transform: 'translate(-50%, -50%)'
+    transform: 'translate(-50%, -50%)',
+    fontSize: '16px'
   },
   imgSelected: {
-    height: '200px',
-    width: 'auto',
-    marginLeft: '8px',
-    border: '2px solid #000'
+    width: '75px',
+    height: '75px',
+    border: '2px solid #000',
   }
 });
 
@@ -68,19 +73,19 @@ export const AlbumMakerImageView = (props) => {
         <div className={classes.imgView}>
           {imgData.map(img => (
             <div className={classes.imgContainer}>
-              <div className={selected.includes(img.id)? classes.checkIconContainer : classes.hiddenIconContainer}>
+              <div className={selected.includes(img._id)? classes.checkIconContainer : classes.hiddenIconContainer}>
                 <CheckIcon className={classes.checkIcon} />
               </div>
               <img
-                key={img.id}
-                imgid={img.id}
+                key={img._id}
+                imgid={img._id}
                 className={
-                  selected.includes(img.id)
+                  selected.includes(img._id)
                     ? classes.imgSelected
-                    : classes.dummyImg
+                    : classes.img
                 }
                 onClick={onImageSelect}
-                src={img.imgUrl}
+                src={`https://d14ed1d2q7cc9f.cloudfront.net/75x75/smart/${img.imgUrl}`}
               />
             </div>
           ))}

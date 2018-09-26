@@ -1,4 +1,6 @@
 import React from 'react';
+import {connect} from 'react-redux';
+import compose from 'recompose/compose';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -9,6 +11,8 @@ import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
 
 import AlbumMakerImageView from './AlbumMakerImageView';
+import {fetchUserPosts} from '../actions/posts';
+import {createAlbum} from '../actions/albums';
 
 const styles = theme => ({
   root: {
@@ -21,16 +25,6 @@ const styles = theme => ({
     transform: 'translate(-50%, -50%)',
     paddingBottom: `${theme.spacing.unit}px`,
     borderRadius: '3px'
-  },
-  imgView: {
-    maxWidth: '100%',
-    height: '60vh',
-    margin: `${theme.spacing.unit * 2}px`,
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    overflowY: 'scroll'
   },
   imgContainer: {
     position: 'relative'
@@ -82,67 +76,39 @@ const styles = theme => ({
   }
 });
 
-const dummyData = [
-  {
-    id: '1',
-    imgUrl: 'https://imgur.com/4DEqqiw.jpeg'
-  },
-  {
-    id: '2',
-    imgUrl: 'https://imgur.com/KAXz5AG.jpeg'
-  },
-  {
-    id: '3',
-    imgUrl: 'https://imgur.com/fzik2O4.jpeg'
-  },
-  {
-    id: '4',
-    imgUrl: 'https://imgur.com/cMiFx4g.jpeg'
-  },
-  {
-    id: '5',
-    imgUrl: 'https://imgur.com/BAWzwTh.jpeg'
-  },
-  {
-    id: '6',
-    imgUrl: 'https://imgur.com/yX3oVzF.jpeg'
-  },
-  {
-    id: '7',
-    imgUrl: 'https://imgur.com/mAI9ReC.jpeg'
-  },
-  {
-    id: '8',
-    imgUrl: 'https://imgur.com/GODoQZn.jpeg'
-  }
-];
-
-const currentAlbumPhotos = [dummyData[1], dummyData[4], dummyData[5]];
 
 class AlbumMaker extends React.Component {
   state = {
     value: 1,
-    currentAlbumPosts: currentAlbumPhotos,
-    posts: dummyData,
+    currentAlbumPosts: this.props.currentAlbumPhotos || [],
+    posts: [],
     selected: [],
     albumName: ''
   };
 
-  componentDidMount() {
+  async componentDidMount() {
+    // fetch all posts
+    const res = await this.props.fetchUserPosts();
+    this.setState({posts: [...res]})
+
     // retrieve current album from db
     // set album as state.currentAlbumPosts and state.selected
     // do sync
-    const currentAlbumPhotoIds = currentAlbumPhotos.map(img => img.id);
-    this.setState({ selected: [...currentAlbumPhotoIds] }, () => {
-      return;
-    });
+    // const currentAlbumPhotoIds = currentAlbumPhotos.map(img => img.id);
+    // this.setState({ selected: [...currentAlbumPhotoIds] }, () => {
+    //   return;
+    // });
   }
 
   filterAlbumPhotos = () => {
-    const currentAlbumPhotoIds = currentAlbumPhotos.map(img => img.id);
-    return this.state.posts.filter(
-      img => !currentAlbumPhotoIds.includes(img.id)
-    );
+    if(this.state.currentAlbumPosts.length > 0) {
+      const currentAlbumPhotoIds = this.state.currentAlbumPosts.map(img => img._id);
+      return this.state.posts.filter(
+        img => !currentAlbumPhotoIds.includes(img._id)
+      );
+    }
+
+    return this.state.currentAlbumPosts;
   };
 
   onTabChange = (event, value) => {
@@ -161,6 +127,11 @@ class AlbumMaker extends React.Component {
     this.setState({albumName: e.target.value})
   }
 
+  onSaveAlbum = async (e) => {
+    e.preventDefault();
+    await this.props.createAlbum(this.state.selected, this.state.albumName)
+  };
+
   render() {
     const { classes } = this.props;
     const { value } = this.state;
@@ -174,7 +145,6 @@ class AlbumMaker extends React.Component {
             <Tab label="This Album's Photos" href="#basic-tabs" />
           </Tabs>
         </AppBar>
-        <div className={classes.imgView}>
           {this.state.value === 0 ? (
             <AlbumMakerImageView
               selected={this.state.selected}
@@ -196,9 +166,9 @@ class AlbumMaker extends React.Component {
               imgData={this.state.currentAlbumPosts}
             />
           ) : null}
-        </div>
+        
         <div className={classes.formContainer}>
-        <form>
+        <form onSubmit={this.onSaveAlbum}>
           <TextField
             id="outlined-name-input"
             label="Album Name"
@@ -210,7 +180,7 @@ class AlbumMaker extends React.Component {
             onChange={this.onAlbumNameChange}
             value={this.state.albumName}
           />
-          <Button variant="contained" className={classes.button}>
+          <Button variant="contained" type="submit" className={classes.button}>
             <SaveIcon
               className={classes.leftIcon}
             />
@@ -227,4 +197,7 @@ AlbumMaker.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(AlbumMaker);
+export default compose(
+  withStyles(styles),
+  connect(null, {fetchUserPosts, createAlbum})
+)(AlbumMaker)

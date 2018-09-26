@@ -20,6 +20,12 @@ export const fetchPosts = (page) => async dispatch => {
   return res.data.length;
 }
 
+export const fetchUserPosts = () => async dispatch => {
+  console.log('called fetchuserposts');
+  const res = await axios.get('/api/posts/myposts/all');
+  return res.data;
+}
+
 export const favePost = (imgId) => async dispatch => {
   try {
     await axios.post(`/api/posts/fave/${imgId}`);
