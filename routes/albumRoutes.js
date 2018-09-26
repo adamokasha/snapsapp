@@ -30,7 +30,6 @@ module.exports = app => {
   // Get a user's albums (protected)
   app.get('/api/albums/myalbums', requireAuth, async (req, res) => {
     try {
-      console.log(req.user.id);
       const userId = req.user.id;
       const albums = await Album.find({ _owner: userId }, '_id name coverImg');
       res.status(200).send(albums);
@@ -38,4 +37,17 @@ module.exports = app => {
       console.log(e);
     }
   });
+
+  // Get a single album
+  app.get('/api/albums/get/:id', async (req, res) => {
+    try {
+      const album = await Album.findById(req.params.id, 'posts');
+      console.log(album);
+      const posts = await Post.find({_id: {$in: album.posts}}, 'imgUrl');
+      console.log(posts);
+      res.status(200).send(posts);
+    } catch (e) {
+      console.log(e);
+    }
+  })
 };

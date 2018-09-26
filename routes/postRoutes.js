@@ -9,7 +9,6 @@ module.exports = app => {
   // Feed
   app.get('/api/posts/:page', async (req, res) => {
     try {
-      console.log('server')
       const { page } = req.params;
 
       const posts = await Post.find({})
@@ -43,7 +42,6 @@ module.exports = app => {
   // Get all user posts
   app.get('/api/posts/myposts/all', requireAuth, async (req, res) => {
     try {
-      console.log('server')
       const userId = req.user.id;
       const posts = await Post.find({_owner: userId}, 'imgUrl');
       res.status(200).send(posts)

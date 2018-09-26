@@ -72,8 +72,8 @@ export const AlbumMakerImageView = (props) => {
     return (
         <div className={classes.imgView}>
           {imgData.map(img => (
-            <div className={classes.imgContainer}>
-              <div className={selected.includes(img._id)? classes.checkIconContainer : classes.hiddenIconContainer}>
+            <div className={classes.imgContainer} key={img._id}>
+              <div className={selected.includes(img._id) ? classes.checkIconContainer : classes.hiddenIconContainer}>
                 <CheckIcon className={classes.checkIcon} />
               </div>
               <img

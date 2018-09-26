@@ -9,6 +9,7 @@ import Tab from '@material-ui/core/Tab';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
+import axios from 'axios';
 
 import AlbumMakerImageView from './AlbumMakerImageView';
 import {fetchUserPosts} from '../actions/posts';
@@ -78,15 +79,18 @@ const styles = theme => ({
 
 
 class AlbumMaker extends React.Component {
+  // selected should always be only a list of post _id's
+  // posts and album posts are objs with _id and imgUrl keys
   state = {
     value: 1,
-    currentAlbumPosts: this.props.currentAlbumPhotos || [],
+    currentAlbumPosts: [],
     posts: [],
     selected: [],
     albumName: ''
   };
 
   async componentDidMount() {
+    try {
     // fetch all posts
     const res = await this.props.fetchUserPosts();
     this.setState({posts: [...res]})
@@ -94,10 +98,18 @@ class AlbumMaker extends React.Component {
     // retrieve current album from db
     // set album as state.currentAlbumPosts and state.selected
     // do sync
-    // const currentAlbumPhotoIds = currentAlbumPhotos.map(img => img.id);
-    // this.setState({ selected: [...currentAlbumPhotoIds] }, () => {
-    //   return;
-    // });
+    console.log(this.props.albumId)
+    if(this.props.albumId) {
+ 
+      const res = await axios.get(`/api/albums/get/${this.props.albumId}`);
+      console.log(res);
+      const currentAlbumPostIds = res.data.map(imgData => imgData._id);
+      await this.setState({selected: [...currentAlbumPostIds]}, () => {});
+      await this.setState({currentAlbumPosts: [...res.data]},  () => {});
+    }
+      
+    } catch(e) { console.log(e)}
+    
   }
 
   filterAlbumPhotos = () => {
@@ -116,6 +128,7 @@ class AlbumMaker extends React.Component {
   };
 
   onImageSelect = imgId => {
+    // Already in selected, so filter out;
     if (this.state.selected.includes(imgId)) {
       const filtered = this.state.selected.filter(img => img !== imgId);
       return this.setState({ selected: filtered });
