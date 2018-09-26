@@ -3,9 +3,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
-import AddPhotoAlternate from '@material-ui/icons/AddPhotoAlternate';
-
-import ImageUploadForm from "./ImageUploadForm";
 
 const styles = theme => ({
   root: {
@@ -30,7 +27,7 @@ class ImageUploadModal extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, modalComponent, buttonIcon } = this.props;
 
     return (
       <div className={classes.root}>
@@ -41,7 +38,7 @@ class ImageUploadModal extends React.Component {
           aria-label="Add"
           className={classes.fab}
         >
-          <AddPhotoAlternate/>
+          {buttonIcon}
         </Button>
         <Modal
           aria-labelledby="simple-modal-title"
@@ -50,9 +47,9 @@ class ImageUploadModal extends React.Component {
           onBackdropClick={this.handleClose}
           onClose={this.handleClose}
         >
-            <ImageUploadForm
-              handleClose={this.handleClose}
-            />
+          <div handleClose={this.handleClose}>
+            {modalComponent}
+          </div>
         </Modal>
       </div>
     );
@@ -60,7 +57,9 @@ class ImageUploadModal extends React.Component {
 }
 
 ImageUploadModal.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  modalComponent: PropTypes.element.isRequired,
+  buttonIcon: PropTypes.element.isRequired
 };
 
 export default withStyles(styles)(ImageUploadModal);

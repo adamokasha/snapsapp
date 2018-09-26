@@ -13,7 +13,14 @@ import AlbumMakerImageView from './AlbumMakerImageView';
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
+    width: '80%',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    paddingBottom: `${theme.spacing.unit}px`,
+    borderRadius: '3px'
   },
   imgView: {
     maxWidth: '100%',
