@@ -86,7 +86,7 @@ class AlbumMaker extends React.Component {
     currentAlbumPosts: [],
     posts: [],
     selected: [],
-    albumName: ''
+    albumName: this.props.albumName || ''
   };
 
   async componentDidMount() {
@@ -142,6 +142,9 @@ class AlbumMaker extends React.Component {
 
   onSaveAlbum = async (e) => {
     e.preventDefault();
+    if(this.props.method === "patch") {
+      return await axios.patch(`/api/albums/update/${this.props.albumId}`, {albumPosts:this.state.selected, albumName: this.state.albumName});
+    }
     await this.props.createAlbum(this.state.selected, this.state.albumName)
   };
 
@@ -207,7 +210,8 @@ class AlbumMaker extends React.Component {
 }
 
 AlbumMaker.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  method: PropTypes.string.isRequired
 };
 
 export default compose(

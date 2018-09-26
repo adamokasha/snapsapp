@@ -1,22 +1,47 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import AddPhotoAlternate from '@material-ui/icons/AddPhotoAlternate';
-
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 
 import AlbumList from '../components/AlbumList';
 import NavBar from '../components/NavBar';
-import FabModal from '../components/FabModal';
+import Modal from '../components/Modal';
 import AlbumMaker from '../components/AlbumMaker';
 
-export const AlbumsPage = () => {
+//     <FabModal modalComponent={<AlbumMaker/>} buttonIcon={<AddPhotoAlternate />} />
+
+const styles = theme => ({
+  fab: {
+    position: 'fixed',
+    bottom: '10%',
+    right: '5%'
+  }
+});
+
+export const AlbumsPage = props => {
+  const { classes } = props;
+
   return (
     <div>
-    <NavBar/>
-    <Typography align="center" variant="display2">Albums</Typography>
-    <AlbumList />
-    <FabModal modalComponent={<AlbumMaker/>} buttonIcon={<AddPhotoAlternate />} />
+      <NavBar />
+      <Modal
+        togglerComponent={
+          <Button
+            onClick={this.handleOpen}
+            variant="fab"
+            color="secondary"
+            aria-label="Add"
+            className={classes.fab}
+          >
+            <AddPhotoAlternate />
+          </Button>
+        }
+        modalComponent={<AlbumMaker method="post" />}
+      />
+      <AlbumList />
     </div>
-  )
-}
+  );
+};
 
-export default AlbumsPage;
+export default withStyles(styles)(AlbumsPage);

@@ -42,10 +42,25 @@ module.exports = app => {
   app.get('/api/albums/get/:id', async (req, res) => {
     try {
       const album = await Album.findById(req.params.id, 'posts');
-      console.log(album);
       const posts = await Post.find({_id: {$in: album.posts}}, 'imgUrl');
-      console.log(posts);
       res.status(200).send(posts);
+    } catch (e) {
+      console.log(e);
+    }
+  })
+
+  //, {name: albumName, posts: [...albumPosts]}
+  app.patch('/api/albums/update/:id', requireAuth, async (req, res) => {
+    try {
+      const { albumName, albumPosts } = req.body;
+      const album = await Album.findById({_id: req.params.id});
+
+      if (album._owner.toHexString() !== req.user.id) {
+        return res.status(401).send({error: 'You are not authorized to edit this album'})
+      }
+
+      await album.update({name: albumName, posts: [...albumPosts]});
+      res.status(200).send(album);
     } catch (e) {
       console.log(e);
     }

@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
+import Avatar from '@material-ui/core/Avatar';
+import Typography from '@material-ui/core/Typography';
+import PhotoAlbumTwoToneIcon from '@material-ui/icons/PhotoAlbumTwoTone';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
@@ -12,11 +16,20 @@ import Modal from './Modal';
 import AlbumMaker from './AlbumMaker';
 
 const styles = theme => ({
-  root: {
+  paper: {
+    width: '50%',
+    margin: `${theme.spacing.unit * 3}px auto`,
+    minHeight: '500px',
+  },
+  gridListRoot: {
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
     backgroundColor: theme.palette.background.paper
+  },
+  avatar: {
+    margin: `${theme.spacing.unit}px auto`,
+    backgroundColor: theme.palette.secondary.main
   },
   gridList: {
     width: '50%',
@@ -36,60 +49,6 @@ const styles = theme => ({
     transition: 'visibility 0s, opacity .3s ease'
   }
 });
-
-const tileData = [
-  {
-    id: '1',
-    img: 'https://imgur.com/4DEqqiw.jpeg',
-    title: 'Test',
-    author: 'kasho'
-  },
-  {
-    id: '2',
-    img: 'https://imgur.com/KAXz5AG.jpeg',
-    title: 'Test',
-    author: 'kasho'
-  },
-  {
-    id: '3',
-    img: 'https://imgur.com/fzik2O4.jpeg',
-    title: 'Test',
-    author: 'kasho'
-  },
-  {
-    id: '4',
-    img: 'https://imgur.com/cMiFx4g.jpeg',
-    title: 'Test',
-    author: 'kasho'
-  },
-  {
-    id: '5',
-    img: 'https://imgur.com/BAWzwTh.jpeg',
-    title: 'Test',
-    author: 'kasho'
-  },
-  {
-    id: '6',
-    img: 'https://imgur.com/yX3oVzF.jpeg',
-    title: 'Test',
-    author: 'kasho'
-  },
-  {
-    id: '7',
-    img: 'https://imgur.com/mAI9ReC.jpeg',
-    title: 'Test',
-    author: 'kasho'
-  },
-  {
-    id: '8',
-    img: 'https://imgur.com/GODoQZn.jpeg',
-    title: 'Test',
-    author: 'kasho'
-  }
-];
-
-// MuiGridListTileBar-title-049
-// MuiGridListTileBar-root-042 MuiGridListTileBar-titlePositionBottom-043
 
 class AlbumList extends React.Component {
   constructor(props) {
@@ -128,11 +87,15 @@ class AlbumList extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.root}>
-        <GridList cellHeight="auto" cols={4} className={classes.gridList}>
-          <GridListTile key="Subheader" cols={4}>
-            <ListSubheader component="div">Albums</ListSubheader>
-          </GridListTile>
+      <Paper className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <PhotoAlbumTwoToneIcon />
+        </Avatar>
+        <Typography align="center" variant="headline">
+          Albums
+        </Typography>
+        <div className={classes.gridListRoot}>
+        <GridList cellHeight="auto" cols={8} className={classes.gridList}>
           {this.state.albums.map((album, i) => (
             <GridListTile
               onMouseLeave={this.toggleEditIcon}
@@ -160,14 +123,21 @@ class AlbumList extends React.Component {
                         <ion-icon name="settings" />
                       </IconButton>
                     }
-                    modalComponent={<AlbumMaker albumId={album._id} />}
+                    modalComponent={
+                      <AlbumMaker
+                        albumId={album._id}
+                        albumName={album.name}
+                        method="patch"
+                      />
+                    }
                   />
                 }
               />
             </GridListTile>
           ))}
         </GridList>
-      </div>
+        </div>
+      </Paper>
     );
   }
 }
