@@ -40,7 +40,7 @@ module.exports = app => {
     }
   });
 
-  // Get user posts
+  // Get all user posts
   app.get('/api/posts/myposts/all', requireAuth, async (req, res) => {
     try {
       console.log('server')

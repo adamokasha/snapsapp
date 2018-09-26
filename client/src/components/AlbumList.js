@@ -7,6 +7,8 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import IconButton from '@material-ui/core/IconButton';
 
+import axios from 'axios';
+
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -96,10 +98,21 @@ const tileData = [
 // MuiGridListTileBar-root-042 MuiGridListTileBar-titlePositionBottom-043
 
 
-function AlbumList(props) {
-  const { classes } = props;
+class AlbumList extends React.Component {
+  constructor(props){
+    super(props);
 
-  function toggleEditIcon(e) {
+    this.state = {
+      albums: []
+    }
+  }
+
+  async componentDidMount() {
+    const albums = await axios.get('/api/albums/myalbums');
+    this.setState({albums: [...albums.data]});
+  }
+
+  toggleEditIcon = (e) => {
     const actionIcon = e.target.querySelectorAll('button[class*="MuiIconButton"]')[0] ||
     // if mouse over titleBar
     e.target.parentNode.parentNode.parentNode.querySelectorAll('button[class*="MuiIconButton"]')[0];
@@ -116,28 +129,33 @@ function AlbumList(props) {
     }
   }
 
-  return (
-    <div className={classes.root}>
-      <GridList cellHeight="auto" cols={4} className={classes.gridList}>
-        <GridListTile onMouseOverCapture={(e) => {e.preventPropagation; console.log(e.target.tagName)}} key="Subheader" cols={4}>
-          <ListSubheader component="div">Albums</ListSubheader>
-        </GridListTile>
-        {tileData.map((tile, i) => (
-          <GridListTile onMouseLeave={toggleEditIcon} onMouseEnter={toggleEditIcon} tileid={`img-tile-${i}`} className={classes.listTile} key={tile.img}>
-            <img src={tile.img}  className={classes.image} alt={tile.title} />
-            <GridListTileBar
-              title={tile.title}
-              actionIcon={
-                <IconButton classes={{root: classes.icon}}>
-                <ion-icon name="settings"></ion-icon>
-                </IconButton>
-              }
-            />
+  render() {
+    const { classes } = this.props;
+
+    return (
+      <div className={classes.root}>
+        <GridList cellHeight="auto" cols={4} className={classes.gridList}>
+          <GridListTile key="Subheader" cols={4}>
+            <ListSubheader component="div">Albums</ListSubheader>
           </GridListTile>
-        ))}
-      </GridList>
-    </div>
-  );
+          {console.log(this.state.albums)}
+          {this.state.albums.map((album, i) => (
+            <GridListTile onMouseLeave={this.toggleEditIcon} onMouseEnter={this.toggleEditIcon} albumid={`img-album-${i}`} className={classes.listTile} key={album._id}>
+              <img src={`https://d14ed1d2q7cc9f.cloudfront.net/200x200/smart/${album.coverImg}`}  className={classes.image} alt={album.name} />
+              <GridListTileBar
+                title={album.name}
+                actionIcon={
+                  <IconButton classes={{root: classes.icon}}>
+                  <ion-icon name="settings"></ion-icon>
+                  </IconButton>
+                }
+              />
+            </GridListTile>
+          ))}
+        </GridList>
+      </div>
+    );
+  }
 }
 
 AlbumList.propTypes = {
