@@ -163,9 +163,10 @@ class ImageModalView extends React.Component {
       const slides = [];
       this.props.slides.forEach(posts => posts.forEach(post => slides.push(post)));
       const currentIndex = slides.indexOf(this.props.post);     
-      this.setState({slides, currentIndex}, () => {});
+      this.setState({slides, currentIndex}, () => {
+        this.checkIfLastSlide()
+      });
 
-      this.checkIfLastSlide()
     }
   }
 
