@@ -35,7 +35,7 @@ export class AppRouter extends React.Component {
           <Route path="/albummaker" component={AlbumMaker} />
 
           <Route exact path="/albums" component={AlbumsPage} />
-          <Route path="/albums/:user/:albumname" component={SingleAlbumPage} />
+          <Route path="/albums/:user/:albumid" component={SingleAlbumPage} />
 
 
         </Switch>

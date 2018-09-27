@@ -60,7 +60,7 @@ module.exports = app => {
     }
   })
 
-  //, {name: albumName, posts: [...albumPosts]}
+  // Update an album
   app.patch('/api/albums/update/:id', requireAuth, async (req, res) => {
     try {
       const { albumName, albumPosts } = req.body;

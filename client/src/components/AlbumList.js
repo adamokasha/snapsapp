@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -17,23 +17,17 @@ import Modal from './Modal';
 import AlbumMaker from './AlbumMaker';
 
 const styles = theme => ({
-  paper: {
-    width: '50%',
-    margin: `${theme.spacing.unit * 3}px auto`,
-    minHeight: '500px',
-  },
+  root: {},
   gridListRoot: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    backgroundColor: theme.palette.background.paper
-  },
-  avatar: {
-    margin: `${theme.spacing.unit}px auto`,
-    backgroundColor: theme.palette.secondary.main
+    width: '100%',
+    margin: `${theme.spacing.unit * 3}px auto`,
+    minHeight: '500px'
   },
   gridList: {
-    width: '50%',
+    width: '100%',
+    justifyContent: 'center',
+    display: 'flex',
+    flexWrap: 'wrap',
     justifyContent: 'center'
   },
   listTile: {
@@ -85,14 +79,7 @@ class AlbumList extends React.Component {
     const { classes } = this.props;
 
     return (
-      <Paper className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <PhotoAlbumTwoToneIcon />
-        </Avatar>
-        <Typography align="center" variant="headline">
-          Albums
-        </Typography>
-        <div className={classes.gridListRoot}>
+      <div className={classes.gridListRoot}>
         <GridList cellHeight="auto" cols={8} className={classes.gridList}>
           {this.state.albums.map((album, i) => (
             <GridListTile
@@ -102,14 +89,21 @@ class AlbumList extends React.Component {
               className={classes.listTile}
               key={album._id}
             >
-            <Link to={{pathname:`/albums/${album._owner.displayNameLowerC}/${album.name.replace(/\s/g,'')}`, state:{albumId: album._id}}}>
-              <img
-                src={`https://d14ed1d2q7cc9f.cloudfront.net/200x200/smart/${
-                  album.coverImg
-                }`}
-                className={classes.image}
-                alt={album.name}
-              />
+              <Link
+                to={{
+                  pathname: `/albums/${
+                    album._owner.displayNameLowerC
+                  }/${album._id}`,
+                  state: { albumId: album._id }
+                }}
+              >
+                <img
+                  src={`https://d14ed1d2q7cc9f.cloudfront.net/200x200/smart/${
+                    album.coverImg
+                  }`}
+                  className={classes.image}
+                  alt={album.name}
+                />
               </Link>
               <GridListTileBar
                 title={album.name}
@@ -136,8 +130,7 @@ class AlbumList extends React.Component {
             </GridListTile>
           ))}
         </GridList>
-        </div>
-      </Paper>
+      </div>
     );
   }
 }

@@ -7,11 +7,7 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
 import Divider from '@material-ui/core/Divider';
 
 import ImageModalView from './ImageModalView';
@@ -104,7 +100,7 @@ class ImageCard extends React.Component {
             togglerComponent={<CardMedia
               className={classes.media}
               image={
-                `https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}` ||
+                `https://d14ed1d2q7cc9f.cloudfront.net/500x350/smart/${imgUrl}` ||
                 'https://i.imgur.com/KAXz5AG.jpg'
               }
               title={title || 'Image Title'}
@@ -126,24 +122,7 @@ class ImageCard extends React.Component {
     );
   }
 }
-/*
-<Modal
-id="image-modal-view"
-aria-labelledby="simple-modal-title"
-aria-describedby="simple-modal-description"
-open={this.state.open}
-onBackdropClick={this.handleClose}
-onClose={this.handleClose}
-classes={{root: classes.modalRoot}}
->
-<img src={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}`} />
-</Modal>
 
-ImageCard.propTypes = {
-  classes: PropTypes.object.isRequired,
-  imgData: PropTypes.object.isRequired
-};
-*/
 const mapStateToProps = ({auth}) => ({
   isAuth: auth
 })

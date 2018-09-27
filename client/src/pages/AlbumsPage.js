@@ -25,6 +25,14 @@ export const AlbumsPage = props => {
   return (
     <div>
       <NavBar />
+      <Typography
+      variant="display3"
+      align="center"
+      color="textPrimary"
+      gutterBottom
+    >
+      Albums
+    </Typography>
       <Modal
         togglerComponent={
           <Button
