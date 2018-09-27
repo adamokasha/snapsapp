@@ -158,7 +158,11 @@ class ImageModalView extends React.Component {
   }
 
   componentDidMount(){
-    document.getElementById('goTopButton').style.display = 'none';
+    // Prevent goTopButton from getting in way of modal
+    const goTopButton = document.getElementById('goTopButton');
+    if(goTopButton) {
+      document.getElementById('goTopButton').style.display = 'none';
+    }
 
     // If feed slides will be array of arrays (due to pagination)
     if(this.props.slidesContext === 'feed') {
@@ -173,7 +177,11 @@ class ImageModalView extends React.Component {
   }
 
   componentWillUnmount() {
-    document.getElementById('goTopButton').style.display = 'inline-flex';
+    // Restore goTopButton
+    const goTopButton = document.getElementById('goTopButton');
+    if(goTopButton) {
+      document.getElementById('goTopButton').style.display = 'inline-flex';
+    }
   }
 
   checkIfLastSlide = () => {
