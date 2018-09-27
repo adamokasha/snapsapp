@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import classNames from 'classnames';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
@@ -94,6 +95,15 @@ const styles = theme => ({
   navRight: {
     right: '2%'
   },
+  disabledNavRight: {
+    display: 'none'
+  },
+  loader: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transformOrigin: '-50%, -50%'
+  },
   image: {
     // maintain aspect ratio
     maxWidth: '100%',
@@ -104,7 +114,11 @@ const styles = theme => ({
     position: 'absolute',
     top: '50%',
     left: '50%',
-    transform: 'translate(-50%, -50%)'
+    transform: 'translate(-50%, -50%)',
+    opacity: 1
+  },
+  imgHidden: {
+    opacity: 0
   },
   bottom: {
     display: 'flex',
@@ -137,7 +151,9 @@ class ImageModalView extends React.Component {
     this.state = {
       slides: [],
       currentSlide: this.props.post,
-      currentIndex: null
+      currentIndex: null,
+      loading: true,
+      ended: false
     };
   }
 
@@ -148,11 +164,22 @@ class ImageModalView extends React.Component {
       this.props.slides.forEach(posts => posts.forEach(post => slides.push(post)));
       const currentIndex = slides.indexOf(this.props.post);     
       this.setState({slides, currentIndex}, () => {});
+
+      this.checkIfLastSlide()
     }
   }
 
-  
+  checkIfLastSlide = () => {
+    const {currentIndex} = this.state;
+      // If current slide is last, return, don't increment
+      if (currentIndex + 1 > this.state.slides.length - 1 ) {
+        return this.setState({loading: false, ended: true}, ()=> {});
+      }
+  }
+
+ 
   onPrevSlide = () => {
+    this.setState({loading: true, ended: false});
     const {currentIndex} = this.state;
     if (currentIndex - 1 < 0 ) {
       return;
@@ -163,15 +190,22 @@ class ImageModalView extends React.Component {
 
   onNextSlide = () => {
     const {currentIndex} = this.state;
-    if (currentIndex + 1 > this.state.slides.length - 1 ) {
-      return;
+    this.setState({loading: true});
+
+    // Check if next slide last, dont include next icon
+    if(currentIndex + 1 === this.state.slides.length - 1) {
+      this.setState({ended: true});
     }
+    this.checkIfLastSlide()
     const nextSlide = this.state.slides[currentIndex + 1];
     return this.setState({currentSlide: nextSlide, currentIndex: this.state.currentIndex + 1}, () => {});
   }
 
+  onImgLoad = () => {
+    this.setState({loading: false})
+  }
+
   render() {
-    console.log(this.props.slides);
     const { classes } = this.props;
     const {
       _id,
@@ -222,13 +256,19 @@ class ImageModalView extends React.Component {
               className={classNames(classes.navIcons, classes.navLeft)}
             />
             <img
-              className={classes.image}
+              onLoad={this.onImgLoad}
+              className={this.state.loading ? classes.imgHidden : classes.image}
               src={`https://s3.amazonaws.com/img-share-kasho/${imgUrl}`}
               alt="testing"
             />
+            {this.state.loading ? (
+              <CircularProgress className={classes.loader} />
+            ) : (
+              null
+            )}
             <NavigateNextIcon
               onClick={this.onNextSlide}
-              className={classNames(classes.navIcons, classes.navRight)}
+              className={this.state.ended ? classes.disabledNavRight : classNames(classes.navIcons, classes.navRight)}
             />
           </div>
           <div className={classes.bottom}>
