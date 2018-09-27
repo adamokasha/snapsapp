@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -38,9 +39,6 @@ const styles = theme => ({
   listTile: {
     height: '200px !important',
     width: '200px !important'
-  },
-  image: {
-    pointerEvents: 'none'
   },
   icon: {
     color: 'rgba(255, 255, 255, 0.54)',
@@ -104,6 +102,7 @@ class AlbumList extends React.Component {
               className={classes.listTile}
               key={album._id}
             >
+            <Link to={{pathname:`/albums/${album._owner.displayNameLowerC}/${album.name.replace(/\s/g,'')}`, state:{albumId: album._id}}}>
               <img
                 src={`https://d14ed1d2q7cc9f.cloudfront.net/200x200/smart/${
                   album.coverImg
@@ -111,6 +110,7 @@ class AlbumList extends React.Component {
                 className={classes.image}
                 alt={album.name}
               />
+              </Link>
               <GridListTileBar
                 title={album.name}
                 actionIcon={

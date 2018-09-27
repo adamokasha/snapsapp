@@ -8,6 +8,7 @@ import NavigationIcon from '@material-ui/icons/Navigation';
 
 import ImageGrid from '../components/ImageGrid';
 import { fetchPosts } from '../actions/posts';
+import {setSlidesSource} from '../actions/slidesSource';
 
 const styles = theme => ({
   circularLoader: {
@@ -124,6 +125,7 @@ export class Feed extends React.Component {
     }
     this.setState({ isFetching: true }, async () => {
       await this.props.fetchPosts(this.state.currentPage);
+      await this.props.setSlidesSource('feed');
       this.setState(
         {
           pages: [...this.props.posts],
@@ -164,7 +166,7 @@ export class Feed extends React.Component {
           </Button>
         ) : null}
         {this.state.pages.map((page, i) => (
-          <ImageGrid key={i} imgData={page} />
+          <ImageGrid key={i} posts={page} />
         ))}
         {this.state.isFetching ? (
           <CircularProgress className={classes.circularLoader} size={50} />
@@ -182,6 +184,6 @@ export default compose(
   withStyles(styles),
   connect(
     mapStateToProps,
-    { fetchPosts }
+    { fetchPosts, setSlidesSource }
   )
 )(Feed);

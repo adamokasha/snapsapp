@@ -31,18 +31,29 @@ module.exports = app => {
   app.get('/api/albums/myalbums', requireAuth, async (req, res) => {
     try {
       const userId = req.user.id;
-      const albums = await Album.find({ _owner: userId }, '_id name coverImg');
+      const albums = await Album.find({ _owner: userId }, '_id name coverImg').populate('_owner', 'displayNameLowerC');
       res.status(200).send(albums);
     } catch (e) {
       console.log(e);
     }
   });
 
-  // Get a single album
+  // Get a single album only imgUrls (for AlbumMaker)
   app.get('/api/albums/get/:id', async (req, res) => {
     try {
       const album = await Album.findById(req.params.id, 'posts');
       const posts = await Post.find({_id: {$in: album.posts}}, 'imgUrl');
+      res.status(200).send(posts);
+    } catch (e) {
+      console.log(e);
+    }
+  })
+
+  // Get a single album with Post properties: title, createdAt, description, imgurl (for AlbumMaker)
+  app.get('/api/albums/full/:id', async (req, res) => {
+    try {
+      const album = await Album.findById(req.params.id, 'posts');
+      const posts = await Post.find({_id: {$in: album.posts}}, 'title createdAt description imgUrl');
       res.status(200).send(posts);
     } catch (e) {
       console.log(e);

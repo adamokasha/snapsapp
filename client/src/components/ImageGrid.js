@@ -40,12 +40,12 @@ const styles = theme => ({
 
 
 function ImageGridList(props) {
-  const { classes, imgData } = props;
+  const { classes, posts } = props;
 
   return (
     <div className={classes.root}>
       <GridList className={classes.gridList} cols={3}>
-        {imgData.map(data => {
+        {posts.map(data => {
           return (
             <GridListTile
               key={data._id} 
@@ -56,7 +56,7 @@ function ImageGridList(props) {
               }}
             >
               <ImageCard
-                imgData={data}
+                post={data}
               />
             </GridListTile>
           );
@@ -68,7 +68,7 @@ function ImageGridList(props) {
 
 ImageGridList.propTypes = {
   classes: PropTypes.object.isRequired,
-  imgData: PropTypes.array.isRequired
+  posts: PropTypes.array.isRequired
 };
 
 export default withStyles(styles)(ImageGridList);

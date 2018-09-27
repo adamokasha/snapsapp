@@ -14,13 +14,18 @@ import Typography from '@material-ui/core/Typography';
 import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
 import Divider from '@material-ui/core/Divider';
 
-import Modal from './Modal';
 import ImageModalView from './ImageModalView';
+import Modal from './Modal';
 import {favePost, unFavePost} from '../actions/posts';
 
 const styles = theme => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
+  },
   card: {
-    maxWidth: 400,
+    maxWidth: 600,
     margin: `${theme.spacing.unit * 3}px auto`
   },
   media: {
@@ -55,8 +60,8 @@ const styles = theme => ({
 
 class ImageCard extends React.Component {
   state = {
-    imgId: this.props.post._id,
-    faved: this.props.post.isFave,
+    imgId: this.props.imgData._id,
+    faved: this.props.imgData.isFave,
     faveColor: 'default',
     open: false
   };
@@ -82,39 +87,33 @@ class ImageCard extends React.Component {
   render() {
     const {classes} = this.props;
     const {
-      _owner,
       imgUrl,
       title,
       description,
-      faveCount
-    } = this.props.post;
+      createdAt,
+    } = this.props.imgData;
 
     return (
       <div>
         <Card className={classes.card} raised>
           <CardHeader
-            avatar={
-              <Avatar aria-label="Recipe" className={classes.avatar}>
-                <img src={_owner.profilePhoto} alt="avatar" />
-              </Avatar>
-            }
             title={title || 'Aerial Photo'}
-            subheader={_owner.displayName || 'September 14, 2016'}
+            subheader={createdAt || 'September 14, 2016'}
           />
-          <Modal
-          togglerComponent={
-            <CardMedia
-            className={classes.media}
-            image={
-              `https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}` ||
-              'https://i.imgur.com/KAXz5AG.jpg'
-            }
-            title={title || 'Image Title'}
-          />
+          <Modal 
+            togglerComponent={<CardMedia
+              className={classes.media}
+              image={
+                `https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}` ||
+                'https://i.imgur.com/KAXz5AG.jpg'
+              }
+              title={title || 'Image Title'}
+              onClick={this.handleOpen}
+            />}
+            modalComponent={<img src={`https://s3.amazonaws.com/img-share-kasho/${imgUrl}`} />
           }
-          modalComponent={<ImageModalView post={this.props.post} />}
-        />
-
+          />
+          
           <CardContent>
             <Typography component="p">
               {description ||
@@ -122,51 +121,29 @@ class ImageCard extends React.Component {
             </Typography>
           </CardContent>
           <Divider />
-          <CardActions className={classes.actions} disableActionSpacing>
-            <div className={classes.actionsLeft}>
-              <Typography variant="caption">{faveCount} Faves</Typography>
-              &nbsp;
-              <Typography variant="caption">15 Comments</Typography>
-            </div>
-            <div className={classes.actionsRight}>
-            {this.props.isAuth ? (
-              <React.Fragment>
-              <IconButton 
-              aria-label="Add to favorites"
-              onClick={this.onFave}
-              color={this.state.faved ? 'secondary' : 'default'}
-              classes={{
-                root: classes.iconButtonRoot
-              }}
-              >
-                <FavoriteTwoToneIcon
-                />
-              </IconButton>
-              <IconButton 
-              aria-label="Share"
-              color="default"
-              classes={{
-                root: classes.iconButtonRoot
-              }}
-              >
-              <ion-icon name="share-alt"></ion-icon>
-              </IconButton>
-              </React.Fragment>
-            ) : ( null )}
-            </div>
-          </CardActions>
-
         </Card>
       </div>
     );
   }
 }
+/*
+<Modal
+id="image-modal-view"
+aria-labelledby="simple-modal-title"
+aria-describedby="simple-modal-description"
+open={this.state.open}
+onBackdropClick={this.handleClose}
+onClose={this.handleClose}
+classes={{root: classes.modalRoot}}
+>
+<img src={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}`} />
+</Modal>
 
 ImageCard.propTypes = {
   classes: PropTypes.object.isRequired,
-  post: PropTypes.object.isRequired
+  imgData: PropTypes.object.isRequired
 };
-
+*/
 const mapStateToProps = ({auth}) => ({
   isAuth: auth
 })

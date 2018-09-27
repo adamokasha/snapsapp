@@ -1,7 +1,12 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import compose from 'recompose/compose';
+import classNames from 'classnames';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
 import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
 import Chip from '@material-ui/core/Chip';
@@ -12,6 +17,10 @@ const styles = theme => ({
   root: {
     width: '90%',
     height: '97%',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
     background: '#fff',
     margin: '0 auto',
     overflowY: 'auto',
@@ -71,6 +80,20 @@ const styles = theme => ({
     display: 'inline-block',
     overflow: 'hidden'
   },
+  navIcons: {
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    fontSize: '48px',
+    cursor: 'pointer',
+    color: 'rgba(0, 0, 0, 0.80)'
+  },
+  navLeft: {
+    left: '2%'
+  },
+  navRight: {
+    right: '2%'
+  },
   image: {
     // maintain aspect ratio
     maxWidth: '100%',
@@ -108,16 +131,57 @@ const styles = theme => ({
 });
 
 class ImageModalView extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      slides: [],
+      currentSlide: this.props.post,
+      currentIndex: null
+    };
+  }
+
+  componentDidMount(){
+    // If feed slides will be array of arrays (due to pagination)
+    if(this.props.slidesSource === 'feed') {
+      const slides = [];
+      this.props.slides.forEach(posts => posts.forEach(post => slides.push(post)));
+      const currentIndex = slides.indexOf(this.props.post);     
+      this.setState({slides, currentIndex}, () => {});
+    }
+  }
+
+  
+  onPrevSlide = () => {
+    const {currentIndex} = this.state;
+    if (currentIndex - 1 < 0 ) {
+      return;
+    }
+    const prevSlide = this.state.slides[currentIndex - 1];
+    return this.setState({currentSlide: prevSlide, currentIndex: this.state.currentIndex - 1}, () => {});
+  }
+
+  onNextSlide = () => {
+    const {currentIndex} = this.state;
+    if (currentIndex + 1 > this.state.slides.length - 1 ) {
+      return;
+    }
+    const nextSlide = this.state.slides[currentIndex + 1];
+    return this.setState({currentSlide: nextSlide, currentIndex: this.state.currentIndex + 1}, () => {});
+  }
+
   render() {
+    console.log(this.props.slides);
     const { classes } = this.props;
     const {
+      _id,
       _owner,
       imgUrl,
       title,
       faveCount,
       isFave,
       description
-    } = this.props.imgData;
+    } = this.state.currentSlide;
 
     return (
       <div className={classes.root}>
@@ -153,10 +217,18 @@ class ImageModalView extends React.Component {
             </div>
           </div>
           <div className={classes.imageContainer}>
+            <NavigateBeforeIcon
+              onClick={this.onPrevSlide}
+              className={classNames(classes.navIcons, classes.navLeft)}
+            />
             <img
               className={classes.image}
               src={`https://s3.amazonaws.com/img-share-kasho/${imgUrl}`}
               alt="testing"
+            />
+            <NavigateNextIcon
+              onClick={this.onNextSlide}
+              className={classNames(classes.navIcons, classes.navRight)}
             />
           </div>
           <div className={classes.bottom}>
@@ -179,9 +251,33 @@ class ImageModalView extends React.Component {
   }
 }
 
-ImageModalView.propTypes = {
-  classes: PropTypes.object.isRequired,
-  imgData: PropTypes.object.isRequired
+const mapStateToProps = (state) => {
+  if(state.slidesSource === 'feed') {
+    return {
+      slidesSource: state.slidesSource,
+      slides: state.posts
+    }
+  }
+  if(state.slidesSource === 'album') {
+    return {
+      slidesSource: state.slidesSource,
+      slides: state.album
+    }
+  }
+  if(state.slidesSource === 'faves') {
+    return {
+      slidesSource: state.slidesSource,
+      slides: state.faves
+    }
+  }
 };
 
-export default withStyles(styles)(ImageModalView);
+ImageModalView.propTypes = {
+  classes: PropTypes.object.isRequired,
+  post: PropTypes.object.isRequired
+};
+
+export default compose(
+  withStyles(styles),
+  connect(mapStateToProps)
+)(ImageModalView);
