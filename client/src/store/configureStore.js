@@ -3,14 +3,14 @@ import reduxThunk from 'redux-thunk';
 
 import authReducer from '../reducers/auth';
 import postsReducer from '../reducers/posts';
-import slidesSource from '../reducers/slidesSource';
+import slidesContext from '../reducers/slidesContext';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const reducers = combineReducers({
   auth: authReducer,
   posts: postsReducer,
-  slidesSource
+  slidesContext
 });
 
 const store = createStore(

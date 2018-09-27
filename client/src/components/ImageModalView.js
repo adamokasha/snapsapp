@@ -158,8 +158,10 @@ class ImageModalView extends React.Component {
   }
 
   componentDidMount(){
+    document.getElementById('goTopButton').style.display = 'none';
+
     // If feed slides will be array of arrays (due to pagination)
-    if(this.props.slidesSource === 'feed') {
+    if(this.props.slidesContext === 'feed') {
       const slides = [];
       this.props.slides.forEach(posts => posts.forEach(post => slides.push(post)));
       const currentIndex = slides.indexOf(this.props.post);     
@@ -168,6 +170,10 @@ class ImageModalView extends React.Component {
       });
 
     }
+  }
+
+  componentWillUnmount() {
+    document.getElementById('goTopButton').style.display = 'inline-flex';
   }
 
   checkIfLastSlide = () => {
@@ -293,21 +299,21 @@ class ImageModalView extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  if(state.slidesSource === 'feed') {
+  if(state.slidesContext === 'feed') {
     return {
-      slidesSource: state.slidesSource,
+      slidesContext: state.slidesContext,
       slides: state.posts
     }
   }
-  if(state.slidesSource === 'album') {
+  if(state.slidesContext === 'album') {
     return {
-      slidesSource: state.slidesSource,
+      slidesContext: state.slidesContext,
       slides: state.album
     }
   }
-  if(state.slidesSource === 'faves') {
+  if(state.slidesContext === 'faves') {
     return {
-      slidesSource: state.slidesSource,
+      slidesContext: state.slidesContext,
       slides: state.faves
     }
   }
