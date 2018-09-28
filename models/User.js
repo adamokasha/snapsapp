@@ -7,6 +7,14 @@ const userSchema = new Schema({
   profilePhoto: String,
   displayName: String,
   displayNameLowerC: String,
+  profile: {
+    name: String,
+    website: String,
+    facebook: String,
+    gplus: String,
+    twitter: String,
+    about: String
+  },
   albums: [{ type: Schema.Types.ObjectId, ref: 'Album'}],
   faves: [{ type: Schema.Types.ObjectId, ref: 'Faves'}],
   registered: {type: Boolean, default: false}

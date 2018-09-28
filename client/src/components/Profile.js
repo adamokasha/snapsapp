@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import EditTwoToneIcon from '@material-ui/icons/EditTwoTone';
 import CancelTwoToneIcon from '@material-ui/icons/CancelTwoTone';
+import axios from 'axios';
 
 const styles = theme => ({
   root: {
@@ -68,7 +69,13 @@ export class Profile extends React.Component {
     super(props);
 
     this.state = {
-      editEnabled: false
+      editEnabled: false,
+      name: this.props.profile ? this.props.profile.name : '',
+      website: this.props.profile ? this.props.profile.website : '',
+      facebook: this.props.profile ? this.props.profile.facebook : '',
+      gplus: this.props.profile ? this.props.profile.gplus : '',
+      twitter: this.props.profile ? this.props.profile.twitter : '',
+      about: this.props.profile ? this.props.profile.about : ''
     };
   }
 
@@ -80,6 +87,30 @@ export class Profile extends React.Component {
     this.setState({ editEnabled: false });
   };
 
+  onSubmit = async e => {
+    e.preventDefault();
+    const { name, website, facebook, gplus, twitter, about } = this.state;
+    const profile = {
+      profile: {
+        name,
+        website,
+        facebook,
+        gplus,
+        twitter,
+        about
+      }
+    };
+    await axios.post('/api/profile/update', profile);
+  };
+
+  onNameChange = (e) => { this.setState({name: e.target.value})}
+  onWebsiteChange = (e) => { this.setState({website: e.target.value})}
+  onFacebookChange = (e) => {this.setState({facebook: e.target.value})}
+  onGplusChange = (e) => {this.setState({gplus: e.target.value})}
+  onTwitterChange = (e) => {this.setState({twitter: e.target.value})}
+  onAboutChange = (e) => {this.setState({about: e.target.value})}
+
+
   render() {
     const { auth } = this.props;
 
@@ -88,8 +119,7 @@ export class Profile extends React.Component {
       <div className={classes.root}>
         <Paper className={classes.paper}>
           <div className={auth ? classes.editButtons : classes.hideEditButtons}>
-            {
-              this.state.editEnabled ? (
+            {this.state.editEnabled ? (
               <IconButton onClick={this.cancelEdit}>
                 <CancelTwoToneIcon />
               </IconButton>
@@ -97,10 +127,9 @@ export class Profile extends React.Component {
               <IconButton onClick={this.enableEdit}>
                 <EditTwoToneIcon />
               </IconButton>
-            )
-          }
+            )}
           </div>
-          <form className={classes.form}>
+          <form onSubmit={this.onSubmit} className={classes.form}>
             <div className={classes.avatarContainer}>
               <Avatar>SO</Avatar>
               <div className={classes.userText}>
@@ -113,9 +142,10 @@ export class Profile extends React.Component {
               <Typography variant="body2">Name:</Typography>
               <TextField
                 margin="normal"
-                value="Sam Okasha"
                 disabled={this.state.editEnabled ? false : true}
                 className={classes.textField}
+                value={this.state.name}
+                onChange={this.onNameChange}
               />
             </div>
 
@@ -125,6 +155,8 @@ export class Profile extends React.Component {
                 className={classes.textField}
                 margin="normal"
                 disabled={this.state.editEnabled ? false : true}
+                value={this.state.website}
+                onChange={this.onWebsiteChange}
               />
             </div>
 
@@ -134,6 +166,8 @@ export class Profile extends React.Component {
                 margin="normal"
                 className={classes.textField}
                 disabled={this.state.editEnabled ? false : true}
+                value={this.state.facebook}
+                onChange={this.onFacebookChange}
               />
             </div>
 
@@ -143,6 +177,8 @@ export class Profile extends React.Component {
                 margin="normal"
                 className={classes.textField}
                 disabled={this.state.editEnabled ? false : true}
+                value={this.state.gplus}
+                onChange={this.onGplusChange}
               />
             </div>
 
@@ -152,6 +188,8 @@ export class Profile extends React.Component {
                 margin="normal"
                 className={classes.textField}
                 disabled={this.state.editEnabled ? false : true}
+                value={this.state.twitter}
+                onChange={this.onTwitterChange}
               />
             </div>
 
@@ -163,6 +201,8 @@ export class Profile extends React.Component {
                 rows={3}
                 className={classes.textField}
                 disabled={this.state.editEnabled ? false : true}
+                value={this.state.about}
+                onChange={this.onAboutChange}
               />
             </div>
 
