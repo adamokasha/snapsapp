@@ -73,7 +73,7 @@ const styles = theme => ({
     height: '50px',
     marginRight: `${theme.spacing.unit * 2}px`
   },
-  imageContainer: {
+  imgContainer: {
     width: '100%',
     height: '80%',
     margin: '0',
@@ -104,7 +104,7 @@ const styles = theme => ({
     left: '50%',
     transformOrigin: '-50%, -50%'
   },
-  image: {
+  img: {
     // maintain aspect ratio
     maxWidth: '100%',
     maxHeight: '100%',
@@ -265,14 +265,14 @@ class ImageModalView extends React.Component {
               </div>
             </div>
           </div>
-          <div className={classes.imageContainer}>
+          <div className={classes.imgContainer}>
             <NavigateBeforeIcon
               onClick={this.onPrevSlide}
               className={classNames(classes.navIcons, classes.navLeft)}
             />
             <img
               onLoad={this.onImgLoad}
-              className={this.state.loading ? classes.imgHidden : classes.image}
+              className={this.state.loading ? classes.imgHidden : classes.img}
               src={`https://s3.amazonaws.com/img-share-kasho/${imgUrl}`}
               alt="testing"
             />

@@ -1,6 +1,7 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import compose from 'recompose/compose';
+import {Link} from 'react-router-dom'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -16,7 +17,7 @@ import Divider from '@material-ui/core/Divider';
 
 import Modal from './Modal';
 import ImageModalView from './ImageModalView';
-import {favePost, unFavePost} from '../actions/posts';
+import { favePost, unFavePost } from '../actions/posts';
 
 const styles = theme => ({
   card: {
@@ -45,7 +46,7 @@ const styles = theme => ({
     width: '100%',
     height: '100%',
     [theme.breakpoints.down('md')]: {
-      top: '18%',
+      top: '18%'
     }
   },
   red: {
@@ -62,32 +63,67 @@ class ImageCard extends React.Component {
   };
 
   handleOpen = () => {
-    let goTopButton = document.getElementById('goTopButton'); 
-    if (goTopButton) {goTopButton.style.display = 'none'};
+    let goTopButton = document.getElementById('goTopButton');
+    if (goTopButton) {
+      goTopButton.style.display = 'none';
+    }
     this.setState({ open: true });
   };
 
   handleClose = () => {
     this.setState({ open: false });
-    let goTopButton = document.getElementById('goTopButton'); 
-    if(goTopButton) {goTopButton.style.display = 'inline-flex'};
+    let goTopButton = document.getElementById('goTopButton');
+    if (goTopButton) {
+      goTopButton.style.display = 'inline-flex';
+    }
   };
 
   onFave = async () => {
-      this.setState({faved: !this.state.faved});
-      await this.props.favePost(this.state.imgId);
-      return;
-  }
+    this.setState({ faved: !this.state.faved });
+    await this.props.favePost(this.state.imgId);
+    return;
+  };
+
+  // Will select view based on width: Modal(m+) or redirect to full page view(s-)
+  selectView = () => {
+    const {classes, title} = this.props;
+    const {imgUrl} = this.props.post;
+    // Don't open modal on small screens
+    if (window.innerHeight < 600) {
+      return (
+        <Link to="/albums">
+        <CardMedia
+          className={classes.media}
+          image={
+            `https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}` ||
+            'https://i.imgur.com/KAXz5AG.jpg'
+          }
+          title={title || 'Image Title'}
+        />
+        </Link>
+      );
+    }
+
+    return (
+      <Modal
+        togglerComponent={
+          <CardMedia
+            className={classes.media}
+            image={
+              `https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}` ||
+              'https://i.imgur.com/KAXz5AG.jpg'
+            }
+            title={title || 'Image Title'}
+          />
+        }
+        modalComponent={<ImageModalView post={this.props.post} />}
+      />
+    );
+  };
 
   render() {
-    const {classes} = this.props;
-    const {
-      _owner,
-      imgUrl,
-      title,
-      description,
-      faveCount
-    } = this.props.post;
+    const { classes } = this.props;
+    const { _owner, imgUrl, title, description, faveCount } = this.props.post;
 
     return (
       <div>
@@ -101,20 +137,7 @@ class ImageCard extends React.Component {
             title={title || 'Aerial Photo'}
             subheader={_owner.displayName || 'September 14, 2016'}
           />
-          <Modal
-          togglerComponent={
-            <CardMedia
-            className={classes.media}
-            image={
-              `https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}` ||
-              'https://i.imgur.com/KAXz5AG.jpg'
-            }
-            title={title || 'Image Title'}
-          />
-          }
-          modalComponent={<ImageModalView post={this.props.post} />}
-        />
-
+            {this.selectView()}
           <CardContent>
             <Typography component="p">
               {description ||
@@ -129,33 +152,31 @@ class ImageCard extends React.Component {
               <Typography variant="caption">15 Comments</Typography>
             </div>
             <div className={classes.actionsRight}>
-            {this.props.isAuth ? (
-              <React.Fragment>
-              <IconButton 
-              aria-label="Add to favorites"
-              onClick={this.onFave}
-              color={this.state.faved ? 'secondary' : 'default'}
-              classes={{
-                root: classes.iconButtonRoot
-              }}
-              >
-                <FavoriteTwoToneIcon
-                />
-              </IconButton>
-              <IconButton 
-              aria-label="Share"
-              color="default"
-              classes={{
-                root: classes.iconButtonRoot
-              }}
-              >
-              <ion-icon name="share-alt"></ion-icon>
-              </IconButton>
-              </React.Fragment>
-            ) : ( null )}
+              {this.props.isAuth ? (
+                <React.Fragment>
+                  <IconButton
+                    aria-label="Add to favorites"
+                    onClick={this.onFave}
+                    color={this.state.faved ? 'secondary' : 'default'}
+                    classes={{
+                      root: classes.iconButtonRoot
+                    }}
+                  >
+                    <FavoriteTwoToneIcon />
+                  </IconButton>
+                  <IconButton
+                    aria-label="Share"
+                    color="default"
+                    classes={{
+                      root: classes.iconButtonRoot
+                    }}
+                  >
+                    <ion-icon name="share-alt" />
+                  </IconButton>
+                </React.Fragment>
+              ) : null}
             </div>
           </CardActions>
-
         </Card>
       </div>
     );
@@ -167,11 +188,14 @@ ImageCard.propTypes = {
   post: PropTypes.object.isRequired
 };
 
-const mapStateToProps = ({auth}) => ({
+const mapStateToProps = ({ auth }) => ({
   isAuth: auth
-})
+});
 
 export default compose(
   withStyles(styles),
-  connect(mapStateToProps, {favePost, unFavePost})
-)(ImageCard)
+  connect(
+    mapStateToProps,
+    { favePost, unFavePost }
+  )
+)(ImageCard);
