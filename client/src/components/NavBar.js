@@ -82,10 +82,11 @@ class NavBar extends React.Component {
           open={open}
           onClose={this.handleClose}
         >
-          <MenuItem to="upload" component={Link} onClick={this.handleClose}>
+          <MenuItem to="/upload" component={Link} onClick={this.handleClose}>
             Add Image
           </MenuItem>
           <MenuItem to="/myalbums" component={Link} onClick={this.handleClose}>Albums</MenuItem>
+          <MenuItem to={`/profile/${auth.displayName}`} component={Link} onClick={this.handleClose}>Profile</MenuItem>
           <MenuItem href="/auth/logout" component="a" onClick={this.handleClose}>
               Log Out
           </MenuItem>

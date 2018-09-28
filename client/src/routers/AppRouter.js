@@ -15,7 +15,7 @@ import AlbumMaker from '../components/AlbumMaker';
 import AlbumsPage from '../pages/AlbumsPage';
 import SingleAlbumPage from '../pages/SingleAlbumPage';
 import FullPost from '../components/FullPost';
-import Profile from '../components/Profile';
+import ProfilePage from '../pages/ProfilePage';
 
 
 export class AppRouter extends React.Component {
@@ -40,7 +40,7 @@ export class AppRouter extends React.Component {
           <Route path="/albums/:user/:albumid" component={SingleAlbumPage} />
           <Route path="/post/:id" component={FullPost} />
 
-          <Route path="/profile" component={Profile} />
+          <Route path="/profile/:user" component={ProfilePage} />
 
         </Switch>
       </BrowserRouter>

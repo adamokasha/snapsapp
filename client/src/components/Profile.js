@@ -2,6 +2,7 @@ import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 import compose from 'recompose/compose';
 import Avatar from '@material-ui/core/Avatar';
 import TextField from '@material-ui/core/TextField';
@@ -69,6 +70,7 @@ export class Profile extends React.Component {
     super(props);
 
     this.state = {
+      ownProfile: false,
       editEnabled: false,
       name: this.props.profile ? this.props.profile.name : '',
       website: this.props.profile ? this.props.profile.website : '',
@@ -77,6 +79,23 @@ export class Profile extends React.Component {
       twitter: this.props.profile ? this.props.profile.twitter : '',
       about: this.props.profile ? this.props.profile.about : ''
     };
+  }
+
+  async componentDidMount() {
+    try{
+      const res = await axios.get(`/api/profile/get/${this.props.user}`);
+      this.setState({...res.data.profile}, () => {
+        this.checkIfProfileOwner();
+      })
+    } catch(e) {
+      console.log(e);
+    }
+  }
+  
+  checkIfProfileOwner = () => {
+    if(this.props.auth.displayName === this.props.user) {
+      this.setState({ownProfile: true}, () => {})
+    }
   }
 
   enableEdit = () => {
@@ -112,13 +131,12 @@ export class Profile extends React.Component {
 
 
   render() {
-    const { auth } = this.props;
-
     const { classes } = this.props;
+    
     return (
       <div className={classes.root}>
         <Paper className={classes.paper}>
-          <div className={auth ? classes.editButtons : classes.hideEditButtons}>
+          <div className={this.state.ownProfile ? classes.editButtons : classes.hideEditButtons}>
             {this.state.editEnabled ? (
               <IconButton onClick={this.cancelEdit}>
                 <CancelTwoToneIcon />
@@ -206,7 +224,8 @@ export class Profile extends React.Component {
               />
             </div>
 
-            <Button
+            {this.state.ownProfile ? (
+              <Button
               className={classes.button}
               type="submit"
               variant="contained"
@@ -214,6 +233,7 @@ export class Profile extends React.Component {
             >
               Save
             </Button>
+            ) : null}
           </form>
         </Paper>
       </div>
@@ -224,6 +244,10 @@ export class Profile extends React.Component {
 const mapStateToProps = ({ auth }) => ({
   auth
 });
+
+Profile.propTypes = {
+  user: PropTypes.string.isRequired,
+}
 
 export default compose(
   withStyles(styles),
