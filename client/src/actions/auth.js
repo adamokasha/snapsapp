@@ -19,6 +19,11 @@ export const registerUser = displayName => async dispatch => {
   }
 };
 
+export const updateProfile = (updates) => ({
+  type: 'UPDATE_PROFILE',
+  payload: updates
+})
+
 export const logout = () => ({
   type: 'LOGOUT'
 });

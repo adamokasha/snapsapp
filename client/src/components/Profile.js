@@ -14,6 +14,8 @@ import EditTwoToneIcon from '@material-ui/icons/EditTwoTone';
 import CancelTwoToneIcon from '@material-ui/icons/CancelTwoTone';
 import axios from 'axios';
 
+import {updateProfile} from '../actions/auth';
+
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -53,10 +55,35 @@ const styles = theme => ({
     justifyContent: 'flex-end',
     width: '100%%'
   },
+  socialText: {
+    // Stops shaking when edit toggled
+    marginTop: `${theme.spacing.unit * 3}px`,
+    marginBottom: `12px`
+  },
   textField: {
     width: '65%',
     marginLeft: `${theme.spacing.unit}px`,
     marginRight: `${theme.spacing.unit * 3}px`
+  },
+  hiddenTextField: {
+    display: 'none'
+  },
+  aTag: {
+    textDecoration: 'none',
+    width: '65%',
+    marginLeft: `${theme.spacing.unit}px`,
+    marginRight: `${theme.spacing.unit * 3}px`,
+    marginTop: `${theme.spacing.unit * 2}px`,
+    marginBottom: `${theme.spacing.unit}px`,
+    paddingBottom: '7px',
+  },
+  hiddenATag: {
+    display: 'none',
+    width: 0
+  },
+  linkText: {
+    fontSize: '16px',
+    paddingTop: '6px',
   },
   button: {
     marginTop: `${theme.spacing.unit * 2}px`,
@@ -70,8 +97,11 @@ export class Profile extends React.Component {
     super(props);
 
     this.state = {
-      ownProfile: false,
       editEnabled: false,
+      ownProfile: false,
+      displayName: this.props.profile ? this.profile.displayName : '',
+      profilePhoto: this.props.profile ? this.profile.profilePhoto : '',
+      joined: this.props.profile ? this.display.joined : '',
       name: this.props.profile ? this.props.profile.name : '',
       website: this.props.profile ? this.props.profile.website : '',
       facebook: this.props.profile ? this.props.profile.facebook : '',
@@ -82,61 +112,87 @@ export class Profile extends React.Component {
   }
 
   async componentDidMount() {
-    try{
+    try {
       const res = await axios.get(`/api/profile/get/${this.props.user}`);
-      this.setState({...res.data.profile}, () => {
-        this.checkIfProfileOwner();
-      })
-    } catch(e) {
+      const {profilePhoto, joined, displayName, profile} = res.data;
+      this.setState({profilePhoto, displayName, joined, ...profile }, () => {
+        return this.checkIfProfileOwner();
+      });
+    } catch (e) {
       console.log(e);
     }
   }
-  
+
   checkIfProfileOwner = () => {
-    if(this.props.auth.displayName === this.props.user) {
-      this.setState({ownProfile: true}, () => {})
+    if (this.props.auth && this.props.auth.displayName === this.props.user) {
+      this.setState({ ownProfile: true }, () => {});
     }
-  }
+  };
 
   enableEdit = () => {
     this.setState({ editEnabled: true });
   };
 
   cancelEdit = () => {
-    this.setState({ editEnabled: false });
+    this.setState({...this.state, editEnabled: false, ...this.props.auth.profile});
   };
 
   onSubmit = async e => {
     e.preventDefault();
-    const { name, website, facebook, gplus, twitter, about } = this.state;
-    const profile = {
-      profile: {
-        name,
-        website,
-        facebook,
-        gplus,
-        twitter,
-        about
-      }
-    };
-    await axios.post('/api/profile/update', profile);
+
+    try {
+      const { name, website, facebook, gplus, twitter, about } = this.state;
+      const profile = {
+        profile: {
+          name,
+          website,
+          facebook,
+          gplus,
+          twitter,
+          about
+        }
+      };
+      await axios.post('/api/profile/update', profile);
+      console.log(profile);
+      this.props.updateProfile(profile);
+      this.setState({editEnabled: false});
+    } catch (e) {
+      console.log(e);
+    }
   };
 
-  onNameChange = (e) => { this.setState({name: e.target.value})}
-  onWebsiteChange = (e) => { this.setState({website: e.target.value})}
-  onFacebookChange = (e) => {this.setState({facebook: e.target.value})}
-  onGplusChange = (e) => {this.setState({gplus: e.target.value})}
-  onTwitterChange = (e) => {this.setState({twitter: e.target.value})}
-  onAboutChange = (e) => {this.setState({about: e.target.value})}
-
+  onNameChange = e => {
+    this.setState({ name: e.target.value });
+  };
+  onWebsiteChange = e => {
+    this.setState({ website: e.target.value });
+  };
+  onFacebookChange = e => {
+    this.setState({ facebook: e.target.value });
+  };
+  onGplusChange = e => {
+    this.setState({ gplus: e.target.value });
+  };
+  onTwitterChange = e => {
+    this.setState({ twitter: e.target.value });
+  };
+  onAboutChange = e => {
+    this.setState({ about: e.target.value });
+  };
 
   render() {
     const { classes } = this.props;
-    
+
     return (
       <div className={classes.root}>
         <Paper className={classes.paper}>
-          <div className={this.state.ownProfile ? classes.editButtons : classes.hideEditButtons}>
+          <div
+            className={
+              this.state.ownProfile
+                ? classes.editButtons
+                : classes.hideEditButtons
+            }
+          >
             {this.state.editEnabled ? (
               <IconButton onClick={this.cancelEdit}>
                 <CancelTwoToneIcon />
@@ -149,10 +205,10 @@ export class Profile extends React.Component {
           </div>
           <form onSubmit={this.onSubmit} className={classes.form}>
             <div className={classes.avatarContainer}>
-              <Avatar>SO</Avatar>
+              <Avatar><img src={`${this.state.profilePhoto}`} alt="avatar" /></Avatar>
               <div className={classes.userText}>
-                <Typography variant="body2">Sam Okasha</Typography>
-                <Typography variant="caption">Member since 09/18</Typography>
+                <Typography variant="body2">{this.state.displayName}</Typography>
+                <Typography variant="caption">Member since {this.state.joined}</Typography>
               </div>
             </div>
             <Divider />
@@ -179,36 +235,99 @@ export class Profile extends React.Component {
             </div>
 
             <div className={classes.fieldGroup}>
-              <Typography variant="body2">Facebook: </Typography>
+              <Typography className={classes.socialText} variant="body2">
+                Facebook:{' '}
+              </Typography>
               <TextField
                 margin="normal"
-                className={classes.textField}
+                className={
+                  this.state.editEnabled
+                    ? classes.textField
+                    : classes.hiddenTextField
+                }
                 disabled={this.state.editEnabled ? false : true}
                 value={this.state.facebook}
                 onChange={this.onFacebookChange}
               />
+              <a
+                href={this.state.facebook ? `http://${this.state.facebook}` : null}
+                className={
+                  this.state.editEnabled ? classes.hiddenATag : classes.aTag
+                }
+              >
+                <Typography
+                  color="primary"
+                  classes={{ colorPrimary: '#3b599' }}
+                  variant="body1"
+                  className={classes.linkText}
+                >
+                  {this.state.facebook}
+                </Typography>
+              </a>
             </div>
 
             <div className={classes.fieldGroup}>
-              <Typography variant="body2">Google+: </Typography>
+              <Typography className={classes.socialText} variant="body2">
+                Google+:{' '}
+              </Typography>
               <TextField
                 margin="normal"
-                className={classes.textField}
+                className={
+                  this.state.editEnabled
+                    ? classes.textField
+                    : classes.hiddenTextField
+                }
                 disabled={this.state.editEnabled ? false : true}
                 value={this.state.gplus}
                 onChange={this.onGplusChange}
               />
+              <a
+                href={this.state.gplus ? `http://${this.state.gplus}`: null }
+                className={
+                  this.state.editEnabled ? classes.hiddenATag : classes.aTag
+                }
+              >
+                <Typography
+                  color="primary"
+                  classes={{ colorPrimary: '#dd4b39' }}
+                  variant="body1"
+                  className={classes.linkText}
+                >
+                  {this.state.gplus}
+                </Typography>
+              </a>
             </div>
 
             <div className={classes.fieldGroup}>
-              <Typography variant="body2">Twitter: </Typography>
+              <Typography className={classes.socialText} variant="body2">
+                Twitter:{' '}
+              </Typography>
               <TextField
                 margin="normal"
-                className={classes.textField}
+                className={
+                  this.state.editEnabled
+                    ? classes.textField
+                    : classes.hiddenTextField
+                }
                 disabled={this.state.editEnabled ? false : true}
                 value={this.state.twitter}
                 onChange={this.onTwitterChange}
               />
+              <a
+                href={this.state.twitter ? `http://${this.state.twitter}` : null}
+                className={
+                  this.state.editEnabled ? classes.hiddenATag : classes.aTag
+                }
+              >
+                <Typography
+                  color="primary"
+                  classes={{ colorPrimary: '#55acee' }}
+                  variant="body1"
+                  className={classes.linkText}
+                >
+                  {this.state.twitter}
+                </Typography>
+              </a>
             </div>
 
             <div className={classes.fieldGroup}>
@@ -226,13 +345,13 @@ export class Profile extends React.Component {
 
             {this.state.ownProfile ? (
               <Button
-              className={classes.button}
-              type="submit"
-              variant="contained"
-              color="primary"
-            >
-              Save
-            </Button>
+                className={classes.button}
+                type="submit"
+                variant="contained"
+                color="primary"
+              >
+                Save
+              </Button>
             ) : null}
           </form>
         </Paper>
@@ -246,10 +365,10 @@ const mapStateToProps = ({ auth }) => ({
 });
 
 Profile.propTypes = {
-  user: PropTypes.string.isRequired,
-}
+  user: PropTypes.string.isRequired
+};
 
 export default compose(
   withStyles(styles),
-  connect(mapStateToProps)
+  connect(mapStateToProps, {updateProfile})
 )(Profile);

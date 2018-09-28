@@ -133,7 +133,7 @@ class ImageCard extends React.Component {
         <Card className={classes.card} raised>
           <CardHeader
             avatar={
-              <Avatar aria-label="Recipe" className={classes.avatar}>
+              <Avatar to={`/profile/${_owner.displayName}`} component={Link} aria-label="Recipe" className={classes.avatar}>
                 <img src={_owner.profilePhoto} alt="avatar" />
               </Avatar>
             }
