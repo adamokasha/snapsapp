@@ -192,7 +192,7 @@ class ImageUploadForm extends React.Component {
                 label="Description"
                 placeholder="Write something about your photo here"
                 multiline
-                rows={6}
+                rows={4}
                 margin="normal"
                 className={classes.textField}
                 onChange={this.onDescChange}

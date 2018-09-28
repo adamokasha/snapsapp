@@ -119,47 +119,6 @@ class DisplayNameForm extends React.Component {
   }
 }
 
-// function DisplayNameForm(props) {
-//   const { classes } = props;
-
-//   return (
-//     <React.Fragment>
-//       <main className={classes.layout}>
-//         <Paper className={classes.paper} elevation={1}>
-//           <Avatar className={classes.avatar}>
-//             <HowToReg />
-//           </Avatar>
-//           <Typography variant="headline">Display Name</Typography>
-//           <Typography
-//             align="center"
-//             variant="subheading"
-//             className={classes.subheading}
-//           >
-//             Thanks for authenticating. Please choose a display name to complete registration.
-//           </Typography>
-//           <form className={classes.container} noValidate autoComplete="off">
-//             <TextField
-//               autoFocus
-//               required
-//               id="displayName"
-//               label="Display Name"
-//               className={classes.textField}
-//               margin="normal"
-//             />
-//             <Button
-//               variant="contained"
-//               color="primary"
-//               className={classes.button}
-//             >
-//               Complete Registration
-//             </Button>
-//           </form>
-//         </Paper>
-//       </main>
-//     </React.Fragment>
-//   );
-// }
-
 DisplayNameForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
