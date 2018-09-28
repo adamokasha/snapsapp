@@ -1,5 +1,6 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
@@ -14,7 +15,7 @@ import EditTwoToneIcon from '@material-ui/icons/EditTwoTone';
 import CancelTwoToneIcon from '@material-ui/icons/CancelTwoTone';
 import axios from 'axios';
 
-import {updateProfile} from '../actions/auth';
+import { updateProfile } from '../actions/auth';
 
 const styles = theme => ({
   root: {
@@ -65,25 +66,8 @@ const styles = theme => ({
     marginLeft: `${theme.spacing.unit}px`,
     marginRight: `${theme.spacing.unit * 3}px`
   },
-  hiddenTextField: {
-    display: 'none'
-  },
-  aTag: {
-    textDecoration: 'none',
-    width: '65%',
-    marginLeft: `${theme.spacing.unit}px`,
-    marginRight: `${theme.spacing.unit * 3}px`,
-    marginTop: `${theme.spacing.unit * 2}px`,
-    marginBottom: `${theme.spacing.unit}px`,
-    paddingBottom: '7px',
-  },
-  hiddenATag: {
-    display: 'none',
-    width: 0
-  },
-  linkText: {
-    fontSize: '16px',
-    paddingTop: '6px',
+  disabledCursor: {
+    cursor: 'pointer'
   },
   button: {
     marginTop: `${theme.spacing.unit * 2}px`,
@@ -114,8 +98,8 @@ export class Profile extends React.Component {
   async componentDidMount() {
     try {
       const res = await axios.get(`/api/profile/get/${this.props.user}`);
-      const {profilePhoto, joined, displayName, profile} = res.data;
-      this.setState({profilePhoto, displayName, joined, ...profile }, () => {
+      const { profilePhoto, joined, displayName, profile } = res.data;
+      this.setState({ profilePhoto, displayName, joined, ...profile }, () => {
         return this.checkIfProfileOwner();
       });
     } catch (e) {
@@ -134,7 +118,11 @@ export class Profile extends React.Component {
   };
 
   cancelEdit = () => {
-    this.setState({...this.state, editEnabled: false, ...this.props.auth.profile});
+    this.setState({
+      ...this.state,
+      editEnabled: false,
+      ...this.props.auth.profile
+    });
   };
 
   onSubmit = async e => {
@@ -155,7 +143,7 @@ export class Profile extends React.Component {
       await axios.post('/api/profile/update', profile);
       console.log(profile);
       this.props.updateProfile(profile);
-      this.setState({editEnabled: false});
+      this.setState({ editEnabled: false });
     } catch (e) {
       console.log(e);
     }
@@ -178,6 +166,11 @@ export class Profile extends React.Component {
   };
   onAboutChange = e => {
     this.setState({ about: e.target.value });
+  };
+
+  onLinkClick = e => {
+    var win = window.open(`http://${e.target.value}`, '_blank');
+    win.focus();
   };
 
   render() {
@@ -205,10 +198,16 @@ export class Profile extends React.Component {
           </div>
           <form onSubmit={this.onSubmit} className={classes.form}>
             <div className={classes.avatarContainer}>
-              <Avatar><img src={`${this.state.profilePhoto}`} alt="avatar" /></Avatar>
+              <Avatar>
+                <img src={`${this.state.profilePhoto}`} alt="avatar" />
+              </Avatar>
               <div className={classes.userText}>
-                <Typography variant="body2">{this.state.displayName}</Typography>
-                <Typography variant="caption">Member since {this.state.joined}</Typography>
+                <Typography variant="body2">
+                  {this.state.displayName}
+                </Typography>
+                <Typography variant="caption">
+                  Member since {this.state.joined}
+                </Typography>
               </div>
             </div>
             <Divider />
@@ -216,6 +215,7 @@ export class Profile extends React.Component {
               <Typography variant="body2">Name:</Typography>
               <TextField
                 margin="normal"
+                inputProps={{style: {color: '#000'}}}
                 disabled={this.state.editEnabled ? false : true}
                 className={classes.textField}
                 value={this.state.name}
@@ -228,6 +228,10 @@ export class Profile extends React.Component {
               <TextField
                 className={classes.textField}
                 margin="normal"
+                onClick={this.state.editEnabled ? null : this.onLinkClick}
+                inputProps={
+                  this.state.editEnabled ? {} : { style: { cursor: 'pointer', color: '#000' } }
+                }
                 disabled={this.state.editEnabled ? false : true}
                 value={this.state.website}
                 onChange={this.onWebsiteChange}
@@ -240,30 +244,15 @@ export class Profile extends React.Component {
               </Typography>
               <TextField
                 margin="normal"
-                className={
-                  this.state.editEnabled
-                    ? classes.textField
-                    : classes.hiddenTextField
+                className={classes.textField}
+                inputProps={
+                  this.state.editEnabled ? {} : { style: { cursor: 'pointer', color: '#3b5999' } }
                 }
                 disabled={this.state.editEnabled ? false : true}
+                onClick={this.state.editEnabled ? null : this.onLinkClick}
                 value={this.state.facebook}
                 onChange={this.onFacebookChange}
               />
-              <a
-                href={this.state.facebook ? `http://${this.state.facebook}` : null}
-                className={
-                  this.state.editEnabled ? classes.hiddenATag : classes.aTag
-                }
-              >
-                <Typography
-                  color="primary"
-                  classes={{ colorPrimary: '#3b599' }}
-                  variant="body1"
-                  className={classes.linkText}
-                >
-                  {this.state.facebook}
-                </Typography>
-              </a>
             </div>
 
             <div className={classes.fieldGroup}>
@@ -272,30 +261,15 @@ export class Profile extends React.Component {
               </Typography>
               <TextField
                 margin="normal"
-                className={
-                  this.state.editEnabled
-                    ? classes.textField
-                    : classes.hiddenTextField
+                className={classes.textField}
+                inputProps={
+                  this.state.editEnabled ? {} : { style: { cursor: 'pointer', color: '#dd4b39' } }
                 }
                 disabled={this.state.editEnabled ? false : true}
+                onClick={this.state.editEnabled ? null : this.onLinkClick}
                 value={this.state.gplus}
                 onChange={this.onGplusChange}
               />
-              <a
-                href={this.state.gplus ? `http://${this.state.gplus}`: null }
-                className={
-                  this.state.editEnabled ? classes.hiddenATag : classes.aTag
-                }
-              >
-                <Typography
-                  color="primary"
-                  classes={{ colorPrimary: '#dd4b39' }}
-                  variant="body1"
-                  className={classes.linkText}
-                >
-                  {this.state.gplus}
-                </Typography>
-              </a>
             </div>
 
             <div className={classes.fieldGroup}>
@@ -304,30 +278,15 @@ export class Profile extends React.Component {
               </Typography>
               <TextField
                 margin="normal"
-                className={
-                  this.state.editEnabled
-                    ? classes.textField
-                    : classes.hiddenTextField
+                className={classes.textField}
+                inputProps={
+                  this.state.editEnabled ? {} : { style: { cursor: 'pointer', color: '#55acee' } }
                 }
                 disabled={this.state.editEnabled ? false : true}
+                onClick={this.state.editEnabled ? null : this.onLinkClick}
                 value={this.state.twitter}
                 onChange={this.onTwitterChange}
               />
-              <a
-                href={this.state.twitter ? `http://${this.state.twitter}` : null}
-                className={
-                  this.state.editEnabled ? classes.hiddenATag : classes.aTag
-                }
-              >
-                <Typography
-                  color="primary"
-                  classes={{ colorPrimary: '#55acee' }}
-                  variant="body1"
-                  className={classes.linkText}
-                >
-                  {this.state.twitter}
-                </Typography>
-              </a>
             </div>
 
             <div className={classes.fieldGroup}>
@@ -336,6 +295,7 @@ export class Profile extends React.Component {
                 margin="normal"
                 multiline
                 rows={3}
+                inputProps={{style: {color: '#000'}}}
                 className={classes.textField}
                 disabled={this.state.editEnabled ? false : true}
                 value={this.state.about}
@@ -370,5 +330,8 @@ Profile.propTypes = {
 
 export default compose(
   withStyles(styles),
-  connect(mapStateToProps, {updateProfile})
+  connect(
+    mapStateToProps,
+    { updateProfile }
+  )
 )(Profile);
