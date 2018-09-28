@@ -87,11 +87,14 @@ class ImageCard extends React.Component {
   // Will select view based on width: Modal(m+) or redirect to full page view(s-)
   selectView = () => {
     const {classes, title} = this.props;
-    const {imgUrl} = this.props.post;
+    const {imgUrl, _id} = this.props.post;
     // Don't open modal on small screens
     if (window.innerHeight < 600) {
       return (
-        <Link to="/albums">
+        <Link to={{
+          pathname: `/post/${_id}/`,
+          state: { post: this.props.post }
+        }}>
         <CardMedia
           className={classes.media}
           image={

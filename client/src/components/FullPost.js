@@ -79,26 +79,6 @@ const styles = theme => ({
 
 export class FullPost extends React.Component {
   render() {
-    const post = {
-      faved: {},
-      isFave: true,
-      faveCount: 1,
-      comments: {},
-      tags: {},
-      _id: '5ba931ecc54b150015045d85',
-      _owner: {
-        profilePhoto:
-          'https://lh6.googleusercontent.com/-qiv1IpPX9Xc/AAAAAAAAAAI/AAAAAAAAAAA/AAN31DVnmHGYoa8QU_ibRrAd07hho5-rqw/mo/photo.jpg?sz=50',
-        displayName: 'kasho'
-      },
-      title: 'Veggies',
-      description: 'Vegetables ',
-      createdAt: 1537815020214,
-      imgUrl:
-        '5ba909db3b527b1ad43d4443/1155fb67-0e3f-48de-b29a-dac366fec124.jpeg',
-      __v: 0
-    };
-
     const {
       _id,
       _owner,
@@ -108,7 +88,7 @@ export class FullPost extends React.Component {
       createdAt,
       isFave,
       description
-    } = post;
+    } = this.props.location.state.post;
 
     const { classes } = this.props;
 
@@ -119,7 +99,7 @@ export class FullPost extends React.Component {
           <div className={classes.imgContainer}>
             <img
               className={classes.img}
-              src="https://s3.amazonaws.com/img-share-kasho/5ba8d9e10dc62b3c1cfebc70/b4676a43-8bcd-4d06-8a1d-06810075a1a5.jpeg"
+              src={`https://s3.amazonaws.com/img-share-kasho/${imgUrl}`}
             />
           </div>
           <div className={classes.postInfo}>

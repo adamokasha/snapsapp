@@ -37,7 +37,7 @@ export class AppRouter extends React.Component {
 
           <Route exact path="/albums" component={AlbumsPage} />
           <Route path="/albums/:user/:albumid" component={SingleAlbumPage} />
-          <Route path="/fullpost" component={FullPost} />
+          <Route path="/post/:id" component={FullPost} />
 
         </Switch>
       </BrowserRouter>
