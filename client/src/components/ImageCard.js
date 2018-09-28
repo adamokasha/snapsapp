@@ -89,7 +89,7 @@ class ImageCard extends React.Component {
     const {classes, title} = this.props;
     const {imgUrl, _id} = this.props.post;
     // Don't open modal on small screens
-    if (window.screen.width < 600) {
+    if (window.screen.width < 600 || window.innerWidth < 600) {
       return (
         <Link to={{
           pathname: `/post/${_id}/`,

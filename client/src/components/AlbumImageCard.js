@@ -1,6 +1,7 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import compose from 'recompose/compose';
+import {withRouter} from 'react-router';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -12,7 +13,7 @@ import Divider from '@material-ui/core/Divider';
 
 import ImageModalView from './ImageModalView';
 import Modal from './Modal';
-import {favePost, unFavePost} from '../actions/posts';
+import { favePost, unFavePost } from '../actions/posts';
 
 const styles = theme => ({
   root: {
@@ -46,7 +47,7 @@ const styles = theme => ({
     width: '100%',
     height: '100%',
     [theme.breakpoints.down('md')]: {
-      top: '18%',
+      top: '18%'
     }
   },
   red: {
@@ -54,40 +55,23 @@ const styles = theme => ({
   }
 });
 
-class ImageCard extends React.Component {
+class AlbumImageCard extends React.Component {
   state = {
-    imgId: this.props.imgData._id,
-    faved: this.props.imgData.isFave,
-    faveColor: 'default',
-    open: false
+    imgId: this.props.post._id,
+    faved: this.props.post.isFave,
+    faveColor: 'default'
   };
 
-  handleOpen = () => {
-    let goTopButton = document.getElementById('goTopButton'); 
-    if (goTopButton) {goTopButton.style.display = 'none'};
-    this.setState({ open: true });
-  };
-
-  handleClose = () => {
-    this.setState({ open: false });
-    let goTopButton = document.getElementById('goTopButton'); 
-    if(goTopButton) {goTopButton.style.display = 'inline-flex'};
-  };
-
-  onFave = async () => {
-      this.setState({faved: !this.state.faved});
-      await this.props.favePost(this.state.imgId);
-      return;
+  onImgClick = () => {
+    return this.props.history.push({
+      pathname: `/post/${this.props.post._id}/`,
+      state: { post: this.props.post }
+    })
   }
 
   render() {
-    const {classes} = this.props;
-    const {
-      imgUrl,
-      title,
-      description,
-      createdAt,
-    } = this.props.imgData;
+    const { classes } = this.props;
+    const { imgUrl, title, description, createdAt } = this.props.post;
 
     return (
       <div>
@@ -96,20 +80,16 @@ class ImageCard extends React.Component {
             title={title || 'Aerial Photo'}
             subheader={createdAt || 'September 14, 2016'}
           />
-          <Modal 
-            togglerComponent={<CardMedia
-              className={classes.media}
-              image={
-                `https://d14ed1d2q7cc9f.cloudfront.net/500x350/smart/${imgUrl}` ||
-                'https://i.imgur.com/KAXz5AG.jpg'
-              }
-              title={title || 'Image Title'}
-              onClick={this.handleOpen}
-            />}
-            modalComponent={<img src={`https://s3.amazonaws.com/img-share-kasho/${imgUrl}`} />
-          }
+          <CardMedia
+            className={classes.media}
+            image={
+              `https://d14ed1d2q7cc9f.cloudfront.net/500x350/smart/${imgUrl}` ||
+              'https://i.imgur.com/KAXz5AG.jpg'
+            }
+            title={title || 'Image Title'}
+            onClick={this.onImgClick}
           />
-          
+
           <CardContent>
             <Typography component="p">
               {description ||
@@ -123,11 +103,14 @@ class ImageCard extends React.Component {
   }
 }
 
-const mapStateToProps = ({auth}) => ({
+const mapStateToProps = ({ auth }) => ({
   isAuth: auth
-})
+});
 
 export default compose(
   withStyles(styles),
-  connect(mapStateToProps, {favePost, unFavePost})
-)(ImageCard)
+  connect(
+    mapStateToProps,
+    { favePost, unFavePost }
+  )
+)(withRouter(AlbumImageCard));

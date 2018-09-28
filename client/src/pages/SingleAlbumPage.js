@@ -10,13 +10,13 @@ export class SingleAlbumPage extends React.Component {
     super(props);
 
     this.state = {
-      imgData: []
+      posts: []
     }
   }
   async componentDidMount() {
     const albumId = this.props.location.state.albumId;
     const res = await axios.get(`/api/albums/full/${albumId}`);
-    this.setState({imgData: res.data})
+    this.setState({posts: res.data})
   }
 
   render() {
@@ -24,7 +24,7 @@ export class SingleAlbumPage extends React.Component {
       <React.Fragment>
       <NavBar />
       <div>
-        {this.state.imgData.map(img => <AlbumImageCard imgData={img} />) }
+        {this.state.posts.map(post => <AlbumImageCard post={post} />) }
       </div>
       </React.Fragment>
     )

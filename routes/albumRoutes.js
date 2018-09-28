@@ -49,11 +49,11 @@ module.exports = app => {
     }
   })
 
-  // Get a single album with Post properties: title, createdAt, description, imgurl (for AlbumMaker)
+  // Get a single album with all Post properties (for SingleAlbumPage)
   app.get('/api/albums/full/:id', async (req, res) => {
     try {
       const album = await Album.findById(req.params.id, 'posts');
-      const posts = await Post.find({_id: {$in: album.posts}}, 'title createdAt description imgUrl');
+      const posts = await Post.find({_id: {$in: album.posts}});
       res.status(200).send(posts);
     } catch (e) {
       console.log(e);

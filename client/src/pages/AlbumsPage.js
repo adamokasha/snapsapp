@@ -24,7 +24,6 @@ export const AlbumsPage = props => {
 
   return (
     <div>
-      <NavBar />
       <Typography
       variant="display3"
       align="center"

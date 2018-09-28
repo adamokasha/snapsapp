@@ -29,6 +29,7 @@ const styles = theme => ({
     marginRight: theme.spacing.unit / 2
   },
   aTag: {
+    padding: 0,
     color: 'inherit',
     textDecoration: 'none'
   }
@@ -84,11 +85,9 @@ class NavBar extends React.Component {
           <MenuItem to="upload" component={Link} onClick={this.handleClose}>
             Add Image
           </MenuItem>
-          <MenuItem onClick={this.handleClose}>My Profile</MenuItem>
-          <MenuItem onClick={this.handleClose}>
-            <a href="/auth/logout" className={classes.aTag}>
+          <MenuItem to="/myalbums" component={Link} onClick={this.handleClose}>Albums</MenuItem>
+          <MenuItem href="/auth/logout" component="a" onClick={this.handleClose}>
               Log Out
-            </a>
           </MenuItem>
         </Menu>
       </div>
