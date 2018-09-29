@@ -44,38 +44,88 @@ module.exports = app => {
   });
 
   // Feed context: User posts all
-  app.get('/api/posts/user/:user/all/:page', async (req, res) => {
+  app.get('/api/posts/user/all/:user/:page', async (req, res) => {
     try {
       const { page, user } = req.params;
       console.log(page, user);
 
-      const userId = await User.find({displayName: user}, '_id');
+      const userId = await User.find({ displayName: user }, '_id');
       console.log(userId);
-      const posts = await Post.find({ '_owner': userId })
-        .limit(5)
-        .skip(5 * page)
+      const posts = await Post.find({ _owner: userId })
+        .populate({
+          path: '_owner',
+          select: 'profilePhoto displayName'
+        })
+        .limit(6)
+        .skip(6 * page)
         .exec();
 
-        if (req.user) {
-          const favesDoc = await Faves.findOne(
-            { _owner: req.user.id },
-            '_faves',
-            { lean: true }
-          );
-          const { _faves } = favesDoc;
-  
-          posts.forEach(post => {
-            if (_faves.toString().includes(post._id)) {
-              return (post.isFave = true);
-            }
-          });
-  
-          return res.status(200).send(posts);
-        }
+      if (req.user) {
+        const favesDoc = await Faves.findOne(
+          { _owner: req.user.id },
+          '_faves',
+          { lean: true }
+        );
+        const { _faves } = favesDoc;
 
-        res.status(200).send(posts);
+        posts.forEach(post => {
+          if (_faves.toString().includes(post._id)) {
+            return (post.isFave = true);
+          }
+        });
+
+        return res.status(200).send(posts);
+      }
+
+      res.status(200).send(posts);
     } catch (e) {
-        console.log(e)
+      console.log(e);
+    }
+  });
+
+  
+
+  // Feed context: User faves all
+  app.get('/api/posts/user/faves/:user/:page', async (req, res) => {
+    try {
+      const { page, user } = req.params;
+
+      const userId = await User.find({ displayName: user }, '_id');
+      const faves = await Faves.find({ _owner: userId })
+        .populate({
+          path: '_faves',
+          select: '_id'
+        })
+        .exec();
+
+      const favesArray = faves[0]._faves;
+
+      const posts = await Post.find({ _id: { $in: favesArray } })
+        .populate({path: '_owner', select: 'profilePhoto displayName'})
+        .limit(6)
+        .skip(6 * page)
+        .exec();
+
+      if (req.user) {
+        const favesDoc = await Faves.findOne(
+          { _owner: req.user.id },
+          '_faves',
+          { lean: true }
+        );
+        const { _faves } = favesDoc;
+
+        posts.forEach(post => {
+          if (_faves.toString().includes(post._id)) {
+            return (post.isFave = true);
+          }
+        });
+
+        return res.status(200).send(posts);
+      }
+
+      res.status(200).send(posts);
+    } catch (e) {
+      console.log(e);
     }
   });
 

@@ -98,7 +98,15 @@ export class Feed extends React.Component {
     }
 
     this.setState({ isFetching: true }, async () => {
-      const res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
+      const {context} = this.props;
+      let res;
+      if (context === 'home') {
+        res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
+      } else if (context === 'userposts') {
+        res = await axios.get(`/api/posts/user/all/${this.props.user}/${this.state.currentPage}`)
+      } else if (context === 'userfaves') {
+        res = await axios.get(`/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`)
+      }
 
       if (!res.data.length) {
         this.setState({ morePagesAvailable: false }, () => {
@@ -121,7 +129,15 @@ export class Feed extends React.Component {
 
   componentDidMount() {
     this.setState({ isFetching: true }, async () => {
-      const res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
+      const {context} = this.props;
+      let res;
+      if (context === 'home') {
+        res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
+      } else if (context === 'userposts') {
+        res = await axios.get(`/api/posts/user/all/${this.props.user}/${this.state.currentPage}`)
+      } else if (context === 'userfaves') {
+        res = await axios.get(`/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`)
+      }
       this.setState(
         {
           pages: [res.data],
