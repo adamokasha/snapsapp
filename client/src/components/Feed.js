@@ -97,7 +97,7 @@ export class Feed extends React.Component {
       return;
     }
 
-    // this.setState is not guaranteed to be synchronous, passing a bc guarantees cb will be called after state update
+    // this.setState is not guaranteed to be synchronous, passing a cb guarantees cb will be called after state update
     this.setState({ isFetching: true }, async () => {
       const res = await this.props.fetchPosts(this.state.currentPage);
       if (!res) {
