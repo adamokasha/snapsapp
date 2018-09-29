@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {Link} from 'react-router-dom';
 import classNames from 'classnames';
 import Button from '@material-ui/core/Button';
 import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
@@ -108,7 +109,7 @@ export class FullPost extends React.Component {
           <div className={classes.postInfo}>
             <div className={classes.infoLeft}>
               <div className={classes.avatarContainer}>
-                <Avatar src={_owner.profilePhoto} className={classes.avatar} />
+                <Avatar to={`/profile/${_owner.displayName}`} component={Link} src={_owner.profilePhoto} className={classes.avatar} />
                 <div>
                   <Typography variant="body2">{title}</Typography>
                   <Typography variant="caption" gutterBottom>

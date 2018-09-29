@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import {Link} from 'react-router-dom';
 import compose from 'recompose/compose';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import classNames from 'classnames';
@@ -237,7 +238,7 @@ class ImageModalView extends React.Component {
         <div className={classes.content}>
           <div className={classes.headerElement}>
             <div className={classes.headerLeft}>
-              <Avatar src={_owner.profilePhoto} className={classes.avatar} />
+              <Avatar to={`/profile/${_owner.displayName}`} component={Link} src={_owner.profilePhoto} className={classes.avatar} />
               <div className={classes.headerLeftText}>
                 <Typography variant="body2">{title}</Typography>
                 <Typography variant="caption">{_owner.displayName}</Typography>

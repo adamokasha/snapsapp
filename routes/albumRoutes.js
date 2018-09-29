@@ -53,7 +53,7 @@ module.exports = app => {
   app.get('/api/albums/full/:id', async (req, res) => {
     try {
       const album = await Album.findById(req.params.id, 'posts');
-      const posts = await Post.find({_id: {$in: album.posts}});
+      const posts = await Post.find({_id: {$in: album.posts}}).populate('_owner', 'displayName profilePhoto');
       res.status(200).send(posts);
     } catch (e) {
       console.log(e);

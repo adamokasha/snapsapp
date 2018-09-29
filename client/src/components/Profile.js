@@ -82,7 +82,10 @@ const styles = theme => ({
   button: {
     marginTop: `${theme.spacing.unit * 2}px`,
     width: '100%',
-    margin: '0 auto'
+    margin: '0 auto',
+  },
+  hiddenSubmitButton: {
+    display: 'none'
   }
 });
 
@@ -315,7 +318,7 @@ export class Profile extends React.Component {
 
             {this.state.ownProfile ? (
               <Button
-                className={classes.button}
+                className={this.state.editEnabled ? classes.button : classes.hiddenSubmitButton }
                 type="submit"
                 variant="contained"
                 color="primary"
