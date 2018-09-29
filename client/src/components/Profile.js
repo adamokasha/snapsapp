@@ -24,11 +24,21 @@ const styles = theme => ({
     width: '100%'
   },
   paper: {
-    width: '30%',
+    width: '90%',
     display: 'flex',
     flexDirection: 'column',
     position: 'relative',
-    padding: `${theme.spacing.unit * 2}px`
+    marginTop: `${theme.spacing.unit * 3}px`,
+    padding: `${theme.spacing.unit * 2}px`,
+    [theme.breakpoints.up('sm')]: {
+      width: '65%'
+    },
+    [theme.breakpoints.up('md')]: {
+      width: '55%'
+    },
+    [theme.breakpoints.up('lg')]: {
+      width: '35%'
+    }
   },
   editButtons: {
     position: 'absolute',
