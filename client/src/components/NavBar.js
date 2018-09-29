@@ -54,7 +54,7 @@ class NavBar extends React.Component {
   };
 
   renderNavButtons() {
-    const { auth, classes } = this.props;
+    const { auth } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 

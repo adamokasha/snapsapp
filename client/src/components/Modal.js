@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
-import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
 

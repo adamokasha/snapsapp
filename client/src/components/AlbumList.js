@@ -2,14 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
-import PhotoAlbumTwoToneIcon from '@material-ui/icons/PhotoAlbumTwoTone';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import IconButton from '@material-ui/core/IconButton';
 import axios from 'axios';
 
@@ -25,7 +20,6 @@ const styles = theme => ({
   },
   gridList: {
     width: '100%',
-    justifyContent: 'center',
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'center'
@@ -60,8 +54,6 @@ class AlbumList extends React.Component {
     const actionIcon = e.currentTarget.querySelectorAll(
       'button[class*="MuiIconButton"]'
     )[0];
-    // if mouse over titleBar
-    // e.target.parentNode.parentNode.parentNode.querySelectorAll('button[class*="MuiIconButton"]')[0];
 
     if (actionIcon && e.type === 'mouseenter') {
       actionIcon.style.visibility = 'visible';

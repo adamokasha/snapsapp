@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
-import classNames from 'classnames';
 import Button from '@material-ui/core/Button';
 import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
 import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
@@ -149,6 +148,11 @@ export class FullPost extends React.Component {
       </React.Fragment>
     );
   }
+}
+
+FullPost.propTypes = {
+  location: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
 }
 
 export default withStyles(styles)(FullPost);

@@ -1,6 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import compose from 'recompose/compose';
 import {withRouter} from 'react-router';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -10,10 +8,6 @@ import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-
-import ImageModalView from './ImageModalView';
-import Modal from './Modal';
-import { favePost, unFavePost } from '../actions/posts';
 
 const styles = theme => ({
   root: {
@@ -103,14 +97,9 @@ class AlbumImageCard extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => ({
-  isAuth: auth
-});
+AlbumImageCard.propTypes = {
+  classes: PropTypes.object.isRequired,
+  post: PropTypes.object.isRequired
+}
 
-export default compose(
-  withStyles(styles),
-  connect(
-    mapStateToProps,
-    { favePost, unFavePost }
-  )
-)(withRouter(AlbumImageCard));
+export default withStyles(styles)(withRouter(AlbumImageCard));

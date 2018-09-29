@@ -14,10 +14,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
 import Divider from '@material-ui/core/Divider';
+import axios from 'axios';
 
 import Modal from './Modal';
 import ImageModalView from './ImageModalView';
-import { favePost, unFavePost } from '../actions/posts';
 
 const styles = theme => ({
   card: {
@@ -79,9 +79,13 @@ class ImageCard extends React.Component {
   };
 
   onFave = async () => {
-    this.setState({ faved: !this.state.faved });
-    await this.props.favePost(this.state.imgId);
-    return;
+    try {
+      this.setState({ faved: !this.state.faved });
+      await axios.post(`/api/posts/fave/${this.state.imgId}`);
+      return;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   // Will select view based on width: Modal(m+) or redirect to full page view(s-)
@@ -126,7 +130,7 @@ class ImageCard extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { _owner, imgUrl, title, description, faveCount } = this.props.post;
+    const { _owner, title, description, faveCount } = this.props.post;
 
     return (
       <div>
@@ -198,7 +202,6 @@ const mapStateToProps = ({ auth }) => ({
 export default compose(
   withStyles(styles),
   connect(
-    mapStateToProps,
-    { favePost, unFavePost }
+    mapStateToProps
   )
 )(ImageCard);

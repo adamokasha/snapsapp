@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 
 import NavBar from '../components/NavBar';
 import Profile from '../components/Profile';

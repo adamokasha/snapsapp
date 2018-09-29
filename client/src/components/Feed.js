@@ -147,7 +147,6 @@ export class Feed extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log(this.state.pages);
 
     return (
       <div>
