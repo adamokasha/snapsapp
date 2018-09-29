@@ -4,8 +4,10 @@ const requireAuth = require('../middlewares/requireAuth');
 
 const Album = mongoose.model('Album');
 const Post = mongoose.model('Post');
+const User = mongoose.model('User');
 
 module.exports = app => {
+  // Add new album
   app.post('/api/albums', requireAuth, async (req, res) => {
     try {
       const { albumName, albumPosts } = req.body;
@@ -26,19 +28,30 @@ module.exports = app => {
       console.log(e);
     }
   });
+  
+  // Feed context: User albums
+  app.get('/api/albums/all/:user', async (req, res) => {
+    try {
+      const userId = await User.find({displayName: req.params.user}, '_id');
+      const albums = await Album.find({_owner: userId}, '_id name coverImg').populate('_owner', 'displayName');
+      res.status(200).send(albums);
+    } catch(e) {
+      console.log(e)
+    }
+  })
 
   // Get a user's albums (protected)
   app.get('/api/albums/myalbums', requireAuth, async (req, res) => {
     try {
       const userId = req.user.id;
-      const albums = await Album.find({ _owner: userId }, '_id name coverImg').populate('_owner', 'displayNameLowerC');
+      const albums = await Album.find({ _owner: userId }, '_id name coverImg').populate('_owner', 'displayName');
       res.status(200).send(albums);
     } catch (e) {
       console.log(e);
     }
   });
 
-  // Get a single album only imgUrls (for AlbumMaker)
+  // Get a single album, only imgUrls (for AlbumMaker)
   app.get('/api/albums/get/:id', async (req, res) => {
     try {
       const album = await Album.findById(req.params.id, 'posts');

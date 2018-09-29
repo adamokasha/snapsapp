@@ -46,8 +46,8 @@ class AlbumList extends React.Component {
   }
 
   async componentDidMount() {
-    const albums = await axios.get('/api/albums/myalbums');
-    this.setState({ albums: [...albums.data] });
+    // const albums = await axios.get('/api/albums/myalbums');
+    // this.setState({ albums: [...albums.data] });
   }
 
   toggleEditIcon = e => {
@@ -73,7 +73,7 @@ class AlbumList extends React.Component {
     return (
       <div className={classes.gridListRoot}>
         <GridList cellHeight="auto" cols={8} className={classes.gridList}>
-          {this.state.albums.map((album, i) => (
+          {this.props.albums.map((album, i) => (
             <GridListTile
               onMouseLeave={this.toggleEditIcon}
               onMouseEnter={this.toggleEditIcon}
@@ -84,7 +84,7 @@ class AlbumList extends React.Component {
               <Link
                 to={{
                   pathname: `/albums/${
-                    album._owner.displayNameLowerC
+                    album._owner.displayName
                   }/${album._id}`,
                   state: { albumId: album._id }
                 }}
@@ -128,7 +128,8 @@ class AlbumList extends React.Component {
 }
 
 AlbumList.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  albums: PropTypes.array.isRequired
 };
 
 export default withStyles(styles)(AlbumList);

@@ -10,6 +10,7 @@ import axios from 'axios';
 
 import ImageGrid from '../components/ImageGrid';
 import { setPosts, setPostContext } from '../actions/posts';
+import AlbumList from './AlbumList';
 
 const styles = theme => ({
   circularLoader: {
@@ -37,6 +38,7 @@ export class Feed extends React.Component {
       morePagesAvailable: true,
       isFetching: false,
       pages: [],
+      albums: [],
       showNavToTop: false
     };
 
@@ -106,6 +108,13 @@ export class Feed extends React.Component {
         res = await axios.get(`/api/posts/user/all/${this.props.user}/${this.state.currentPage}`)
       } else if (context === 'userfaves') {
         res = await axios.get(`/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`)
+      } else if (context === 'useralbums') {
+        res = await axios.get(`/api/albums/all/${this.props.user}`);
+        return this.setState({
+          albums: [...res.data],
+          isFetching: false,
+          morePagesAvailable: false
+        })
       }
 
       if (!res.data.length) {
@@ -137,7 +146,15 @@ export class Feed extends React.Component {
         res = await axios.get(`/api/posts/user/all/${this.props.user}/${this.state.currentPage}`)
       } else if (context === 'userfaves') {
         res = await axios.get(`/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`)
+      } else if (context === 'useralbums') {
+        res = await axios.get(`/api/albums/all/${this.props.user}`);
+        return this.setState({
+          albums: [...res.data],
+          isFetching: false,
+          morePagesAvailable: false
+        })
       }
+
       this.setState(
         {
           pages: [res.data],
@@ -186,6 +203,11 @@ export class Feed extends React.Component {
         {this.state.isFetching ? (
           <CircularProgress className={classes.circularLoader} size={50} />
         ) : null}
+        {
+          this.state.albums ? (
+            <AlbumList albums={this.state.albums} />
+          ) : null
+        }
       </div>
     );
   }

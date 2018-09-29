@@ -53,7 +53,7 @@ class FullWidthTabs extends React.Component {
         {this.state.value === 1 ? (
           <Feed context="userposts" user={this.props.user} />
         ) : null}
-        {this.state.value === 2 ? <Typography>3</Typography> : null}
+        {this.state.value === 2 ? <Feed context="useralbums" user={this.props.user} /> : null}
       </div>
     );
   }
