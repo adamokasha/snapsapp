@@ -12,7 +12,7 @@ import PrivacyPolicy from '../components/PrivacyPolicy';
 import { fetchUser } from '../actions/auth';
 
 import AlbumMaker from '../components/AlbumMaker';
-import AlbumsPage from '../pages/AlbumsPage';
+import MyAlbumsPage from '../pages/MyAlbumsPage';
 import SingleAlbumPage from '../pages/SingleAlbumPage';
 import FullPost from '../components/FullPost';
 import ProfilePage from '../pages/ProfilePage';
@@ -36,10 +36,9 @@ export class AppRouter extends React.Component {
 
           <Route path="/albummaker" component={AlbumMaker} />
 
-          <PrivateRoute exact path="/myalbums" component={AlbumsPage} />
+          <PrivateRoute exact path="/myalbums" component={MyAlbumsPage} />
           <Route path="/albums/:user/:albumid" component={SingleAlbumPage} />
           <Route path="/post/:id" component={FullPost} />
-
           <Route path="/profile/:user" component={ProfilePage} />
 
         </Switch>
