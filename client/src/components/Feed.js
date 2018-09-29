@@ -1,14 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
+import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import NavigationIcon from '@material-ui/icons/Navigation';
+import axios from 'axios';
 
 import ImageGrid from '../components/ImageGrid';
-import { fetchPosts } from '../actions/posts';
-import {setSlidesContext} from '../actions/slidesContext';
+import { setPosts, setPostContext } from '../actions/posts';
 
 const styles = theme => ({
   circularLoader: {
@@ -35,7 +36,7 @@ export class Feed extends React.Component {
       currentPage: this.props.posts.length || 0,
       morePagesAvailable: true,
       isFetching: false,
-      pages: this.props.posts || [],
+      pages: [],
       showNavToTop: false
     };
 
@@ -92,15 +93,14 @@ export class Feed extends React.Component {
   }
 
   loadImages = async () => {
-    const { posts } = this.props;
     if (this.state.isFetching || !this.state.morePagesAvailable) {
       return;
     }
 
-    // this.setState is not guaranteed to be synchronous, passing a cb guarantees cb will be called after state update
     this.setState({ isFetching: true }, async () => {
-      const res = await this.props.fetchPosts(this.state.currentPage);
-      if (!res) {
+      const res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
+
+      if (!res.data.length) {
         this.setState({ morePagesAvailable: false }, () => {
           return;
         });
@@ -109,31 +109,28 @@ export class Feed extends React.Component {
       this.setState(
         {
           currentPage: this.state.currentPage + 1,
-          pages: [...posts],
+          pages: [...this.state.pages, res.data],
           isFetching: false
         },
         () => {
-          return;
+          return this.props.setPosts(res.data);
         }
       );
     });
   };
 
   componentDidMount() {
-    if (this.props.posts.length > 0) {
-      return;
-    }
     this.setState({ isFetching: true }, async () => {
-      await this.props.fetchPosts(this.state.currentPage);
-      await this.props.setSlidesContext('feed');
+      const res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
       this.setState(
         {
-          pages: [...this.props.posts],
+          pages: [res.data],
           currentPage: this.state.currentPage + 1,
           isFetching: false
         },
         () => {
-          return;
+          this.props.setPostContext(this.props.context);
+          this.props.setPosts(res.data);
         }
       );
     });
@@ -150,6 +147,7 @@ export class Feed extends React.Component {
 
   render() {
     const { classes } = this.props;
+    console.log(this.state.pages);
 
     return (
       <div>
@@ -165,9 +163,11 @@ export class Feed extends React.Component {
             Go to Top
           </Button>
         ) : null}
-        {this.state.pages.map((page, i) => (
-          <ImageGrid key={i} posts={page} />
-        ))}
+        {this.state.pages
+          ? this.state.pages.map((page, i) => (
+              <ImageGrid key={i} posts={page} />
+            ))
+          : null}
         {this.state.isFetching ? (
           <CircularProgress className={classes.circularLoader} size={50} />
         ) : null}
@@ -180,10 +180,14 @@ const mapStateToProps = ({ posts }) => ({
   posts
 });
 
+Feed.propTypes = {
+  context: PropTypes.string.isRequired
+};
+
 export default compose(
   withStyles(styles),
   connect(
     mapStateToProps,
-    { fetchPosts, setSlidesContext }
+    { setPosts, setPostContext }
   )
 )(Feed);

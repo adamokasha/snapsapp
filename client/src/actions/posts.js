@@ -13,12 +13,12 @@ export const submitPost = (post, file, history) => async dispatch => {
   }).then(res => console.log(res)).catch(e => console.log(e))
 }
 
-export const fetchPosts = (page) => async dispatch => {
-  const res = await axios.get(`/api/posts/all/${page}`);
-  // console.log(res.data.length);
-  dispatch({ type: 'FETCH_POSTS', payload: res.data});
-  return res.data.length;
-}
+export const setPostContext = (context) => ({
+  type: 'SET_CONTEXT',
+  payload: context
+})
+
+export const setPosts = (posts) => ({ type: 'SET_POSTS', payload: posts});
 
 export const fetchUserPosts = () => async dispatch => {
   console.log('called fetchuserposts');

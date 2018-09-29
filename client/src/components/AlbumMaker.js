@@ -13,7 +13,6 @@ import axios from 'axios';
 
 import AlbumMakerImageView from './AlbumMakerImageView';
 import {fetchUserPosts} from '../actions/posts';
-import {createAlbum} from '../actions/albums';
 
 const styles = theme => ({
   root: {
@@ -98,7 +97,6 @@ class AlbumMaker extends React.Component {
     // retrieve current album from db
     // set album as state.currentAlbumPosts and state.selected
     // do sync
-    console.log(this.props.albumId)
     if(this.props.albumId) {
  
       const res = await axios.get(`/api/albums/get/${this.props.albumId}`);
@@ -145,7 +143,8 @@ class AlbumMaker extends React.Component {
     if(this.props.method === "patch") {
       return await axios.patch(`/api/albums/update/${this.props.albumId}`, {albumPosts:this.state.selected, albumName: this.state.albumName});
     }
-    await this.props.createAlbum(this.state.selected, this.state.albumName)
+    const {selected, albumName } = this.state;
+    await axios.post('/api/albums', {albumPosts: selected, albumName});
   };
 
   render() {
@@ -216,5 +215,5 @@ AlbumMaker.propTypes = {
 
 export default compose(
   withStyles(styles),
-  connect(null, {fetchUserPosts, createAlbum})
+  connect(null, {fetchUserPosts})
 )(AlbumMaker)

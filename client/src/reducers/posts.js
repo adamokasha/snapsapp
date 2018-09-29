@@ -1,7 +1,9 @@
-export default (state = [], action) => {
+export default (state = { context: null, postData: []}, action) => {
   switch (action.type) {
-    case 'FETCH_POSTS':
-      return [...state, action.payload]
+    case 'SET_CONTEXT':
+      return {...state, context: action.payload}
+    case 'SET_POSTS':
+      return {...state, postData: [...state.postData, action.payload]}
     default:
     return state;
   }

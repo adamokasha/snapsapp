@@ -12,7 +12,7 @@ export class HomePage extends React.Component {
       <div>
       <NavBar />
         {isAuth ? null : <HeroUnit />}
-        <Feed />
+        <Feed context={'home'} />
       </div>
     );
   }

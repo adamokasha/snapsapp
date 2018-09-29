@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import compose from 'recompose/compose';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import classNames from 'classnames';
@@ -96,7 +96,7 @@ const styles = theme => ({
   navRight: {
     right: '2%'
   },
-  disabledNavRight: {
+  disabledNav: {
     display: 'none'
   },
   loader: {
@@ -154,72 +154,85 @@ class ImageModalView extends React.Component {
       currentSlide: this.props.post,
       currentIndex: null,
       loading: true,
-      ended: false
+      start: false,
+      end: false
     };
   }
 
-  componentDidMount(){
+  componentDidMount() {
     // Prevent goTopButton from getting in way of modal
     const goTopButton = document.getElementById('goTopButton');
-    if(goTopButton) {
+    if (goTopButton) {
       document.getElementById('goTopButton').style.display = 'none';
     }
 
     // If feed slides will be array of arrays (due to pagination)
-    if(this.props.slidesContext === 'feed') {
-      const slides = [];
-      this.props.slides.forEach(posts => posts.forEach(post => slides.push(post)));
-      const currentIndex = slides.indexOf(this.props.post);     
-      this.setState({slides, currentIndex}, () => {
-        this.checkIfLastSlide()
-      });
-
-    }
+    const slides = [];
+    this.props.slides.forEach(posts =>
+      posts.forEach(post => slides.push(post))
+    );
+    const currentIndex = slides.indexOf(this.props.post);
+    this.setState({ slides, currentIndex }, () => {
+      this.checkIfLastSlide();
+      this.checkIfFirstSlide();
+    });
   }
 
   componentWillUnmount() {
     // Restore goTopButton
     const goTopButton = document.getElementById('goTopButton');
-    if(goTopButton) {
+    if (goTopButton) {
       document.getElementById('goTopButton').style.display = 'inline-flex';
     }
   }
 
-  checkIfLastSlide = () => {
-    const {currentIndex} = this.state;
-      // If current slide is last, return, don't increment
-      if (currentIndex + 1 > this.state.slides.length - 1 ) {
-        return this.setState({loading: false, ended: true}, ()=> {});
-      }
+  checkIfFirstSlide() {
+    const { currentIndex } = this.state;
+    if (currentIndex === 0) {
+      this.setState({ start: true }, () => {});
+    }
   }
 
- 
+  checkIfLastSlide = () => {
+    const { currentIndex } = this.state;
+    // If current slide is last, return, don't increment
+    if (currentIndex + 1 > this.state.slides.length - 1) {
+      return this.setState({ loading: false, end: true }, () => {});
+    }
+  };
+
   onPrevSlide = () => {
-    this.setState({loading: true, ended: false});
-    const {currentIndex} = this.state;
-    if (currentIndex - 1 < 0 ) {
+    this.setState({ loading: true, end: false });
+    const { currentIndex } = this.state;
+    if (currentIndex - 1 < 0) {
       return;
     }
     const prevSlide = this.state.slides[currentIndex - 1];
-    return this.setState({currentSlide: prevSlide, currentIndex: this.state.currentIndex - 1}, () => {});
-  }
+    return this.setState(
+      { currentSlide: prevSlide, currentIndex: this.state.currentIndex - 1 },
+      () => {}
+    );
+  };
 
   onNextSlide = () => {
-    const {currentIndex} = this.state;
-    this.setState({loading: true});
+    const { currentIndex } = this.state;
+    this.setState({ loading: true, start: false });
 
     // Check if next slide last, dont include next icon
-    if(currentIndex + 1 === this.state.slides.length - 1) {
-      this.setState({ended: true});
+    if (currentIndex + 1 === this.state.slides.length - 1) {
+      this.setState({ end: true });
     }
-    this.checkIfLastSlide()
+    this.checkIfLastSlide();
     const nextSlide = this.state.slides[currentIndex + 1];
-    return this.setState({currentSlide: nextSlide, currentIndex: this.state.currentIndex + 1}, () => {});
-  }
+    return this.setState(
+      { currentSlide: nextSlide, currentIndex: this.state.currentIndex + 1 },
+      () => {}
+    );
+  };
 
   onImgLoad = () => {
-    this.setState({loading: false})
-  }
+    this.setState({ loading: false });
+  };
 
   render() {
     const { classes } = this.props;
@@ -238,7 +251,12 @@ class ImageModalView extends React.Component {
         <div className={classes.content}>
           <div className={classes.headerElement}>
             <div className={classes.headerLeft}>
-              <Avatar to={`/profile/${_owner.displayName}`} component={Link} src={_owner.profilePhoto} className={classes.avatar} />
+              <Avatar
+                to={`/profile/${_owner.displayName}`}
+                component={Link}
+                src={_owner.profilePhoto}
+                className={classes.avatar}
+              />
               <div className={classes.headerLeftText}>
                 <Typography variant="body2">{title}</Typography>
                 <Typography variant="caption">{_owner.displayName}</Typography>
@@ -269,7 +287,11 @@ class ImageModalView extends React.Component {
           <div className={classes.imgContainer}>
             <NavigateBeforeIcon
               onClick={this.onPrevSlide}
-              className={classNames(classes.navIcons, classes.navLeft)}
+              className={
+                this.state.start
+                  ? classes.disabledNav
+                  : classNames(classes.navIcons, classes.navLeft)
+              }
             />
             <img
               onLoad={this.onImgLoad}
@@ -279,12 +301,14 @@ class ImageModalView extends React.Component {
             />
             {this.state.loading ? (
               <CircularProgress className={classes.loader} />
-            ) : (
-              null
-            )}
+            ) : null}
             <NavigateNextIcon
               onClick={this.onNextSlide}
-              className={this.state.ended ? classes.disabledNavRight : classNames(classes.navIcons, classes.navRight)}
+              className={
+                this.state.end
+                  ? classes.disabledNav
+                  : classNames(classes.navIcons, classes.navRight)
+              }
             />
           </div>
           <div className={classes.bottom}>
@@ -307,26 +331,9 @@ class ImageModalView extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  if(state.slidesContext === 'feed') {
-    return {
-      slidesContext: state.slidesContext,
-      slides: state.posts
-    }
-  }
-  if(state.slidesContext === 'album') {
-    return {
-      slidesContext: state.slidesContext,
-      slides: state.album
-    }
-  }
-  if(state.slidesContext === 'faves') {
-    return {
-      slidesContext: state.slidesContext,
-      slides: state.faves
-    }
-  }
-};
+const mapStateToProps = state => ({
+  slides: state.posts.postData
+});
 
 ImageModalView.propTypes = {
   classes: PropTypes.object.isRequired,
