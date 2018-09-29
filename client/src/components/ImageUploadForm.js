@@ -106,7 +106,10 @@ class ImageUploadForm extends React.Component {
   };
 
   onTagsChange = e => {
-    this.setState({ post: { ...this.state.post, tags: e.target.value } });
+    const textInput = e.target.value; 
+    const tagsArr = textInput.replace(/[^\w\s]/gi, '').trim().replace(/\s\s+/g, ' ').split(' '); 
+
+    this.setState({ post: { ...this.state.post, tags: tagsArr } });
   };
 
   onDescChange = e => {
