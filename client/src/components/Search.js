@@ -65,6 +65,19 @@ export class Search extends React.Component {
     this.setState(state => ({ open: !state.open }));
   };
 
+  handleOpen = (e) => {
+    if(!e.target.value) {
+      return this.setState({open: false})
+    }
+    this.setState({open: true})
+  }
+
+  // handleReopen = (e) => {
+  //   if(e.target.value) {
+  //     this.setState({open: true})
+  //   }
+  // }
+
   handleClose = event => {
     if (this.anchorEl.contains(event.target)) {
       return;
@@ -91,7 +104,8 @@ export class Search extends React.Component {
               <IconButton><SearchIcon className={classes.searchIcon} /></IconButton>
             </InputAdornment>
           }
-          onFocus={this.handleToggle}
+          onKeyUp={this.handleOpen}
+          onFocus={this.handleOpen}
           onBlur={this.handleClose}
         />
         <Popper className={classes.popper} open={this.state.open} anchorEl={this.anchorEl} transition disablePortal placement="bottom-start">
@@ -105,7 +119,7 @@ export class Search extends React.Component {
               <ClickAwayListener onClickAway={this.handleClose}>
                 <MenuList className={classes.menuList}>
                   <MenuItem onClick={this.handleClose}><ImageSearchIcon className={classes.searchIcons} />Search posts</MenuItem>
-                  <MenuItem onClick={this.handleClose}><GroupIcon className={classes.searchIcons} />Search People</MenuItem>
+                  <MenuItem onClick={this.handleClose}><GroupIcon className={classes.searchIcons} />Search people</MenuItem>
                 </MenuList>
               </ClickAwayListener>
             </Paper>
