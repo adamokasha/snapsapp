@@ -120,9 +120,6 @@ export class Feed extends React.Component {
           morePagesAvailable: false
         });
       } else if (context === 'searchPosts') {
-        // In this context, props already have passed some initial data to this component
-          // componentDidMount inital async calls skipped but...
-            // componentDidMount will already have incremented currentPage by + 1
         res = await this.props.searchPosts(this.props.searchTerms, this.state.currentPage);
         if (!res.data.length) {
           this.setState({ morePagesAvailable: false }, () => {
@@ -173,13 +170,11 @@ export class Feed extends React.Component {
           morePagesAvailable: false
         });
       } if (context === 'searchPosts') {
-        console.log('searchPosts')
-        console.log(this.props.posts)
         return this.setState({
           currentPage: this.state.currentPage + 1,
           pages: this.props.posts.searchResults,
           isFetching: false
-        });
+        }, () => {});
       }
 
       this.setState(
@@ -196,10 +191,12 @@ export class Feed extends React.Component {
     });
   }
 
+
   componentWillUnmount() {
     // Prevent memory leak
     window.removeEventListener('scroll', this.onScroll, false);
   }
+
 
   goTop = () => {
     window.scrollTo(0, 0);
@@ -228,9 +225,7 @@ export class Feed extends React.Component {
               <ImageGrid key={i} posts={page} />
             ))
           : null}
-        {this.state.isFetching ? (
-          <CircularProgress className={classes.circularLoader} size={50} />
-        ) : null}
+        
 
         {this.state.albums && context === 'userAlbums' ? (
           <AlbumList albums={this.state.albums} />
@@ -238,6 +233,10 @@ export class Feed extends React.Component {
 
         {context === 'searchPosts' ? (
           posts.searchResults.map((page, i) => <ImageGrid key={i} posts={page} />)
+        ) : null}
+
+        {this.state.isFetching ? (
+          <CircularProgress className={classes.circularLoader} size={50} />
         ) : null}
       </div>
     );
