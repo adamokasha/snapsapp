@@ -146,22 +146,22 @@ export class Feed extends React.Component {
       let res;
       if (context === 'home') {
         res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
-      } else if (context === 'userposts') {
+      } else if (context === 'userPosts') {
         res = await axios.get(
           `/api/posts/user/all/${this.props.user}/${this.state.currentPage}`
         );
-      } else if (context === 'userfaves') {
+      } else if (context === 'userFaves') {
         res = await axios.get(
           `/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`
         );
-      } else if (context === 'useralbums') {
+      } else if (context === 'userAlbums') {
         res = await axios.get(`/api/albums/all/${this.props.user}`);
         return this.setState({
           albums: [...res.data],
           isFetching: false,
           morePagesAvailable: false
         });
-      }
+      } 
 
       this.setState(
         {
@@ -213,7 +213,7 @@ export class Feed extends React.Component {
           <CircularProgress className={classes.circularLoader} size={50} />
         ) : null}
 
-        {this.state.albums && context === 'useralbums' ? (
+        {this.state.albums && context === 'userAlbums' ? (
           <AlbumList albums={this.state.albums} />
         ) : null}
       </div>

@@ -23,7 +23,16 @@ export const setPostContext = context => ({
 
 export const setPosts = posts => ({ type: 'SET_POSTS', payload: posts });
 
+// Needs to be moved
 export const fetchUserPosts = () => async dispatch => {
   const res = await axios.get('/api/posts/myposts/all');
   return res.data;
 };
+
+export const searchPosts = (searchTermsArr, page) => async dispatch => {
+  const res = await axios.post(`/api/posts/search/${page}`, {
+    searchTerms: searchTermsArr
+  });
+
+  dispatch({type: 'SET_SEARCHED_POSTS', payload: res.data});
+}

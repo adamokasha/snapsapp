@@ -2,16 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import compose from 'recompose/compose';
-import TextField from '@material-ui/core/TextField';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
-import FilledInput from '@material-ui/core/FilledInput';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
-import IconButton from '@material-ui/core/IconButton'
-import ArrowDropDownCircleTwoToneIcon from '@material-ui/icons/ArrowDropDownCircle';
+import IconButton from '@material-ui/core/IconButton';
 import ImageSearchIcon from '@material-ui/icons/ImageSearch';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import Paper from '@material-ui/core/Paper';
@@ -20,6 +15,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import GroupIcon from '@material-ui/icons/Group';
 
+import {searchPosts} from '../actions/posts';
 
 const styles = theme => ({
   root: {
@@ -28,64 +24,64 @@ const styles = theme => ({
     justifyContent: 'center'
   },
   input: {
-    margin: `${theme.spacing.unit*2}px 0`
+    margin: `${theme.spacing.unit * 2}px 0`
   },
   popper: {
-    'zIndex': '1000',
+    zIndex: '1000',
     left: '-67px !important'
   },
   paper: {
     width: '262px',
-    background: "#fafafa"
+    background: '#fafafa'
   },
   searchIcons: {
     paddingRight: `${theme.spacing.unit}px`
   }
-})
+});
 
 export class Search extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      searchTerm: '',
-      open: false
+      searchTerms: null,
+      popperOpen: false
+    };
+  }
+
+  popperOpen = e => {
+    if (!e.target.value) {
+      return this.setState({ popperOpen: false });
     }
-  }
-
-  onSearchChange = (e) => {
-    this.setState({searchTerm: e.target.event}, () => {})
-  }
-
-  state = {
-    open: false,
+    this.setState({ popperOpen: true });
   };
 
-  handleToggle = () => {
-    this.setState(state => ({ open: !state.open }));
-  };
-
-  handleOpen = (e) => {
-    if(!e.target.value) {
-      return this.setState({open: false})
-    }
-    this.setState({open: true})
-  }
-
-  // handleReopen = (e) => {
-  //   if(e.target.value) {
-  //     this.setState({open: true})
-  //   }
-  // }
-
-  handleClose = event => {
+  popperClose = event => {
     if (this.anchorEl.contains(event.target)) {
       return;
     }
-
-    this.setState({ open: false });
+    this.setState({ popperOpen: false });
   };
 
+  onSearchChange = e => {
+    this.setState({ searchTerms: e.target.value }, () => {});
+  };
+
+  onSearchPosts = async e => {
+    // Scrub search terms
+    const searchTermsArr = this.state.searchTerms
+      .replace(/[^\w\s]/gi, '')
+      .trim()
+      .replace(/\s\s+/g, ' ')
+      .split(' ');
+
+    this.props.searchPosts(searchTermsArr, 0);
+    this.props.setContext('searchPosts');
+  };
+
+  onSearchPeople = e => {
+    this.props.onSearch(this.state.searchTerms, 'people');
+  };
 
   render() {
     const { classes } = this.props;
@@ -93,42 +89,64 @@ export class Search extends React.Component {
       <div className={classes.root}>
         <OutlinedInput
           inputRef={node => {
-            this.anchorEl = node
+            this.anchorEl = node;
           }}
           className={classes.input}
-          placeholder="Search #tag, user..."
-          aria-owns={this.state.open ? 'menu-list-grow' : null}
+          placeholder="#tags, posts, user..."
+          aria-owns={this.state.popperOpen ? 'menu-list-grow' : null}
           aria-haspopup="true"
           startAdornment={
             <InputAdornment position="start">
-              <IconButton><SearchIcon className={classes.searchIcon} /></IconButton>
+              <IconButton>
+                <SearchIcon className={classes.searchIcon} />
+              </IconButton>
             </InputAdornment>
           }
-          onKeyUp={this.handleOpen}
-          onFocus={this.handleOpen}
-          onBlur={this.handleClose}
+          onKeyUp={this.popperOpen}
+          onFocus={this.popperOpen}
+          onBlur={this.popperClose}
+          onChange={this.onSearchChange}
         />
-        <Popper className={classes.popper} open={this.state.open} anchorEl={this.anchorEl} transition disablePortal placement="bottom-start">
-        {({ TransitionProps }) => (
-          <Grow
-            {...TransitionProps}
-            id="menu-list-grow"
-            style={{ transformOrigin: 'center top' }}
-          >
-            <Paper className={classes.paper}>
-              <ClickAwayListener onClickAway={this.handleClose}>
-                <MenuList className={classes.menuList}>
-                  <MenuItem onClick={this.handleClose}><ImageSearchIcon className={classes.searchIcons} />Search posts</MenuItem>
-                  <MenuItem onClick={this.handleClose}><GroupIcon className={classes.searchIcons} />Search people</MenuItem>
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Grow>
-        )}
+        <Popper
+          className={classes.popper}
+          open={this.state.popperOpen}
+          anchorEl={this.anchorEl}
+          transition
+          disablePortal
+          placement="bottom-start"
+        >
+          {({ TransitionProps }) => (
+            <Grow
+              {...TransitionProps}
+              id="menu-list-grow"
+              style={{ transformOrigin: 'center top' }}
+            >
+              <Paper className={classes.paper}>
+                <ClickAwayListener onClickAway={this.popperClose}>
+                  <MenuList className={classes.menuList}>
+                    <MenuItem onClick={this.onSearchPosts}>
+                      <ImageSearchIcon className={classes.searchIcons} />
+                      Search posts
+                    </MenuItem>
+                    <MenuItem onClick={this.onSearchPeople}>
+                      <GroupIcon className={classes.searchIcons} />
+                      Search people
+                    </MenuItem>
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
         </Popper>
       </div>
     );
   }
 }
 
-export default withStyles(styles)(Search);
+export default compose(
+  withStyles(styles),
+  connect(
+    null,
+    {searchPosts}
+  )
+)(Search);

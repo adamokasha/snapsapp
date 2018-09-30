@@ -139,20 +139,24 @@ module.exports = app => {
   });
 
   // Search by tag or title
-  app.post('/api/posts/search/', async (req, res) => {
+  app.post('/api/posts/search/:page', async (req, res) => {
     try {
-      const {searchTerms} = req.body;
-      console.log( 'SEARCHTERMS: ', searchTerms)
+      const { searchTerms } = req.body;
+      const {page} = req.params;
+
+      console.log('SEARCHTERMS: ', searchTerms);
 
       const posts = await Post.find({
-        $or: [
-          { tags: { $in: searchTerms } },
-          { title: { $in: searchTerms } }
-        ]
-      });
+        $or: [{ tags: { $in: searchTerms } }, { title: { $in: searchTerms } }]
+      })
+        .populate({ path: '_owner', select: 'profilePhoto displayName' })
+        .limit(12)
+        .skip(12 * page)
+        .exec();
+
       res.status(200).send(posts);
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   });
 

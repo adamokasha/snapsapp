@@ -48,12 +48,12 @@ class FullWidthTabs extends React.Component {
           </Tabs>
         </AppBar>
         {this.state.value === 0 ? (
-          <Feed context="userfaves" user={this.props.user} /> 
+          <Feed context="userFaves" user={this.props.user} /> 
         ) : null}
         {this.state.value === 1 ? (
-          <Feed context="userposts" user={this.props.user} />
+          <Feed context="userPosts" user={this.props.user} />
         ) : null}
-        {this.state.value === 2 ? <Feed context="useralbums" user={this.props.user} /> : null}
+        {this.state.value === 2 ? <Feed context="userAlbums" user={this.props.user} /> : null}
       </div>
     );
   }
