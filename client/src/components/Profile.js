@@ -14,6 +14,7 @@ import EditTwoToneIcon from '@material-ui/icons/EditTwoTone';
 import CancelTwoToneIcon from '@material-ui/icons/CancelTwoTone';
 import axios from 'axios';
 
+import ProfileHeader from './ProfileHeader';
 import { updateProfile } from '../actions/auth';
 
 const styles = theme => ({
@@ -81,7 +82,7 @@ const styles = theme => ({
   button: {
     marginTop: `${theme.spacing.unit * 2}px`,
     width: '100%',
-    margin: '0 auto',
+    margin: '0 auto'
   },
   hiddenSubmitButton: {
     display: 'none'
@@ -191,43 +192,22 @@ export class Profile extends React.Component {
     return (
       <div className={classes.root}>
         <Paper className={classes.paper}>
-          <div
-            className={
-              this.state.ownProfile
-                ? classes.editButtons
-                : classes.hideEditButtons
-            }
-          >
-            {this.state.editEnabled ? (
-              <IconButton onClick={this.cancelEdit}>
-                <CancelTwoToneIcon />
-              </IconButton>
-            ) : (
-              <IconButton onClick={this.enableEdit}>
-                <EditTwoToneIcon />
-              </IconButton>
-            )}
-          </div>
+          <ProfileHeader 
+            ownProfile={this.state.ownProfile}
+            editEnabled={this.state.editEnabled}
+            profilePhoto={this.state.profilePhoto}
+            displayName={this.state.displayName}
+            joined={this.state.joined}
+            cancelEdit={this.cancelEdit}
+            enableEdit={this.enableEdit}
+          />
+          <Divider />
           <form onSubmit={this.onSubmit} className={classes.form}>
-            <div className={classes.avatarContainer}>
-              <Avatar>
-                <img src={`${this.state.profilePhoto}`} alt="avatar" />
-              </Avatar>
-              <div className={classes.userText}>
-                <Typography variant="body2">
-                  {this.state.displayName}
-                </Typography>
-                <Typography variant="caption">
-                  Member since {this.state.joined}
-                </Typography>
-              </div>
-            </div>
-            <Divider />
             <div className={classes.fieldGroup}>
               <Typography variant="body2">Name:</Typography>
               <TextField
                 margin="normal"
-                inputProps={{style: {color: '#000'}}}
+                inputProps={{ style: { color: '#000' } }}
                 disabled={this.state.editEnabled ? false : true}
                 className={classes.textField}
                 value={this.state.name}
@@ -242,7 +222,9 @@ export class Profile extends React.Component {
                 margin="normal"
                 onClick={this.state.editEnabled ? null : this.onLinkClick}
                 inputProps={
-                  this.state.editEnabled ? {} : { style: { cursor: 'pointer', color: '#000' } }
+                  this.state.editEnabled
+                    ? {}
+                    : { style: { cursor: 'pointer', color: '#000' } }
                 }
                 disabled={this.state.editEnabled ? false : true}
                 value={this.state.website}
@@ -258,7 +240,9 @@ export class Profile extends React.Component {
                 margin="normal"
                 className={classes.textField}
                 inputProps={
-                  this.state.editEnabled ? {} : { style: { cursor: 'pointer', color: '#3b5999' } }
+                  this.state.editEnabled
+                    ? {}
+                    : { style: { cursor: 'pointer', color: '#3b5999' } }
                 }
                 disabled={this.state.editEnabled ? false : true}
                 onClick={this.state.editEnabled ? null : this.onLinkClick}
@@ -275,7 +259,9 @@ export class Profile extends React.Component {
                 margin="normal"
                 className={classes.textField}
                 inputProps={
-                  this.state.editEnabled ? {} : { style: { cursor: 'pointer', color: '#dd4b39' } }
+                  this.state.editEnabled
+                    ? {}
+                    : { style: { cursor: 'pointer', color: '#dd4b39' } }
                 }
                 disabled={this.state.editEnabled ? false : true}
                 onClick={this.state.editEnabled ? null : this.onLinkClick}
@@ -292,7 +278,9 @@ export class Profile extends React.Component {
                 margin="normal"
                 className={classes.textField}
                 inputProps={
-                  this.state.editEnabled ? {} : { style: { cursor: 'pointer', color: '#55acee' } }
+                  this.state.editEnabled
+                    ? {}
+                    : { style: { cursor: 'pointer', color: '#55acee' } }
                 }
                 disabled={this.state.editEnabled ? false : true}
                 onClick={this.state.editEnabled ? null : this.onLinkClick}
@@ -307,7 +295,7 @@ export class Profile extends React.Component {
                 margin="normal"
                 multiline
                 rows={3}
-                inputProps={{style: {color: '#000'}}}
+                inputProps={{ style: { color: '#000' } }}
                 className={classes.textField}
                 disabled={this.state.editEnabled ? false : true}
                 value={this.state.about}
@@ -317,7 +305,11 @@ export class Profile extends React.Component {
 
             {this.state.ownProfile ? (
               <Button
-                className={this.state.editEnabled ? classes.button : classes.hiddenSubmitButton }
+                className={
+                  this.state.editEnabled
+                    ? classes.button
+                    : classes.hiddenSubmitButton
+                }
                 type="submit"
                 variant="contained"
                 color="primary"

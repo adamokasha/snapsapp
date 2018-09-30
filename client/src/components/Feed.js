@@ -100,21 +100,25 @@ export class Feed extends React.Component {
     }
 
     this.setState({ isFetching: true }, async () => {
-      const {context} = this.props;
+      const { context } = this.props;
       let res;
       if (context === 'home') {
         res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
       } else if (context === 'userposts') {
-        res = await axios.get(`/api/posts/user/all/${this.props.user}/${this.state.currentPage}`)
+        res = await axios.get(
+          `/api/posts/user/all/${this.props.user}/${this.state.currentPage}`
+        );
       } else if (context === 'userfaves') {
-        res = await axios.get(`/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`)
+        res = await axios.get(
+          `/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`
+        );
       } else if (context === 'useralbums') {
         res = await axios.get(`/api/albums/all/${this.props.user}`);
         return this.setState({
           albums: [...res.data],
           isFetching: false,
           morePagesAvailable: false
-        })
+        });
       }
 
       if (!res.data.length) {
@@ -138,21 +142,25 @@ export class Feed extends React.Component {
 
   componentDidMount() {
     this.setState({ isFetching: true }, async () => {
-      const {context} = this.props;
+      const { context } = this.props;
       let res;
       if (context === 'home') {
         res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
       } else if (context === 'userposts') {
-        res = await axios.get(`/api/posts/user/all/${this.props.user}/${this.state.currentPage}`)
+        res = await axios.get(
+          `/api/posts/user/all/${this.props.user}/${this.state.currentPage}`
+        );
       } else if (context === 'userfaves') {
-        res = await axios.get(`/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`)
+        res = await axios.get(
+          `/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`
+        );
       } else if (context === 'useralbums') {
         res = await axios.get(`/api/albums/all/${this.props.user}`);
         return this.setState({
           albums: [...res.data],
           isFetching: false,
           morePagesAvailable: false
-        })
+        });
       }
 
       this.setState(
@@ -179,7 +187,7 @@ export class Feed extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, context } = this.props;
 
     return (
       <div>
@@ -195,6 +203,7 @@ export class Feed extends React.Component {
             Go to Top
           </Button>
         ) : null}
+
         {this.state.pages
           ? this.state.pages.map((page, i) => (
               <ImageGrid key={i} posts={page} />
@@ -203,11 +212,10 @@ export class Feed extends React.Component {
         {this.state.isFetching ? (
           <CircularProgress className={classes.circularLoader} size={50} />
         ) : null}
-        {
-          this.state.albums ? (
-            <AlbumList albums={this.state.albums} />
-          ) : null
-        }
+
+        {this.state.albums && context === 'useralbums' ? (
+          <AlbumList albums={this.state.albums} />
+        ) : null}
       </div>
     );
   }
