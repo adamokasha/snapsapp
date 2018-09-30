@@ -83,8 +83,6 @@ module.exports = app => {
     }
   });
 
-  
-
   // Feed context: User faves all
   app.get('/api/posts/user/faves/:user/:page', async (req, res) => {
     try {
@@ -101,7 +99,7 @@ module.exports = app => {
       const favesArray = faves[0]._faves;
 
       const posts = await Post.find({ _id: { $in: favesArray } })
-        .populate({path: '_owner', select: 'profilePhoto displayName'})
+        .populate({ path: '_owner', select: 'profilePhoto displayName' })
         .limit(6)
         .skip(6 * page)
         .exec();
@@ -137,6 +135,24 @@ module.exports = app => {
       res.status(200).send(posts);
     } catch (e) {
       console.log(e);
+    }
+  });
+
+  // Search by tag or title
+  app.post('/api/posts/search/', async (req, res) => {
+    try {
+      const {searchTerms} = req.body;
+      console.log( 'SEARCHTERMS: ', searchTerms)
+
+      const posts = await Post.find({
+        $or: [
+          { tags: { $in: searchTerms } },
+          { title: { $in: searchTerms } }
+        ]
+      });
+      res.status(200).send(posts);
+    } catch (e) {
+      console.log(e)
     }
   });
 
