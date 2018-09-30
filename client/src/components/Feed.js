@@ -249,7 +249,8 @@ const mapStateToProps = ({ posts }) => ({
 });
 
 Feed.propTypes = {
-  context: PropTypes.string.isRequired
+  context: PropTypes.string.isRequired,
+  searchTerms: PropTypes.array
 };
 
 export default compose(

@@ -29,6 +29,10 @@ export const fetchUserPosts = () => async dispatch => {
   return res.data;
 };
 
+export const resetSearchResults = () => ({
+  type: 'RESET_SEARCH_RESULTS'
+})
+
 export const searchPosts = (searchTermsArr, page) => async dispatch => {
   const res = await axios.post(`/api/posts/search/${page}`, {
     searchTerms: searchTermsArr

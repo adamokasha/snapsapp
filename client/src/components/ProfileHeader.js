@@ -1,20 +1,11 @@
 import React from 'react';
-import Paper from '@material-ui/core/Paper';
-import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import compose from 'recompose/compose';
 import Avatar from '@material-ui/core/Avatar';
-import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import EditTwoToneIcon from '@material-ui/icons/EditTwoTone';
 import CancelTwoToneIcon from '@material-ui/icons/CancelTwoTone';
-import axios from 'axios';
-
-import { updateProfile } from '../actions/auth';
 
 const styles = theme => ({
   // root: {
