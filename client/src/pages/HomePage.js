@@ -16,8 +16,8 @@ export class HomePage extends React.Component {
     };
   }
 
-  setContext = (context) => {
-    this.setState({currentContext: context})
+  setContext = context => {
+    this.setState({ currentContext: context });
   };
 
   render() {
@@ -27,8 +27,13 @@ export class HomePage extends React.Component {
         <NavBar />
         {isAuth ? null : <HeroUnit />}
         <Search setContext={this.setContext} />
-        <Button onClick={() => this.setState({currentContext:'home'})}>Back</Button>
-        <Feed context="home" />
+        <Button onClick={() => this.setState({ currentContext: 'home' })}>
+          Back
+        </Button>
+        {this.state.currentContext === 'home' ? <Feed context="home" /> : null}
+        {this.state.currentContext === 'searchPosts' ? (
+          <Feed context='searchPosts' />
+        ) : null}
       </div>
     );
   }

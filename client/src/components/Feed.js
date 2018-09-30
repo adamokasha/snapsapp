@@ -161,7 +161,15 @@ export class Feed extends React.Component {
           isFetching: false,
           morePagesAvailable: false
         });
-      } 
+      } if (context === 'searchPosts') {
+        console.log('searchPosts')
+        console.log(this.props.posts)
+        return this.setState({
+          currentPage: this.state.currentPage + 1,
+          pages: this.props.posts.searchResults,
+          isFetching: false
+        });
+      }
 
       this.setState(
         {
@@ -187,7 +195,7 @@ export class Feed extends React.Component {
   };
 
   render() {
-    const { classes, context } = this.props;
+    const { classes, context, posts } = this.props;
 
     return (
       <div>
@@ -215,6 +223,10 @@ export class Feed extends React.Component {
 
         {this.state.albums && context === 'userAlbums' ? (
           <AlbumList albums={this.state.albums} />
+        ) : null}
+
+        {context === 'searchPosts' ? (
+          posts.searchResults.map((page, i) => <ImageGrid key={i} posts={page} />)
         ) : null}
       </div>
     );

@@ -44,7 +44,7 @@ export class Search extends React.Component {
     super(props);
 
     this.state = {
-      searchTerms: null,
+      searchTerms: '',
       popperOpen: false
     };
   }
@@ -75,6 +75,7 @@ export class Search extends React.Component {
       .replace(/\s\s+/g, ' ')
       .split(' ');
 
+    this.setState({popperOpen: false, searchTerms: ''}, () => {});
     this.props.searchPosts(searchTermsArr, 0);
     this.props.setContext('searchPosts');
   };
@@ -102,10 +103,13 @@ export class Search extends React.Component {
               </IconButton>
             </InputAdornment>
           }
+          labelWidth={-25}
+          label="Search"
           onKeyUp={this.popperOpen}
           onFocus={this.popperOpen}
           onBlur={this.popperClose}
           onChange={this.onSearchChange}
+          value={this.state.searchTerms}
         />
         <Popper
           className={classes.popper}
