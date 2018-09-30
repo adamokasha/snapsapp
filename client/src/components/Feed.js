@@ -9,7 +9,7 @@ import NavigationIcon from '@material-ui/icons/Navigation';
 import axios from 'axios';
 
 import ImageGrid from '../components/ImageGrid';
-import { setPosts, setPostContext } from '../actions/posts';
+import { setPosts, setPostContext, searchPosts } from '../actions/posts';
 import AlbumList from './AlbumList';
 
 const styles = theme => ({
@@ -34,7 +34,7 @@ export class Feed extends React.Component {
     super(props);
 
     this.state = {
-      currentPage: this.props.posts.length || 0,
+      currentPage: 0,
       morePagesAvailable: true,
       isFetching: false,
       pages: [],
@@ -104,21 +104,32 @@ export class Feed extends React.Component {
       let res;
       if (context === 'home') {
         res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
-      } else if (context === 'userposts') {
+      } else if (context === 'userPosts') {
         res = await axios.get(
           `/api/posts/user/all/${this.props.user}/${this.state.currentPage}`
         );
-      } else if (context === 'userfaves') {
+      } else if (context === 'userFaves') {
         res = await axios.get(
           `/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`
         );
-      } else if (context === 'useralbums') {
+      } else if (context === 'userAlbums') {
         res = await axios.get(`/api/albums/all/${this.props.user}`);
         return this.setState({
           albums: [...res.data],
           isFetching: false,
           morePagesAvailable: false
         });
+      } else if (context === 'searchPosts') {
+        // In this context, props already have passed some initial data to this component
+          // componentDidMount inital async calls skipped but...
+            // componentDidMount will already have incremented currentPage by + 1
+        res = await this.props.searchPosts(this.props.searchTerms, this.state.currentPage);
+        if (!res.data.length) {
+          this.setState({ morePagesAvailable: false }, () => {
+            return;
+          });
+        }
+        return this.setState({isFetching: false, currentPage: this.state.currentPage + 1}, () => {});
       }
 
       if (!res.data.length) {
@@ -245,6 +256,6 @@ export default compose(
   withStyles(styles),
   connect(
     mapStateToProps,
-    { setPosts, setPostContext }
+    { setPosts, setPostContext, searchPosts }
   )
 )(Feed);

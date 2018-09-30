@@ -35,4 +35,6 @@ export const searchPosts = (searchTermsArr, page) => async dispatch => {
   });
 
   dispatch({type: 'SET_SEARCHED_POSTS', payload: res.data});
+
+  return res;
 }

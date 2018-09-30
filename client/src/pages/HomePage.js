@@ -12,12 +12,13 @@ export class HomePage extends React.Component {
     super(props);
 
     this.state = {
-      currentContext: 'home'
+      currentContext: 'home',
+      searchTerms: null
     };
   }
 
-  setContext = context => {
-    this.setState({ currentContext: context });
+  setContext = (context, searchTermsArr) => {
+    this.setState({ currentContext: context, searchTerms: searchTermsArr });
   };
 
   render() {
@@ -32,7 +33,7 @@ export class HomePage extends React.Component {
         </Button>
         {this.state.currentContext === 'home' ? <Feed context="home" /> : null}
         {this.state.currentContext === 'searchPosts' ? (
-          <Feed context='searchPosts' />
+          <Feed context='searchPosts' searchTerms={this.state.searchTerms} />
         ) : null}
       </div>
     );

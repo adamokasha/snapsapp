@@ -77,7 +77,7 @@ export class Search extends React.Component {
 
     this.setState({popperOpen: false, searchTerms: ''}, () => {});
     this.props.searchPosts(searchTermsArr, 0);
-    this.props.setContext('searchPosts');
+    this.props.setContext('searchPosts', searchTermsArr);
   };
 
   onSearchPeople = e => {

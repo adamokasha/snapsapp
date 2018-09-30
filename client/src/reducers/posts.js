@@ -5,7 +5,7 @@ export default (state = { context: null, postData: [], searchResults : []}, acti
     case 'SET_POSTS':
       return {...state, postData: [...state.postData, action.payload]}
     case 'SET_SEARCHED_POSTS':
-      return {...state, searchResults: [action.payload ] }
+      return {...state, searchResults: [...state.searchResults, action.payload ] }
     default:
     return state;
   }
