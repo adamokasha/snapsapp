@@ -11,6 +11,7 @@ import axios from 'axios';
 import ImageGrid from '../components/ImageGrid';
 import { setPosts, setPostContext, searchPosts } from '../actions/posts';
 import AlbumList from './AlbumList';
+import ProfileList from './ProfileList';
 
 const styles = theme => ({
   circularLoader: {
@@ -39,6 +40,7 @@ export class Feed extends React.Component {
       isFetching: false,
       pages: [],
       albums: [],
+      profilePages: [],
       showNavToTop: false
     };
 
@@ -175,6 +177,14 @@ export class Feed extends React.Component {
           currentPage: this.state.currentPage + 1,
           pages: this.props.posts.searchResults,
         }, () => {});
+      } if(context === 'searchUsers') {
+        res = await axios.post(`/api/profile/search/${this.state.currentPage}`, {searchTerms: this.props.searchTerms});
+        console.log(res);
+        return this.setState({
+          profilePages: [res.data],
+          currentPage: this.state.currentPage + 1,
+          isFetching: false
+        })
       }
 
       this.setState(
@@ -195,6 +205,17 @@ export class Feed extends React.Component {
     // When component first mounts searchResults in props will be an empty array, need to update state.pages with new searchResults
     if(this.props.posts.searchResults !== prevProps.posts.searchResults) {
       this.setState({pages: this.props.posts.searchResults, isFetching: false})
+    }
+    
+    // New user search
+    if(this.props.searchTerms !== prevProps.searchTerms) {
+      // New search so must reset currentPage
+      this.setState({currentPage: 0}, async () => {
+        const res = await axios.post(`/api/profile/search/${this.state.currentPage}`, {searchTerms: this.props.searchTerms});
+
+        this.setState({profilePages: [res.data], currentPage: this.state.currentPage + 1, isFetching: false}, () => {})
+      });
+      
     }
   }
 
@@ -236,6 +257,10 @@ export class Feed extends React.Component {
         {this.state.albums && context === 'userAlbums' ? (
           <AlbumList albums={this.state.albums} />
         ) : null}
+
+        {this.state.profilePages && context === 'searchUsers' ? 
+          this.state.profilePages.map((profiles, i) => <ProfileList key={i} profiles={profiles} />)
+         : null}
 
         {this.state.isFetching ? (
           <CircularProgress className={classes.circularLoader} size={50} />

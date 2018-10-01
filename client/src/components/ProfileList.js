@@ -40,12 +40,12 @@ const styles = theme => ({
 
 
 function ProfileList(props) {
-  const { classes, posts } = props;
+  const { classes, profiles } = props;
 
   return (
     <div className={classes.root}>
       <GridList className={classes.gridList} cols={3}>
-        {posts.map(data => {
+        {profiles.map(data => {
           return (
             <GridListTile
               key={data._id} 

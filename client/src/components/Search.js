@@ -15,7 +15,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import GroupIcon from '@material-ui/icons/Group';
 
-import {resetSearchResults, searchPosts} from '../actions/posts';
+import { resetSearchResults, searchPosts } from '../actions/posts';
 
 const styles = theme => ({
   root: {
@@ -67,22 +67,26 @@ export class Search extends React.Component {
     this.setState({ searchTerms: e.target.value }, () => {});
   };
 
-  onSearchPosts = async e => {
-    // Scrub search terms
-    const searchTermsArr = this.state.searchTerms
+  scrubSearchTerms(searchTerms) {
+    return searchTerms
       .replace(/[^\w\s]/gi, '')
       .trim()
       .replace(/\s\s+/g, ' ')
       .split(' ');
+  }
 
-    this.setState({popperOpen: false, searchTerms: ''}, () => {});
+  onSearchPosts = async e => {
+    const searchTermsArr = this.scrubSearchTerms(this.state.searchTerms);
+     
+    this.setState({ popperOpen: false, searchTerms: '' }, () => {});
     await this.props.resetSearchResults();
     this.props.searchPosts(searchTermsArr, 0);
-    this.props.setContext('searchPosts', searchTermsArr);
+    this.props.setSearch('searchPosts', searchTermsArr);
   };
 
   onSearchPeople = e => {
-    this.props.onSearch(this.state.searchTerms, 'people');
+    const searchTermsArr = this.scrubSearchTerms(this.state.searchTerms);
+    this.props.setSearch('searchUsers', searchTermsArr);
   };
 
   render() {
@@ -152,6 +156,6 @@ export default compose(
   withStyles(styles),
   connect(
     null,
-    {searchPosts, resetSearchResults}
+    { searchPosts, resetSearchResults }
   )
 )(Search);
