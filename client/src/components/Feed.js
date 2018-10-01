@@ -9,7 +9,7 @@ import NavigationIcon from '@material-ui/icons/Navigation';
 import axios from 'axios';
 
 import ImageGrid from '../components/ImageGrid';
-import { setPosts, setPostContext, searchPosts } from '../actions/posts';
+import { setPostContext, setPosts } from '../actions/posts';
 import AlbumList from './AlbumList';
 import ProfileList from './ProfileList';
 
@@ -122,18 +122,30 @@ export class Feed extends React.Component {
           morePagesAvailable: false
         });
       } else if (context === 'searchPosts') {
-        res = await this.props.searchPosts(this.props.searchTerms, this.state.currentPage);
+        res = await axios.post(`/api/posts/search/${this.state.currentPage}`, {
+          searchTerms: this.props.searchTerms
+        });
+      } else if (context === 'searchUsers') {
+        res = await axios.post(
+          `/api/profile/search/${this.state.currentPage}`,
+          { searchTerms: this.props.searchTerms }
+        );
+
         if (!res.data.length) {
-          this.setState({ morePagesAvailable: false }, () => {
-            return;
+          return this.setState({ morePagesAvailable: false, isFetching: false }, () => {
+            
           });
         }
-        return this.setState({isFetching: false, currentPage: this.state.currentPage + 1}, () => {});
+
+        return this.setState({
+          profilePages: [...this.state.pages, res.data],
+          currentPage: this.state.currentPage + 1,
+          isFetching: false
+        });
       }
 
       if (!res.data.length) {
-        this.setState({ morePagesAvailable: false }, () => {
-          return;
+        return this.setState({ morePagesAvailable: false, isFetching: false }, () => {
         });
       }
 
@@ -171,20 +183,22 @@ export class Feed extends React.Component {
           isFetching: false,
           morePagesAvailable: false
         });
-      } if (context === 'searchPosts') {
-        console.log(this.props.posts.searchResults)
-        return this.setState({
-          currentPage: this.state.currentPage + 1,
-          pages: this.props.posts.searchResults,
-        }, () => {});
-      } if(context === 'searchUsers') {
-        res = await axios.post(`/api/profile/search/${this.state.currentPage}`, {searchTerms: this.props.searchTerms});
-        console.log(res);
+      }
+      if (context === 'searchPosts') {
+        res = await axios.post(`/api/posts/search/${this.state.currentPage}`, {
+          searchTerms: this.props.searchTerms
+        });
+      }
+      if (context === 'searchUsers') {
+        res = await axios.post(
+          `/api/profile/search/${this.state.currentPage}`,
+          { searchTerms: this.props.searchTerms }
+        );
         return this.setState({
           profilePages: [res.data],
           currentPage: this.state.currentPage + 1,
           isFetching: false
-        })
+        });
       }
 
       this.setState(
@@ -202,29 +216,63 @@ export class Feed extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    // When component first mounts searchResults in props will be an empty array, need to update state.pages with new searchResults
-    if(this.props.posts.searchResults !== prevProps.posts.searchResults) {
-      this.setState({pages: this.props.posts.searchResults, isFetching: false})
-    }
-    
-    // New user search
-    if(this.props.searchTerms !== prevProps.searchTerms) {
-      // New search so must reset currentPage
-      this.setState({currentPage: 0}, async () => {
-        const res = await axios.post(`/api/profile/search/${this.state.currentPage}`, {searchTerms: this.props.searchTerms});
+    // New search
+    if (this.props.searchTerms !== prevProps.searchTerms) {
+      // User search
+      if (this.props.context === 'searchUsers') {
+        this.setState(
+          { currentPage: 0, isFetching: true, profilePages: [] },
+          async () => {
+            const res = await axios.post(
+              `/api/profile/search/${this.state.currentPage}`,
+              { searchTerms: this.props.searchTerms }
+            );
 
-        this.setState({profilePages: [res.data], currentPage: this.state.currentPage + 1, isFetching: false}, () => {})
-      });
-      
+            this.setState(
+              {
+                profilePages: [res.data],
+                currentPage: this.state.currentPage + 1,
+                isFetching: false
+              },
+              () => {}
+            );
+          }
+        );
+      }
+
+      // Post search
+      if (this.props.context === 'searchPosts') {
+        this.setState(
+          { currentPage: 0, isFetching: true, pages: [] },
+          async () => {
+            const res = await axios.post(
+              `/api/posts/search/${this.state.currentPage}`,
+              {
+                searchTerms: this.props.searchTerms
+              }
+            );
+
+            this.setState(
+              {
+                pages: [res.data],
+                currentPage: this.state.currentPage + 1,
+                isFetching: false
+              },
+              () => {
+                this.props.setPostContext(this.props.context);
+                this.props.setPosts(res.data);
+              }
+            );
+          }
+        );
+      }
     }
   }
-
 
   componentWillUnmount() {
     // Prevent memory leak
     window.removeEventListener('scroll', this.onScroll, false);
   }
-
 
   goTop = () => {
     window.scrollTo(0, 0);
@@ -253,14 +301,16 @@ export class Feed extends React.Component {
               <ImageGrid key={i} posts={page} />
             ))
           : null}
-        
+
         {this.state.albums && context === 'userAlbums' ? (
           <AlbumList albums={this.state.albums} />
         ) : null}
 
-        {this.state.profilePages && context === 'searchUsers' ? 
-          this.state.profilePages.map((profiles, i) => <ProfileList key={i} profiles={profiles} />)
-         : null}
+        {this.state.profilePages && context === 'searchUsers'
+          ? this.state.profilePages.map((profiles, i) => (
+              <ProfileList key={i} profiles={profiles} />
+            ))
+          : null}
 
         {this.state.isFetching ? (
           <CircularProgress className={classes.circularLoader} size={50} />
@@ -283,6 +333,6 @@ export default compose(
   withStyles(styles),
   connect(
     mapStateToProps,
-    { setPosts, setPostContext, searchPosts }
+    { setPosts, setPostContext }
   )
 )(Feed);

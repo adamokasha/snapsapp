@@ -15,8 +15,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import GroupIcon from '@material-ui/icons/Group';
 
-import { resetSearchResults, searchPosts } from '../actions/posts';
-
 const styles = theme => ({
   root: {
     backgroundColor: `${theme.palette.background.paper}`,
@@ -77,10 +75,7 @@ export class Search extends React.Component {
 
   onSearchPosts = async e => {
     const searchTermsArr = this.scrubSearchTerms(this.state.searchTerms);
-     
     this.setState({ popperOpen: false, searchTerms: '' }, () => {});
-    await this.props.resetSearchResults();
-    this.props.searchPosts(searchTermsArr, 0);
     this.props.setSearch('searchPosts', searchTermsArr);
   };
 
@@ -156,7 +151,6 @@ export class Search extends React.Component {
 export default compose(
   withStyles(styles),
   connect(
-    null,
-    { searchPosts, resetSearchResults }
+    null
   )
 )(Search);
