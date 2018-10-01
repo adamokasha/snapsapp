@@ -72,7 +72,7 @@ export class Feed extends React.Component {
       ticking = true;
     }
 
-    const loadImages = this.loadImages.bind(this);
+    const loadData = this.loadData.bind(this);
     const boundSetState = this.setState.bind(this);
 
     function update() {
@@ -89,14 +89,14 @@ export class Feed extends React.Component {
         boundSetState({ showNavToTop: false });
       }
       if (currentInnerHeight + currentPageYOffset >= currentDocOffsetHeight) {
-        loadImages();
+        loadData();
       }
     }
 
     window.addEventListener('scroll', this.onScroll, false);
   }
 
-  loadImages = async () => {
+  loadData = () => {
     if (this.state.isFetching || !this.state.morePagesAvailable) {
       return;
     }
@@ -104,115 +104,75 @@ export class Feed extends React.Component {
     this.setState({ isFetching: true }, async () => {
       const { context } = this.props;
       let res;
-      if (context === 'home') {
-        res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
-      } else if (context === 'userPosts') {
-        res = await axios.get(
-          `/api/posts/user/all/${this.props.user}/${this.state.currentPage}`
-        );
-      } else if (context === 'userFaves') {
-        res = await axios.get(
-          `/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`
-        );
-      } else if (context === 'userAlbums') {
-        res = await axios.get(`/api/albums/all/${this.props.user}`);
-        return this.setState({
-          albums: [...res.data],
-          isFetching: false,
-          morePagesAvailable: false
-        });
-      } else if (context === 'searchPosts') {
-        res = await axios.post(`/api/posts/search/${this.state.currentPage}`, {
-          searchTerms: this.props.searchTerms
-        });
-      } else if (context === 'searchUsers') {
-        res = await axios.post(
-          `/api/profile/search/${this.state.currentPage}`,
-          { searchTerms: this.props.searchTerms }
-        );
-
-        if (!res.data.length) {
-          return this.setState({ morePagesAvailable: false, isFetching: false }, () => {
-            
+      switch (context) {
+        case 'home':
+          res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
+          break;
+        case 'userPosts':
+          res = await axios.get(
+            `/api/posts/user/all/${this.props.user}/${this.state.currentPage}`
+          );
+          break;
+        case 'userFaves':
+          res = await axios.get(
+            `/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`
+          );
+          break;
+        case 'userAlbums':
+          res = await axios.get(`/api/albums/all/${this.props.user}`);
+          return this.setState({
+            albums: [...res.data],
+            isFetching: false,
+            morePagesAvailable: false
           });
-        }
-
-        return this.setState({
-          profilePages: [...this.state.pages, res.data],
-          currentPage: this.state.currentPage + 1,
-          isFetching: false
-        });
+        case 'searchPosts':
+          res = await axios.post(
+            `/api/posts/search/${this.state.currentPage}`,
+            {
+              searchTerms: this.props.searchTerms
+            }
+          );
+          break;
+        case 'searchUsers':
+          res = await axios.post(
+            `/api/profile/search/${this.state.currentPage}`,
+            { searchTerms: this.props.searchTerms }
+          );
+          if (!res.data.length) {
+            return this.setState(
+              { morePagesAvailable: false, isFetching: false },
+              () => {}
+            );
+          }
+          return this.setState({
+            profilePages: [...this.state.pages, res.data],
+            currentPage: this.state.currentPage + 1,
+            isFetching: false
+          });
       }
 
       if (!res.data.length) {
-        return this.setState({ morePagesAvailable: false, isFetching: false }, () => {
-        });
+        return this.setState(
+          { morePagesAvailable: false, isFetching: false },
+          () => {}
+        );
       }
 
-      this.setState(
+      return this.setState(
         {
           currentPage: this.state.currentPage + 1,
           pages: [...this.state.pages, res.data],
           isFetching: false
         },
         () => {
-          return this.props.setPosts(res.data);
+          this.props.setPosts(res.data);
         }
       );
     });
   };
 
   componentDidMount() {
-    this.setState({ isFetching: true }, async () => {
-      const { context } = this.props;
-      let res;
-      if (context === 'home') {
-        res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
-      } else if (context === 'userPosts') {
-        res = await axios.get(
-          `/api/posts/user/all/${this.props.user}/${this.state.currentPage}`
-        );
-      } else if (context === 'userFaves') {
-        res = await axios.get(
-          `/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`
-        );
-      } else if (context === 'userAlbums') {
-        res = await axios.get(`/api/albums/all/${this.props.user}`);
-        return this.setState({
-          albums: [...res.data],
-          isFetching: false,
-          morePagesAvailable: false
-        });
-      }
-      if (context === 'searchPosts') {
-        res = await axios.post(`/api/posts/search/${this.state.currentPage}`, {
-          searchTerms: this.props.searchTerms
-        });
-      }
-      if (context === 'searchUsers') {
-        res = await axios.post(
-          `/api/profile/search/${this.state.currentPage}`,
-          { searchTerms: this.props.searchTerms }
-        );
-        return this.setState({
-          profilePages: [res.data],
-          currentPage: this.state.currentPage + 1,
-          isFetching: false
-        });
-      }
-
-      this.setState(
-        {
-          pages: [res.data],
-          currentPage: this.state.currentPage + 1,
-          isFetching: false
-        },
-        () => {
-          this.props.setPostContext(this.props.context);
-          this.props.setPosts(res.data);
-        }
-      );
-    });
+    this.loadData();
   }
 
   componentDidUpdate(prevProps) {
