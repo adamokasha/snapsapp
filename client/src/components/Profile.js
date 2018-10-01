@@ -15,6 +15,7 @@ import CancelTwoToneIcon from '@material-ui/icons/CancelTwoTone';
 import axios from 'axios';
 
 import ProfileHeader from './ProfileHeader';
+import ProfileFollows from './ProfileFollows';
 import { updateProfile } from '../actions/auth';
 
 const styles = theme => ({
@@ -201,6 +202,8 @@ export class Profile extends React.Component {
             cancelEdit={this.cancelEdit}
             enableEdit={this.enableEdit}
           />
+          <Divider />
+          <ProfileFollows />
           <Divider />
           <form onSubmit={this.onSubmit} className={classes.form}>
             <div className={classes.fieldGroup}>
