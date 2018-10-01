@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button';
 import NavigationIcon from '@material-ui/icons/Navigation';
 import axios from 'axios';
 
-import ImageGrid from '../components/ImageGrid';
+import ImageGrid from './ImageGrid';
 import { setPostContext, setPosts } from '../actions/posts';
 import AlbumList from './AlbumList';
 import ProfileList from './ProfileList';
@@ -30,7 +30,7 @@ const styles = theme => ({
   }
 });
 
-export class Feed extends React.Component {
+export class ScrollView extends React.Component {
   constructor(props) {
     super(props);
 
@@ -284,7 +284,7 @@ const mapStateToProps = ({ posts }) => ({
   posts
 });
 
-Feed.propTypes = {
+ScrollView.propTypes = {
   context: PropTypes.string.isRequired,
   searchTerms: PropTypes.array
 };
@@ -295,4 +295,4 @@ export default compose(
     mapStateToProps,
     { setPosts, setPostContext }
   )
-)(Feed);
+)(ScrollView);

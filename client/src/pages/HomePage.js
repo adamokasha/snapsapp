@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 
 import Search from '../components/Search';
 import HeroUnit from '../components/HeroUnit';
-import Feed from '../components/Feed';
+import ScrollView from '../components/ScrollView';
 import NavBar from '../components/NavBar';
 
 export class HomePage extends React.Component {
@@ -31,12 +31,12 @@ export class HomePage extends React.Component {
         <Button onClick={() => this.setState({ currentContext: 'home' })}>
           Back
         </Button>
-        {this.state.currentContext === 'home' ? <Feed context="home" /> : null}
+        {this.state.currentContext === 'home' ? <ScrollView context="home" /> : null}
         {this.state.currentContext === 'searchPosts' ? (
-          <Feed context='searchPosts' searchTerms={this.state.searchTerms} />
+          <ScrollView context='searchPosts' searchTerms={this.state.searchTerms} />
         ) : null}
         {this.state.currentContext === 'searchUsers' ? (
-          <Feed context='searchUsers' searchTerms={this.state.searchTerms} />
+          <ScrollView context='searchUsers' searchTerms={this.state.searchTerms} />
         ) : null}
       </div>
     );

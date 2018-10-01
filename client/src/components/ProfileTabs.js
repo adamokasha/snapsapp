@@ -6,7 +6,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 
-import Feed from './Feed';
+import ScrollView from './ScrollView';
 
 const styles = theme => ({
   root: {
@@ -48,12 +48,12 @@ class FullWidthTabs extends React.Component {
           </Tabs>
         </AppBar>
         {this.state.value === 0 ? (
-          <Feed context="userFaves" user={this.props.user} /> 
+          <ScrollView context="userFaves" user={this.props.user} /> 
         ) : null}
         {this.state.value === 1 ? (
-          <Feed context="userPosts" user={this.props.user} />
+          <ScrollView context="userPosts" user={this.props.user} />
         ) : null}
-        {this.state.value === 2 ? <Feed context="userAlbums" user={this.props.user} /> : null}
+        {this.state.value === 2 ? <ScrollView context="userAlbums" user={this.props.user} /> : null}
       </div>
     );
   }

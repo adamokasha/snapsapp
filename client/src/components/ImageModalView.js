@@ -166,7 +166,7 @@ class ImageModalView extends React.Component {
       document.getElementById('goTopButton').style.display = 'none';
     }
 
-    // If feed slides will be array of arrays (due to pagination)
+    // If ScrollView, slides will be array of arrays (due to pagination)
     const slides = [];
     this.props.slides.forEach(posts =>
       posts.forEach(post => slides.push(post))

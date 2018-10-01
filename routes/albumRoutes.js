@@ -29,7 +29,7 @@ module.exports = app => {
     }
   });
   
-  // Feed context: User albums
+  // ScrollView context: User albums
   app.get('/api/albums/all/:user', async (req, res) => {
     try {
       const userId = await User.find({displayName: req.params.user}, '_id');

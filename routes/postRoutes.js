@@ -6,7 +6,7 @@ const User = mongoose.model('User');
 const Faves = mongoose.model('Faves');
 
 module.exports = app => {
-  // Feed context: Home page
+  // ScrollView context: Home page
   app.get('/api/posts/all/:page', async (req, res) => {
     try {
       const { page } = req.params;
@@ -43,7 +43,7 @@ module.exports = app => {
     }
   });
 
-  // Feed context: User posts all
+  // ScrollView context: User posts all
   app.get('/api/posts/user/all/:user/:page', async (req, res) => {
     try {
       const { page, user } = req.params;
@@ -83,7 +83,7 @@ module.exports = app => {
     }
   });
 
-  // Feed context: User faves all
+  // ScrollView context: User faves all
   app.get('/api/posts/user/faves/:user/:page', async (req, res) => {
     try {
       const { page, user } = req.params;
