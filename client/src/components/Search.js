@@ -70,6 +70,7 @@ export class Search extends React.Component {
       .replace(/[^\w\s]/gi, '')
       .trim()
       .replace(/\s\s+/g, ' ')
+      .toLowerCase()
       .split(' ');
   }
 

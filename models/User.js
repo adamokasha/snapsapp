@@ -6,7 +6,7 @@ const userSchema = new Schema({
   facebookId: String,
   profilePhoto: String,
   displayName: String,
-  displayNameLowerC: String,
+  displayName_lower: {type: String, lowercase: true},
   profile: {
     name: String,
     website: String,

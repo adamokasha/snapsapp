@@ -147,7 +147,7 @@ module.exports = app => {
       console.log('SEARCHTERMS: ', searchTerms);
 
       const posts = await Post.find({
-        $or: [{ tags: { $in: searchTerms } }, { title: { $in: searchTerms } }]
+        $or: [{ tags: { $in: searchTerms } }, { title_lower: { $in: searchTerms } }]
       })
         .populate({ path: '_owner', select: 'profilePhoto displayName' })
         .limit(12)

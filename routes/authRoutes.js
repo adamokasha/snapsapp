@@ -46,7 +46,7 @@ module.exports = app => {
         });
       }
       const existingUser = await User.findOne({
-        displayNameLowerC: req.body.displayName.toLowerCase()
+        displayName_lower: req.body.displayName
       });
 
       if (existingUser) {
@@ -59,7 +59,7 @@ module.exports = app => {
         { _id: req.user.id },
         {
           displayName: req.body.displayName,
-          displayNameLowerC: req.body.displayName.toLowerCase(),
+          displayName_lower: req.body.displayName,
           registered: true
         }
       );

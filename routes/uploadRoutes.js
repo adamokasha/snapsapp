@@ -44,6 +44,7 @@ module.exports = app => {
         const post = await new Post({
           _owner: req.user.id,
           title,
+          title_lower: title,
           description,
           createdAt: Date.now(),
           // ! key and other file props available on req.file/files

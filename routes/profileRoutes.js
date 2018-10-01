@@ -35,7 +35,7 @@ module.exports = app => {
       const regexArr = searchTerms.map(term => {
         return new RegExp(term, 'g');
       });
-      const users = await User.find({ displayNameLowerC: { $in: regexArr } })
+      const users = await User.find({ displayName_lower: { $in: regexArr } })
         .limit(20)
         .skip(20 * page)
         .exec();

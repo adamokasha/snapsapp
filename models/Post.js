@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 const PostSchema = new Schema({
   _owner: {type: Schema.Types.ObjectId, ref: 'User', required: true},
   title: String,
+  title_lower: {type: String, lowercase: true},
   createdAt: Number,
   imgUrl: {type:String, required: true},
   description: String,
@@ -11,7 +12,7 @@ const PostSchema = new Schema({
   isFave: {type: Boolean, default: false},
   faveCount: {type: Number, default: 0 },
   comments: Array,
-  tags: Array
+  tags: [{type: String, lowercase: true}]
 });
 
 mongoose.model('Post', PostSchema);
