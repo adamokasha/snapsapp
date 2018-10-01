@@ -86,6 +86,7 @@ export class Search extends React.Component {
 
   onSearchPeople = e => {
     const searchTermsArr = this.scrubSearchTerms(this.state.searchTerms);
+    this.setState({ popperOpen: false, searchTerms: '' }, () => {});
     this.props.setSearch('searchUsers', searchTermsArr);
   };
 

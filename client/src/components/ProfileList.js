@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {Link} from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
+import Paper from '@material-ui/core/Paper'
+
 
 import ProfileHeader from './ProfileHeader';
 
@@ -33,8 +36,13 @@ const styles = theme => ({
   tile: {
     overflow: 'initial'
   },
-  subheader: {
-    width: '100%'
+  paper: {
+    padding: `${theme.spacing.unit * 2}px`,
+    paddingBottom: `${theme.spacing.unit}px`,
+    cursor: 'pointer'
+  },
+  link: {
+    textDecoration: 'none'
   }
 });
 
@@ -44,7 +52,7 @@ function ProfileList(props) {
 
   return (
     <div className={classes.root}>
-      <GridList className={classes.gridList} cols={3}>
+      <GridList className={classes.gridList} cols={4}>
         {profiles.map(data => {
           return (
             <GridListTile
@@ -55,12 +63,16 @@ function ProfileList(props) {
                 tile: classes.tile
               }}
             >
+              <Paper className={classes.paper}>
+              <Link className={classes.link} to={`/profile/${data.displayName}`}>
               <ProfileHeader
                 context="search"
                 profilePhoto={data.profilePhoto}
                 displayName={data.displayName}
                 joined={data.joined}
               />
+              </Link>
+              </Paper>
             </GridListTile>
           );
         })}
