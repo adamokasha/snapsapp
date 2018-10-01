@@ -170,10 +170,10 @@ export class Feed extends React.Component {
           morePagesAvailable: false
         });
       } if (context === 'searchPosts') {
+        console.log(this.props.posts.searchResults)
         return this.setState({
           currentPage: this.state.currentPage + 1,
           pages: this.props.posts.searchResults,
-          isFetching: false
         }, () => {});
       }
 
@@ -189,6 +189,13 @@ export class Feed extends React.Component {
         }
       );
     });
+  }
+
+  componentDidUpdate(prevProps) {
+    // When component first mounts searchResults in props will be an empty array, need to update state.pages with new searchResults
+    if(this.props.posts.searchResults !== prevProps.posts.searchResults) {
+      this.setState({pages: this.props.posts.searchResults, isFetching: false})
+    }
   }
 
 
@@ -226,13 +233,8 @@ export class Feed extends React.Component {
             ))
           : null}
         
-
         {this.state.albums && context === 'userAlbums' ? (
           <AlbumList albums={this.state.albums} />
-        ) : null}
-
-        {context === 'searchPosts' ? (
-          posts.searchResults.map((page, i) => <ImageGrid key={i} posts={page} />)
         ) : null}
 
         {this.state.isFetching ? (
