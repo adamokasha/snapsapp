@@ -40,7 +40,7 @@ const styles = theme => ({
 
 
 function ImageGridList(props) {
-  const { classes, posts } = props;
+  const { classes, posts, context } = props;
 
   return (
     <div className={classes.root}>
@@ -57,6 +57,7 @@ function ImageGridList(props) {
             >
               <ImageCard
                 post={data}
+                context={context ? context : null}
               />
             </GridListTile>
           );

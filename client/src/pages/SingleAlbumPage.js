@@ -3,20 +3,20 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 
 import NavBar from '../components/NavBar';
-import AlbumImageCard from '../components/AlbumImageCard';
+import ImageGrid from '../components/ImageGrid'
 
 export class SingleAlbumPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      posts: []
+      albumPosts: []
     }
   }
   async componentDidMount() {
     const albumId = this.props.location.state.albumId;
     const res = await axios.get(`/api/albums/full/${albumId}`);
-    this.setState({posts: res.data})
+    this.setState({albumPosts: res.data})
   }
 
   render() {
@@ -24,7 +24,7 @@ export class SingleAlbumPage extends React.Component {
       <React.Fragment>
       <NavBar />
       <div>
-        {this.state.posts.map(post => <AlbumImageCard post={post} />) }
+        <ImageGrid context='album' posts={this.state.albumPosts} />
       </div>
       </React.Fragment>
     )

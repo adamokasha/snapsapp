@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -49,8 +49,8 @@ const styles = theme => ({
       top: '18%'
     }
   },
-  red: {
-    color: 'red'
+  albumHidden: {
+    display: 'none'
   }
 });
 
@@ -90,23 +90,26 @@ class ImageCard extends React.Component {
 
   // Will select view based on width: Modal(m+) or redirect to full page view(s-)
   selectView = () => {
-    const {classes, title} = this.props;
-    const {imgUrl, _id} = this.props.post;
+    const { classes, title, context } = this.props;
+    const { imgUrl, _id } = this.props.post;
     // Don't open modal on small screens
-    if (window.screen.width < 600 || window.innerWidth < 600) {
+    if (
+      context === 'album' ||
+      window.screen.width < 600 ||
+      window.innerWidth < 600
+    ) {
       return (
-        <Link to={{
-          pathname: `/post/${_id}/`,
-          state: { post: this.props.post }
-        }}>
-        <CardMedia
-          className={classes.media}
-          image={
-            `https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}` ||
-            'https://i.imgur.com/KAXz5AG.jpg'
-          }
-          title={title || 'Image Title'}
-        />
+        <Link
+          to={{
+            pathname: `/post/${_id}/`,
+            state: { post: this.props.post }
+          }}
+        >
+          <CardMedia
+            className={classes.media}
+            image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}`}
+            title={title || 'Image Title'}
+          />
         </Link>
       );
     }
@@ -116,11 +119,8 @@ class ImageCard extends React.Component {
         togglerComponent={
           <CardMedia
             className={classes.media}
-            image={
-              `https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}` ||
-              'https://i.imgur.com/KAXz5AG.jpg'
-            }
-            title={title || 'Image Title'}
+            image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}`}
+            title={title || 'Untitled'}
           />
         }
         modalComponent={<ImageModalView post={this.props.post} />}
@@ -129,27 +129,45 @@ class ImageCard extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
-    const { _owner, title, description, faveCount } = this.props.post;
+    const { classes, context } = this.props;
+    const {
+      _owner,
+      title,
+      description,
+      faveCount,
+      createdAt
+    } = this.props.post;
 
     return (
       <div>
-        <Card className={classes.card} raised>
+        <Card
+          className={classes.card}
+          raised
+        >
           <CardHeader
             avatar={
-              <Avatar to={`/profile/${_owner.displayName}`} component={Link} aria-label="Recipe" className={classes.avatar}>
+              <Avatar
+                to={`/profile/${_owner.displayName}`}
+                component={Link}
+                aria-label="Recipe"
+                className={classes.avatar}
+              >
                 <img src={_owner.profilePhoto} alt="avatar" />
               </Avatar>
             }
             title={title || 'Aerial Photo'}
             subheader={_owner.displayName || 'September 14, 2016'}
+            className={context === 'album' ? classes.albumHidden : null}
           />
-            {this.selectView()}
+          {this.selectView()}
           <CardContent>
-            <Typography component="p">
-              {description ||
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis varius, orci in faucibus egestas, mi turpis condimentum dui, ac dictum ipsum ante sit amet elit.'}
-            </Typography>
+            {context === 'album' ? (
+              <div>
+                <Typography variant="body2">{title}</Typography>
+                <Typography variant="caption">Posted {createdAt}</Typography>
+              </div>
+            ) : null}
+            <Typography>{context === 'album' ? null : description}</Typography>
           </CardContent>
           <Divider />
           <CardActions className={classes.actions} disableActionSpacing>
@@ -192,7 +210,8 @@ class ImageCard extends React.Component {
 
 ImageCard.propTypes = {
   classes: PropTypes.object.isRequired,
-  post: PropTypes.object.isRequired
+  post: PropTypes.object.isRequired,
+  context: PropTypes.string
 };
 
 const mapStateToProps = ({ auth }) => ({
@@ -201,7 +220,5 @@ const mapStateToProps = ({ auth }) => ({
 
 export default compose(
   withStyles(styles),
-  connect(
-    mapStateToProps
-  )
+  connect(mapStateToProps)
 )(ImageCard);
