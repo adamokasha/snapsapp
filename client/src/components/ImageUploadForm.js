@@ -1,7 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import compose from 'recompose/compose';
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
@@ -12,8 +9,6 @@ import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
 import Close from '@material-ui/icons/Close';
 import withStyles from '@material-ui/core/styles/withStyles';
-
-import { submitPost } from '../actions/posts';
 
 const styles = theme => ({
   root: {
@@ -106,8 +101,12 @@ class ImageUploadForm extends React.Component {
   };
 
   onTagsChange = e => {
-    const textInput = e.target.value; 
-    const tagsArr = textInput.replace(/[^\w\s]/gi, '').trim().replace(/\s\s+/g, ' ').split(' '); 
+    const textInput = e.target.value;
+    const tagsArr = textInput
+      .replace(/[^\w\s]/gi, '')
+      .trim()
+      .replace(/\s\s+/g, ' ')
+      .split(' ');
 
     this.setState({ post: { ...this.state.post, tags: tagsArr } });
   };
@@ -119,10 +118,23 @@ class ImageUploadForm extends React.Component {
   };
 
   onSubmit = async e => {
-    e.preventDefault();
-    const { post, file } = this.state;
+    try {
+      e.preventDefault();
+      const { post, file } = this.state;
 
-    await this.props.submitPost(post, file, this.props.history);
+      const data = new FormData();
+      // name must match multer upload('name')
+      data.append('image', file);
+      data.append('data', JSON.stringify(post));
+
+      await fetch('/api/upload', {
+        mode: 'no-cors',
+        method: 'POST',
+        body: data
+      });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   render() {
@@ -221,16 +233,4 @@ ImageUploadForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-// export default withStyles(styles)(ImageUploadForm);
-
-const mapStateToProps = state => ({
-  id: state.auth._id
-});
-
-export default compose(
-  withStyles(styles),
-  connect(
-    mapStateToProps,
-    { submitPost }
-  )
-)(withRouter(ImageUploadForm));
+export default withStyles(styles)(ImageUploadForm);

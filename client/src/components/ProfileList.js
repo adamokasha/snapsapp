@@ -64,9 +64,8 @@ function ProfileList(props) {
               }}
             >
               <Paper className={classes.paper}>
-              <Link className={classes.link} to={`/profile/${data.displayName}`}>
+              <Link className={classes.link} target="_blank" to={`/profile/${data.displayName}`}>
               <ProfileHeader
-                context="search"
                 profilePhoto={data.profilePhoto}
                 displayName={data.displayName}
                 joined={data.joined}

@@ -1,5 +1,5 @@
 import React from 'react';
-import {withRouter} from 'react-router';
+import {Link} from 'react-router-dom'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -56,13 +56,6 @@ class AlbumImageCard extends React.Component {
     faveColor: 'default'
   };
 
-  onImgClick = () => {
-    return this.props.history.push({
-      pathname: `/post/${this.props.post._id}/`,
-      state: { post: this.props.post }
-    })
-  }
-
   render() {
     const { classes } = this.props;
     const { imgUrl, title, description, createdAt } = this.props.post;
@@ -74,6 +67,10 @@ class AlbumImageCard extends React.Component {
             title={title || 'Aerial Photo'}
             subheader={createdAt || 'September 14, 2016'}
           />
+          <Link to={{
+            pathname: `/post/${this.props.post._id}/`,
+            state: { post: this.props.post }
+          }}>
           <CardMedia
             className={classes.media}
             image={
@@ -81,9 +78,8 @@ class AlbumImageCard extends React.Component {
               'https://i.imgur.com/KAXz5AG.jpg'
             }
             title={title || 'Image Title'}
-            onClick={this.onImgClick}
           />
-
+          </Link>
           <CardContent>
             <Typography component="p">
               {description ||
@@ -102,4 +98,4 @@ AlbumImageCard.propTypes = {
   post: PropTypes.object.isRequired
 }
 
-export default withStyles(styles)(withRouter(AlbumImageCard));
+export default withStyles(styles)(AlbumImageCard);
