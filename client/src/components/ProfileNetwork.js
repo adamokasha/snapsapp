@@ -34,7 +34,7 @@ const styles = theme => ({
   }
 });
 
-export const ProfileFollows = props => {
+export const ProfileNetwork = props => {
   const onFollow = async () => {
     console.log('clicked');
     try {
@@ -87,4 +87,8 @@ export const ProfileFollows = props => {
   );
 };
 
-export default withStyles(styles)(ProfileFollows);
+ProfileNetwork.propTypes = {
+  userid: PropTypes.string.isRequired
+}
+
+export default withStyles(styles)(ProfileNetwork);

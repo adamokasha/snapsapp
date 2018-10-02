@@ -8,7 +8,7 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import axios from 'axios';
 
-import Modal from './Modal';
+import ModalView from './ModalView';
 import AlbumMaker from './AlbumMaker';
 
 const styles = theme => ({
@@ -100,7 +100,7 @@ class AlbumList extends React.Component {
               <GridListTileBar
                 title={album.name}
                 actionIcon={
-                  <Modal
+                  <ModalView
                     togglerComponent={
                       <IconButton
                         albumid={album._id}

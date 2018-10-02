@@ -15,7 +15,7 @@ import CancelTwoToneIcon from '@material-ui/icons/CancelTwoTone';
 import axios from 'axios';
 
 import ProfileHeader from './ProfileHeader';
-import ProfileFollows from './ProfileFollows';
+import ProfileNetwork from './ProfileNetwork';
 import { updateProfile } from '../actions/auth';
 
 const styles = theme => ({
@@ -204,7 +204,7 @@ export class Profile extends React.Component {
             enableEdit={this.enableEdit}
           />
           <Divider />
-          <ProfileFollows
+          <ProfileNetwork
             userid={this.state.id}
           />
           <Divider />

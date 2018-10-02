@@ -16,7 +16,7 @@ import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
 import Divider from '@material-ui/core/Divider';
 import axios from 'axios';
 
-import Modal from './Modal';
+import ModalView from './ModalView';
 import ImageModalView from './ImageModalView';
 
 const styles = theme => ({
@@ -112,7 +112,7 @@ class ImageCard extends React.Component {
     }
 
     return (
-      <Modal
+      <ModalView
         togglerComponent={
           <CardMedia
             className={classes.media}

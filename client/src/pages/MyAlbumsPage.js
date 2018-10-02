@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import AlbumList from '../components/AlbumList';
 import NavBar from '../components/NavBar';
-import Modal from '../components/Modal';
+import ModalView from '../components/ModalView';
 import AlbumMaker from '../components/AlbumMaker';
 import axios from 'axios';
 
@@ -45,7 +45,7 @@ export class AlbumsPage extends React.Component {
         >
           Albums
         </Typography>
-        <Modal
+        <ModalView
           togglerComponent={
             <Button
               onClick={this.handleOpen}

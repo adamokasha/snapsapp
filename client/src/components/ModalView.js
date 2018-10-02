@@ -7,7 +7,7 @@ const styles = theme => ({
 
 });
 
-class ImageUploadModal extends React.Component {
+class ModalView extends React.Component {
   state = {
     open: false
   };
@@ -46,10 +46,10 @@ class ImageUploadModal extends React.Component {
   }
 }
 
-ImageUploadModal.propTypes = {
+ModalView.propTypes = {
   classes: PropTypes.object.isRequired,
   togglerComponent: PropTypes.element.isRequired,
   modalComponent: PropTypes.element.isRequired
 };
 
-export default withStyles(styles)(ImageUploadModal);
+export default withStyles(styles)(ModalView);
