@@ -6,9 +6,11 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
-
 import MailOutlinedIcon from '@material-ui/icons/MailOutlined';
 import PersonAddOutlined from '@material-ui/icons/PersonAdd';
+
+import ModalView from './ModalView';
+import ProfileNetworkTabs from './ProfileNetworkTabs'
 
 const styles = theme => ({
   root: {
@@ -56,15 +58,20 @@ export const ProfileNetwork = props => {
           </Typography>
         </div>
         <div>
-          <Typography
-            align="center"
-            variant="body2"
-            className={classes.following}
-          >
-            52
-            <br />
-            Following
-          </Typography>
+          <ModalView 
+            togglerComponent={
+              <Typography
+              align="center"
+              variant="body2"
+              className={classes.following}
+            >
+              52
+              <br />
+              Following
+            </Typography>
+            }
+            modalComponent={<ProfileNetworkTabs tabPosition={1} userId={props.userid}/>}
+          />         
         </div>
       </div>
       <div className={classes.actions}>
