@@ -60,7 +60,9 @@ module.exports = app => {
       })
       .exec();
 
-      res.status(200).send(followersDoc.followers)
+      const {followers} = followersDoc[0]
+
+      res.status(200).send(followers)
     } catch (e) {
       console.log(e);
     }
@@ -95,7 +97,10 @@ module.exports = app => {
       if(clientId === id) {
         return res.status(400).send({error: "Can't add self."})
       }
-      const follows = await Follows.findOneAndUpdate({_owner: clientId}, {$push: {follows: id, upsert: true}});
+      const follows = await Follows.findOneAndUpdate({_owner: clientId}, {$addToSet: {follows: id}});
+
+      // Update the followed users Followers docs
+      await Followers.findOneAndUpdate({_owner: id}, {$addToSet: {followers: clientId}});
 
       res.status(200).send(follows);
     } catch (e) {console.log(e)}
@@ -110,6 +115,9 @@ module.exports = app => {
         return res.status(400).send({error: "Can't unfollow self."})
       }
       const follows = await Follows.findOneAndRemove({_owner: clientId}, {$pull: {follows: id}});
+
+      // Update the followed users Followers docs
+      await Followers.findOneAndRemove({_owner: id}, {$pull: {followers: clientId}});
 
       res.status(200).send(follows);
     } catch (e) {console.log(e)}
