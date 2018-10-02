@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const requireAuth = require('../middlewares/requireAuth');
 const User = mongoose.model('User');
 const Faves = mongoose.model('Faves');
+const Follows = mongoose.model('Follows');
+const Followers = mongoose.model('Followers');
 
 
 module.exports = app => {
@@ -64,10 +66,17 @@ module.exports = app => {
         }
       );
 
-      // Create and save new faves document for every newly reg'd user
-      const faves = await new Faves({
+      // Create and save new faves, follows and followers doc for every newly reg'd user
+      await new Faves({
+        _owner: req.user.id
+      }).save();
+      await new Follows({
+        _owner: req.user.id
+      }).save();
+      await new Followers({
         _owner: req.user.id
       }).save()
+
 
       res.redirect('/');
     } catch (e) {

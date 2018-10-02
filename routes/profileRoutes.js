@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const requireAuth = require('../middlewares/requireAuth');
 const User = mongoose.model('User');
+const Follows = mongoose.model('Follows');
+const Followers = mongoose.model('Followers');
 
 module.exports = app => {
   // Update Profile
@@ -44,4 +46,64 @@ module.exports = app => {
       console.log(e);
     }
   });
+
+  // Get a user's followers
+  app.get('/api/profile/followers/:id/:page', async (req, res) => {
+    try {
+      const {id, page} = req.params;
+      const followers = await Followers.find({_owner: id})
+      .limit(25)
+      .skip(25 * page)
+      .populate({
+        path: 'followers',
+        select: 'displayName profilePhoto'
+      })
+      .exec();
+
+      res.status(200).send(followers)
+    } catch (e) {
+      console.log(e);
+    }
+  })
+
+  // Get a user's follows
+  app.get('/api/profile/follows/:id/:page', async (req, res) => {
+    try {
+      const {id, page} = req.params;
+      const follows = await Follows.find({_owner: id})
+      .limit(25)
+      .skip(25 * page)
+      .populate({
+        path: 'follows',
+        select: 'displayName profilePhoto'
+      })
+      .exec();
+
+      res.status(200).send(follows)
+    } catch (e) {
+      console.log(e);
+    }
+  })
+
+  // Follow a user
+  app.post('/api/profile/follows/add/:id', async (req, res) => {
+    try {
+      const clientId = req.user.id;
+      const {id} = req.params;
+      const follows = await Follows.findByIdAndUpdate({_owner: clientId}, {_follows: id, upsert: true});
+
+      res.status(200).send(follows);
+    } catch (e) {console.log(e)}
+  });
+
+  // Unfollow a user
+  app.delete('api/profile/follows/unf/:id', async (req, res) => {
+    try {
+      const clientId = req.user.id;
+      const {id} = req.params;
+      const follows = await Follows.findByIdAndRemove({_owner: clientId}, {_follows: id});
+
+      res.status(200).send(follows);
+    } catch (e) {console.log(e)}
+  })
 };

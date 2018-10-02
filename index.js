@@ -9,6 +9,8 @@ require('./models/User');
 require('./models/Faves');
 require('./models/Album');
 require('./models/Post');
+require('./models/Followers');
+require('./models/Follows');
 require('./services/passport');
 
 mongoose.Promise = global.Promise;
