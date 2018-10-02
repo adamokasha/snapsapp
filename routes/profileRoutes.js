@@ -51,7 +51,7 @@ module.exports = app => {
   app.get('/api/profile/followers/:id/:page', async (req, res) => {
     try {
       const {id, page} = req.params;
-      const followers = await Followers.find({_owner: id})
+      const followersDoc = await Followers.find({_owner: id})
       .limit(25)
       .skip(25 * page)
       .populate({
@@ -60,7 +60,7 @@ module.exports = app => {
       })
       .exec();
 
-      res.status(200).send(followers)
+      res.status(200).send(followersDoc.followers)
     } catch (e) {
       console.log(e);
     }
@@ -70,7 +70,7 @@ module.exports = app => {
   app.get('/api/profile/follows/:id/:page', async (req, res) => {
     try {
       const {id, page} = req.params;
-      const follows = await Follows.find({_owner: id})
+      const followsDoc = await Follows.find({_owner: id}, 'follows')
       .limit(25)
       .skip(25 * page)
       .populate({
@@ -78,6 +78,8 @@ module.exports = app => {
         select: 'displayName profilePhoto'
       })
       .exec();
+
+      const {follows} = followsDoc[0]
 
       res.status(200).send(follows)
     } catch (e) {
@@ -93,7 +95,7 @@ module.exports = app => {
       if(clientId === id) {
         return res.status(400).send({error: "Can't add self."})
       }
-      const follows = await Follows.findOneAndUpdate({_owner: clientId}, {follows: id, upsert: true});
+      const follows = await Follows.findOneAndUpdate({_owner: clientId}, {$push: {follows: id, upsert: true}});
 
       res.status(200).send(follows);
     } catch (e) {console.log(e)}
@@ -107,7 +109,7 @@ module.exports = app => {
       if(clientId === id) {
         return res.status(400).send({error: "Can't unfollow self."})
       }
-      const follows = await Follows.findOneAndRemove({_owner: clientId}, {follows: id});
+      const follows = await Follows.findOneAndRemove({_owner: clientId}, {$pull: {follows: id}});
 
       res.status(200).send(follows);
     } catch (e) {console.log(e)}

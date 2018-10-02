@@ -10,7 +10,7 @@ import MailOutlinedIcon from '@material-ui/icons/MailOutlined';
 import PersonAddOutlined from '@material-ui/icons/PersonAdd';
 
 import ModalView from './ModalView';
-import ProfileNetworkTabs from './ProfileNetworkTabs'
+import ProfileNetworkTabs from './ProfileNetworkTabs';
 
 const styles = theme => ({
   root: {
@@ -44,41 +44,48 @@ export const ProfileNetwork = props => {
     } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   const { classes } = props;
   return (
     <div className={classes.root}>
       <div className={classes.info}>
         <div>
-          <Typography align="center" variant="body2">
-            1152
-            <br />
-            Followers
-          </Typography>
+          <ModalView
+            togglerComponent={
+              <Typography align="center" variant="body2">
+                1152
+                <br />
+                Followers
+              </Typography>
+            }
+            modalComponent={
+              <ProfileNetworkTabs tabPosition={1} userId={props.userid} />
+            }
+          />
         </div>
         <div>
-          <ModalView 
+          <ModalView
             togglerComponent={
               <Typography
-              align="center"
-              variant="body2"
-              className={classes.following}
-            >
-              52
-              <br />
-              Following
-            </Typography>
+                align="center"
+                variant="body2"
+                className={classes.following}
+              >
+                52
+                <br />
+                Following
+              </Typography>
             }
-            modalComponent={<ProfileNetworkTabs tabPosition={1} userId={props.userid}/>}
-          />         
+            modalComponent={
+              <ProfileNetworkTabs tabPosition={1} userId={props.userid} />
+            }
+          />
         </div>
       </div>
       <div className={classes.actions}>
         <div>
-          <Button
-            onClick={onFollow}
-          >
+          <Button onClick={onFollow}>
             <PersonAddOutlined className={classes.leftIcon} />
             Follow
           </Button>
@@ -96,6 +103,6 @@ export const ProfileNetwork = props => {
 
 ProfileNetwork.propTypes = {
   userid: PropTypes.string.isRequired
-}
+};
 
 export default withStyles(styles)(ProfileNetwork);

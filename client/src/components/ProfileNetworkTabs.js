@@ -10,9 +10,14 @@ import ScrollView from './ScrollView';
 
 const styles = theme => ({
   root: {
-    marginTop: `${theme.spacing.unit * 3}px`,
-    backgroundColor: theme.palette.background.paper,
-    width: '100%'
+    flexGrow: 1,
+    width: '30%',
+    position: 'absolute',
+    top: '15%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    paddingBottom: `${theme.spacing.unit}px`,
+    borderRadius: '3px'
   }
 });
 
@@ -42,23 +47,18 @@ class FullWidthTabs extends React.Component {
             textColor="primary"
             fullWidth
           >
-            <Tab label="Follows" />
+            <Tab label="Followers" />
             <Tab label="Following" />
           </Tabs>
         </AppBar>
-        {this.state.value === 0 ? (
-          <p>Tab 0</p>
-        ) : null}
+        {this.state.value === 0 ? <p>Tab 0</p> : null}
         {this.state.value === 1 ? (
-          <p>Tab 1</p>
+          <ScrollView context="userFollows" userId={this.props.userId} />
         ) : null}
       </div>
     );
   }
 }
-
-
-/*<ScrollView context="userFollows" user={this.props.userId} /> */
 
 /*<ScrollView context="userFollowing" user={this.props.userId} />*/
 
