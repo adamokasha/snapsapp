@@ -51,7 +51,9 @@ class FullWidthTabs extends React.Component {
             <Tab label="Following" />
           </Tabs>
         </AppBar>
-        {this.state.value === 0 ? <p>Tab 0</p> : null}
+        {this.state.value === 0 ? (
+          <ScrollView context="userFollowers" userId={this.props.userId} />
+        ) : null}
         {this.state.value === 1 ? (
           <ScrollView context="userFollows" userId={this.props.userId} />
         ) : null}

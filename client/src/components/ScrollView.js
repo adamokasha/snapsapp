@@ -142,6 +142,23 @@ export class ScrollView extends React.Component {
             currentPage: this.state.currentPage + 1,
             isFetching: false
           });
+        case 'userFollowers':
+          res = await axios.get(
+            `/api/profile/followers/${this.props.userId}/${
+              this.state.currentPage
+            }`
+          );
+          if (!res.data.length) {
+            return this.setState(
+              { morePagesAvailable: false, isFetching: false },
+              () => {}
+            );
+          }
+          return this.setState({
+            profilePages: [...this.state.pages, res.data],
+            currentPage: this.state.currentPage + 1,
+            isFetching: false
+          });
         case 'searchPosts':
           res = await axios.post(
             `/api/posts/search/${this.state.currentPage}`,
@@ -289,7 +306,8 @@ export class ScrollView extends React.Component {
             ))
           : null}
 
-        {this.state.profilePages && context === 'userFollows'
+        {(this.state.profilePages && context === 'userFollows') ||
+        (this.state.profilePages && context === 'userFollowers')
           ? this.state.profilePages.map((profiles, i) => (
               <ProfileList key={i} profiles={profiles} />
             ))
