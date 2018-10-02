@@ -95,6 +95,7 @@ export class Profile extends React.Component {
     super(props);
 
     this.state = {
+      id: '',
       editEnabled: false,
       ownProfile: false,
       displayName: this.props.profile ? this.profile.displayName : '',
@@ -112,8 +113,8 @@ export class Profile extends React.Component {
   async componentDidMount() {
     try {
       const res = await axios.get(`/api/profile/get/${this.props.user}`);
-      const { profilePhoto, joined, displayName, profile } = res.data;
-      this.setState({ profilePhoto, displayName, joined, ...profile }, () => {
+      const { profilePhoto, joined, displayName, profile, _id } = res.data;
+      this.setState({ id: _id, profilePhoto, displayName, joined, ...profile }, () => {
         return this.checkIfProfileOwner();
       });
     } catch (e) {
@@ -203,7 +204,9 @@ export class Profile extends React.Component {
             enableEdit={this.enableEdit}
           />
           <Divider />
-          <ProfileFollows />
+          <ProfileFollows
+            userid={this.state.id}
+          />
           <Divider />
           <form onSubmit={this.onSubmit} className={classes.form}>
             <div className={classes.fieldGroup}>

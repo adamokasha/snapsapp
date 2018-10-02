@@ -5,6 +5,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
+import axios from 'axios';
 
 import MailOutlinedIcon from '@material-ui/icons/MailOutlined';
 import PersonAddOutlined from '@material-ui/icons/PersonAdd';
@@ -30,10 +31,19 @@ const styles = theme => ({
   },
   following: {
     marginLeft: `${theme.spacing.unit}px`
-  },
+  }
 });
 
 export const ProfileFollows = props => {
+  const onFollow = async () => {
+    console.log('clicked');
+    try {
+      await axios.post(`/api/profile/follows/add/${props.userid}`);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   const { classes } = props;
   return (
     <div className={classes.root}>
@@ -46,7 +56,11 @@ export const ProfileFollows = props => {
           </Typography>
         </div>
         <div>
-          <Typography align="center" variant="body2" className={classes.following}>
+          <Typography
+            align="center"
+            variant="body2"
+            className={classes.following}
+          >
             52
             <br />
             Following
@@ -55,7 +69,9 @@ export const ProfileFollows = props => {
       </div>
       <div className={classes.actions}>
         <div>
-          <Button>
+          <Button
+            onClick={onFollow}
+          >
             <PersonAddOutlined className={classes.leftIcon} />
             Follow
           </Button>

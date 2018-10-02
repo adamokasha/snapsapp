@@ -86,22 +86,28 @@ module.exports = app => {
   })
 
   // Follow a user
-  app.post('/api/profile/follows/add/:id', async (req, res) => {
+  app.post('/api/profile/follows/add/:id', requireAuth, async (req, res) => {
     try {
       const clientId = req.user.id;
       const {id} = req.params;
-      const follows = await Follows.findByIdAndUpdate({_owner: clientId}, {_follows: id, upsert: true});
+      if(clientId === id) {
+        return res.status(400).send({error: "Can't add self."})
+      }
+      const follows = await Follows.findOneAndUpdate({_owner: clientId}, {follows: id, upsert: true});
 
       res.status(200).send(follows);
     } catch (e) {console.log(e)}
   });
 
   // Unfollow a user
-  app.delete('api/profile/follows/unf/:id', async (req, res) => {
+  app.delete('api/profile/follows/unf/:id', requireAuth, async (req, res) => {
     try {
       const clientId = req.user.id;
       const {id} = req.params;
-      const follows = await Follows.findByIdAndRemove({_owner: clientId}, {_follows: id});
+      if(clientId === id) {
+        return res.status(400).send({error: "Can't unfollow self."})
+      }
+      const follows = await Follows.findOneAndRemove({_owner: clientId}, {follows: id});
 
       res.status(200).send(follows);
     } catch (e) {console.log(e)}
