@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const Post = mongoose.model('Post');
 const User = mongoose.model('User');
 const Faves = mongoose.model('Faves');
+const Follows = mongoose.model('Follows');
+
 
 module.exports = app => {
   // ScrollView context: Home page
@@ -12,6 +14,7 @@ module.exports = app => {
       const { page } = req.params;
 
       const posts = await Post.find({})
+        .sort({createdAt: -1})
         .limit(12)
         .skip(12 * page)
         .populate({
@@ -38,6 +41,24 @@ module.exports = app => {
       }
 
       res.send(posts);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+  // ScrollView context: Follows Feed
+  app.get('/api/posts/follows/:userId/:page', async (req, res) => {
+    try {
+      const {page} = req.params;
+      const follows = await Follows.find({ _owner: req.params.userId }, 'follows');
+      console.log('FOLLOWS: ', follows[0].follows)
+      const posts = await Post.find({ _owner: { $in: follows[0].follows } })
+        .sort({ createdAt: -1 })
+        .limit(8)
+        .skip(8 * page)
+        .exec();
+      
+      res.status(200).send(posts);
     } catch (e) {
       console.log(e);
     }
@@ -142,12 +163,15 @@ module.exports = app => {
   app.post('/api/posts/search/:page', async (req, res) => {
     try {
       const { searchTerms } = req.body;
-      const {page} = req.params;
+      const { page } = req.params;
 
       console.log('SEARCHTERMS: ', searchTerms);
 
       const posts = await Post.find({
-        $or: [{ tags: { $in: searchTerms } }, { title_lower: { $in: searchTerms } }]
+        $or: [
+          { tags: { $in: searchTerms } },
+          { title_lower: { $in: searchTerms } }
+        ]
       })
         .populate({ path: '_owner', select: 'profilePhoto displayName' })
         .limit(12)
