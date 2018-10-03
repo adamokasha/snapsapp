@@ -36,70 +36,93 @@ const styles = theme => ({
   }
 });
 
-export const ProfileNetwork = props => {
-  const onFollow = async () => {
-    console.log('clicked');
+export class ProfileNetwork extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      followersCount: '',
+      followsCount: ''
+    };
+  }
+
+  async componentDidUpdate(prevProps) {
+    if(prevProps.userid !== this.props.userid) {
+      console.log('called!');
+      try {
+        const res = await axios.get(`/api/profile/count/${this.props.userid}`);
+        const {followsCount, followersCount} = res.data[0];
+        this.setState({followersCount, followsCount}, () => {});
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
+
+  onFollow = async () => {
     try {
-      await axios.post(`/api/profile/follows/add/${props.userid}`);
+      await axios.post(`/api/profile/follows/add/${this.props.userid}`);
     } catch (e) {
       console.log(e);
     }
   };
 
-  const { classes } = props;
-  return (
-    <div className={classes.root}>
-      <div className={classes.info}>
-        <div>
-          <ModalView
-            togglerComponent={
-              <Typography align="center" variant="body2">
-                1152
-                <br />
-                Followers
-              </Typography>
-            }
-            modalComponent={
-              <ProfileNetworkTabs tabPosition={1} userId={props.userid} />
-            }
-          />
+  render() {
+    const { classes, userid } = this.props;
+    return (
+      <div className={classes.root}>
+        <div className={classes.info}>
+          <div>
+            <ModalView
+              togglerComponent={
+                <Typography align="center" variant="body2">
+                  {this.state.followersCount}
+                  <br />
+                  Followers
+                </Typography>
+              }
+              modalComponent={
+                <ProfileNetworkTabs tabPosition={1} userId={userid} />
+              }
+            />
+          </div>
+          <div>
+            <ModalView
+              togglerComponent={
+                <Typography
+                  align="center"
+                  variant="body2"
+                  className={classes.following}
+                >
+                  {this.state.followsCount}
+                  <br />
+                  Following
+                </Typography>
+              }
+              modalComponent={
+                <ProfileNetworkTabs tabPosition={1} userId={userid} />
+              }
+            />
+          </div>
         </div>
-        <div>
-          <ModalView
-            togglerComponent={
-              <Typography
-                align="center"
-                variant="body2"
-                className={classes.following}
-              >
-                52
-                <br />
-                Following
-              </Typography>
-            }
-            modalComponent={
-              <ProfileNetworkTabs tabPosition={1} userId={props.userid} />
-            }
-          />
+        <div className={classes.actions}>
+          <div>
+            <Button onClick={this.onFollow}>
+              <PersonAddOutlined className={classes.leftIcon} />
+              Follow
+            </Button>
+          </div>
+          <div>
+            <Button>
+              <MailOutlinedIcon className={classes.leftIcon} />
+              Message
+            </Button>
+          </div>
         </div>
       </div>
-      <div className={classes.actions}>
-        <div>
-          <Button onClick={onFollow}>
-            <PersonAddOutlined className={classes.leftIcon} />
-            Follow
-          </Button>
-        </div>
-        <div>
-          <Button>
-            <MailOutlinedIcon className={classes.leftIcon} />
-            Message
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 ProfileNetwork.propTypes = {
   userid: PropTypes.string.isRequired
