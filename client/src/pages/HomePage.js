@@ -41,6 +41,9 @@ export class HomePage extends React.Component {
         {this.state.currentContext === 'following' ? (
           <ScrollView context='following' />
         ) : null}
+        {this.state.currentContext === 'popular' ? (
+          <ScrollView context='popular' />
+        ) : null}
         {this.state.currentContext === 'searchUsers' ? (
           <ScrollView context='searchUsers' searchTerms={this.state.searchTerms} />
         ) : null}
