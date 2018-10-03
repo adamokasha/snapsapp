@@ -57,6 +57,8 @@ module.exports = app => {
         { $sort: { faveCount: -1 } }
       ]).exec();
 
+      await Post.populate(posts, {path: '_owner', select: 'displayName profilePhoto'});
+
       if (req.user) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
