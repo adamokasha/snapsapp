@@ -47,15 +47,16 @@ module.exports = app => {
   });
 
   // ScrollView context: Follows Feed
-  app.get('/api/posts/follows/:userId/:page', async (req, res) => {
+  app.get('/api/posts/follows/:page', requireAuth, async (req, res) => {
     try {
       const {page} = req.params;
-      const follows = await Follows.find({ _owner: req.params.userId }, 'follows');
+      const follows = await Follows.find({ _owner: req.user.id }, 'follows');
       console.log('FOLLOWS: ', follows[0].follows)
       const posts = await Post.find({ _owner: { $in: follows[0].follows } })
         .sort({ createdAt: -1 })
-        .limit(8)
-        .skip(8 * page)
+        .limit(12)
+        .skip(12 * page)
+        .populate({path: '_owner', select: 'displayName profilePhoto'})
         .exec();
       
       res.status(200).send(posts);

@@ -22,6 +22,10 @@ export class HomePage extends React.Component {
     this.setState({ currentContext: context, searchTerms: searchTermsArr });
   };
 
+  setContext = (context) => {
+    this.setState({currentContext: context}, () => {})
+  }
+
   render() {
     const { isAuth } = this.props;
     return (
@@ -29,10 +33,13 @@ export class HomePage extends React.Component {
         <NavBar />
         {isAuth ? null : <HeroUnit />}
         <Search setSearch={this.setSearch} />
-        <MainPageMenu />
+        <MainPageMenu setContext={this.setContext} />
         {this.state.currentContext === 'home' ? <ScrollView context="home" /> : null}
         {this.state.currentContext === 'searchPosts' ? (
           <ScrollView context='searchPosts' searchTerms={this.state.searchTerms} />
+        ) : null}
+        {this.state.currentContext === 'following' ? (
+          <ScrollView context='following' />
         ) : null}
         {this.state.currentContext === 'searchUsers' ? (
           <ScrollView context='searchUsers' searchTerms={this.state.searchTerms} />

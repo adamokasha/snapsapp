@@ -7,7 +7,8 @@ import Grow from '@material-ui/core/Grow';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
-import MenuList from '@material-ui/core/MenuList';import ArrowDropDownCircleOutlinedIcon from '@material-ui/icons/ArrowDropDownCircleOutlined';
+import MenuList from '@material-ui/core/MenuList';
+import ArrowDropDownCircleOutlinedIcon from '@material-ui/icons/ArrowDropDownCircleOutlined';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import FiberNew from '@material-ui/icons/FiberNew';
 import PeopleOutlinedIcon from '@material-ui/icons/PeopleOutlined';
@@ -19,6 +20,9 @@ const styles = theme => ({
   },
   popper: {
     zIndex: 1000
+  },
+  leftIcon: {
+    marginRight: `${theme.spacing.unit}px`
   }
 });
 
@@ -30,8 +34,12 @@ export class MainPageMenu extends React.Component {
       context: 'homepage',
       popperOpen: false
     };
-    
   }
+
+  togglePopper = e => {
+    console.log('toggle');
+    this.setState({ popperOpen: !this.state.popperOpen }, () => {});
+  };
 
   popperOpen = e => {
     this.setState({ popperOpen: true });
@@ -41,21 +49,38 @@ export class MainPageMenu extends React.Component {
     this.setState({ popperOpen: false });
   };
 
+  onFollowing = () => {
+    this.setState({context: 'following'});
+    this.props.setContext('following');
+  }
+
+  onNew = () => {
+    this.setState({context: 'new'});
+    this.props.setContext('new');
+  }
+
+  onPopular = () => {
+    this.setState({context: 'popular'});
+    this.props.setContext('popular');
+  }
+
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
         <div>
-          <Button
-            buttonRef={node => {
-              this.anchorEl = node;
-            }}
-            aria-owns={this.state.popperOpen ? 'menu-list-grow' : null}
-            aria-haspopup="true"  
-            onClick={this.popperOpen}
-          >
-            <ArrowDropDownCircleOutlinedIcon />
-          </Button>
+          <ClickAwayListener onClickAway={this.popperClose}>
+            <Button
+              buttonRef={node => {
+                this.anchorEl = node;
+              }}
+              aria-owns={this.state.popperOpen ? 'menu-list-grow' : null}
+              aria-haspopup="true"
+              onClick={this.togglePopper}
+            >
+              <ArrowDropDownCircleOutlinedIcon />
+            </Button>
+          </ClickAwayListener>
 
           <Popper
             className={classes.popper}
@@ -72,22 +97,20 @@ export class MainPageMenu extends React.Component {
                 style={{ transformOrigin: 'center top' }}
               >
                 <Paper className={classes.paper}>
-                  <ClickAwayListener onClickAway={this.popperClose}>
-                    <MenuList className={classes.menuList}>
-                      <MenuItem onClick={this.onSearchPosts}>
-                        <PeopleOutlinedIcon className={classes.searchIcons} />
-                        Following
-                      </MenuItem>
-                      <MenuItem onClick={this.onSearchPeople}>
-                        <FiberNew className={classes.searchIcons} />
-                        Newest
-                      </MenuItem>
-                      <MenuItem onClick={this.onSearchPeople}>
-                        <WhatshotOutlinedIcon className={classes.searchIcons} />
-                        What's Hot
-                      </MenuItem>
-                    </MenuList>
-                  </ClickAwayListener>
+                  <MenuList className={classes.menuList}>
+                    <MenuItem onClick={this.onFollowing}>
+                      <PeopleOutlinedIcon className={classes.leftIcon} />
+                      Following
+                    </MenuItem>
+                    <MenuItem onClick={this.onNew}>
+                      <FiberNew className={classes.leftIcon} />
+                      New
+                    </MenuItem>
+                    <MenuItem onClick={this.onPopular}>
+                      <WhatshotOutlinedIcon className={classes.leftIcon} />
+                      Popular
+                    </MenuItem>
+                  </MenuList>
                 </Paper>
               </Grow>
             )}

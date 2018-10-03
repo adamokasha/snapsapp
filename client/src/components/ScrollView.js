@@ -108,6 +108,9 @@ export class ScrollView extends React.Component {
         case 'home':
           res = await axios.get(`/api/posts/all/${this.state.currentPage}`);
           break;
+        case 'following':
+          res = await axios.get(`/api/posts/follows/${this.state.currentPage}`);
+          break;
         case 'userPosts':
           res = await axios.get(
             `/api/posts/user/all/${this.props.user}/${this.state.currentPage}`
