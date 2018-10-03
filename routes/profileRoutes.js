@@ -171,13 +171,13 @@ module.exports = app => {
       if (clientId === id) {
         return res.status(400).send({ error: "Can't unfollow self." });
       }
-      const follows = await Follows.findOneAndRemove(
+      const follows = await Follows.findOneAndUpdate(
         { _owner: clientId },
         { $pull: { follows: id } }
       );
 
       // Update the followed users Followers docs
-      await Followers.findOneAndRemove(
+      await Followers.findOneAndUpdate(
         { _owner: id },
         { $pull: { followers: clientId } }
       );
