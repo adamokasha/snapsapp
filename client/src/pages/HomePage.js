@@ -6,6 +6,7 @@ import Search from '../components/Search';
 import HeroUnit from '../components/HeroUnit';
 import ScrollView from '../components/ScrollView';
 import NavBar from '../components/NavBar';
+import MainPageMenu from '../components/MainPageMenu';
 
 export class HomePage extends React.Component {
   constructor(props) {
@@ -28,9 +29,7 @@ export class HomePage extends React.Component {
         <NavBar />
         {isAuth ? null : <HeroUnit />}
         <Search setSearch={this.setSearch} />
-        <Button onClick={() => this.setState({ currentContext: 'home' })}>
-          Back
-        </Button>
+        <MainPageMenu />
         {this.state.currentContext === 'home' ? <ScrollView context="home" /> : null}
         {this.state.currentContext === 'searchPosts' ? (
           <ScrollView context='searchPosts' searchTerms={this.state.searchTerms} />
