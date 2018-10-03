@@ -164,7 +164,7 @@ module.exports = app => {
   });
 
   // Unfollow a user
-  app.delete('api/profile/follows/unf/:id', requireAuth, async (req, res) => {
+  app.delete('/api/profile/follows/unf/:id', requireAuth, async (req, res) => {
     try {
       const clientId = req.user.id;
       const { id } = req.params;

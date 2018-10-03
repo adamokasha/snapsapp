@@ -42,19 +42,23 @@ export class ProfileNetwork extends React.Component {
 
     this.state = {
       followersCount: '',
-      followsCount: ''
+      followsCount: '',
+      clientFollows: null
     };
   }
 
   async componentDidUpdate(prevProps) {
-    if(prevProps.userid !== this.props.userid) {
+    if (prevProps.userid !== this.props.userid) {
       console.log('called!');
       try {
         const res = await axios.get(`/api/profile/count/${this.props.userid}`);
-        const {followsCount, followersCount} = res.data[0];
-        this.setState({followersCount, followsCount}, () => {});
+        const { followsCount, followersCount, clientFollows } = res.data[0];
+        this.setState(
+          { followersCount, followsCount, clientFollows },
+          () => {}
+        );
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     }
   }
@@ -66,6 +70,14 @@ export class ProfileNetwork extends React.Component {
       console.log(e);
     }
   };
+
+  onUnfollow = async () => {
+    try{
+      await axios.delete(`/api/profile/follows/unf/${this.props.userid}`);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   render() {
     const { classes, userid } = this.props;
@@ -107,10 +119,17 @@ export class ProfileNetwork extends React.Component {
         </div>
         <div className={classes.actions}>
           <div>
-            <Button onClick={this.onFollow}>
-              <PersonAddOutlined className={classes.leftIcon} />
-              Follow
-            </Button>
+            {this.state.clientFollows ? (
+              <Button onClick={this.onUnfollow}>
+                <PersonAddOutlined className={classes.leftIcon} />
+                Unfollow
+              </Button>
+            ) : (
+              <Button onClick={this.onFollow}>
+                <PersonAddOutlined className={classes.leftIcon} />
+                Follow
+              </Button>
+            )}
           </div>
           <div>
             <Button>
