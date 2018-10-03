@@ -47,9 +47,14 @@ module.exports = app => {
     }
   });
 
-  // Get following and followers count
+  // Get following and followers count and clientFollows (for ProfileNetwork component)
   app.get('/api/profile/count/:userId', async (req, res) => {
     try {
+      let clientId;
+      req.user
+        ? (clientId = mongoose.Types.ObjectId(req.user.id))
+        : (clientId = null);
+      console.log(clientId);
       const userId = mongoose.Types.ObjectId(req.params.userId);
       const follows = await Follows.aggregate([
         { $match: { _owner: userId } },
@@ -63,13 +68,26 @@ module.exports = app => {
           }
         },
         { $unwind: { path: '$followers', preserveNullAndEmptyArrays: true } },
-        { $addFields: { followersCount: { $size: '$followers.followers' } } },
-        {$project: {
-          _id: 0,
-          follows: 0,
-          followers: 0,
-          _owner: 0
-        }},
+        {
+          $addFields: {
+            followersCount: { $size: '$followers.followers' },
+            clientFollows: {
+              $cond: [
+                { $setIsSubset: [[clientId], '$followers.followers'] },
+                true,
+                false
+              ]
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            follows: 0,
+            followers: 0,
+            _owner: 0
+          }
+        }
       ]);
       console.log(follows);
       res.send(follows);
