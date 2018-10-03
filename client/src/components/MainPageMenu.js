@@ -18,6 +18,10 @@ const styles = theme => ({
   root: {
     backgroundColor: '#fff'
   },
+  button: {
+    marginLeft: '2%',
+    textTransform: 'capitalize'
+  },
   popper: {
     zIndex: 1000
   },
@@ -31,7 +35,7 @@ export class MainPageMenu extends React.Component {
     super(props);
 
     this.state = {
-      context: 'homepage',
+      context: 'popular',
       popperOpen: false
     };
   }
@@ -76,9 +80,13 @@ export class MainPageMenu extends React.Component {
               }}
               aria-owns={this.state.popperOpen ? 'menu-list-grow' : null}
               aria-haspopup="true"
+              variant="outlined"
+              size="small"
+              className={classes.button}
               onClick={this.togglePopper}
             >
-              <ArrowDropDownCircleOutlinedIcon />
+              <ArrowDropDownCircleOutlinedIcon className={classes.leftIcon} />
+              {this.state.context}
             </Button>
           </ClickAwayListener>
 

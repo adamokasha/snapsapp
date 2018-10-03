@@ -13,7 +13,7 @@ export class HomePage extends React.Component {
     super(props);
 
     this.state = {
-      currentContext: 'home',
+      currentContext: 'popular',
       searchTerms: null
     };
   }
@@ -34,7 +34,7 @@ export class HomePage extends React.Component {
         {isAuth ? null : <HeroUnit />}
         <Search setSearch={this.setSearch} />
         <MainPageMenu setContext={this.setContext} />
-        {this.state.currentContext === 'home' ? <ScrollView context="home" /> : null}
+        {this.state.currentContext === 'new' ? <ScrollView context="new" /> : null}
         {this.state.currentContext === 'searchPosts' ? (
           <ScrollView context='searchPosts' searchTerms={this.state.searchTerms} />
         ) : null}

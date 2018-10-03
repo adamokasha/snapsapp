@@ -7,8 +7,8 @@ const Faves = mongoose.model('Faves');
 const Follows = mongoose.model('Follows');
 
 module.exports = app => {
-  // ScrollView context: Home page
-  app.get('/api/posts/all/:page', async (req, res) => {
+  // ScrollView context: New
+  app.get('/api/posts/new/:page', async (req, res) => {
     try {
       const { page } = req.params;
 
