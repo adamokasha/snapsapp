@@ -207,23 +207,35 @@ module.exports = app => {
       const postComments = await Post.aggregate([
         { $match: { _id: mongoose.Types.ObjectId(postId) } },
         { $unwind: '$comments' },
-        { $limit: 50 },
-        { $skip: 50 * page },
-        { $sort: { 'comments.createdAt': -1 } },
-        { $replaceRoot: { newRoot: '$comments' } },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'comments._owner',
+            foreignField: '_id',
+            as: 'comments._owner'
+          }
+        },
         {
           $project: {
-            _owner: 1,
-            createdAt: 1,
-            body: 1
+            'comments._id': 1,
+            'comments.createdAt': 1,
+            'comments.body': 1,
+            'comments._owner._id': 1,
+            'comments._owner.displayName': 1,
+            'comments._owner.profilePhoto': 1
           }
-        }
+        },
+        { $unwind: '$comments._owner' },
+        { $replaceRoot: { newRoot: '$comments' } },
+        { $sort: { createdAt: -1 } },
+        { $limit: 50 },
+        { $skip: 50 * page }
       ]);
 
-      await Post.populate(postComments, {
-        path: '_owner',
-        select: 'profilePhoto displayName'
-      });
+      // await Post.populate(postComments, {
+      //   path: '_owner',
+      //   select: 'profilePhoto displayName'
+      // });
 
       res.status(200).send(postComments);
     } catch (e) {
