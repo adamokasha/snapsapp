@@ -5,7 +5,7 @@ const MessageBox = mongoose.model('MessageBox');
 
 module.exports = app => {
   // Get MessageBox
-  app.get('/api/inbox', requireAuth, async (req, res) => {
+  app.get('/api/message/box', requireAuth, async (req, res) => {
     try {
       const messageBox = await MessageBox.findOne({_owner: req.user.id});
       res.status(200).send(messageBox);  
