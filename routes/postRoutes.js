@@ -228,8 +228,8 @@ module.exports = app => {
         { $unwind: '$comments._owner' },
         { $replaceRoot: { newRoot: '$comments' } },
         { $sort: { createdAt: -1 } },
-        { $limit: 50 },
-        { $skip: 50 * page }
+        { $skip: 50 * page },
+        { $limit: 50 }
       ]);
 
       // await Post.populate(postComments, {
