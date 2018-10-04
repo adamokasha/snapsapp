@@ -1,6 +1,6 @@
 import React from 'react';
 import {withStyles} from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
+import Typography from '@material-ui/core/Typography'
 
 import Comment from './Comment';
 
@@ -8,7 +8,17 @@ const styles = theme => ({
 
 })
 
-export class Comment extends React.Component {
+export class CommentList extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      currentPage: 0,
+      pages: [],
+      isLoading: false
+    }
+  }
+
   componentDidMount() {
     // fetch post comments...
   }
@@ -16,16 +26,12 @@ export class Comment extends React.Component {
   render() {
     return (
       <div>
-      {this.props.comments.map((comment, i) => {
+      {this.props.comments ? (this.props.comments.map((comment, i) => {
         <Comment key={i} comment={comment} />
-      })}
+      })) : <Typography>Be the first to comment!</Typography> }
       </div>
     )
   }
-}
-
-CommentList.propTypes = {
-  comments: PropTypes.array.isRequired
 }
 
 export default withStyles(styles)(CommentList);

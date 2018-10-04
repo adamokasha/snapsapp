@@ -1,4 +1,7 @@
 import React from 'react';
+import {connect} from 'react-redux';
+import { withStyles } from '@material-ui/core/styles';
+import compose from 'recompose/compose';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import Button from '@material-ui/core/Button';
@@ -6,9 +9,10 @@ import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
 import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
 
 import NavBar from './NavBar';
+import CommentForm from './CommentForm';
+import CommentList from './CommentList';
 
 const styles = theme => ({
   root: {
@@ -74,6 +78,10 @@ const styles = theme => ({
   ionicon: {
     fontSize: '24px',
     color: 'rgba(0, 0, 0, 0.70)'
+  },
+  commentsContainer: {
+    display: 'flex',
+    flexDirection: 'row'
   }
 });
 
@@ -143,16 +151,26 @@ export class FullPost extends React.Component {
               </div>
             </div>
           </div>
-          <div className="commentsContainer" />
+          <div className="commentsContainer">
+            <CommentList />
+            <CommentForm/>
+          </div>
         </div>
       </React.Fragment>
     );
   }
 }
 
+const mapStateToProps = ({auth}) => ({
+  auth
+})
+
 FullPost.propTypes = {
   location: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
 }
 
-export default withStyles(styles)(FullPost);
+export default compose(
+  withStyles(styles),
+  connect(mapStateToProps)
+)(FullPost);
