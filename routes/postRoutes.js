@@ -196,6 +196,32 @@ module.exports = app => {
     }
   });
 
+  // Get post comments 
+  app.get('/api/posts/comments/all/:postId', async (req, res) => {
+    try {
+      const postComments = await Post.findOne({_id: req.params.postId}, 'comments');
+      res.status(200).send(postComments);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+  // Add a comment
+  app.post('/api/posts/comments/add/:postId', requireAuth, async (req, res) => {
+    try {
+      const {commentBody} = req.body;
+      const comment = {
+        _owner: req.user.id,
+        createdAt: Date.now(),
+        body: commentBody
+      }
+      const postComment = await Post.findOneAndUpdate({_id: postId}, {comments: {$push: comment}});
+      res.status(200).send(postComment);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
   // Search by tag or title
   app.post('/api/posts/search/:page', async (req, res) => {
     try {
