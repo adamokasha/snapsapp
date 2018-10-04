@@ -203,15 +203,26 @@ module.exports = app => {
   app.get('/api/posts/comments/all/:postId/:page', async (req, res) => {
     try {
       const { postId, page } = req.params;
-      const postComments = await Post.findOne({ _id: postId }, 'comments')
-        .sort({'comments.createdAt': -1})
-        .limit(50)
-        .skip(50 * page)
-        .populate({
-          path: 'comments._owner',
-          select: 'profilePhoto displayName'
-        })
-        .exec();
+
+      const postComments = await Post.aggregate([
+        { $match: { _id: mongoose.Types.ObjectId(postId) } },
+        { $limit: 50 },
+        { $skip: 50 * page },
+        { $unwind: '$comments' },
+        { $sort: { 'comments.createdAt': -1 } },
+        {
+          $project: {
+            comments: 1,
+            owner: 1
+          }
+        }
+      ]);
+
+      await Post.populate(postComments, {
+        path: 'comments._owner',
+        select: 'profilePhoto displayName'
+      });
+
       res.status(200).send(postComments);
     } catch (e) {
       console.log(e);
