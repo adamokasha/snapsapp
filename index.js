@@ -11,6 +11,8 @@ require('./models/Album');
 require('./models/Post');
 require('./models/Followers');
 require('./models/Follows');
+require('./models/MailBox');
+require('./models/Message');
 require('./services/passport');
 
 mongoose.Promise = global.Promise;
