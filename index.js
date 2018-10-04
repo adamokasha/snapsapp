@@ -11,7 +11,7 @@ require('./models/Album');
 require('./models/Post');
 require('./models/Followers');
 require('./models/Follows');
-require('./models/MailBox');
+require('./models/MessageBox');
 require('./models/Message');
 require('./services/passport');
 

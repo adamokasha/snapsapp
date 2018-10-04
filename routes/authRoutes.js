@@ -6,7 +6,7 @@ const User = mongoose.model('User');
 const Faves = mongoose.model('Faves');
 const Follows = mongoose.model('Follows');
 const Followers = mongoose.model('Followers');
-const MailBox = mongoose.model('MailBox');
+const MessageBox = mongoose.model('MessageBox');
 const Message = mongoose.model('Message');
 
 
@@ -68,7 +68,7 @@ module.exports = app => {
         }
       );
 
-      // Create and save new faves, follows, followers, mailbox doc for every newly reg'd user
+      // Create and save new faves, follows, followers, messageBox doc for every newly reg'd user
       await new Faves({
         _owner: req.user.id
       }).save();
@@ -78,7 +78,7 @@ module.exports = app => {
       await new Followers({
         _owner: req.user.id
       }).save()
-      await new MailBox({
+      await new MessageBox({
         _owner: req.user.id,
       }).save();
 
