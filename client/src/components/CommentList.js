@@ -26,7 +26,7 @@ export class CommentList extends React.Component {
       );
       this.setState({
         currentPage: this.state.currentPage + 1,
-        pages: [...res.data.comments]
+        pages: [...res.data]
       });
     } catch (e) {
       console.log(e);

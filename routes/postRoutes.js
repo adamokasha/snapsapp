@@ -206,20 +206,22 @@ module.exports = app => {
 
       const postComments = await Post.aggregate([
         { $match: { _id: mongoose.Types.ObjectId(postId) } },
+        { $unwind: '$comments' },
         { $limit: 50 },
         { $skip: 50 * page },
-        { $unwind: '$comments' },
         { $sort: { 'comments.createdAt': -1 } },
+        { $replaceRoot: { newRoot: '$comments' } },
         {
           $project: {
-            comments: 1,
-            owner: 1
+            _owner: 1,
+            createdAt: 1,
+            body: 1
           }
         }
       ]);
 
       await Post.populate(postComments, {
-        path: 'comments._owner',
+        path: '_owner',
         select: 'profilePhoto displayName'
       });
 
