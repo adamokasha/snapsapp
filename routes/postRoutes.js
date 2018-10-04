@@ -200,12 +200,18 @@ module.exports = app => {
   });
 
   // Get post comments
-  app.get('/api/posts/comments/all/:postId', async (req, res) => {
+  app.get('/api/posts/comments/all/:postId/:page', async (req, res) => {
     try {
-      const postComments = await Post.findOne(
-        { _id: req.params.postId },
-        'comments'
-      );
+      const { postId, page } = req.params;
+      const postComments = await Post.findOne({ _id: postId }, 'comments')
+        .sort({'comments.createdAt': -1})
+        .limit(50)
+        .skip(50 * page)
+        .populate({
+          path: 'comments._owner',
+          select: 'profilePhoto displayName'
+        })
+        .exec();
       res.status(200).send(postComments);
     } catch (e) {
       console.log(e);
@@ -221,12 +227,12 @@ module.exports = app => {
         createdAt: Date.now(),
         body: commentBody
       };
-      const postComment = await Post.findOneAndUpdate(
+      await Post.findOneAndUpdate(
         { _id: req.params.postId },
         { $push: { comments: comment } },
-        {new: true}
+        { new: true }
       );
-      res.status(200).send({success: 'Comment added'});
+      res.status(200).send({ success: 'Comment added' });
     } catch (e) {
       console.log(e);
     }

@@ -152,7 +152,7 @@ export class FullPost extends React.Component {
             </div>
           </div>
           <div className="commentsContainer">
-            <CommentList />
+            <CommentList postId={_id}/>
             <CommentForm postId={_id}/>
           </div>
         </div>

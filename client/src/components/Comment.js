@@ -5,17 +5,35 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
-
+  root: {
+    display: 'flex'
+  },
+  avatarContainer: {
+    display: 'flex',
+  },
+  commentBox: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  commentHeading: {
+    display: 'flex'
+  }
 })
 
-export const Comment = () => {
+export const Comment = (props) => {
+  const {classes} = props;
+  const {_owner, body, createdAt} = props.comment;
   return (
-    <div>
-      <div>
-      <Avatar></Avatar>
+    <div className={classes.root}>
+      <div className={classes.avatarContainer}>
+      <Avatar><img src={_owner.profilePhoto}/></Avatar>
       </div>
-      <div>
-        <Typography>Comment</Typography>
+      <div className={classes.commentBox}>
+        <div className={classes.commentHeading}>
+          <Typography variant="body2">{_owner.displayName}</Typography>
+          <Typography variant="body2">{createdAt}</Typography>
+        </div>
+        <Typography>{body}</Typography>
       </div>
     </div>
   )
