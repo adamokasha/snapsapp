@@ -57,7 +57,10 @@ module.exports = app => {
         { $sort: { faveCount: -1 } }
       ]).exec();
 
-      await Post.populate(posts, {path: '_owner', select: 'displayName profilePhoto'});
+      await Post.populate(posts, {
+        path: '_owner',
+        select: 'displayName profilePhoto'
+      });
 
       if (req.user) {
         const favesDoc = await Faves.findOne(
@@ -196,10 +199,13 @@ module.exports = app => {
     }
   });
 
-  // Get post comments 
+  // Get post comments
   app.get('/api/posts/comments/all/:postId', async (req, res) => {
     try {
-      const postComments = await Post.findOne({_id: req.params.postId}, 'comments');
+      const postComments = await Post.findOne(
+        { _id: req.params.postId },
+        'comments'
+      );
       res.status(200).send(postComments);
     } catch (e) {
       console.log(e);
@@ -209,14 +215,18 @@ module.exports = app => {
   // Add a comment
   app.post('/api/posts/comments/add/:postId', requireAuth, async (req, res) => {
     try {
-      const {commentBody} = req.body;
+      const { commentBody } = req.body;
       const comment = {
         _owner: req.user.id,
         createdAt: Date.now(),
         body: commentBody
-      }
-      const postComment = await Post.findOneAndUpdate({_id: postId}, {comments: {$push: comment}});
-      res.status(200).send(postComment);
+      };
+      const postComment = await Post.findOneAndUpdate(
+        { _id: req.params.postId },
+        { $push: { comments: comment } },
+        {new: true}
+      );
+      res.status(200).send({success: 'Comment added'});
     } catch (e) {
       console.log(e);
     }
@@ -227,8 +237,6 @@ module.exports = app => {
     try {
       const { searchTerms } = req.body;
       const { page } = req.params;
-
-      console.log('SEARCHTERMS: ', searchTerms);
 
       const posts = await Post.find({
         $or: [

@@ -15,7 +15,7 @@ const PostSchema = new Schema({
     {
       _owner: { type: Schema.Types.ObjectId, ref: 'User' },
       createdAt: Number,
-      Body: { type: String, maxlength: 200 }
+      body: { type: String, maxlength: 200 }
     }
   ],
   tags: [{ type: String, lowercase: true }]
