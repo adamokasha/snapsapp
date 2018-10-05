@@ -142,7 +142,7 @@ export class ProfileNetwork extends React.Component {
                     Message
                   </Button>
                 }
-                modalComponent={<MessageForm />}
+                modalComponent={<MessageForm userId={userid} />}
               />
             </div>
           </div>

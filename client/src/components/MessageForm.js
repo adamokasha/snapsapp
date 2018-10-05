@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import Button from '@material-ui/core/Button';
 import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
+import axios from 'axios';
 
 const styles = theme => ({
   root: {
@@ -31,13 +32,37 @@ export class MessageForm extends React.Component {
     };
   }
 
+  onTitleChange = e => {
+    this.setState({ title: e.target.value }, () => {});
+  };
+
+  onBodyChange = e => {
+    this.setState({ body: e.target.value }, () => {});
+  };
+
+  onSubmit = async e => {
+    try {
+      e.preventDefault();
+      await axios.post(`/api/message/new/${this.props.userId}`, {
+        title: this.state.title,
+        body: this.state.body
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   render() {
-    const {classes} = this.props;
+    const { classes } = this.props;
     return (
-      <form className={classes.root}>
-        <OutlinedInput placeholder="Title" type="text" />
-        <OutlinedInput multiline rows={3} />
-        <Button variant="contained">
+      <form onSubmit={this.onSubmit} className={classes.root}>
+        <OutlinedInput
+          placeholder="Title"
+          type="text"
+          onChange={this.onTitleChange}
+        />
+        <OutlinedInput multiline rows={3} onChange={this.onBodyChange} />
+        <Button type="submit" variant="contained">
           <SendOutlinedIcon className={classes.leftIcon} />
           Send
         </Button>
