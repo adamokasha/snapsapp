@@ -8,7 +8,7 @@ module.exports = app => {
   // Get MessageBox
   app.get('/api/message/box', requireAuth, async (req, res) => {
     try {
-      const messageBox = await MessageBox.findOne({ _owner: req.user.id });
+      const messageBox = await MessageBox.findOne({ _owner: req.user.id }).populate({path: '_messages _unread', select: 'title body _from'});
       res.status(200).send(messageBox);
     } catch (e) {
       console.log(e);
@@ -25,8 +25,8 @@ module.exports = app => {
         _from: req.user.id,
         _to: to,
         createdAt,
-        title: title,
-        messages: [{ _owner: req.user.id, createdAt, body: body }]
+        title,
+        body
       }).save();
 
       await MessageBox.findOneAndUpdate(
