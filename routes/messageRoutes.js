@@ -8,7 +8,59 @@ module.exports = app => {
   // Get MessageBox
   app.get('/api/message/box', requireAuth, async (req, res) => {
     try {
-      const messageBox = await MessageBox.findOne({ _owner: req.user.id }).populate({path: '_messages _unread', select: 'title body _from'});
+      const messageBox = await MessageBox.aggregate([
+        { $match: { _owner: mongoose.Types.ObjectId(req.user.id) } },
+        {
+          $lookup: {
+            from: 'messages',
+            localField: '_unread',
+            foreignField: '_id',
+            as: '_unread'
+          }
+        },
+        { $unwind: '$_unread' },
+        {
+          $lookup: {
+            from: 'users',
+            localField: '_unread._from',
+            foreignField: '_id',
+            as: '_unread._from'
+          }
+        },
+        { $unwind: '$_unread._from' },
+        {
+          $project: {
+            _owner: 1,
+            _unread: {
+              _id: 1,
+              title: 1,
+              body: 1,
+              replied: 1,
+              replies: 1,
+              '_from': { displayName: 1, profilePhoto: 1 }
+            }
+          }
+        },
+        // Roll back _unread's into array
+        {
+          $group: {
+            _id: '$_id',
+            _unread: { $push: '$_unread' },
+            _owner: { $first: '$_owner' }
+            // '_messages': {$first: '$_messages'}
+          }
+        }
+      ]);
+
+      // The easy way
+      // const messageBox = await MessageBox.findOne({
+      //   _owner: req.user.id
+      // })
+      //   .populate({ path: '_unread', select: 'title body _from' })
+      //   .exec();
+
+      // await MessageBox.populate(messageBox, {path: '_unread._from', select: 'displayName profilePhoto'});
+
       res.status(200).send(messageBox);
     } catch (e) {
       console.log(e);
