@@ -41,10 +41,33 @@ export class MessageBox extends React.Component {
 
     this.state = {
       messages: [],
+      selected: [],
       viewing: 'unread',
       isLoading: false
     };
   }
+
+  onSelectOne = messageId => {
+    const { selected } = this.state;
+    // Add
+    if (!selected.includes(messageId)) {
+      return this.setState({ selected: [...this.state.selected, messageId] });
+    }
+    //Remove
+    const filtered = selected.filter(id => id !== messageId);
+    this.setState({ selected: [...filtered] });
+  };
+
+  onSelectAll = () => {
+    const { selected, messages } = this.state;
+    // Remove all
+    if (selected.length === messages.length) {
+      return this.setState({ selected: [] });
+    }
+
+    const allMessageIds = messages.map(message => message._id);
+    this.setState({ selected: [...allMessageIds] });
+  };
 
   async componentDidMount() {
     try {
@@ -59,14 +82,17 @@ export class MessageBox extends React.Component {
     const { classes } = this.props;
     return (
       <Paper className={classes.root}>
-        <div className={classes.header}>
-          Messages
-        </div>
+        <div className={classes.header}>Messages</div>
         <div className={classes.box}>
           <MailBoxNav />
-            {this.state.viewing === 'unread' ? (
-              <MessageList messages={this.state.messages} />
-            ) : null}
+          {this.state.viewing === 'unread' ? (
+            <MessageList
+              selected={this.state.selected}
+              onSelectOne={this.onSelectOne}
+              onSelectAll={this.onSelectAll}
+              messages={this.state.messages}
+            />
+          ) : null}
         </div>
       </Paper>
     );

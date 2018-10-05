@@ -7,19 +7,39 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Checkbox from '@material-ui/core/Checkbox';
+import Typography from '@material-ui/core/Typography';
 
 import Avatar from '@material-ui/core/Avatar';
 
 const styles = theme => ({
   root: {
     width: '100%'
+  },
+  selectAllContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center'
+  },
+  selectAllCheckbox: {
+    right: '4px'
   }
 });
 
 export const MessageList = props => {
   const { classes, messages } = props;
   return (
-      <List classes={{root: classes.root}}>
+    <div className={classes.root}>
+      <div className={classes.selectAllContainer}>
+        <Typography variant="body2">
+          Select All
+          <Checkbox
+            onClick={() => props.onSelectAll()}
+            className={classes.selectAllCheckbox}
+            checked={props.messages.length === props.selected.length}
+          />
+        </Typography>
+      </div>
+      <List classes={{ root: classes.root }}>
         {messages.length > 1 ? (
           messages.map(message => (
             <ListItem>
@@ -27,7 +47,10 @@ export const MessageList = props => {
               <ListItemText primary={message._from.displayName} />
               <ListItemText primary={message.title} />
               <ListItemSecondaryAction>
-                <Checkbox />
+                <Checkbox
+                  onClick={() => props.onSelectOne(message._id)}
+                  checked={props.selected.includes(message._id)}
+                />
               </ListItemSecondaryAction>
             </ListItem>
           ))
@@ -35,11 +58,14 @@ export const MessageList = props => {
           <div>No New Messages</div>
         )}
       </List>
+    </div>
   );
 };
 
 MessageList.propTypes = {
-  messages: PropTypes.array
+  messages: PropTypes.array,
+  onSelect: PropTypes.func,
+  onSelectAll: PropTypes.func
 };
 
 export default withStyles(styles)(MessageList);
