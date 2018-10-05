@@ -6,7 +6,7 @@ const MessageBox = mongoose.model('MessageBox');
 
 module.exports = app => {
   // Get MessageBox
-  app.get('/api/message/box', requireAuth, async (req, res) => {
+  app.get('/api/message/unread', requireAuth, async (req, res) => {
     try {
       const messageBox = await MessageBox.aggregate([
         { $match: { _owner: mongoose.Types.ObjectId(req.user.id) } },
@@ -61,7 +61,7 @@ module.exports = app => {
 
       // await MessageBox.populate(messageBox, {path: '_unread._from', select: 'displayName profilePhoto'});
 
-      res.status(200).send(messageBox);
+      res.status(200).send(messageBox[0]);
     } catch (e) {
       console.log(e);
     }
