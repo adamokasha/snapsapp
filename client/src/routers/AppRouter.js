@@ -16,6 +16,7 @@ import MyAlbumsPage from '../pages/MyAlbumsPage';
 import SingleAlbumPage from '../pages/SingleAlbumPage';
 import FullPost from '../components/FullPost';
 import ProfilePage from '../pages/ProfilePage';
+import MessageBoxPage from '../pages/MessageBoxPage';
 
 
 export class AppRouter extends React.Component {
@@ -33,7 +34,7 @@ export class AppRouter extends React.Component {
           <PublicRoute path="/login" component={() => <RegisterOrLogin registerOrLogin="login" />} registerOrLogin="login" />
           <PublicRoute path="/privacy" component={PrivacyPolicy} />
           <PrivateRoute path="/upload" component={ImageUploadPage} />
-
+          <PrivateRoute path="/mbox" component={MessageBoxPage}/>
           <Route path="/albummaker" component={AlbumMaker} />
 
           <PrivateRoute exact path="/myalbums" component={MyAlbumsPage} />

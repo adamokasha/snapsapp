@@ -8,6 +8,7 @@ const MessageSchema = new Schema({
   messages: [
     {
       _owner: { type: Schema.Types.ObjectId, ref: 'User' },
+      title: String,
       createdAt: Number,
       body: { type: String, maxlength: 200 }
     }

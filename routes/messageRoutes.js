@@ -1,5 +1,6 @@
-const requireAuth = require('../middlewares/requireAuth');
+const mongoose = require('mongoose');
 
+const requireAuth = require('../middlewares/requireAuth');
 const Message = mongoose.model('Message');
 const MessageBox = mongoose.model('MessageBox');
 
@@ -23,6 +24,7 @@ module.exports = app => {
         _from: req.user.id,
         _to: message.to,
         createdAt,
+        title: message.title,
         messages: [{ _owner: req.user.id, createdAt, body: message.body }]
       }).save();
 

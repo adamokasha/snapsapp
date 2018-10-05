@@ -8,6 +8,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import InboxIcon from '@material-ui/icons/Inbox';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
@@ -60,6 +61,11 @@ class NavBar extends React.Component {
 
     return auth ? (
       <div>
+        <Link to="/mbox">
+          <IconButton>
+            <InboxIcon />
+          </IconButton>
+        </Link>
         <IconButton
           aria-owns={open ? 'menu-appbar' : null}
           aria-haspopup="true"
@@ -85,10 +91,22 @@ class NavBar extends React.Component {
           <MenuItem to="/upload" component={Link} onClick={this.handleClose}>
             Add Image
           </MenuItem>
-          <MenuItem to="/myalbums" component={Link} onClick={this.handleClose}>Albums</MenuItem>
-          <MenuItem to={`/profile/${auth.displayName}`} component={Link} onClick={this.handleClose}>Profile</MenuItem>
-          <MenuItem href="/auth/logout" component="a" onClick={this.handleClose}>
-              Log Out
+          <MenuItem to="/myalbums" component={Link} onClick={this.handleClose}>
+            Albums
+          </MenuItem>
+          <MenuItem
+            to={`/profile/${auth.displayName}`}
+            component={Link}
+            onClick={this.handleClose}
+          >
+            Profile
+          </MenuItem>
+          <MenuItem
+            href="/auth/logout"
+            component="a"
+            onClick={this.handleClose}
+          >
+            Log Out
           </MenuItem>
         </Menu>
       </div>

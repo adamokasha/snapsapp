@@ -2,6 +2,8 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {withStyles} from '@material-ui/core/styles';
 import compose from 'recompose/compose';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 import axios from 'axios';
 
 export class MessageBox extends React.Component {
@@ -9,7 +11,7 @@ export class MessageBox extends React.Component {
     super(props);
 
     this.state = {
-      message: [],
+      messages: [],
       viewing: 'unread',
       isLoading: false
     }
@@ -27,8 +29,12 @@ export class MessageBox extends React.Component {
   render() {
     return (
       <div>
-      
+        <List>
+          {this.state.messages.length > 1 ? this.state.messages.map(message => <ListItem>{message.title}</ListItem>): null }
+        </List>
       </div>
     )
   }
 }
+
+export default MessageBox;
