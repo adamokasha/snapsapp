@@ -14,21 +14,27 @@ const styles = theme => ({
 
 export const Message = (props) => {
   return (
-    <Paper>
+    <div>
       <List>
         <ListItem>
-          <Avatar src={props._from.profilePhoto} />
-          <ListItemText>{props.body}</ListItemText>
+          <Avatar src={props.message._from.profilePhoto} />
+          <ListItemText>{props.message.body}</ListItemText>
+          {props.message.replies.map(reply => (
+            <ListItem>
+            <Avatar src={reply._owner.profilePhoto} />
+            <ListItemText
+              primary={reply.body}
+            />
+            </ListItem>
+          ))}
         </ListItem>
       </List>
-    </Paper>
+    </div>
   )
 }
 
 Message.propTypes = {
-  // title: PropTypes.string.isRequired,
-  body: PropTypes.string.isRequired,
-  replies: PropTypes.array
+  message: PropTypes.object
 }
 
 export default withStyles(styles)(Message)

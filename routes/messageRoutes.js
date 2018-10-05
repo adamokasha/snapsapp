@@ -36,8 +36,8 @@ module.exports = app => {
               title: 1,
               body: 1,
               replied: 1,
-              replies: 1,
-              '_from': { displayName: 1, profilePhoto: 1 }
+              // replies: 1,
+              _from: { displayName: 1, profilePhoto: 1 }
             }
           }
         },
@@ -65,6 +65,25 @@ module.exports = app => {
     } catch (e) {
       console.log(e);
     }
+  });
+
+  // Get single message
+  app.get('/api/message/get/:id', requireAuth, async (req, res) => {
+    const message = await Message.findById({ _id: req.params.id }).populate({path: '_from _to', select: 'displayName profilePhoto'});
+    // Populate
+    await Message.populate(message, {
+      path: 'replies._owner',
+      select: 'displayName profilePhoto'
+    });
+    // If req.user is not the recipient or the sender = 401
+    // Additional layer of security but most likely unnecessary
+    const owners = [message._to._id.toString(), message._from._id.toString()]
+    if (!owners.includes(req.user.id)) {
+      return res
+        .status(401)
+        .send({ error: 'You are not authorized to view this message' });
+    }
+    res.status(200).send(message);
   });
 
   // Send a new message

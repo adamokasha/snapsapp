@@ -10,6 +10,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 
 import Avatar from '@material-ui/core/Avatar';
+import { Divider } from '@material-ui/core';
 
 const styles = theme => ({
   root: {
@@ -35,7 +36,10 @@ export const MessageList = props => {
           <Checkbox
             onClick={() => props.onSelectAll()}
             className={classes.selectAllCheckbox}
-            checked={props.messages.length === props.selected.length}
+            checked={
+              props.messages.length > 1 &&
+              props.messages.length === props.selected.length
+            }
           />
         </Typography>
       </div>
@@ -44,8 +48,14 @@ export const MessageList = props => {
           messages.map(message => (
             <ListItem>
               <Avatar src={message._from.profilePhoto} />
-              <ListItemText primary={message._from.displayName} />
-              <ListItemText primary={message.title} />
+              <ListItemText
+                onClick={() => props.setMessageView(message._id)}
+                primary={message._from.displayName}
+              />
+              <ListItemText
+                onClick={() => props.setMessageView(message._id)}
+                primary={message.title}
+              />
               <ListItemSecondaryAction>
                 <Checkbox
                   onClick={() => props.onSelectOne(message._id)}
@@ -65,7 +75,8 @@ export const MessageList = props => {
 MessageList.propTypes = {
   messages: PropTypes.array,
   onSelect: PropTypes.func,
-  onSelectAll: PropTypes.func
+  onSelectAll: PropTypes.func,
+  setMessageView: PropTypes.func
 };
 
 export default withStyles(styles)(MessageList);

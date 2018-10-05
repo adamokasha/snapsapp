@@ -11,7 +11,6 @@ const MessageSchema = new Schema({
   replies: [
     {
       _owner: { type: Schema.Types.ObjectId, ref: 'User' },
-      title: String,
       createdAt: Number,
       body: { type: String, maxlength: 200 }
     }

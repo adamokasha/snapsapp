@@ -43,6 +43,7 @@ export class MessageBox extends React.Component {
       messages: [],
       selected: [],
       viewing: 'unread',
+      currentMessage: null,
       isLoading: false
     };
   }
@@ -69,6 +70,15 @@ export class MessageBox extends React.Component {
     this.setState({ selected: [...allMessageIds] });
   };
 
+  setMessageView = async messageId => {
+    try {
+      const res = await axios.get(`/api/message/get/${messageId}`);
+      this.setState({ viewing: 'message', currentMessage: res.data });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   async componentDidMount() {
     try {
       const res = await axios.get('/api/message/unread');
@@ -91,7 +101,11 @@ export class MessageBox extends React.Component {
               onSelectOne={this.onSelectOne}
               onSelectAll={this.onSelectAll}
               messages={this.state.messages}
+              setMessageView={this.setMessageView}
             />
+          ) : null}
+          {this.state.viewing === 'message' ? (
+            <Message message={this.state.currentMessage} />
           ) : null}
         </div>
       </Paper>
