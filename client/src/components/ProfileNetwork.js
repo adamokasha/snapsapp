@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import compose from 'recompose/compose';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,6 +12,7 @@ import PersonAddOutlined from '@material-ui/icons/PersonAdd';
 
 import ModalView from './ModalView';
 import ProfileNetworkTabs from './ProfileNetworkTabs';
+import MessageForm from './MessageForm';
 
 const styles = theme => ({
   root: {
@@ -72,15 +74,15 @@ export class ProfileNetwork extends React.Component {
   };
 
   onUnfollow = async () => {
-    try{
+    try {
       await axios.delete(`/api/profile/follows/unf/${this.props.userid}`);
     } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   render() {
-    const { classes, userid } = this.props;
+    const { classes, userid, auth } = this.props;
     return (
       <div className={classes.root}>
         <div className={classes.info}>
@@ -117,34 +119,48 @@ export class ProfileNetwork extends React.Component {
             />
           </div>
         </div>
-        <div className={classes.actions}>
-          <div>
-            {this.state.clientFollows ? (
-              <Button onClick={this.onUnfollow}>
-                <PersonAddOutlined className={classes.leftIcon} />
-                Unfollow
-              </Button>
-            ) : (
-              <Button onClick={this.onFollow}>
-                <PersonAddOutlined className={classes.leftIcon} />
-                Follow
-              </Button>
-            )}
+        {auth ? (
+          <div className={classes.actions}>
+            <div>
+              {this.state.clientFollows ? (
+                <Button onClick={this.onUnfollow}>
+                  <PersonAddOutlined className={classes.leftIcon} />
+                  Unfollow
+                </Button>
+              ) : (
+                <Button onClick={this.onFollow}>
+                  <PersonAddOutlined className={classes.leftIcon} />
+                  Follow
+                </Button>
+              )}
+            </div>
+            <div>
+              <ModalView
+                togglerComponent={
+                  <Button>
+                    <MailOutlinedIcon className={classes.leftIcon} />
+                    Message
+                  </Button>
+                }
+                modalComponent={<MessageForm />}
+              />
+            </div>
           </div>
-          <div>
-            <Button>
-              <MailOutlinedIcon className={classes.leftIcon} />
-              Message
-            </Button>
-          </div>
-        </div>
+        ) : null}
       </div>
     );
   }
 }
 
+const mapStateToProps = ({ auth }) => ({
+  auth
+});
+
 ProfileNetwork.propTypes = {
   userid: PropTypes.string.isRequired
 };
 
-export default withStyles(styles)(ProfileNetwork);
+export default compose(
+  withStyles(styles),
+  connect(mapStateToProps)
+)(ProfileNetwork);
