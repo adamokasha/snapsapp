@@ -69,7 +69,10 @@ module.exports = app => {
 
   // Get single message
   app.get('/api/message/get/:id', requireAuth, async (req, res) => {
-    const message = await Message.findById({ _id: req.params.id }).populate({path: '_from _to', select: 'displayName profilePhoto'});
+    const message = await Message.findById({ _id: req.params.id }).populate({
+      path: '_from _to',
+      select: 'displayName profilePhoto'
+    });
     // Populate
     await Message.populate(message, {
       path: 'replies._owner',
@@ -77,7 +80,7 @@ module.exports = app => {
     });
     // If req.user is not the recipient or the sender = 401
     // Additional layer of security but most likely unnecessary
-    const owners = [message._to._id.toString(), message._from._id.toString()]
+    const owners = [message._to._id.toString(), message._from._id.toString()];
     if (!owners.includes(req.user.id)) {
       return res
         .status(401)
@@ -106,6 +109,31 @@ module.exports = app => {
           $push: { _unread: newMessage._id, _messages: newMessage._id }
         }
       );
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+  // Reply to an existing message
+  app.post(`/api/message/reply/:msgId`, requireAuth, async (req, res) => {
+    try {
+      const { reply } = req.body;
+      const message = await Message.findOneAndUpdate(
+        { _id: req.params.msgId },
+        { $push: { replies: reply } }
+      );
+
+      // Find the recipient
+      const recipient = [
+        message._from.toString(),
+        message._to.toString()
+      ].filter(owner => owner !== req.user.id)[0];
+      // Update recipient's unread messages
+      await MessageBox.findOneAndUpdate(
+        { _id: recipient },
+        { $addToSet: { unread: message._id } }
+      );
+      res.status(200).send({ success: 'Reply sent' });
     } catch (e) {
       console.log(e);
     }
