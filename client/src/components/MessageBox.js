@@ -14,6 +14,10 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import InboxIcon from '@material-ui/icons/Inbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+
 
 import MailBoxNav from './MailBoxNav';
 import MessageList from './MessageList';
@@ -26,12 +30,15 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column'
   },
-  header: {
-    padding: `${theme.spacing.unit}px`,
-    borderBottom: '1px dotted rgba(0, 0, 0, .4)'
+  appBarRoot: {
+    boxShadow: 'none'
+  },
+  toolbarRoot: {
+    minHeight: '48px'
   },
   box: {
-    display: 'flex'
+    display: 'flex',
+    height: '300px'
   }
 });
 
@@ -92,7 +99,15 @@ export class MessageBox extends React.Component {
     const { classes } = this.props;
     return (
       <Paper className={classes.root}>
-        <div className={classes.header}>Messages</div>
+        <div className={classes.header}>
+          <AppBar classes={{root: classes.appBarRoot}} position="static" color="primary">
+            <Toolbar classes={{root: classes. toolbarRoot}}>
+              <Typography variant="title" color="inherit">
+                Message Box
+              </Typography>
+            </Toolbar>
+          </AppBar>
+        </div>
         <div className={classes.box}>
           <MailBoxNav />
           {this.state.viewing === 'unread' ? (
