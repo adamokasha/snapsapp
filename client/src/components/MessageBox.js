@@ -50,7 +50,7 @@ export class MessageBox extends React.Component {
     this.state = {
       messages: [],
       selected: [],
-      viewing: 'unread',
+      viewing: 'list',
       currentMessage: null,
       isLoading: false
     };
@@ -87,6 +87,30 @@ export class MessageBox extends React.Component {
     }
   };
 
+  setList = async (listView) => {
+    if(listView === 'unread') {
+      const res = await axios.get(`/api/message/unread`);
+      if(!res.data._unread){
+        return this.setState({ viewing: 'list', messages: [] }, () => {});
+      }
+      return this.setState({ viewing: 'list', messages: [...res.data._unread] }, () => {});
+    }
+    if(listView === 'all') {
+      const res = await axios.get(`/api/message/all`);
+      if(!res.data._all){
+        return this.setState({ viewing: 'list', messages: [] }, () => {});
+      }
+      return this.setState({ viewing: 'list', messages: [...res.data._all] }, () => {});
+    }
+    if(listView === 'sent') {
+      const res = await axios.get(`/api/message/sent`);
+      if(!res.data._sent){
+        return this.setState({ viewing: 'list', messages: [] }, () => {});
+      }
+      return this.setState({ viewing: 'list' ,messages: [...res.data._sent] }, () => {});
+    } 
+  }
+
   async componentDidMount() {
     try {
       const res = await axios.get('/api/message/unread');
@@ -101,10 +125,10 @@ export class MessageBox extends React.Component {
     return (
       <Paper className={classes.root}>
         <div className={classes.header}>
-          <MessageBoxAppBar />
+          <MessageBoxAppBar setList={this.setList} />
         </div>
         <div className={classes.box}>
-          {this.state.viewing === 'unread' ? (
+          {this.state.viewing === 'list' ? (
             <MessageList
               selected={this.state.selected}
               onSelectOne={this.onSelectOne}

@@ -67,6 +67,113 @@ module.exports = app => {
     }
   });
 
+  // Get MessageBox all
+  app.get('/api/message/all', requireAuth, async (req, res) => {
+    try {
+      const messageBox = await MessageBox.aggregate([
+        { $match: { _owner: mongoose.Types.ObjectId(req.user.id) } },
+        {
+          $lookup: {
+            from: 'messages',
+            localField: '_all',
+            foreignField: '_id',
+            as: '_all'
+          }
+        },
+        { $unwind: '$_all' },
+        {
+          $lookup: {
+            from: 'users',
+            localField: '_all._from',
+            foreignField: '_id',
+            as: '_all._from'
+          }
+        },
+        { $unwind: '$_all._from' },
+        {
+          $project: {
+            _owner: 1,
+            _all: {
+              _id: 1,
+              title: 1,
+              body: 1,
+              replied: 1,
+              // replies: 1,
+              _from: { displayName: 1, profilePhoto: 1 }
+            }
+          }
+        },
+        // Roll back _all's into array
+        {
+          $group: {
+            _id: '$_id',
+            _all: { $push: '$_all' },
+            _owner: { $first: '$_owner' }
+            // '_messages': {$first: '$_messages'}
+          }
+        }
+      ]);
+
+      res.status(200).send(messageBox[0]);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+    // Get MessageBox sent
+    app.get('/api/message/sent', requireAuth, async (req, res) => {
+      try {
+        const messageBox = await MessageBox.aggregate([
+          { $match: { _owner: mongoose.Types.ObjectId(req.user.id) } },
+          {
+            $lookup: {
+              from: 'messages',
+              localField: '_sent',
+              foreignField: '_id',
+              as: '_sent'
+            }
+          },
+          { $unwind: '$_sent' },
+          {
+            $lookup: {
+              from: 'users',
+              localField: '_sent._from',
+              foreignField: '_id',
+              as: '_sent._from'
+            }
+          },
+          { $unwind: '$_sent._from' },
+          {
+            $project: {
+              _owner: 1,
+              _sent: {
+                _id: 1,
+                title: 1,
+                body: 1,
+                replied: 1,
+                // replies: 1,
+                _from: { displayName: 1, profilePhoto: 1 }
+              }
+            }
+          },
+          // Roll back _sent's into array
+          {
+            $group: {
+              _id: '$_id',
+              _sent: { $push: '$_sent' },
+              _owner: { $first: '$_owner' }
+              // '_messages': {$first: '$_messages'}
+            }
+          }
+        ]);
+        console.log(messageBox)
+  
+        res.status(200).send(messageBox[0]);
+      } catch (e) {
+        console.log(e);
+      }
+    });
+
   // Get single message
   app.get('/api/message/get/:id', requireAuth, async (req, res) => {
     const message = await Message.findById({ _id: req.params.id }).populate({
@@ -118,6 +225,8 @@ module.exports = app => {
           $push: { _sent: newMessage._id }
         }
       );
+
+      res.status(200).send({success: 'Message sent!'})
     } catch (e) {
       console.log(e);
     }

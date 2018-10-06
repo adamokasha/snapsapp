@@ -54,7 +54,7 @@ export const MessageList = props => {
       </div>
       <Divider/>
       <List classes={{ root: classes.root }}>
-        {messages.length > 1 ? (
+        {messages.length > 0 ? (
           messages.map(message => (
             <ListItem>
                 <Checkbox
@@ -74,7 +74,7 @@ export const MessageList = props => {
             </ListItem>
           ))
         ) : (
-          <div>No New Messages</div>
+          <div>No Messages to Show</div>
         )}
       </List>
     </div>

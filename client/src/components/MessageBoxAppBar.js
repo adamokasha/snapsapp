@@ -1,5 +1,5 @@
 import React from 'react';
-import {withStyles} from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -27,7 +27,6 @@ const styles = theme => ({
   }
 });
 
-
 class MessageBoxAppBar extends React.Component {
   state = {
     anchorEl: null
@@ -41,9 +40,24 @@ class MessageBoxAppBar extends React.Component {
     this.setState({ anchorEl: null });
   };
 
+  onSetUnread = () => {
+    this.handleClose();
+    this.props.setList('unread');
+  }
+
+  onSetAll = () => {
+    this.handleClose();
+    this.props.setList('all');
+  }
+
+  onSetSent = () => {
+    this.handleClose();
+    this.props.setList('sent');
+  }
+
   render() {
     const { anchorEl } = this.state;
-    const {classes} = this.props;
+    const { classes } = this.props;
 
     return (
       <AppBar
@@ -61,7 +75,7 @@ class MessageBoxAppBar extends React.Component {
               aria-haspopup="true"
               onClick={this.handleClick}
             >
-              <ArrowDropDownCircleOutlinedIcon/>
+              <ArrowDropDownCircleOutlinedIcon />
             </IconButton>
             <Menu
               id="simple-menu"
@@ -69,9 +83,21 @@ class MessageBoxAppBar extends React.Component {
               open={Boolean(anchorEl)}
               onClose={this.handleClose}
             >
-              <MenuItem onClick={this.handleClose}>New</MenuItem>
-              <MenuItem onClick={this.handleClose}>All</MenuItem>
-              <MenuItem onClick={this.handleClose}>Sent</MenuItem>
+              <MenuItem
+                onClick={this.onSetUnread}
+              >
+                Unread
+              </MenuItem>
+              <MenuItem
+                onClick={this.onSetAll}
+              >
+                All
+              </MenuItem>
+              <MenuItem
+                onClick={this.onSetSent}
+              >
+                Sent
+              </MenuItem>
             </Menu>
           </div>
         </Toolbar>
