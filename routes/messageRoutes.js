@@ -120,59 +120,59 @@ module.exports = app => {
     }
   });
 
-    // Get MessageBox sent
-    app.get('/api/message/sent', requireAuth, async (req, res) => {
-      try {
-        const messageBox = await MessageBox.aggregate([
-          { $match: { _owner: mongoose.Types.ObjectId(req.user.id) } },
-          {
-            $lookup: {
-              from: 'messages',
-              localField: '_sent',
-              foreignField: '_id',
-              as: '_sent'
-            }
-          },
-          { $unwind: '$_sent' },
-          {
-            $lookup: {
-              from: 'users',
-              localField: '_sent._from',
-              foreignField: '_id',
-              as: '_sent._from'
-            }
-          },
-          { $unwind: '$_sent._from' },
-          {
-            $project: {
-              _owner: 1,
-              _sent: {
-                _id: 1,
-                title: 1,
-                body: 1,
-                replied: 1,
-                // replies: 1,
-                _from: { displayName: 1, profilePhoto: 1 }
-              }
-            }
-          },
-          // Roll back _sent's into array
-          {
-            $group: {
-              _id: '$_id',
-              _sent: { $push: '$_sent' },
-              _owner: { $first: '$_owner' }
-              // '_messages': {$first: '$_messages'}
+  // Get MessageBox sent
+  app.get('/api/message/sent', requireAuth, async (req, res) => {
+    try {
+      const messageBox = await MessageBox.aggregate([
+        { $match: { _owner: mongoose.Types.ObjectId(req.user.id) } },
+        {
+          $lookup: {
+            from: 'messages',
+            localField: '_sent',
+            foreignField: '_id',
+            as: '_sent'
+          }
+        },
+        { $unwind: '$_sent' },
+        {
+          $lookup: {
+            from: 'users',
+            localField: '_sent._from',
+            foreignField: '_id',
+            as: '_sent._from'
+          }
+        },
+        { $unwind: '$_sent._from' },
+        {
+          $project: {
+            _owner: 1,
+            _sent: {
+              _id: 1,
+              title: 1,
+              body: 1,
+              replied: 1,
+              // replies: 1,
+              _from: { displayName: 1, profilePhoto: 1 }
             }
           }
-        ]);
-        console.log(messageBox)
-  
-        res.status(200).send(messageBox[0]);
-      } catch (e) {
-        console.log(e);
-      }
-    });
+        },
+        // Roll back _sent's into array
+        {
+          $group: {
+            _id: '$_id',
+            _sent: { $push: '$_sent' },
+            _owner: { $first: '$_owner' }
+            // '_messages': {$first: '$_messages'}
+          }
+        }
+      ]);
+      console.log(messageBox);
+
+      res.status(200).send(messageBox[0]);
+    } catch (e) {
+      console.log(e);
+    }
+  });
 
   // Get single message
   app.get('/api/message/get/:id', requireAuth, async (req, res) => {
@@ -193,6 +193,13 @@ module.exports = app => {
         .status(401)
         .send({ error: 'You are not authorized to view this message' });
     }
+
+    // Remove from recipient's unread list
+    await MessageBox.findOneAndUpdate(
+      { _owner: req.user.id },
+      { $pull: { _unread: req.params.id } }
+    );
+
     res.status(200).send(message);
   });
 
@@ -226,7 +233,7 @@ module.exports = app => {
         }
       );
 
-      res.status(200).send({success: 'Message sent!'})
+      res.status(200).send({ success: 'Message sent!' });
     } catch (e) {
       console.log(e);
     }
@@ -251,13 +258,35 @@ module.exports = app => {
         message._from.toString(),
         message._to.toString()
       ].filter(owner => owner !== req.user.id)[0];
-      console.log(req.user.id, recipient)
+      console.log(req.user.id, recipient);
       // Update recipient's unread messages
       await MessageBox.findOneAndUpdate(
         { _owner: recipient },
-        { $addToSet: { _unread: message._id, _all: message._id } },
+        { $addToSet: { _unread: message._id, _all: message._id } }
       );
       res.status(200).send({ success: 'Reply sent' });
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+  // Delete a single or multiple message from a user's MessageBox
+  app.delete('/api/message/delete', requireAuth, async (req, res) => {
+    try {
+      const { deletions } = req.body;
+      console.log(deletions);
+      await MessageBox.findOneAndUpdate(
+        { _owner: req.user.id },
+        {
+          $pull: {
+            _unread: { $in: deletions },
+            _all: { $in: deletions },
+            _sent: { $in: deletions }
+          }
+        }
+      );
+
+      res.status(200).send({success: 'Message(s) deleted.'})
     } catch (e) {
       console.log(e);
     }

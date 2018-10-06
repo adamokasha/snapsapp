@@ -48,7 +48,7 @@ export const MessageList = props => {
           Select All
         </Typography>
         </div>
-        <IconButton>
+        <IconButton onClick={props.onDelete}>
             <DeleteIcon />
         </IconButton>
       </div>
