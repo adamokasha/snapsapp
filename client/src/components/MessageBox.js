@@ -22,6 +22,7 @@ import Typography from '@material-ui/core/Typography';
 import MailBoxNav from './MailBoxNav';
 import MessageList from './MessageList';
 import Message from './Message';
+import MessageBoxAppBar from './MessageBoxAppBar';
 
 const styles = theme => ({
   root: {
@@ -100,16 +101,9 @@ export class MessageBox extends React.Component {
     return (
       <Paper className={classes.root}>
         <div className={classes.header}>
-          <AppBar classes={{root: classes.appBarRoot}} position="static" color="primary">
-            <Toolbar classes={{root: classes. toolbarRoot}}>
-              <Typography variant="title" color="inherit">
-                Message Box
-              </Typography>
-            </Toolbar>
-          </AppBar>
+          <MessageBoxAppBar />
         </div>
         <div className={classes.box}>
-          <MailBoxNav />
           {this.state.viewing === 'unread' ? (
             <MessageList
               selected={this.state.selected}

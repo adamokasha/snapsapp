@@ -8,21 +8,26 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete'
 
 import Avatar from '@material-ui/core/Avatar';
-import { Divider } from '@material-ui/core';
+import  Divider from '@material-ui/core/Divider';
 
 const styles = theme => ({
   root: {
     width: '100%'
   },
+  menuContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingLeft: `${theme.spacing.unit * 3}px`,
+    paddingRight: `${theme.spacing.unit * 3}px`
+  },
   selectAllContainer: {
     display: 'flex',
-    justifyContent: 'flex-end',
     alignItems: 'center'
-  },
-  selectAllCheckbox: {
-    right: '4px'
   }
 });
 
@@ -30,23 +35,32 @@ export const MessageList = props => {
   const { classes, messages } = props;
   return (
     <div className={classes.root}>
-      <div className={classes.selectAllContainer}>
-        <Typography variant="body2">
-          Select All
+      <div className={classes.menuContainer}>
+        <div className={classes.selectAllContainer}>
           <Checkbox
             onClick={() => props.onSelectAll()}
-            className={classes.selectAllCheckbox}
             checked={
               props.messages.length > 1 &&
               props.messages.length === props.selected.length
             }
           />
+          <Typography variant="body2">
+          Select All
         </Typography>
+        </div>
+        <IconButton>
+            <DeleteIcon />
+        </IconButton>
       </div>
+      <Divider/>
       <List classes={{ root: classes.root }}>
         {messages.length > 1 ? (
           messages.map(message => (
             <ListItem>
+                <Checkbox
+                  onClick={() => props.onSelectOne(message._id)}
+                  checked={props.selected.includes(message._id)}
+                />
               <Avatar src={message._from.profilePhoto} />
               <ListItemText
                 onClick={() => props.setMessageView(message._id)}
@@ -56,12 +70,7 @@ export const MessageList = props => {
                 onClick={() => props.setMessageView(message._id)}
                 primary={message.title}
               />
-              <ListItemSecondaryAction>
-                <Checkbox
-                  onClick={() => props.onSelectOne(message._id)}
-                  checked={props.selected.includes(message._id)}
-                />
-              </ListItemSecondaryAction>
+              
             </ListItem>
           ))
         ) : (
