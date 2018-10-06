@@ -5,7 +5,7 @@ const Message = mongoose.model('Message');
 const MessageBox = mongoose.model('MessageBox');
 
 module.exports = app => {
-  // Get MessageBox
+  // Get MessageBox unreads
   app.get('/api/message/unread', requireAuth, async (req, res) => {
     try {
       const messageBox = await MessageBox.aggregate([
@@ -103,10 +103,19 @@ module.exports = app => {
         body
       }).save();
 
+      // Add message to recipient's MessageBox
       await MessageBox.findOneAndUpdate(
         { _owner: to },
         {
-          $push: { _unread: newMessage._id, _messages: newMessage._id }
+          $push: { _unread: newMessage._id, _all: newMessage._id }
+        }
+      );
+
+      // Add Message to own MessageBox's sent list
+      await MessageBox.findOneAndUpdate(
+        { _owner: req.user.id },
+        {
+          $push: { _sent: newMessage._id }
         }
       );
     } catch (e) {
@@ -117,7 +126,12 @@ module.exports = app => {
   // Reply to an existing message
   app.post(`/api/message/reply/:msgId`, requireAuth, async (req, res) => {
     try {
-      const { reply } = req.body;
+      const { body } = req.body;
+      const reply = {
+        _owner: req.user.id,
+        createdAt: Date.now(),
+        body
+      };
       const message = await Message.findOneAndUpdate(
         { _id: req.params.msgId },
         { $push: { replies: reply } }
@@ -128,10 +142,11 @@ module.exports = app => {
         message._from.toString(),
         message._to.toString()
       ].filter(owner => owner !== req.user.id)[0];
+      console.log(req.user.id, recipient)
       // Update recipient's unread messages
       await MessageBox.findOneAndUpdate(
-        { _id: recipient },
-        { $addToSet: { unread: message._id } }
+        { _owner: recipient },
+        { $addToSet: { _unread: message._id, _all: message._id } },
       );
       res.status(200).send({ success: 'Reply sent' });
     } catch (e) {

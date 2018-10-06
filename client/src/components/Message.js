@@ -9,11 +9,12 @@ import Avatar from '@material-ui/core/Avatar';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import Button from '@material-ui/core/Button';
 import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
+import axios from 'axios';
 
 const styles = theme => ({
   root: {
     width: '100%',
-    position: 'relative',
+    position: 'relative'
   },
   listRoot: {
     height: '200px',
@@ -29,25 +30,44 @@ const styles = theme => ({
 });
 
 export class Message extends React.Component {
-  onSubmit() {}
+  constructor() {
+    super();
 
-  onBodyChange() {}
+    this.state = {
+      body: ''
+    };
+  }
+  onSubmit = async e => {
+    try {
+      e.preventDefault();
+      const { body } = this.state;
+      await axios.post(`/api/message/reply/${this.props.message._id}`, {
+        body
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  onBodyChange = e => {
+    this.setState({ body: e.target.value }, () => {});
+  };
 
   render() {
     const { message, classes } = this.props;
     return (
       <div className={classes.root}>
-        <List classes={{root: classes.listRoot}}>
+        <List classes={{ root: classes.listRoot }}>
           <ListItem>
             <Avatar src={message._from.profilePhoto} />
             <ListItemText>{message.body}</ListItemText>
-            {message.replies.map(reply => (
-              <ListItem>
-                <Avatar src={reply._owner.profilePhoto} />
-                <ListItemText primary={reply.body} />
-              </ListItem>
-            ))}
           </ListItem>
+          {message.replies.map(reply => (
+            <ListItem>
+              <Avatar src={reply._owner.profilePhoto} />
+              <ListItemText primary={reply.body} />
+            </ListItem>
+          ))}
         </List>
         <form onSubmit={this.onSubmit} className={classes.form}>
           <OutlinedInput multiline rows={1} onChange={this.onBodyChange} />
