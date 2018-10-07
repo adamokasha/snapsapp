@@ -1,7 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import Paper from '@material-ui/core/Paper';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import compose from 'recompose/compose';
+import PropTypes from 'prop-types';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -37,7 +38,18 @@ export class Message extends React.Component {
       body: '',
       message: this.props.message
     };
+
+    this.bottomRef = React.createRef();
   }
+
+  componentDidMount() {
+    this.bottomRef.current.scrollIntoView();
+  }
+
+  componentDidUpdate() {
+    this.bottomRef.current.scrollIntoView();
+  }
+
   onSubmit = async e => {
     try {
       e.preventDefault();
@@ -52,8 +64,7 @@ export class Message extends React.Component {
         createdAt,
         body,
         _owner: {
-          profilePhoto:
-            'https://lh3.googleusercontent.com/-ZXSGTOl5Lmc/AAAAAAAAAAI/AAAAAAAAAK0/X4K3YOBCQbk/photo.jpg?sz=50'
+          profilePhoto: this.props.auth.profilePhoto
         }
       };
       const updatedReplies = this.state.message.replies.push(reply);
@@ -63,7 +74,8 @@ export class Message extends React.Component {
           message: {
             ...this.state.message,
             replies: [...this.state.message.replies, ...updatedReplies]
-          }
+          },
+          body: ''
         },
         () => {}
       );
@@ -91,9 +103,15 @@ export class Message extends React.Component {
               <ListItemText primary={reply.body} />
             </ListItem>
           ))}
+          <div ref={this.bottomRef} />
         </List>
         <form onSubmit={this.onSubmit} className={classes.form}>
-          <OutlinedInput multiline rows={1} onChange={this.onBodyChange} />
+          <OutlinedInput
+            multiline
+            rows={1}
+            onChange={this.onBodyChange}
+            value={this.state.body}
+          />
           <Button type="submit" variant="contained">
             <SendOutlinedIcon className={classes.leftIcon} />
             Reply
@@ -108,4 +126,11 @@ Message.propTypes = {
   message: PropTypes.object
 };
 
-export default withStyles(styles)(Message);
+const mapStateToProps = ({ auth }) => ({
+  auth
+});
+
+export default compose(
+  withStyles(styles),
+  connect(mapStateToProps)
+)(Message);
