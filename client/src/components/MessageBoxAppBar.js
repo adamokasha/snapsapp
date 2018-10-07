@@ -8,6 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ArrowDropDownCircleOutlinedIcon from '@material-ui/icons/ArrowDropDownCircleOutlined';
+import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 
 const styles = theme => ({
   root: {
@@ -43,17 +44,17 @@ class MessageBoxAppBar extends React.Component {
   onSetUnread = () => {
     this.handleClose();
     this.props.setList('unread');
-  }
+  };
 
   onSetAll = () => {
     this.handleClose();
     this.props.setList('all');
-  }
+  };
 
   onSetSent = () => {
     this.handleClose();
     this.props.setList('sent');
-  }
+  };
 
   render() {
     const { anchorEl } = this.state;
@@ -69,7 +70,17 @@ class MessageBoxAppBar extends React.Component {
           <Typography variant="title" color="inherit">
             Message Box
           </Typography>
-          <div className={classes.menu}>
+          {this.props.view === 'list' ? null : (
+            <IconButton
+              onClick={() => {
+                this.props.setList(this.props.listType);
+              }}
+              className={classes.menu}
+            >
+              <KeyboardBackspaceIcon />
+            </IconButton>
+          )}
+          <div className={this.props.view === 'list' ? classes.menu : null}>
             <IconButton
               aria-owns={anchorEl ? 'simple-menu' : null}
               aria-haspopup="true"
@@ -83,21 +94,9 @@ class MessageBoxAppBar extends React.Component {
               open={Boolean(anchorEl)}
               onClose={this.handleClose}
             >
-              <MenuItem
-                onClick={this.onSetUnread}
-              >
-                Unread
-              </MenuItem>
-              <MenuItem
-                onClick={this.onSetAll}
-              >
-                All
-              </MenuItem>
-              <MenuItem
-                onClick={this.onSetSent}
-              >
-                Sent
-              </MenuItem>
+              <MenuItem onClick={this.onSetUnread}>Unread</MenuItem>
+              <MenuItem onClick={this.onSetAll}>All</MenuItem>
+              <MenuItem onClick={this.onSetSent}>Sent</MenuItem>
             </Menu>
           </div>
         </Toolbar>

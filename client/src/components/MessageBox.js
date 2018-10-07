@@ -91,7 +91,10 @@ export class MessageBox extends React.Component {
     if (listView === 'unread') {
       const res = await axios.get(`/api/message/unread`);
       if (!res.data._unread) {
-        return this.setState({ view: 'list', listType: 'unread', messages: [] }, () => {});
+        return this.setState(
+          { view: 'list', listType: 'unread', messages: [] },
+          () => {}
+        );
       }
       return this.setState(
         { view: 'list', listType: 'unread', messages: [...res.data._unread] },
@@ -101,7 +104,10 @@ export class MessageBox extends React.Component {
     if (listView === 'all') {
       const res = await axios.get(`/api/message/all`);
       if (!res.data._all) {
-        return this.setState({ view: 'list', listType: 'all', messages: [] }, () => {});
+        return this.setState(
+          { view: 'list', listType: 'all', messages: [] },
+          () => {}
+        );
       }
       return this.setState(
         { view: 'list', listType: 'all', messages: [...res.data._all] },
@@ -111,7 +117,10 @@ export class MessageBox extends React.Component {
     if (listView === 'sent') {
       const res = await axios.get(`/api/message/sent`);
       if (!res.data._sent) {
-        return this.setState({ view: 'list', listType: 'sent', messages: [] }, () => {});
+        return this.setState(
+          { view: 'list', listType: 'sent', messages: [] },
+          () => {}
+        );
       }
       return this.setState(
         { view: 'list', listType: 'sent', messages: [...res.data._sent] },
@@ -124,7 +133,10 @@ export class MessageBox extends React.Component {
     try {
       const res = await axios.get('/api/message/unread');
       if (!res.data._unread) {
-        return this.setState({ view: 'list', listType: 'unread', messages: [] }, () => {});
+        return this.setState(
+          { view: 'list', listType: 'unread', messages: [] },
+          () => {}
+        );
       }
       this.setState({ messages: [...res.data._unread] }, () => {});
     } catch (e) {
@@ -148,7 +160,11 @@ export class MessageBox extends React.Component {
     return (
       <Paper className={classes.root}>
         <div className={classes.header}>
-          <MessageBoxAppBar setList={this.setList} />
+          <MessageBoxAppBar
+            view={this.state.view}
+            listType={this.state.listType}
+            setList={this.setList}
+          />
         </div>
         <div className={classes.box}>
           {this.state.view === 'list' ? (
