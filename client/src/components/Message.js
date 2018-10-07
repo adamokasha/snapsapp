@@ -36,7 +36,9 @@ export class Message extends React.Component {
 
     this.state = {
       body: '',
-      message: this.props.message
+      message: this.props.message,
+      currentPage: 0,
+      hasMoreReplies: this.props.hasMoreReplies
     };
 
     this.bottomRef = React.createRef();
@@ -46,7 +48,12 @@ export class Message extends React.Component {
     this.bottomRef.current.scrollIntoView();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    if (this.props.message.replies !== prevProps.message.replies) {
+      this.setState({ message: this.props.message }, () =>
+        this.bottomRef.current.scrollIntoView()
+      );
+    }
     this.bottomRef.current.scrollIntoView();
   }
 
@@ -88,14 +95,25 @@ export class Message extends React.Component {
     this.setState({ body: e.target.value }, () => {});
   };
 
+  loadPrevious = async () => {
+    try {
+      await this.props.setMessage(
+        this.props.message._id,
+        this.state.currentPage
+      );
+      this.setState({ currentPage: this.state.currentPage + 1 });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   render() {
     const { message, classes } = this.props;
     return (
       <div className={classes.root}>
         <List classes={{ root: classes.listRoot }}>
           <ListItem>
-            <Avatar src={message._from.profilePhoto} />
-            <ListItemText>{message.body}</ListItemText>
+            {this.props.hasMoreReplies && <Button onClick={this.loadPrevious}>Load Previous</Button>}
           </ListItem>
           {this.state.message.replies.map(reply => (
             <ListItem>

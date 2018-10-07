@@ -175,32 +175,72 @@ module.exports = app => {
   });
 
   // Get single message
-  app.get('/api/message/get/:id', requireAuth, async (req, res) => {
-    const message = await Message.findById({ _id: req.params.id }).populate({
-      path: '_from _to',
-      select: 'displayName profilePhoto'
-    });
-    // Populate
-    await Message.populate(message, {
-      path: 'replies._owner',
-      select: 'displayName profilePhoto'
-    });
-    // If req.user is not the recipient or the sender = 401
-    // Additional layer of security but most likely unnecessary
-    const owners = [message._to._id.toString(), message._from._id.toString()];
-    if (!owners.includes(req.user.id)) {
-      return res
-        .status(401)
-        .send({ error: 'You are not authorized to view this message' });
+  app.get('/api/message/get/:id/:page', requireAuth, async (req, res) => {
+    try {
+      const message = await Message.aggregate([
+        { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
+        { $unwind: '$replies' },
+        {$sort: {'replies.createdAt': -1}},
+        {$skip: 5 * req.params.page},
+        {$limit: 5},
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'replies._owner',
+            foreignField: '_id',
+            as: 'replies._owner'
+          }
+        },
+        {$unwind: '$replies._owner'},
+        {
+          $project: {
+            title: 1,
+            createdAt: 1,
+            replies: {
+              body: 1,
+              createdAt: 1,
+              _owner: { displayName: 1, profilePhoto: 1 }
+            }
+          }
+        },
+        {$group: {
+          _id: '$_id',
+          title: {$first: '$title'},
+          createdAt: {$first: '$createdAt'},
+          replies: {$push: '$replies'}
+        }}
+      ]);
+
+      res.status(200).send(message[0]);
+    } catch (e) {
+      console.log(e);
     }
 
-    // Remove from recipient's unread list
-    await MessageBox.findOneAndUpdate(
-      { _owner: req.user.id },
-      { $pull: { _unread: req.params.id } }
-    );
+    // const message = await Message.findById({ _id: req.params.id }).populate({
+    //   path: '_from _to',
+    //   select: 'displayName profilePhoto'
+    // });
+    // // Populate
+    // await Message.populate(message, {
+    //   path: 'replies._owner',
+    //   select: 'displayName profilePhoto'
+    // });
+    // // If req.user is not the recipient or the sender = 401
+    // // Additional layer of security but most likely unnecessary
+    // const owners = [message._to._id.toString(), message._from._id.toString()];
+    // if (!owners.includes(req.user.id)) {
+    //   return res
+    //     .status(401)
+    //     .send({ error: 'You are not authorized to view this message' });
+    // }
 
-    res.status(200).send(message);
+    // // Remove from recipient's unread list
+    // await MessageBox.findOneAndUpdate(
+    //   { _owner: req.user.id },
+    //   { $pull: { _unread: req.params.id } }
+    // );
+
+    // res.status(200).send(message);
   });
 
   // Send a new message
@@ -286,7 +326,7 @@ module.exports = app => {
         }
       );
 
-      res.status(200).send({success: 'Message(s) deleted.'})
+      res.status(200).send({ success: 'Message(s) deleted.' });
     } catch (e) {
       console.log(e);
     }

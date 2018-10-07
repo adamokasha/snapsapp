@@ -71,11 +71,11 @@ export const MessageList = props => {
               />
               <Avatar src={message._from.profilePhoto} />
               <ListItemText
-                onClick={() => props.setMessageView(message._id)}
+                onClick={() => props.setMessage(message._id)}
                 primary={message._from.displayName}
               />
               <ListItemText
-                onClick={() => props.setMessageView(message._id)}
+                onClick={() => props.setMessage(message._id)}
                 primary={message.title}
               />
             </ListItem>
@@ -94,7 +94,7 @@ MessageList.propTypes = {
   messages: PropTypes.array,
   onSelect: PropTypes.func,
   onSelectAll: PropTypes.func,
-  setMessageView: PropTypes.func
+  setMessage: PropTypes.func
 };
 
 export default withStyles(styles)(MessageList);

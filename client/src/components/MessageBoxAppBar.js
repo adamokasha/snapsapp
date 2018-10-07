@@ -73,7 +73,7 @@ class MessageBoxAppBar extends React.Component {
           {this.props.view === 'list' ? null : (
             <IconButton
               onClick={() => {
-                this.props.setList(this.props.listType);
+                this.props.goBack(this.props.listType);
               }}
               className={classes.menu}
             >

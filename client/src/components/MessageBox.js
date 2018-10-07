@@ -52,6 +52,8 @@ export class MessageBox extends React.Component {
       view: 'list',
       listType: 'unread',
       currentMessage: null,
+      currentMessagePage: 0,
+      hasMoreReplies: true,
       isLoading: false
     };
   }
@@ -78,9 +80,14 @@ export class MessageBox extends React.Component {
     this.setState({ selected: [...allMessageIds] });
   };
 
-  setMessageView = async messageId => {
+  setMessage = async (messageId, currentPage) => {
     try {
-      const res = await axios.get(`/api/message/get/${messageId}`);
+      const res = await axios.get(
+        `/api/message/get/${messageId}/${currentPage + 1 || 0}`
+      );
+      if(!res.data) {
+        return this.setState({hasMoreReplies: false})
+      }
       this.setState({ view: 'message', currentMessage: res.data });
     } catch (e) {
       console.log(e);
@@ -129,6 +136,12 @@ export class MessageBox extends React.Component {
     }
   };
 
+  goBack = async (listType) => {
+    this.setState({hasMoreReplies: true}, () => {
+      this.setList(listType);
+    })
+  }
+
   async componentDidMount() {
     try {
       const res = await axios.get('/api/message/unread');
@@ -167,6 +180,7 @@ export class MessageBox extends React.Component {
             view={this.state.view}
             listType={this.state.listType}
             setList={this.setList}
+            goBack={this.goBack}
           />
         </div>
         <div className={classes.box}>
@@ -178,12 +192,16 @@ export class MessageBox extends React.Component {
               onSelectOne={this.onSelectOne}
               onSelectAll={this.onSelectAll}
               messages={this.state.messages}
-              setMessageView={this.setMessageView}
+              setMessage={this.setMessage}
               onDelete={this.onDelete}
             />
           ) : null}
           {this.state.view === 'message' ? (
-            <Message message={this.state.currentMessage} />
+            <Message
+              setMessage={this.setMessage}
+              message={this.state.currentMessage}
+              hasMoreReplies={this.state.hasMoreReplies}
+            />
           ) : null}
         </div>
       </Paper>
