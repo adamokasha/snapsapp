@@ -264,7 +264,7 @@ module.exports = app => {
         { _owner: recipient },
         { $addToSet: { _unread: message._id, _all: message._id } }
       );
-      res.status(200).send({ success: 'Reply sent' });
+      res.status(200).send(reply);
     } catch (e) {
       console.log(e);
     }

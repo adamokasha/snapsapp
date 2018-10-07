@@ -30,20 +30,43 @@ const styles = theme => ({
 });
 
 export class Message extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
-      body: ''
+      body: '',
+      message: this.props.message
     };
   }
   onSubmit = async e => {
     try {
       e.preventDefault();
-      const { body } = this.state;
-      await axios.post(`/api/message/reply/${this.props.message._id}`, {
-        body
-      });
+      const res = await axios.post(
+        `/api/message/reply/${this.props.message._id}`,
+        {
+          body: this.state.body
+        }
+      );
+      const { body, createdAt } = res.data;
+      const reply = {
+        createdAt,
+        body,
+        _owner: {
+          profilePhoto:
+            'https://lh3.googleusercontent.com/-ZXSGTOl5Lmc/AAAAAAAAAAI/AAAAAAAAAK0/X4K3YOBCQbk/photo.jpg?sz=50'
+        }
+      };
+      const updatedReplies = this.state.message.replies.push(reply);
+      this.setState(
+        {
+          ...this.state,
+          message: {
+            ...this.state.message,
+            replies: [...this.state.message.replies, ...updatedReplies]
+          }
+        },
+        () => {}
+      );
     } catch (e) {
       console.log(e);
     }
@@ -62,7 +85,7 @@ export class Message extends React.Component {
             <Avatar src={message._from.profilePhoto} />
             <ListItemText>{message.body}</ListItemText>
           </ListItem>
-          {message.replies.map(reply => (
+          {this.state.message.replies.map(reply => (
             <ListItem>
               <Avatar src={reply._owner.profilePhoto} />
               <ListItemText primary={reply.body} />
