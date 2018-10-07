@@ -149,7 +149,10 @@ export class MessageBox extends React.Component {
       await axios.delete(`/api/message/delete`, {
         data: { deletions: this.state.selected }
       });
-      this.setState({ selected: [] });
+      const updatedMessages = this.state.messages.filter(
+        message => !this.state.selected.includes(message._id)
+      );
+      this.setState({ messages: updatedMessages, selected: [] }, () => {});
     } catch (e) {
       console.log(e);
     }
