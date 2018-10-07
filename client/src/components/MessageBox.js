@@ -49,7 +49,8 @@ export class MessageBox extends React.Component {
     this.state = {
       messages: [],
       selected: [],
-      viewing: 'list',
+      view: 'list',
+      listType: 'unread',
       currentMessage: null,
       isLoading: false
     };
@@ -80,7 +81,7 @@ export class MessageBox extends React.Component {
   setMessageView = async messageId => {
     try {
       const res = await axios.get(`/api/message/get/${messageId}`);
-      this.setState({ viewing: 'message', currentMessage: res.data });
+      this.setState({ view: 'message', currentMessage: res.data });
     } catch (e) {
       console.log(e);
     }
@@ -90,30 +91,30 @@ export class MessageBox extends React.Component {
     if (listView === 'unread') {
       const res = await axios.get(`/api/message/unread`);
       if (!res.data._unread) {
-        return this.setState({ viewing: 'list', messages: [] }, () => {});
+        return this.setState({ view: 'list', listType: 'unread', messages: [] }, () => {});
       }
       return this.setState(
-        { viewing: 'list', messages: [...res.data._unread] },
+        { view: 'list', listType: 'unread', messages: [...res.data._unread] },
         () => {}
       );
     }
     if (listView === 'all') {
       const res = await axios.get(`/api/message/all`);
       if (!res.data._all) {
-        return this.setState({ viewing: 'list', messages: [] }, () => {});
+        return this.setState({ view: 'list', listType: 'all', messages: [] }, () => {});
       }
       return this.setState(
-        { viewing: 'list', messages: [...res.data._all] },
+        { view: 'list', listType: 'all', messages: [...res.data._all] },
         () => {}
       );
     }
     if (listView === 'sent') {
       const res = await axios.get(`/api/message/sent`);
       if (!res.data._sent) {
-        return this.setState({ viewing: 'list', messages: [] }, () => {});
+        return this.setState({ view: 'list', listType: 'sent', messages: [] }, () => {});
       }
       return this.setState(
-        { viewing: 'list', messages: [...res.data._sent] },
+        { view: 'list', listType: 'sent', messages: [...res.data._sent] },
         () => {}
       );
     }
@@ -122,6 +123,9 @@ export class MessageBox extends React.Component {
   async componentDidMount() {
     try {
       const res = await axios.get('/api/message/unread');
+      if (!res.data._unread) {
+        return this.setState({ view: 'list', listType: 'unread', messages: [] }, () => {});
+      }
       this.setState({ messages: [...res.data._unread] }, () => {});
     } catch (e) {
       console.log(e);
@@ -147,8 +151,10 @@ export class MessageBox extends React.Component {
           <MessageBoxAppBar setList={this.setList} />
         </div>
         <div className={classes.box}>
-          {this.state.viewing === 'list' ? (
+          {this.state.view === 'list' ? (
             <MessageList
+              setList={this.setList}
+              listType={this.state.listType}
               selected={this.state.selected}
               onSelectOne={this.onSelectOne}
               onSelectAll={this.onSelectAll}
@@ -157,7 +163,7 @@ export class MessageBox extends React.Component {
               onDelete={this.onDelete}
             />
           ) : null}
-          {this.state.viewing === 'message' ? (
+          {this.state.view === 'message' ? (
             <Message message={this.state.currentMessage} />
           ) : null}
         </div>

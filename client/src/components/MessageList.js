@@ -9,10 +9,12 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete'
+import DeleteIcon from '@material-ui/icons/Delete';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 
 import Avatar from '@material-ui/core/Avatar';
-import  Divider from '@material-ui/core/Divider';
+import Divider from '@material-ui/core/Divider';
 
 const styles = theme => ({
   root: {
@@ -43,24 +45,30 @@ export const MessageList = props => {
               props.messages.length > 1 &&
               props.messages.length === props.selected.length
             }
+            disabled={messages.length ? false : true}
           />
-          <Typography variant="body2">
-          Select All
-        </Typography>
+          <Typography variant="body2">Select All</Typography>
         </div>
-        <IconButton onClick={props.onDelete}>
-            <DeleteIcon />
-        </IconButton>
+        <div>
+          <IconButton onClick={() => props.setList(props.listType)}>
+            <RefreshIcon />
+          </IconButton>
+          {messages.length ? (
+            <IconButton onClick={props.onDelete}>
+              <DeleteIcon />
+            </IconButton>
+          ) : null}
+        </div>
       </div>
-      <Divider/>
+      <Divider />
       <List classes={{ root: classes.root }}>
         {messages.length > 0 ? (
           messages.map(message => (
             <ListItem>
-                <Checkbox
-                  onClick={() => props.onSelectOne(message._id)}
-                  checked={props.selected.includes(message._id)}
-                />
+              <Checkbox
+                onClick={() => props.onSelectOne(message._id)}
+                checked={props.selected.includes(message._id)}
+              />
               <Avatar src={message._from.profilePhoto} />
               <ListItemText
                 onClick={() => props.setMessageView(message._id)}
@@ -70,11 +78,12 @@ export const MessageList = props => {
                 onClick={() => props.setMessageView(message._id)}
                 primary={message.title}
               />
-              
             </ListItem>
           ))
         ) : (
-          <div>No Messages to Show</div>
+          <Typography align="center" variant="body2">
+            No Messages to Show
+          </Typography>
         )}
       </List>
     </div>
