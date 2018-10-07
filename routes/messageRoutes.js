@@ -5,61 +5,54 @@ const Message = mongoose.model('Message');
 const MessageBox = mongoose.model('MessageBox');
 
 module.exports = app => {
+  const setListAggrPipeline = (list, userId) => [
+    { $match: { _owner: mongoose.Types.ObjectId(userId) } },
+    {
+      $lookup: {
+        from: 'messages',
+        localField: `${list}`,
+        foreignField: '_id',
+        as: `${list}`
+      }
+    },
+    { $unwind: `$${list}` },
+    {
+      $lookup: {
+        from: 'users',
+        localField: `${list}._from`,
+        foreignField: '_id',
+        as: `${list}._from`
+      }
+    },
+    { $unwind: `$${list}._from` },
+    {
+      $project: {
+        _owner: 1,
+        [`${list}`]: {
+          _id: 1,
+          title: 1,
+          body: 1,
+          replied: 1,
+          _from: { displayName: 1, profilePhoto: 1 }
+        }
+      }
+    },
+    // Roll back list items into array
+    {
+      $group: {
+        _id: '$_id',
+        [`${list}`]: { $push: `$${list}` },
+        _owner: { $first: '$_owner' }
+      }
+    }
+  ];
+
   // Get MessageBox unreads
   app.get('/api/message/unread', requireAuth, async (req, res) => {
     try {
-      const messageBox = await MessageBox.aggregate([
-        { $match: { _owner: mongoose.Types.ObjectId(req.user.id) } },
-        {
-          $lookup: {
-            from: 'messages',
-            localField: '_unread',
-            foreignField: '_id',
-            as: '_unread'
-          }
-        },
-        { $unwind: '$_unread' },
-        {
-          $lookup: {
-            from: 'users',
-            localField: '_unread._from',
-            foreignField: '_id',
-            as: '_unread._from'
-          }
-        },
-        { $unwind: '$_unread._from' },
-        {
-          $project: {
-            _owner: 1,
-            _unread: {
-              _id: 1,
-              title: 1,
-              body: 1,
-              replied: 1,
-              // replies: 1,
-              _from: { displayName: 1, profilePhoto: 1 }
-            }
-          }
-        },
-        // Roll back _unread's into array
-        {
-          $group: {
-            _id: '$_id',
-            _unread: { $push: '$_unread' },
-            _owner: { $first: '$_owner' }
-            // '_messages': {$first: '$_messages'}
-          }
-        }
-      ]);
-
-      // The easy way
-      // const messageBox = await MessageBox.findOne({
-      //   _owner: req.user.id
-      // })
-      //   .populate({ path: '_unread', select: 'title body _from' })
-      //   .exec();
-
-      // await MessageBox.populate(messageBox, {path: '_unread._from', select: 'displayName profilePhoto'});
+      const messageBox = await MessageBox.aggregate(
+        setListAggrPipeline('_unread', req.user.id)
+      );
 
       res.status(200).send(messageBox[0]);
     } catch (e) {
@@ -70,49 +63,9 @@ module.exports = app => {
   // Get MessageBox all
   app.get('/api/message/all', requireAuth, async (req, res) => {
     try {
-      const messageBox = await MessageBox.aggregate([
-        { $match: { _owner: mongoose.Types.ObjectId(req.user.id) } },
-        {
-          $lookup: {
-            from: 'messages',
-            localField: '_all',
-            foreignField: '_id',
-            as: '_all'
-          }
-        },
-        { $unwind: '$_all' },
-        {
-          $lookup: {
-            from: 'users',
-            localField: '_all._from',
-            foreignField: '_id',
-            as: '_all._from'
-          }
-        },
-        { $unwind: '$_all._from' },
-        {
-          $project: {
-            _owner: 1,
-            _all: {
-              _id: 1,
-              title: 1,
-              body: 1,
-              replied: 1,
-              // replies: 1,
-              _from: { displayName: 1, profilePhoto: 1 }
-            }
-          }
-        },
-        // Roll back _all's into array
-        {
-          $group: {
-            _id: '$_id',
-            _all: { $push: '$_all' },
-            _owner: { $first: '$_owner' }
-            // '_messages': {$first: '$_messages'}
-          }
-        }
-      ]);
+      const messageBox = await MessageBox.aggregate(
+        setListAggrPipeline('_all', req.user.id)
+      );
 
       res.status(200).send(messageBox[0]);
     } catch (e) {
@@ -123,50 +76,9 @@ module.exports = app => {
   // Get MessageBox sent
   app.get('/api/message/sent', requireAuth, async (req, res) => {
     try {
-      const messageBox = await MessageBox.aggregate([
-        { $match: { _owner: mongoose.Types.ObjectId(req.user.id) } },
-        {
-          $lookup: {
-            from: 'messages',
-            localField: '_sent',
-            foreignField: '_id',
-            as: '_sent'
-          }
-        },
-        { $unwind: '$_sent' },
-        {
-          $lookup: {
-            from: 'users',
-            localField: '_sent._from',
-            foreignField: '_id',
-            as: '_sent._from'
-          }
-        },
-        { $unwind: '$_sent._from' },
-        {
-          $project: {
-            _owner: 1,
-            _sent: {
-              _id: 1,
-              title: 1,
-              body: 1,
-              replied: 1,
-              // replies: 1,
-              _from: { displayName: 1, profilePhoto: 1 }
-            }
-          }
-        },
-        // Roll back _sent's into array
-        {
-          $group: {
-            _id: '$_id',
-            _sent: { $push: '$_sent' },
-            _owner: { $first: '$_owner' }
-            // '_messages': {$first: '$_messages'}
-          }
-        }
-      ]);
-      console.log(messageBox);
+      const messageBox = await MessageBox.aggregate(
+        setListAggrPipeline('_sent', req.user.id)
+      );
 
       res.status(200).send(messageBox[0]);
     } catch (e) {
@@ -180,9 +92,9 @@ module.exports = app => {
       const message = await Message.aggregate([
         { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
         { $unwind: '$replies' },
-        {$sort: {'replies.createdAt': -1}},
-        {$skip: 5 * req.params.page},
-        {$limit: 5},
+        { $sort: { 'replies.createdAt': 1 } },
+        { $skip: 5 * req.params.page },
+        { $limit: 5 },
         {
           $lookup: {
             from: 'users',
@@ -191,25 +103,46 @@ module.exports = app => {
             as: 'replies._owner'
           }
         },
-        {$unwind: '$replies._owner'},
+        { $unwind: '$replies._owner' },
         {
           $project: {
             title: 1,
             createdAt: 1,
+            _to: 1,
+            _from: 1,
             replies: {
               body: 1,
               createdAt: 1,
-              _owner: { displayName: 1, profilePhoto: 1 }
+              _owner: { _id: 1, displayName: 1, profilePhoto: 1 }
             }
           }
         },
-        {$group: {
-          _id: '$_id',
-          title: {$first: '$title'},
-          createdAt: {$first: '$createdAt'},
-          replies: {$push: '$replies'}
-        }}
+        {
+          $group: {
+            _id: '$_id',
+            _to: { $first: '$_to' },
+            _from: { $first: '$_from' },
+            title: { $first: '$title' },
+            createdAt: { $first: '$createdAt' },
+            replies: { $push: '$replies' }
+          }
+        }
       ]);
+
+      // If req.user is not the recipient or the sender = 401
+      // Additional layer of security but most likely unnecessary
+      const owners = [message[0]._to.toString(), message[0]._from.toString()];
+      if (!owners.includes(req.user.id)) {
+        return res
+          .status(401)
+          .send({ error: 'You are not authorized to view this message' });
+      }
+
+      // Remove from recipient's unread list
+      await MessageBox.findOneAndUpdate(
+        { _owner: req.user.id },
+        { $pull: { _unread: req.params.id } }
+      );
 
       res.status(200).send(message[0]);
     } catch (e) {
@@ -225,20 +158,6 @@ module.exports = app => {
     //   path: 'replies._owner',
     //   select: 'displayName profilePhoto'
     // });
-    // // If req.user is not the recipient or the sender = 401
-    // // Additional layer of security but most likely unnecessary
-    // const owners = [message._to._id.toString(), message._from._id.toString()];
-    // if (!owners.includes(req.user.id)) {
-    //   return res
-    //     .status(401)
-    //     .send({ error: 'You are not authorized to view this message' });
-    // }
-
-    // // Remove from recipient's unread list
-    // await MessageBox.findOneAndUpdate(
-    //   { _owner: req.user.id },
-    //   { $pull: { _unread: req.params.id } }
-    // );
 
     // res.status(200).send(message);
   });
@@ -254,7 +173,7 @@ module.exports = app => {
         _to: to,
         createdAt,
         title,
-        body
+        replies: [{ _owner: req.user.id, body, createdAt }]
       }).save();
 
       // Add message to recipient's MessageBox
