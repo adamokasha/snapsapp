@@ -16,6 +16,8 @@ import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
 import axios from 'axios';
 
+import { updateMboxNotif } from '../actions/auth';
+
 const styles = theme => ({
   root: {
     flexGrow: 1
@@ -48,20 +50,25 @@ class NavBar extends React.Component {
     };
   }
 
+  async componentDidMount(){
+    try {
+      const res = await axios.get('/api/message/count');
+      this.props.updateMboxNotif(res.data.size);
+      this.setState({ mBoxUnreadCount: res.data.size }, () => {});
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
-
-  async componentDidUpdate(prevProps){
-    if (this.props.auth !== prevProps.auth){
+  async componentDidUpdate(prevProps) {
+    if (this.props.auth !== prevProps.auth) {
       try {
-        const res = await axios.get('/api/message/count');
-        this.setState({mBoxUnreadCount: res.data[0].size}, () => {})
+        this.setState({ mBoxUnreadCount: this.props.auth.mboxNotif }, () => {});
       } catch (e) {
         console.log(e);
       }
     }
   }
-
-
 
   handleMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
@@ -80,8 +87,8 @@ class NavBar extends React.Component {
       <div>
         <Link to="/mbox">
           <IconButton>
-          <Badge badgeContent={this.state.mBoxUnreadCount} color="secondary">
-            <InboxIcon />
+            <Badge badgeContent={auth.mBoxNotif || 0} color="secondary">
+              <InboxIcon />
             </Badge>
           </IconButton>
         </Link>
@@ -180,5 +187,5 @@ const mapStateToProps = ({ auth }) => ({
 
 export default compose(
   withStyles(styles),
-  connect(mapStateToProps)
+  connect(mapStateToProps, {updateMboxNotif})
 )(NavBar);

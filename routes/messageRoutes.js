@@ -72,10 +72,11 @@ module.exports = app => {
           $project: {
             size: { $size: '$_unread' }
           }
-        }
+        },
+        {$limit: 1}
       ]);
 
-      res.status(200).send(unreadCount);
+      res.status(200).send(unreadCount[0]);
     } catch (e) {
       console.log(e);
     }

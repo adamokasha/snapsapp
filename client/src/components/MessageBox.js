@@ -1,16 +1,18 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import compose from 'recompose/compose';
 import Paper from '@material-ui/core/Paper';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import axios from 'axios';
-
 
 import MessageList from './MessageList';
 import Message from './Message';
 import MessageBoxAppBar from './MessageBoxAppBar';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
+import { updateMboxNotif } from '../actions/auth';
 
 const styles = theme => ({
   root: {
@@ -53,11 +55,20 @@ export class MessageBox extends React.Component {
     };
   }
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   if(prevState.listType !== this.state.listType) {
-  //     this.setState({currentListPage: 0}, () => {})
-  //   }
-  // }
+  async componentDidMount() {
+    try {
+      this.setList(this.state.listType, this.state.currentListPage);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async componentDidUpdate(prevProps, prevState){
+    if(this.state.message !== prevState.messages) {
+      const res = await axios.get('/api/message/count');
+      this.props.updateMboxNotif(res.data.size);
+    }
+  }
 
   onSelectOne = messageId => {
     const { selected } = this.state;
@@ -96,9 +107,11 @@ export class MessageBox extends React.Component {
   };
 
   // Passed as prop to MessageBoxAppBar to reset currentListPage to 0 when switching b/w listType
-  switchListType = (listType) => {
-    this.setState({currentListPage: 0}, () => {this.setList(listType)})
-  }
+  switchListType = listType => {
+    this.setState({ currentListPage: 0 }, () => {
+      this.setList(listType);
+    });
+  };
 
   setList = async listView => {
     if (listView === 'unread') {
@@ -159,14 +172,6 @@ export class MessageBox extends React.Component {
     });
   };
 
-  async componentDidMount() {
-    try {
-      this.setList(this.state.listType, this.state.currentListPage);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
   onDelete = async () => {
     try {
       await axios.delete(`/api/message/delete`, {
@@ -186,9 +191,12 @@ export class MessageBox extends React.Component {
       if (this.state.currentListPage === 0) {
         return;
       }
-      this.setState({ currentListPage: this.state.currentListPage - 1, hasMoreLists: true }, () => {
-        this.setList(this.state.listType);
-      });
+      this.setState(
+        { currentListPage: this.state.currentListPage - 1, hasMoreLists: true },
+        () => {
+          this.setList(this.state.listType);
+        }
+      );
     } catch (e) {
       console.log(e);
     }
@@ -241,7 +249,9 @@ export class MessageBox extends React.Component {
         <div className={classes.paginationControls}>
           <IconButton
             onClick={this.onListBack}
-            disabled={this.state.messages.length < 5 || !this.state.hasMoreLists}
+            disabled={
+              this.state.messages.length < 5 || !this.state.hasMoreLists
+            }
           >
             <ArrowLeftIcon />
           </IconButton>
@@ -257,4 +267,10 @@ export class MessageBox extends React.Component {
   }
 }
 
-export default withStyles(styles)(MessageBox);
+export default compose(
+  withStyles(styles),
+  connect(
+    null,
+    { updateMboxNotif }
+  )
+)(MessageBox);
