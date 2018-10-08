@@ -7,7 +7,7 @@ const MessageSchema = new Schema({
   createdAt: Number,
   title: String,
   body: String,
-  replied: {type: Boolean, default: false},
+  lastReplied: Number,
   replies: [
     {
       _owner: { type: Schema.Types.ObjectId, ref: 'User' },

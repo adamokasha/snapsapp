@@ -32,7 +32,7 @@ module.exports = app => {
           _id: 1,
           title: 1,
           body: 1,
-          replied: 1,
+          lastReplied: 1,
           _from: { displayName: 1, profilePhoto: 1 }
         }
       }
@@ -42,7 +42,7 @@ module.exports = app => {
       $group: {
         _id: '$_id',
         [`${list}`]: { $push: `$${list}` },
-        _owner: { $first: '$_owner' }
+        _owner: { $first: '$_owner' },
       }
     }
   ];
@@ -173,6 +173,7 @@ module.exports = app => {
         _to: to,
         createdAt,
         title,
+        lastReplied: createdAt,
         replies: [{ _owner: req.user.id, body, createdAt }]
       }).save();
 
@@ -202,14 +203,15 @@ module.exports = app => {
   app.post(`/api/message/reply/:msgId`, requireAuth, async (req, res) => {
     try {
       const { body } = req.body;
+      const dateNow = Date.now();
       const reply = {
         _owner: req.user.id,
-        createdAt: Date.now(),
+        createdAt: dateNow,
         body
       };
       const message = await Message.findOneAndUpdate(
         { _id: req.params.msgId },
-        { $push: { replies: reply } }
+        { $push: { replies: reply }, $set: { lastReplied: dateNow, read: false } }
       );
 
       // Find the recipient
