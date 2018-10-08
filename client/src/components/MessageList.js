@@ -18,7 +18,12 @@ import Divider from '@material-ui/core/Divider';
 
 const styles = theme => ({
   root: {
-    width: '100%'
+    width: '100%',
+  },
+  messageListRoot: {
+    width: '100%',
+    height: '250px',
+    overflowY: 'scroll'
   },
   menuContainer: {
     display: 'flex',
@@ -61,8 +66,8 @@ export const MessageList = props => {
         </div>
       </div>
       <Divider />
-      <List classes={{ root: classes.root }}>
-        {messages.length > 0 ? (
+      <List classes={{ root: classes.messageListRoot }}>
+        {messages ? (
           messages.map(message => (
             <ListItem>
               <Checkbox

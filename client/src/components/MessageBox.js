@@ -1,27 +1,16 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import compose from 'recompose/compose';
 import Paper from '@material-ui/core/Paper';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Avatar from '@material-ui/core/Avatar';
-import Checkbox from '@material-ui/core/Checkbox';
+import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import axios from 'axios';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import InboxIcon from '@material-ui/icons/Inbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 
-import MailBoxNav from './MailBoxNav';
+
 import MessageList from './MessageList';
 import Message from './Message';
 import MessageBoxAppBar from './MessageBoxAppBar';
+import IconButton from '@material-ui/core/IconButton';
+import Divider from '@material-ui/core/Divider';
 
 const styles = theme => ({
   root: {
@@ -39,6 +28,10 @@ const styles = theme => ({
   box: {
     display: 'flex',
     height: '300px'
+  },
+  paginationControls: {
+    display: 'flex',
+    justifyContent: 'flex-end'
   }
 });
 
@@ -49,6 +42,8 @@ export class MessageBox extends React.Component {
     this.state = {
       messages: [],
       selected: [],
+      currentListPage: 0,
+      hasMoreLists: true,
       view: 'list',
       listType: 'unread',
       currentMessage: null,
@@ -57,6 +52,12 @@ export class MessageBox extends React.Component {
       isLoading: false
     };
   }
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   if(prevState.listType !== this.state.listType) {
+  //     this.setState({currentListPage: 0}, () => {})
+  //   }
+  // }
 
   onSelectOne = messageId => {
     const { selected } = this.state;
@@ -85,8 +86,8 @@ export class MessageBox extends React.Component {
       const res = await axios.get(
         `/api/message/get/${messageId}/${currentPage + 1 || 0}`
       );
-      if(!res.data) {
-        return this.setState({hasMoreReplies: false})
+      if (!res.data) {
+        return this.setState({ hasMoreReplies: false });
       }
       this.setState({ view: 'message', currentMessage: res.data });
     } catch (e) {
@@ -94,12 +95,24 @@ export class MessageBox extends React.Component {
     }
   };
 
+  // Passed as prop to MessageBoxAppBar to reset currentListPage to 0 when switching b/w listType
+  switchListType = (listType) => {
+    this.setState({currentListPage: 0}, () => {this.setList(listType)})
+  }
+
   setList = async listView => {
     if (listView === 'unread') {
-      const res = await axios.get(`/api/message/unread`);
+      const res = await axios.get(
+        `/api/message/unread/${this.state.currentListPage}`
+      );
       if (!res.data._unread) {
         return this.setState(
-          { view: 'list', listType: 'unread', messages: [] },
+          {
+            view: 'list',
+            listType: 'unread',
+            hasMoreLists: false,
+            currentListPage: this.state.currentListPage - 1
+          },
           () => {}
         );
       }
@@ -109,10 +122,12 @@ export class MessageBox extends React.Component {
       );
     }
     if (listView === 'all') {
-      const res = await axios.get(`/api/message/all`);
+      const res = await axios.get(
+        `/api/message/all/${this.state.currentListPage}`
+      );
       if (!res.data._all) {
         return this.setState(
-          { view: 'list', listType: 'all', messages: [] },
+          { view: 'list', listType: 'all', hasMoreLists: false },
           () => {}
         );
       }
@@ -122,10 +137,12 @@ export class MessageBox extends React.Component {
       );
     }
     if (listView === 'sent') {
-      const res = await axios.get(`/api/message/sent`);
+      const res = await axios.get(
+        `/api/message/sent/${this.state.currentListPage}`
+      );
       if (!res.data._sent) {
         return this.setState(
-          { view: 'list', listType: 'sent', messages: [] },
+          { view: 'list', listType: 'sent', hasMoreLists: false },
           () => {}
         );
       }
@@ -136,22 +153,15 @@ export class MessageBox extends React.Component {
     }
   };
 
-  goBack = async (listType) => {
-    this.setState({hasMoreReplies: true}, () => {
+  goBack = async listType => {
+    this.setState({ hasMoreReplies: true }, () => {
       this.setList(listType);
-    })
-  }
+    });
+  };
 
   async componentDidMount() {
     try {
-      const res = await axios.get('/api/message/unread');
-      if (!res.data._unread) {
-        return this.setState(
-          { view: 'list', listType: 'unread', messages: [] },
-          () => {}
-        );
-      }
-      this.setState({ messages: [...res.data._unread] }, () => {});
+      this.setList(this.state.listType, this.state.currentListPage);
     } catch (e) {
       console.log(e);
     }
@@ -171,15 +181,38 @@ export class MessageBox extends React.Component {
     }
   };
 
+  onListForward = async () => {
+    try {
+      if (this.state.currentListPage === 0) {
+        return;
+      }
+      this.setState({ currentListPage: this.state.currentListPage - 1, hasMoreLists: true }, () => {
+        this.setList(this.state.listType);
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  onListBack = () => {
+    try {
+      this.setState({ currentListPage: this.state.currentListPage + 1 }, () => {
+        this.setList(this.state.listType);
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   render() {
     const { classes } = this.props;
     return (
       <Paper className={classes.root}>
         <div className={classes.header}>
           <MessageBoxAppBar
+            switchListType={this.switchListType}
             view={this.state.view}
             listType={this.state.listType}
-            setList={this.setList}
             goBack={this.goBack}
           />
         </div>
@@ -203,6 +236,21 @@ export class MessageBox extends React.Component {
               hasMoreReplies={this.state.hasMoreReplies}
             />
           ) : null}
+        </div>
+        <Divider />
+        <div className={classes.paginationControls}>
+          <IconButton
+            onClick={this.onListBack}
+            disabled={this.state.messages.length < 5 || !this.state.hasMoreLists}
+          >
+            <ArrowLeftIcon />
+          </IconButton>
+          <IconButton
+            onClick={this.onListForward}
+            disabled={this.state.currentListPage > 0 ? false : true}
+          >
+            <ArrowRightIcon />
+          </IconButton>
         </div>
       </Paper>
     );

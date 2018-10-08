@@ -43,17 +43,17 @@ class MessageBoxAppBar extends React.Component {
 
   onSetUnread = () => {
     this.handleClose();
-    this.props.setList('unread');
+    this.props.switchListType('unread');
   };
 
   onSetAll = () => {
     this.handleClose();
-    this.props.setList('all');
+    this.props.switchListType('all');
   };
 
   onSetSent = () => {
     this.handleClose();
-    this.props.setList('sent');
+    this.props.switchListType('sent');
   };
 
   render() {

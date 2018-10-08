@@ -5,7 +5,7 @@ const Message = mongoose.model('Message');
 const MessageBox = mongoose.model('MessageBox');
 
 module.exports = app => {
-  const setListAggrPipeline = (list, userId) => [
+  const setListAggrPipeline = (list, userId, page) => [
     { $match: { _owner: mongoose.Types.ObjectId(userId) } },
     {
       $lookup: {
@@ -37,21 +37,24 @@ module.exports = app => {
         }
       }
     },
+    { $sort: {[`${list}.lastReplied`]: -1} },
+    { $skip: 5 * page },
+    { $limit: 5 },
     // Roll back list items into array
     {
       $group: {
         _id: '$_id',
         [`${list}`]: { $push: `$${list}` },
-        _owner: { $first: '$_owner' },
+        _owner: { $first: '$_owner' }
       }
-    }
+    } 
   ];
 
   // Get MessageBox unreads
-  app.get('/api/message/unread', requireAuth, async (req, res) => {
+  app.get('/api/message/unread/:page', requireAuth, async (req, res) => {
     try {
       const messageBox = await MessageBox.aggregate(
-        setListAggrPipeline('_unread', req.user.id)
+        setListAggrPipeline('_unread', req.user.id, req.params.page)
       );
 
       res.status(200).send(messageBox[0]);
@@ -61,10 +64,10 @@ module.exports = app => {
   });
 
   // Get MessageBox all
-  app.get('/api/message/all', requireAuth, async (req, res) => {
+  app.get('/api/message/all/:page', requireAuth, async (req, res) => {
     try {
       const messageBox = await MessageBox.aggregate(
-        setListAggrPipeline('_all', req.user.id)
+        setListAggrPipeline('_all', req.user.id, req.params.page)
       );
 
       res.status(200).send(messageBox[0]);
@@ -74,10 +77,10 @@ module.exports = app => {
   });
 
   // Get MessageBox sent
-  app.get('/api/message/sent', requireAuth, async (req, res) => {
+  app.get('/api/message/sent/:page', requireAuth, async (req, res) => {
     try {
       const messageBox = await MessageBox.aggregate(
-        setListAggrPipeline('_sent', req.user.id)
+        setListAggrPipeline('_sent', req.user.id, req.params.page)
       );
 
       res.status(200).send(messageBox[0]);
@@ -211,7 +214,10 @@ module.exports = app => {
       };
       const message = await Message.findOneAndUpdate(
         { _id: req.params.msgId },
-        { $push: { replies: reply }, $set: { lastReplied: dateNow, read: false } }
+        {
+          $push: { replies: reply },
+          $set: { lastReplied: dateNow, read: false }
+        }
       );
 
       // Find the recipient
