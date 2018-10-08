@@ -63,8 +63,8 @@ export class MessageBox extends React.Component {
     }
   }
 
-  async componentDidUpdate(prevProps, prevState){
-    if(this.state.message !== prevState.messages) {
+  async componentDidUpdate(prevProps, prevState) {
+    if (this.state.message !== prevState.messages) {
       const res = await axios.get('/api/message/count');
       this.props.updateMboxNotif(res.data.size);
     }
@@ -246,22 +246,24 @@ export class MessageBox extends React.Component {
           ) : null}
         </div>
         <Divider />
-        <div className={classes.paginationControls}>
-          <IconButton
-            onClick={this.onListBack}
-            disabled={
-              this.state.messages.length < 5 || !this.state.hasMoreLists
-            }
-          >
-            <ArrowLeftIcon />
-          </IconButton>
-          <IconButton
-            onClick={this.onListForward}
-            disabled={this.state.currentListPage > 0 ? false : true}
-          >
-            <ArrowRightIcon />
-          </IconButton>
-        </div>
+        {this.state.view === 'list' && (
+          <div className={classes.paginationControls}>
+            <IconButton
+              onClick={this.onListBack}
+              disabled={
+                this.state.messages.length < 5 || !this.state.hasMoreLists
+              }
+            >
+              <ArrowLeftIcon />
+            </IconButton>
+            <IconButton
+              onClick={this.onListForward}
+              disabled={this.state.currentListPage > 0 ? false : true}
+            >
+              <ArrowRightIcon />
+            </IconButton>
+          </div>
+        )}
       </Paper>
     );
   }

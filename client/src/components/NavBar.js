@@ -1,21 +1,26 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import compose from 'recompose/compose';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import { Link } from 'react-router-dom';
+import compose from 'recompose/compose';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import InboxIcon from '@material-ui/icons/Inbox';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import CameraIcon from '@material-ui/icons/Camera';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
 import axios from 'axios';
 
+import ModalView from './ModalView';
+import ImageUploadForm from './ImageUploadForm';
 import { updateMboxNotif } from '../actions/auth';
 
 const styles = theme => ({
@@ -25,6 +30,16 @@ const styles = theme => ({
   grow: {
     flexGrow: 1
   },
+  logo: {
+    display: 'flex'
+  },
+  logoIcon: {
+    marginRight: `${theme.spacing.unit}px`
+  },
+  nav: {
+    display: 'flex',
+    marginLeft: 'auto'
+  },
   menuButton: {
     marginLeft: -12,
     marginRight: 20
@@ -32,6 +47,9 @@ const styles = theme => ({
   leftIcon: {
     fontSize: '18px',
     marginRight: theme.spacing.unit / 2
+  },
+  iconButton: {
+    color: '#fff !important'
   },
   aTag: {
     padding: 0,
@@ -50,7 +68,7 @@ class NavBar extends React.Component {
     };
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     try {
       const res = await axios.get('/api/message/count');
       this.props.updateMboxNotif(res.data.size);
@@ -79,26 +97,36 @@ class NavBar extends React.Component {
   };
 
   renderNavButtons() {
-    const { auth } = this.props;
+    const { auth, classes } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
     return auth ? (
-      <div>
+      <div className={classes.nav}>
+        <ModalView
+          togglerComponent={
+            <IconButton className={classes.iconButton}>
+              <CloudUploadIcon />
+            </IconButton>
+          }
+          modalComponent={<ImageUploadForm />}
+        />
+
         <Link to="/mbox">
-          <IconButton>
+          <IconButton className={classes.iconButton}>
             <Badge badgeContent={auth.mBoxNotif || 0} color="secondary">
               <InboxIcon />
             </Badge>
           </IconButton>
         </Link>
+
         <IconButton
           aria-owns={open ? 'menu-appbar' : null}
           aria-haspopup="true"
           onClick={this.handleMenu}
           color="inherit"
         >
-          <AccountCircle />
+          <Avatar alt="avatar" src={auth.profilePhoto} />
         </IconButton>
         <Menu
           id="menu-appbar"
@@ -115,7 +143,7 @@ class NavBar extends React.Component {
           onClose={this.handleClose}
         >
           <MenuItem to="/upload" component={Link} onClick={this.handleClose}>
-            Add Image
+            Add Post
           </MenuItem>
           <MenuItem to="/myalbums" component={Link} onClick={this.handleClose}>
             Albums
@@ -137,7 +165,7 @@ class NavBar extends React.Component {
         </Menu>
       </div>
     ) : (
-      <div>
+      <div className={classes.nav}>
         <Button to="/login" component={Link} variant="text" color="inherit">
           &nbsp;Sign In
         </Button>
@@ -160,15 +188,20 @@ class NavBar extends React.Component {
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
-            <Typography
-              variant="title"
-              color="inherit"
-              className={classes.grow}
-            >
-              <Link to="/" className={classes.aTag}>
-                <ion-icon size="large" name="aperture" />
+            <div>
+              <Link to="/" className={classNames(classes.logo, classes.aTag)}>
+                <CameraIcon className={classes.logoIcon} />
+
+                <Typography
+                  variant="title"
+                  color="inherit"
+                  className={classes.grow}
+                >
+                  SnapsApp
+                </Typography>
               </Link>
-            </Typography>
+            </div>
+
             {this.renderNavButtons()}
           </Toolbar>
         </AppBar>
@@ -187,5 +220,8 @@ const mapStateToProps = ({ auth }) => ({
 
 export default compose(
   withStyles(styles),
-  connect(mapStateToProps, {updateMboxNotif})
+  connect(
+    mapStateToProps,
+    { updateMboxNotif }
+  )
 )(NavBar);
