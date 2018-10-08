@@ -199,6 +199,16 @@ module.exports = app => {
     }
   });
 
+  // Get single post
+  app.get('/api/posts/single/:id', async (req, res) => {
+    try {
+      const post = await Post.findOne({_id: req.params.id}, '-comments');
+      res.status(200).send(post)
+    } catch (e) {
+      console.log(e)
+    }
+  })
+
   // Get post comments
   app.get('/api/posts/comments/all/:postId/:page', async (req, res) => {
     try {

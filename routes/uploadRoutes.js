@@ -52,7 +52,7 @@ module.exports = app => {
           tags
         });
         await post.save();
-        res.status(200).send({success: 'Post has been added!'})
+        res.status(200).send({success: 'Post has been added!', postData: post})
     }
   );
 };

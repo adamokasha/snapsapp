@@ -1,4 +1,5 @@
 import React from 'react';
+import {withRouter} from 'react-router'
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
@@ -10,10 +11,12 @@ import Input from '@material-ui/core/Input';
 import Close from '@material-ui/icons/Close';
 import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 const styles = theme => ({
   paper: {
+    position: 'relative',
     width: '95%',
     display: 'block',
     [theme.breakpoints.up('sm')]: {
@@ -26,7 +29,7 @@ const styles = theme => ({
       width: '45%'
     },
     // Stops shaking on focus
-    minHeight: '535px',
+    minHeight: '550px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -36,6 +39,11 @@ const styles = theme => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)'
+  },
+  linearLoader: {
+    position: 'absolute',
+    top: '0',
+    width: '100%'
   },
   closeIcon: {
     position: 'absolute',
@@ -59,7 +67,7 @@ const styles = theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     height: '100px',
-    border: '1px dashed',
+    border: '1px dashed rgba(0, 0, 0, .5)',
     width: '50%',
     [theme.breakpoints.up('sm')]: {
       width: '30%'
@@ -70,7 +78,8 @@ const styles = theme => ({
     margin: '0 auto'
   },
   blankIcon: {
-    fontSize: '48px'
+    fontSize: '48px',
+    color: 'rgba(0, 0, 0, .5)'
   },
   previewImage: {
     maxHeight: '100px',
@@ -87,9 +96,6 @@ const styles = theme => ({
     },
     [theme.breakpoints.up('md')]: {
       width: '40%'
-    },
-    [theme.breakpoints.up('lg')]: {
-      width: '30%'
     },
     margin: '0 auto'
   },
@@ -115,7 +121,8 @@ class ImageUploadForm extends React.Component {
       description: ''
     },
     previewImage: '',
-    file: null
+    file: null,
+    isLoading: false
   };
 
   onFileSelect = e => {
@@ -150,20 +157,30 @@ class ImageUploadForm extends React.Component {
     });
   };
 
-  onSubmit = async e => {
+  onSubmit = e => {
     try {
       e.preventDefault();
-      const { post, file } = this.state;
 
-      const data = new FormData();
-      // name must match multer upload('name')
-      data.append('image', file);
-      data.append('data', JSON.stringify(post));
+      this.setState({ isLoading: true }, async () => {
+        const { post, file } = this.state;
 
-      await fetch('/api/upload', {
-        mode: 'no-cors',
-        method: 'POST',
-        body: data
+        const data = new FormData();
+        // name must match multer upload('name')
+        data.append('image', file);
+        data.append('data', JSON.stringify(post));
+
+        const res = await fetch('/api/upload', {
+          mode: 'no-cors',
+          method: 'POST',
+          body: data
+        });
+
+        const {postData} = await res.json();
+
+        this.setState({ isLoading: false }, () => {
+          // this.props.history.push({path: `/post/${postData._id}`, state: {post: postData}});
+          this.props.handleClose();
+        });
       });
     } catch (e) {
       console.log(e);
@@ -175,6 +192,9 @@ class ImageUploadForm extends React.Component {
 
     return (
       <Paper className={classes.paper}>
+        {this.state.isLoading && (
+          <LinearProgress className={classes.linearLoader} color="secondary" />
+        )}
         <div className={classes.heading}>
           <Avatar className={classes.avatar}>
             <AddPhotoAlternate />
@@ -204,25 +224,24 @@ class ImageUploadForm extends React.Component {
             )}
           </div>
           <div className={classes.fileInputContainer}>
-          <Input
-            accept="image/*"
-            className={classes.fileInput}
-            id="hidden-file-input"
-            name="image"
-            type="file"
-            onChange={this.onFileSelect}
-          />
-          <label htmlFor="hidden-file-input">
-            <Button
-              variant="raised"
-              component="span"
-              className={classes.button}
-            >
-              Browse for an Image File
-            </Button>
-          </label>
-          </div>
-          {' '}
+            <Input
+              accept="image/*"
+              className={classes.fileInput}
+              id="hidden-file-input"
+              name="image"
+              type="file"
+              onChange={this.onFileSelect}
+            />
+            <label htmlFor="hidden-file-input">
+              <Button
+                variant="raised"
+                component="span"
+                className={classes.button}
+              >
+                Browse for an Image File
+              </Button>
+            </label>
+          </div>{' '}
           <TextField
             id="full-width"
             label="Title"
@@ -253,6 +272,7 @@ class ImageUploadForm extends React.Component {
             size="large"
             className={classes.button}
             type="submit"
+            disabled={this.state.isLoading ? true : false}
           >
             Save Post
           </Button>
@@ -266,4 +286,5 @@ ImageUploadForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(ImageUploadForm);
+
+export default withStyles(styles)(withRouter(ImageUploadForm));
