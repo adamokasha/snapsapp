@@ -8,16 +8,14 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
 import Close from '@material-ui/icons/Close';
+import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutlined';
+import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 const styles = theme => ({
-  root: {
-    margin: `${theme.spacing.unit * 3}px 0`
-  },
-  layout: {
+  paper: {
     width: '95%',
     display: 'block',
-    margin: '0 auto',
     [theme.breakpoints.up('sm')]: {
       width: '80%'
     },
@@ -26,22 +24,26 @@ const styles = theme => ({
     },
     [theme.breakpoints.up('lg')]: {
       width: '45%'
-    }
-  },
-  paper: {
-    position: 'relative',
-    minHeight: '300px',
-    margin: `${theme.spacing.unit * 3}px auto`,
+    },
+    // Stops shaking on focus
+    minHeight: '535px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
-      .spacing.unit * 3}px`
+      .spacing.unit * 3}px`,
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)'
   },
   closeIcon: {
     position: 'absolute',
     right: '4%',
     cursor: 'pointer'
+  },
+  heading: {
+    marginBottom: `${theme.spacing.unit}px`
   },
   avatar: {
     margin: `${theme.spacing.unit}px auto`,
@@ -52,13 +54,44 @@ const styles = theme => ({
     flexDirection: 'column',
     width: '100%'
   },
+  blankImage: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100px',
+    border: '1px dashed',
+    width: '50%',
+    [theme.breakpoints.up('sm')]: {
+      width: '30%'
+    },
+    [theme.breakpoints.up('md')]: {
+      width: '20%'
+    },
+    margin: '0 auto'
+  },
+  blankIcon: {
+    fontSize: '48px'
+  },
   previewImage: {
-    maxHeight: '250px',
+    maxHeight: '100px',
     maxWidth: '100%',
     width: 'auto',
     height: 'auto',
     margin: '0 auto',
     display: 'block'
+  },
+  fileInputContainer: {
+    width: '85%',
+    [theme.breakpoints.up('sm')]: {
+      width: '50%'
+    },
+    [theme.breakpoints.up('md')]: {
+      width: '40%'
+    },
+    [theme.breakpoints.up('lg')]: {
+      width: '30%'
+    },
+    margin: '0 auto'
   },
   fileInput: {
     display: 'none'
@@ -141,90 +174,90 @@ class ImageUploadForm extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.root}>
-        <main className={classes.layout}>
-          <Paper className={classes.paper}>
-            <Avatar className={classes.avatar}>
-              <AddPhotoAlternate />
-            </Avatar>
-            <Typography align="center" variant="headline">
-              Add Image
-            </Typography>
-            <Close
-              className={classes.closeIcon}
-              onClick={this.props.handleClose}
-            />
-            <form
-              method="post"
-              action=""
-              encType="multipart/form-data"
-              onSubmit={this.onSubmit}
-            >
-              <div>
-                {this.state.previewImage ? (
-                  <img
-                    src={this.state.previewImage}
-                    alt="preview"
-                    className={classes.previewImage}
-                  />
-                ) : null}
+      <Paper className={classes.paper}>
+        <div className={classes.heading}>
+          <Avatar className={classes.avatar}>
+            <AddPhotoAlternate />
+          </Avatar>
+          <Typography align="center" variant="headline">
+            Add Image
+          </Typography>
+        </div>
+        <Close className={classes.closeIcon} onClick={this.props.handleClose} />
+        <form
+          method="post"
+          action=""
+          encType="multipart/form-data"
+          onSubmit={this.onSubmit}
+        >
+          <div>
+            {this.state.previewImage ? (
+              <img
+                src={this.state.previewImage}
+                alt="preview"
+                className={classes.previewImage}
+              />
+            ) : (
+              <div className={classes.blankImage}>
+                <InsertDriveFileOutlinedIcon className={classes.blankIcon} />
               </div>
-              <Input
-                accept="image/*"
-                className={classes.fileInput}
-                id="hidden-file-input"
-                name="image"
-                type="file"
-                onChange={this.onFileSelect}
-              />
-              <label htmlFor="hidden-file-input">
-                <Button
-                  variant="raised"
-                  component="span"
-                  className={classes.button}
-                >
-                  Click to Choose an Image File
-                </Button>
-              </label>{' '}
-              <TextField
-                id="full-width"
-                label="Title"
-                placeholder="Give your photo a title"
-                margin="normal"
-                className={classes.textField}
-                onChange={this.onTitleChange}
-              />{' '}
-              <TextField
-                id="full-width"
-                label="Tags"
-                placeholder="Enter a comma seperate list of tags for you photo"
-                margin="normal"
-                className={classes.textField}
-                onChange={this.onTagsChange}
-              />{' '}
-              <TextField
-                id="full-width"
-                label="Description"
-                placeholder="Write something about your photo here"
-                multiline
-                rows={4}
-                margin="normal"
-                className={classes.textField}
-                onChange={this.onDescChange}
-              />
-              <Button
-                color="primary"
-                variant="contained"
-                size="large"
-                className={classes.button}
-                type="submit"
-              >
-                Save Post
-              </Button>
-            </form>
-          </Paper>
-        </main>
-      </div>
+            )}
+          </div>
+          <div className={classes.fileInputContainer}>
+          <Input
+            accept="image/*"
+            className={classes.fileInput}
+            id="hidden-file-input"
+            name="image"
+            type="file"
+            onChange={this.onFileSelect}
+          />
+          <label htmlFor="hidden-file-input">
+            <Button
+              variant="raised"
+              component="span"
+              className={classes.button}
+            >
+              Browse for an Image File
+            </Button>
+          </label>
+          </div>
+          {' '}
+          <TextField
+            id="full-width"
+            label="Title"
+            placeholder="Give your photo a title"
+            margin="normal"
+            className={classes.textField}
+            onChange={this.onTitleChange}
+          />{' '}
+          <TextField
+            id="full-width"
+            label="Tags"
+            placeholder="Enter a comma seperate list of tags for you photo"
+            margin="normal"
+            className={classes.textField}
+            onChange={this.onTagsChange}
+          />{' '}
+          <TextField
+            id="full-width"
+            label="Description"
+            placeholder="Write something about your photo here"
+            margin="normal"
+            className={classes.textField}
+            onChange={this.onDescChange}
+          />
+          <Button
+            color="primary"
+            variant="contained"
+            size="large"
+            className={classes.button}
+            type="submit"
+          >
+            Save Post
+          </Button>
+        </form>
+      </Paper>
     );
   }
 }

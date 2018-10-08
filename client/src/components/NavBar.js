@@ -40,14 +40,6 @@ const styles = theme => ({
     display: 'flex',
     marginLeft: 'auto'
   },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20
-  },
-  leftIcon: {
-    fontSize: '18px',
-    marginRight: theme.spacing.unit / 2
-  },
   iconButton: {
     color: '#fff !important'
   },
@@ -109,7 +101,7 @@ class NavBar extends React.Component {
               <CloudUploadIcon />
             </IconButton>
           }
-          modalComponent={<ImageUploadForm />}
+          modalComponent={<ImageUploadForm/>}
         />
 
         <Link to="/mbox">
@@ -142,9 +134,6 @@ class NavBar extends React.Component {
           open={open}
           onClose={this.handleClose}
         >
-          <MenuItem to="/upload" component={Link} onClick={this.handleClose}>
-            Add Post
-          </MenuItem>
           <MenuItem to="/myalbums" component={Link} onClick={this.handleClose}>
             Albums
           </MenuItem>
@@ -211,7 +200,9 @@ class NavBar extends React.Component {
 }
 
 NavBar.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  auth: PropTypes.object,
+  updateMboxNotif: PropTypes.func
 };
 
 const mapStateToProps = ({ auth }) => ({
