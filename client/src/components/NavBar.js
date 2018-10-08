@@ -13,6 +13,8 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
+import Badge from '@material-ui/core/Badge';
+import axios from 'axios';
 
 const styles = theme => ({
   root: {
@@ -37,14 +39,29 @@ const styles = theme => ({
 });
 
 class NavBar extends React.Component {
-  state = {
-    auth: true,
-    anchorEl: null
-  };
+  constructor(props) {
+    super(props);
 
-  handleChange = event => {
-    this.setState({ auth: event.target.checked });
-  };
+    this.state = {
+      anchorEl: null,
+      mBoxUnreadCount: null
+    };
+  }
+
+
+
+  async componentDidUpdate(prevProps){
+    if (this.props.auth !== prevProps.auth){
+      try {
+        const res = await axios.get('/api/message/count');
+        this.setState({mBoxUnreadCount: res.data[0].size}, () => {})
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
+
 
   handleMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
@@ -63,7 +80,9 @@ class NavBar extends React.Component {
       <div>
         <Link to="/mbox">
           <IconButton>
+          <Badge badgeContent={this.state.mBoxUnreadCount} color="secondary">
             <InboxIcon />
+            </Badge>
           </IconButton>
         </Link>
         <IconButton

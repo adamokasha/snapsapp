@@ -37,7 +37,7 @@ module.exports = app => {
         }
       }
     },
-    { $sort: {[`${list}.lastReplied`]: -1} },
+    { $sort: { [`${list}.lastReplied`]: -1 } },
     { $skip: 5 * page },
     { $limit: 5 },
     // Roll back list items into array
@@ -47,7 +47,7 @@ module.exports = app => {
         [`${list}`]: { $push: `$${list}` },
         _owner: { $first: '$_owner' }
       }
-    } 
+    }
   ];
 
   // Get MessageBox unreads
@@ -58,6 +58,24 @@ module.exports = app => {
       );
 
       res.status(200).send(messageBox[0]);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+  // Get MessageBox unreads count only (For NavBar message box notification)
+  app.get('/api/message/count', requireAuth, async (req, res) => {
+    try {
+      const unreadCount = await MessageBox.aggregate([
+        { $match: { _owner: mongoose.Types.ObjectId(req.user.id) } },
+        {
+          $project: {
+            size: { $size: '$_unread' }
+          }
+        }
+      ]);
+
+      res.status(200).send(unreadCount);
     } catch (e) {
       console.log(e);
     }
