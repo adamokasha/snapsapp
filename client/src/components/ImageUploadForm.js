@@ -1,5 +1,8 @@
 import React from 'react';
-import {withRouter} from 'react-router'
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+import compose from 'recompose/compose';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
@@ -13,6 +16,8 @@ import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutli
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import withStyles from '@material-ui/core/styles/withStyles';
+
+import CustomSnackbar from './CustomSnackbar';
 
 const styles = theme => ({
   paper: {
@@ -110,6 +115,10 @@ const styles = theme => ({
   button: {
     width: '100%',
     marginTop: '5%'
+  },
+  aTag: {
+    color: 'inherit',
+    textDecoration: 'none'
   }
 });
 
@@ -122,7 +131,9 @@ class ImageUploadForm extends React.Component {
     },
     previewImage: '',
     file: null,
-    isLoading: false
+    isLoading: false,
+    snackbarOpen: false,
+    postLinkObj: null
   };
 
   onFileSelect = e => {
@@ -175,11 +186,28 @@ class ImageUploadForm extends React.Component {
           body: data
         });
 
-        const {postData} = await res.json();
+        const { postData } = await res.json();
+        // Profile info pulled out of redux store to avoid a populate call to mongo db. Upload process is faster.
+        const {_id, displayName, profilePhoto} = this.props.auth;
+        postData._owner = {
+          _id,
+          displayName,
+          profilePhoto
+        }
 
         this.setState({ isLoading: false }, () => {
-          // this.props.history.push({path: `/post/${postData._id}`, state: {post: postData}});
-          this.props.handleClose();
+          this.setState(
+            {
+              postLinkObj: {
+                pathname: `/post/${postData._id}`,
+                state: { post: postData }
+              }
+            },
+            () => {
+              this.setState({ snackbarOpen: true });
+            }
+          );
+          // this.props.handleClose();
         });
       });
     } catch (e) {
@@ -187,97 +215,130 @@ class ImageUploadForm extends React.Component {
     }
   };
 
+  onSnackbarOpen = () => {
+    this.setState({ snackbarOpen: true }, () => {});
+  };
+
+  onSnackbarClose = () => {
+    this.setState({ snackbarOpen: false }, () => {});
+  };
+
   render() {
     const { classes } = this.props;
 
     return (
-      <Paper className={classes.paper}>
-        {this.state.isLoading && (
-          <LinearProgress className={classes.linearLoader} color="secondary" />
-        )}
-        <div className={classes.heading}>
-          <Avatar className={classes.avatar}>
-            <AddPhotoAlternate />
-          </Avatar>
-          <Typography align="center" variant="headline">
-            Add Image
-          </Typography>
-        </div>
-        <Close className={classes.closeIcon} onClick={this.props.handleClose} />
-        <form
-          method="post"
-          action=""
-          encType="multipart/form-data"
-          onSubmit={this.onSubmit}
-        >
-          <div>
-            {this.state.previewImage ? (
-              <img
-                src={this.state.previewImage}
-                alt="preview"
-                className={classes.previewImage}
-              />
-            ) : (
-              <div className={classes.blankImage}>
-                <InsertDriveFileOutlinedIcon className={classes.blankIcon} />
-              </div>
-            )}
-          </div>
-          <div className={classes.fileInputContainer}>
-            <Input
-              accept="image/*"
-              className={classes.fileInput}
-              id="hidden-file-input"
-              name="image"
-              type="file"
-              onChange={this.onFileSelect}
+      <React.Fragment>
+        <Paper className={classes.paper}>
+          {this.state.isLoading && (
+            <LinearProgress
+              className={classes.linearLoader}
+              color="secondary"
             />
-            <label htmlFor="hidden-file-input">
-              <Button
-                variant="raised"
-                component="span"
-                className={classes.button}
-              >
-                Browse for an Image File
-              </Button>
-            </label>
-          </div>{' '}
-          <TextField
-            id="full-width"
-            label="Title"
-            placeholder="Give your photo a title"
-            margin="normal"
-            className={classes.textField}
-            onChange={this.onTitleChange}
-          />{' '}
-          <TextField
-            id="full-width"
-            label="Tags"
-            placeholder="Enter a comma seperate list of tags for you photo"
-            margin="normal"
-            className={classes.textField}
-            onChange={this.onTagsChange}
-          />{' '}
-          <TextField
-            id="full-width"
-            label="Description"
-            placeholder="Write something about your photo here"
-            margin="normal"
-            className={classes.textField}
-            onChange={this.onDescChange}
+          )}
+          <div className={classes.heading}>
+            <Avatar className={classes.avatar}>
+              <AddPhotoAlternate />
+            </Avatar>
+            <Typography align="center" variant="headline">
+              Add Image
+            </Typography>
+          </div>
+          <Close
+            className={classes.closeIcon}
+            onClick={this.props.handleClose}
           />
-          <Button
-            color="primary"
-            variant="contained"
-            size="large"
-            className={classes.button}
-            type="submit"
-            disabled={this.state.isLoading ? true : false}
+          <form
+            method="post"
+            action=""
+            encType="multipart/form-data"
+            onSubmit={this.onSubmit}
           >
-            Save Post
-          </Button>
-        </form>
-      </Paper>
+            <div>
+              {this.state.previewImage ? (
+                <img
+                  src={this.state.previewImage}
+                  alt="preview"
+                  className={classes.previewImage}
+                />
+              ) : (
+                <div className={classes.blankImage}>
+                  <InsertDriveFileOutlinedIcon className={classes.blankIcon} />
+                </div>
+              )}
+            </div>
+            <div className={classes.fileInputContainer}>
+              <Input
+                accept="image/*"
+                className={classes.fileInput}
+                id="hidden-file-input"
+                name="image"
+                type="file"
+                onChange={this.onFileSelect}
+              />
+              <label htmlFor="hidden-file-input">
+                <Button
+                  variant="raised"
+                  component="span"
+                  className={classes.button}
+                >
+                  Browse for an Image File
+                </Button>
+              </label>
+            </div>{' '}
+            <TextField
+              id="full-width"
+              label="Title"
+              placeholder="Give your photo a title"
+              margin="normal"
+              className={classes.textField}
+              onChange={this.onTitleChange}
+            />{' '}
+            <TextField
+              id="full-width"
+              label="Tags"
+              placeholder="Enter a comma seperate list of tags for you photo"
+              margin="normal"
+              className={classes.textField}
+              onChange={this.onTagsChange}
+            />{' '}
+            <TextField
+              id="full-width"
+              label="Description"
+              placeholder="Write something about your photo here"
+              margin="normal"
+              className={classes.textField}
+              onChange={this.onDescChange}
+            />
+            <Button
+              color="primary"
+              variant="contained"
+              size="large"
+              className={classes.button}
+              type="submit"
+              disabled={this.state.isLoading ? true : false}
+            >
+              Save Post
+            </Button>
+          </form>
+        </Paper>
+        <CustomSnackbar
+          variant="success"
+          message={
+            this.state.postLinkObj && (
+              <Link
+                onClick={this.props.handleClose}
+                className={classes.aTag}
+                to={this.state.postLinkObj}
+              >
+                <p>Click here to see your post.</p>
+              </Link>
+            )
+          }
+          onSnackbarOpen={this.onSnackbarOpen}
+          onSnackbarClose={this.onSnackbarClose}
+          snackbarOpen={this.state.snackbarOpen}
+        />
+      </React.Fragment>
     );
   }
 }
@@ -286,5 +347,11 @@ ImageUploadForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
+const mapStateToProps = ({auth}) => ({
+  auth
+})
 
-export default withStyles(styles)(withRouter(ImageUploadForm));
+export default compose(
+  withStyles(styles),
+  connect(mapStateToProps)
+)(withRouter(ImageUploadForm));
