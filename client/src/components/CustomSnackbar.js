@@ -142,7 +142,7 @@ class CustomSnackbar extends React.Component {
 
 CustomSnackbar.propTypes = {
   classes: PropTypes.object.isRequired,
-  variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']).isRequired,
+  variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']),
 };
 
 export default withStyles(styles2)(CustomSnackbar);

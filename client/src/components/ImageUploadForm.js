@@ -198,53 +198,70 @@ class ImageUploadForm extends React.Component {
   };
 
   onSubmit = e => {
-    try {
-      e.preventDefault();
+    e.preventDefault();
 
-      this.setState({ isLoading: true }, async () => {
-        const { post, file } = this.state;
+    this.setState({ isLoading: true }, async () => {
+      const { post, file } = this.state;
 
-        const data = new FormData();
-        // name must match multer upload('name')
-        data.append('image', file);
-        data.append('data', JSON.stringify(post));
+      const data = new FormData();
+      // name must match multer upload('name')
+      data.append('image', file);
+      data.append('data', JSON.stringify(post));
 
-        const res = await fetch('/api/upload', {
-          mode: 'no-cors',
-          method: 'POST',
-          body: data
-        });
+      fetch('/api/upload', {
+        mode: 'no-cors',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          Accept: 'application/json; charset=utf-8'
+        },
+        body: data
+      })
+        .then(res => res.json())
+        .then(data => {
+          const { postData } = data;
+          // Profile info pulled out of redux store to avoid a populate call to mongodb. To keep upload process faster.
+          const { _id, displayName, profilePhoto } = this.props.auth;
+          postData._owner = {
+            _id,
+            displayName,
+            profilePhoto
+          };
 
-        const { postData } = await res.json();
-        // Profile info pulled out of redux store to avoid a populate call to mongo db. Keeps upload process faster.
-        const { _id, displayName, profilePhoto } = this.props.auth;
-        postData._owner = {
-          _id,
-          displayName,
-          profilePhoto
-        };
-
-        this.setState({ isLoading: false }, () => {
+          this.setState({ isLoading: false }, () => {
+            this.setState(
+              {
+                postLinkObj: {
+                  pathname: `/post/${postData._id}`,
+                  state: { post: postData }
+                }
+              },
+              () => {
+                this.setState(
+                  {
+                    snackbarOpen: true,
+                    snackbarVar: 'success',
+                    snackbarMessage: 'Click here to see your post!'
+                  },
+                  () => {}
+                );
+              }
+            );
+          });
+        })
+        .catch(e => {
+          console.log('CATCH BLOCK TRIGGERED!!!!');
           this.setState(
             {
-              postLinkObj: {
-                pathname: `/post/${postData._id}`,
-                state: { post: postData }
-              }
+              snackbarOpen: true,
+              snackbarVar: 'error',
+              snackbarMessage: 'Could not add post! Try again.',
+              isLoading: false
             },
-            () => {
-              this.setState({
-                snackbarOpen: true,
-                snackbarVar: 'success',
-                snackbarMessage: 'Click here to see your post!'
-              });
-            }
+            () => {}
           );
         });
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    });
   };
 
   onSnackbarOpen = () => {
@@ -253,6 +270,23 @@ class ImageUploadForm extends React.Component {
 
   onSnackbarClose = () => {
     this.setState({ snackbarOpen: false }, () => {});
+  };
+
+  setSnackbarMessage = variant => {
+    if (variant === 'success') {
+      return (
+        <Link
+          onClick={this.props.handleClose}
+          className={this.props.classes.aTag}
+          to={this.state.postLinkObj}
+        >
+          <p>{this.state.snackbarMessage}</p>
+        </Link>
+      );
+    }
+    if (variant === 'error') {
+      return <p>Could not add post! Please check fields.</p>;
+    }
   };
 
   render() {
@@ -415,15 +449,8 @@ class ImageUploadForm extends React.Component {
         <CustomSnackbar
           variant={this.state.snackbarVar}
           message={
-            this.state.postLinkObj && (
-              <Link
-                onClick={this.props.handleClose}
-                className={classes.aTag}
-                to={this.state.postLinkObj}
-              >
-                <p>{this.state.snackbarMessage}</p>
-              </Link>
-            )
+            this.state.snackbarOpen &&
+            this.setSnackbarMessage(this.state.snackbarVar)
           }
           onSnackbarOpen={this.onSnackbarOpen}
           onSnackbarClose={this.onSnackbarClose}

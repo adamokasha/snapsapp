@@ -44,20 +44,25 @@ module.exports = app => {
     requireAuth,
     upload.single('image'),
     async (req, res) => {
-      let data = JSON.parse(req.body.data);
-      const { title, tags, description } = data;
-      const post = await new Post({
-        _owner: req.user.id,
-        title,
-        title_lower: title,
-        description,
-        createdAt: Date.now(),
-        // ! key and other file props available on req.file/files
-        imgUrl: req.file.key,
-        tags
-      });
-      await post.save();
-      res.status(200).send({ success: 'Post has been added!', postData: post });
+      try {
+        let data = JSON.parse(req.body.data);
+        const { title, tags, description } = data;
+        const post = await new Post({
+          _owner: req.user.id,
+          title,
+          title_lower: title,
+          description,
+          createdAt: Date.now(),
+          // ! key and other file props available on req.file/files
+          imgUrl: req.file.key,
+          tags
+        });
+        await post.save();
+        res.status(200).send({ success: 'Post has been added!', postData: post });
+      } catch (e) {
+        res.status(200).send({error: 'Could not add post. Please check html form input and upload file.'})
+      }
+      
     }
   );
 };
