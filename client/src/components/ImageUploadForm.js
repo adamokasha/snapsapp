@@ -11,6 +11,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
+import IconButton from '@material-ui/core/IconButton';
 import Close from '@material-ui/icons/Close';
 import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
@@ -50,10 +51,11 @@ const styles = theme => ({
     top: '0',
     width: '100%'
   },
-  closeIcon: {
+  closeButton: {
     position: 'absolute',
     right: '4%',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    color: 'rgba(0, 0, 0, 1)'
   },
   heading: {
     marginBottom: `${theme.spacing.unit}px`
@@ -80,7 +82,8 @@ const styles = theme => ({
     [theme.breakpoints.up('md')]: {
       width: '20%'
     },
-    margin: '0 auto'
+    margin: '0 auto',
+    borderRadius: '3%'
   },
   blankIcon: {
     fontSize: '48px',
@@ -132,14 +135,14 @@ class ImageUploadForm extends React.Component {
     previewImage: '',
     file: null,
     isLoading: false,
+    postLinkObj: null,
     snackbarOpen: false,
-    postLinkObj: null
+    snackbarVar: null,
+    snackbarMessage: null
   };
 
   onFileSelect = e => {
-    const src = e.target.files[0]
-      ? URL.createObjectURL(e.target.files[0])
-      : null;
+    const src = e.target.files[0] && URL.createObjectURL(e.target.files[0]);
     if (!src) {
       return;
     }
@@ -187,13 +190,13 @@ class ImageUploadForm extends React.Component {
         });
 
         const { postData } = await res.json();
-        // Profile info pulled out of redux store to avoid a populate call to mongo db. Upload process is faster.
-        const {_id, displayName, profilePhoto} = this.props.auth;
+        // Profile info pulled out of redux store to avoid a populate call to mongo db. Keeps upload process faster.
+        const { _id, displayName, profilePhoto } = this.props.auth;
         postData._owner = {
           _id,
           displayName,
           profilePhoto
-        }
+        };
 
         this.setState({ isLoading: false }, () => {
           this.setState(
@@ -204,10 +207,13 @@ class ImageUploadForm extends React.Component {
               }
             },
             () => {
-              this.setState({ snackbarOpen: true });
+              this.setState({
+                snackbarOpen: true,
+                snackbarVar: 'success',
+                snackbarMessage: 'Click here to see your post!'
+              });
             }
           );
-          // this.props.handleClose();
         });
       });
     } catch (e) {
@@ -240,13 +246,15 @@ class ImageUploadForm extends React.Component {
               <AddPhotoAlternate />
             </Avatar>
             <Typography align="center" variant="headline">
-              Add Image
+              Add Post
             </Typography>
           </div>
-          <Close
-            className={classes.closeIcon}
+          <IconButton
             onClick={this.props.handleClose}
-          />
+            className={classes.closeButton}
+          >
+            <Close />
+          </IconButton>
           <form
             method="post"
             action=""
@@ -292,6 +300,7 @@ class ImageUploadForm extends React.Component {
               margin="normal"
               className={classes.textField}
               onChange={this.onTitleChange}
+              inputProps={{maxLength: 30}}
             />{' '}
             <TextField
               id="full-width"
@@ -308,6 +317,7 @@ class ImageUploadForm extends React.Component {
               margin="normal"
               className={classes.textField}
               onChange={this.onDescChange}
+              inputProps={{maxLength: 120}}
             />
             <Button
               color="primary"
@@ -322,7 +332,7 @@ class ImageUploadForm extends React.Component {
           </form>
         </Paper>
         <CustomSnackbar
-          variant="success"
+          variant={this.state.snackbarVar}
           message={
             this.state.postLinkObj && (
               <Link
@@ -330,7 +340,7 @@ class ImageUploadForm extends React.Component {
                 className={classes.aTag}
                 to={this.state.postLinkObj}
               >
-                <p>Click here to see your post.</p>
+                <p>{this.state.snackbarMessage}</p>
               </Link>
             )
           }
@@ -347,9 +357,9 @@ ImageUploadForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-const mapStateToProps = ({auth}) => ({
+const mapStateToProps = ({ auth }) => ({
   auth
-})
+});
 
 export default compose(
   withStyles(styles),
