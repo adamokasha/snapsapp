@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import compose from 'recompose/compose';
+import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
@@ -25,7 +26,6 @@ import CustomSnackbar from './CustomSnackbar';
 
 const styles = theme => ({
   paper: {
-    position: 'relative',
     width: '95%',
     display: 'block',
     display: 'flex',
@@ -33,14 +33,6 @@ const styles = theme => ({
     alignItems: 'center',
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
       .spacing.unit * 3}px`,
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    [theme.breakpoints.down('sm')]: {
-      maxHeight: '560px',
-      overflowY: 'scroll'
-    },
     [theme.breakpoints.up('sm')]: {
       width: '80%'
     },
@@ -50,6 +42,15 @@ const styles = theme => ({
     [theme.breakpoints.up('lg')]: {
       width: '45%'
     }
+  },
+  paperModal: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)'
+  },
+  paperPage: {
+    margin: '0 auto'
   },
   linearLoader: {
     position: 'absolute',
@@ -290,11 +291,17 @@ class ImageUploadForm extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, view } = this.props;
 
     return (
       <React.Fragment>
-        <Paper className={classes.paper}>
+        <Paper
+          className={
+            view === 'modal'
+              ? classNames(classes.paper, classes.paperModal)
+              : classNames(classes.paper, classes.paperPage)
+          }
+        >
           {this.state.isLoading && (
             <LinearProgress
               className={classes.linearLoader}
@@ -309,12 +316,14 @@ class ImageUploadForm extends React.Component {
               Add Post
             </Typography>
           </div>
-          <IconButton
-            onClick={this.props.handleClose}
-            className={classes.closeButton}
-          >
-            <Close />
-          </IconButton>
+          {view === 'modal' && (
+            <IconButton
+              onClick={this.props.handleClose}
+              className={classes.closeButton}
+            >
+              <Close />
+            </IconButton>
+          )}
           <form
             method="post"
             action=""
@@ -463,7 +472,8 @@ class ImageUploadForm extends React.Component {
 
 ImageUploadForm.propTypes = {
   classes: PropTypes.object.isRequired,
-  handleClose: PropTypes.func.isRequired
+  handleClose: PropTypes.func.isRequired,
+  view: PropTypes.oneOf[('modal', 'page')]
 };
 
 const mapStateToProps = ({ auth }) => ({

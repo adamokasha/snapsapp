@@ -18,7 +18,7 @@ export class ImageUploadPage extends React.Component {
     return (
       <div className={classes.root}>
         <main className={classes.layout}>
-          <ImageUploadForm />
+          <ImageUploadForm view="page" />
         </main>
       </div>
     );

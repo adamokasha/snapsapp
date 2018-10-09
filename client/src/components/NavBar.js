@@ -88,6 +88,30 @@ class NavBar extends React.Component {
     this.setState({ anchorEl: null });
   };
 
+  selectPostFormView = () => {
+    const {classes} = this.props;
+    if (window.screen.width < 600 || window.innerWidth < 600) {
+      return (
+        <Link to="/upload">
+          <IconButton className={classes.iconButton}>
+            <CloudUploadIcon />
+          </IconButton>
+        </Link>
+      );
+    }
+
+    return (
+      <ModalView
+        togglerComponent={
+          <IconButton className={classes.iconButton}>
+            <CloudUploadIcon />
+          </IconButton>
+        }
+        modalComponent={<ImageUploadForm view="modal" />}
+      />
+    );
+  };
+
   renderNavButtons() {
     const { auth, classes } = this.props;
     const { anchorEl } = this.state;
@@ -95,14 +119,7 @@ class NavBar extends React.Component {
 
     return auth ? (
       <div className={classes.nav}>
-        <ModalView
-          togglerComponent={
-            <IconButton className={classes.iconButton}>
-              <CloudUploadIcon />
-            </IconButton>
-          }
-          modalComponent={<ImageUploadForm/>}
-        />
+        {this.selectPostFormView()}
 
         <Link to="/mbox">
           <IconButton className={classes.iconButton}>
