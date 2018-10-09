@@ -14,7 +14,9 @@ import Input from '@material-ui/core/Input';
 import IconButton from '@material-ui/core/IconButton';
 import Close from '@material-ui/icons/Close';
 import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutlined';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
+import Chip from '@material-ui/core/Chip';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import withStyles from '@material-ui/core/styles/withStyles';
 
@@ -129,7 +131,7 @@ class ImageUploadForm extends React.Component {
   state = {
     post: {
       title: '',
-      tags: null,
+      tags: [],
       description: ''
     },
     previewImage: '',
@@ -151,7 +153,9 @@ class ImageUploadForm extends React.Component {
   };
 
   onTitleChange = e => {
-    this.setState({ post: { ...this.state.post, title: e.target.value } });
+    const str = e.target.value;
+    const cleanedStr = str.replace(/[^\w\s]/gi, '');
+    this.setState({ post: { ...this.state.post, title: cleanedStr } });
   };
 
   onTagsChange = e => {
@@ -162,7 +166,12 @@ class ImageUploadForm extends React.Component {
       .replace(/\s\s+/g, ' ')
       .split(' ');
 
-    this.setState({ post: { ...this.state.post, tags: tagsArr } });
+    const cleanedTagsArr = tagsArr
+      .map(tag => tag.slice(0, 12))
+      .slice(0, 5)
+      .filter(tag => tag.length); // Edge case: empty string remains after clearing input
+
+    this.setState({ post: { ...this.state.post, tags: cleanedTagsArr } });
   };
 
   onDescChange = e => {
@@ -300,8 +309,27 @@ class ImageUploadForm extends React.Component {
               margin="normal"
               className={classes.textField}
               onChange={this.onTitleChange}
-              inputProps={{maxLength: 30}}
+              inputProps={{ maxLength: 30 }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {this.state.post.title.length}
+                    /30
+                  </InputAdornment>
+                )
+              }}
+              value={this.state.post.title}
+              required
             />{' '}
+            <div>
+              {this.state.post.tags &&
+                this.state.post.tags.map(tag => {
+                  if (tag === '') {
+                    return;
+                  }
+                  return <Chip label={tag} />;
+                })}
+            </div>
             <TextField
               id="full-width"
               label="Tags"
@@ -309,6 +337,14 @@ class ImageUploadForm extends React.Component {
               margin="normal"
               className={classes.textField}
               onChange={this.onTagsChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {this.state.post.tags.length}
+                    /5 Tags
+                  </InputAdornment>
+                )
+              }}
             />{' '}
             <TextField
               id="full-width"
@@ -317,7 +353,15 @@ class ImageUploadForm extends React.Component {
               margin="normal"
               className={classes.textField}
               onChange={this.onDescChange}
-              inputProps={{maxLength: 120}}
+              inputProps={{ maxLength: 120 }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {this.state.post.description.length}
+                    /120
+                  </InputAdornment>
+                )
+              }}
             />
             <Button
               color="primary"
@@ -325,7 +369,13 @@ class ImageUploadForm extends React.Component {
               size="large"
               className={classes.button}
               type="submit"
-              disabled={this.state.isLoading ? true : false}
+              disabled={
+                this.state.file &&
+                this.state.post.title.length > 4 &&
+                !this.state.isLoading
+                  ? false
+                  : true
+              }
             >
               Save Post
             </Button>
