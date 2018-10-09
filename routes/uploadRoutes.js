@@ -16,7 +16,6 @@ const s3 = new AWS.S3({
   region: 'us-east-1'
 });
 
-
 const upload = multer({
   limits: {
     fileSize: 1000000
@@ -30,7 +29,13 @@ const upload = multer({
     key: function(req, file, cb) {
       cb(null, `${req.user.id}/${uuid()}.jpeg`);
     }
-  })
+  }),
+  fileFilter: (req, file, cb) => {
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+      return cb(new Error('Only image files are allowed!'));
+    }
+    cb(null, true);
+  }
 });
 
 module.exports = app => {
@@ -39,20 +44,20 @@ module.exports = app => {
     requireAuth,
     upload.single('image'),
     async (req, res) => {
-        let data = JSON.parse(req.body.data);
-        const {title, tags, description} = data;
-        const post = await new Post({
-          _owner: req.user.id,
-          title,
-          title_lower: title,
-          description,
-          createdAt: Date.now(),
-          // ! key and other file props available on req.file/files
-          imgUrl: req.file.key,
-          tags
-        });
-        await post.save();
-        res.status(200).send({success: 'Post has been added!', postData: post})
+      let data = JSON.parse(req.body.data);
+      const { title, tags, description } = data;
+      const post = await new Post({
+        _owner: req.user.id,
+        title,
+        title_lower: title,
+        description,
+        createdAt: Date.now(),
+        // ! key and other file props available on req.file/files
+        imgUrl: req.file.key,
+        tags
+      });
+      await post.save();
+      res.status(200).send({ success: 'Post has been added!', postData: post });
     }
   );
 };

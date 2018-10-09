@@ -27,6 +27,19 @@ const styles = theme => ({
     position: 'relative',
     width: '95%',
     display: 'block',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
+      .spacing.unit * 3}px`,
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    [theme.breakpoints.down('sm')]: {
+      maxHeight: '560px',
+      overflowY: 'scroll'
+    },
     [theme.breakpoints.up('sm')]: {
       width: '80%'
     },
@@ -36,17 +49,6 @@ const styles = theme => ({
     [theme.breakpoints.up('lg')]: {
       width: '45%'
     },
-    // Stops shaking on focus
-    minHeight: '550px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
-      .spacing.unit * 3}px`,
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)'
   },
   linearLoader: {
     position: 'absolute',
@@ -78,14 +80,14 @@ const styles = theme => ({
     height: '100px',
     border: '1px dashed rgba(0, 0, 0, .5)',
     width: '50%',
+    margin: '0 auto',
+    borderRadius: '3%',
     [theme.breakpoints.up('sm')]: {
       width: '30%'
     },
     [theme.breakpoints.up('md')]: {
       width: '20%'
-    },
-    margin: '0 auto',
-    borderRadius: '3%'
+    }
   },
   blankIcon: {
     fontSize: '48px',
@@ -116,6 +118,16 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 2,
     marginRight: theme.spacing.unit * 2,
     width: '100%'
+  },
+  tagContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    width: '100%',
+    padding: `${theme.spacing.unit}px`
+  },
+  chipTag: {
+    marginLeft: `${theme.spacing.unit}px`,
+    marginBottom: `${theme.spacing.unit}px`
   },
   button: {
     width: '100%',
@@ -282,15 +294,18 @@ class ImageUploadForm extends React.Component {
                   <InsertDriveFileOutlinedIcon className={classes.blankIcon} />
                 </div>
               )}
+              <p>limit: 2mb</p>
+              <p>filesize: {this.state.file && this.state.file.size}</p>
             </div>
             <div className={classes.fileInputContainer}>
               <Input
-                accept="image/*"
+                
                 className={classes.fileInput}
                 id="hidden-file-input"
                 name="image"
                 type="file"
                 onChange={this.onFileSelect}
+                inputProps={{accept: "image/*"}}
               />
               <label htmlFor="hidden-file-input">
                 <Button
@@ -321,13 +336,13 @@ class ImageUploadForm extends React.Component {
               value={this.state.post.title}
               required
             />{' '}
-            <div>
+            <div className={classes.tagContainer}>
               {this.state.post.tags &&
                 this.state.post.tags.map(tag => {
                   if (tag === '') {
                     return;
                   }
-                  return <Chip label={tag} />;
+                  return <Chip className={classes.chipTag} label={tag} />;
                 })}
             </div>
             <TextField
@@ -404,7 +419,8 @@ class ImageUploadForm extends React.Component {
 }
 
 ImageUploadForm.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  handleClose: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ auth }) => ({
