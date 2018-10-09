@@ -53,6 +53,11 @@ const styles = theme => ({
     margin: '0 auto'
   },
   linearLoader: {
+    position: 'fixed',
+    top: '0',
+    width: '100%'
+  },
+  linearLoaderModal: {
     position: 'absolute',
     top: '0',
     width: '100%'
@@ -304,7 +309,7 @@ class ImageUploadForm extends React.Component {
         >
           {this.state.isLoading && (
             <LinearProgress
-              className={classes.linearLoader}
+              className={view === 'modal' ? classes.linearLoaderModal : classes.linearLoader}
               color="secondary"
             />
           )}
@@ -472,8 +477,8 @@ class ImageUploadForm extends React.Component {
 
 ImageUploadForm.propTypes = {
   classes: PropTypes.object.isRequired,
-  handleClose: PropTypes.func.isRequired,
-  view: PropTypes.oneOf[('modal', 'page')]
+  handleClose: PropTypes.func,
+  view: PropTypes.oneOf(['modal', 'page'])
 };
 
 const mapStateToProps = ({ auth }) => ({
