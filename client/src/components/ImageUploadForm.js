@@ -18,6 +18,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
 import Chip from '@material-ui/core/Chip';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import filesize from 'filesize';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 import CustomSnackbar from './CustomSnackbar';
@@ -48,7 +49,7 @@ const styles = theme => ({
     },
     [theme.breakpoints.up('lg')]: {
       width: '45%'
-    },
+    }
   },
   linearLoader: {
     position: 'absolute',
@@ -148,6 +149,7 @@ class ImageUploadForm extends React.Component {
     },
     previewImage: '',
     file: null,
+    fileSize: null,
     isLoading: false,
     postLinkObj: null,
     snackbarOpen: false,
@@ -161,7 +163,10 @@ class ImageUploadForm extends React.Component {
       return;
     }
     this.setState({ previewImage: src });
-    this.setState({ file: e.target.files[0] });
+    this.setState({
+      file: e.target.files[0],
+      fileSize: e.target.files[0].size
+    });
   };
 
   onTitleChange = e => {
@@ -294,18 +299,28 @@ class ImageUploadForm extends React.Component {
                   <InsertDriveFileOutlinedIcon className={classes.blankIcon} />
                 </div>
               )}
-              <p>limit: 2mb</p>
-              <p>filesize: {this.state.file && this.state.file.size}</p>
+              <div>
+                <Typography variant="caption">Limit: 2 MB</Typography>
+                <Typography
+                  color={
+                    this.state.fileSize > 2097152 ? 'secondary' : 'default'
+                  }
+                  variant="caption"
+                >
+                  File size:{' '}
+                  {this.state.file &&
+                    filesize(this.state.file.size, { exponent: 2 })}
+                </Typography>
+              </div>
             </div>
             <div className={classes.fileInputContainer}>
               <Input
-                
                 className={classes.fileInput}
                 id="hidden-file-input"
                 name="image"
                 type="file"
                 onChange={this.onFileSelect}
-                inputProps={{accept: "image/*"}}
+                inputProps={{ accept: 'image/*' }}
               />
               <label htmlFor="hidden-file-input">
                 <Button
@@ -386,6 +401,7 @@ class ImageUploadForm extends React.Component {
               type="submit"
               disabled={
                 this.state.file &&
+                this.state.fileSize < 2097152 &&
                 this.state.post.title.length > 4 &&
                 !this.state.isLoading
                   ? false

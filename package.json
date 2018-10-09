@@ -18,6 +18,7 @@
     "body-parser": "^1.18.3",
     "cookie-session": "^2.0.0-beta.3",
     "express": "^4.16.3",
+    "filesize": "^3.6.1",
     "mongoose": "^5.2.15",
     "multer": "^1.3.1",
     "multer-s3": "^2.7.0",
