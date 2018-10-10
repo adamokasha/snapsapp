@@ -12,18 +12,20 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
+import moment from 'moment';
 
 import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 
 const styles = theme => ({
   root: {
-    width: '100%',
+    width: '100%'
   },
   messageListRoot: {
     width: '100%',
     height: '250px',
-    overflowY: 'scroll'
+    overflowY: 'scroll',
+    paddingTop: 0
   },
   menuContainer: {
     display: 'flex',
@@ -39,7 +41,7 @@ const styles = theme => ({
 });
 
 export const MessageList = props => {
-  const { classes, messages } = props;
+  const { classes, messages, selected } = props;
   return (
     <div className={classes.root}>
       <div className={classes.menuContainer}>
@@ -55,35 +57,38 @@ export const MessageList = props => {
           <Typography variant="body2">Select All</Typography>
         </div>
         <div>
-          <IconButton onClick={() => props.setList(props.listType)}>
-            <RefreshIcon />
-          </IconButton>
-          {messages.length ? (
+          {selected.length > 0 && (
             <IconButton onClick={props.onDelete}>
               <DeleteIcon />
             </IconButton>
-          ) : null}
+          )}
+          <IconButton onClick={() => props.setList(props.listType)}>
+            <RefreshIcon />
+          </IconButton>
         </div>
       </div>
       <Divider />
       <List classes={{ root: classes.messageListRoot }}>
         {messages ? (
           messages.map(message => (
-            <ListItem>
-              <Checkbox
-                onClick={() => props.onSelectOne(message._id)}
-                checked={props.selected.includes(message._id)}
-              />
-              <Avatar src={message._from.profilePhoto} />
-              <ListItemText
-                onClick={() => props.setMessage(message._id)}
-                primary={message._from.displayName}
-              />
-              <ListItemText
-                onClick={() => props.setMessage(message._id)}
-                primary={message.title}
-              />
-            </ListItem>
+              <ListItem divider={true} selected={props.selected.includes(message._id)}>
+                <Checkbox
+                  onClick={() => props.onSelectOne(message._id)}
+                  checked={props.selected.includes(message._id)}
+                />
+                <Avatar src={message._from.profilePhoto} />
+                <ListItemText
+                  onClick={() => props.setMessage(message._id)}
+                  primary={message._from.displayName}
+                />
+                <ListItemText
+                  onClick={() => props.setMessage(message._id)}
+                  primary={message.title}
+                />
+                <ListItemText
+                  primary={moment(message.lastReplied).fromNow()}
+                />
+              </ListItem>
           ))
         ) : (
           <Typography align="center" variant="body2">

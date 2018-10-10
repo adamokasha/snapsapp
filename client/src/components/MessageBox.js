@@ -16,10 +16,19 @@ import { updateMboxNotif } from '../actions/auth';
 
 const styles = theme => ({
   root: {
-    width: '40%',
+    width: '90%',
     margin: '0 auto',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    [theme.breakpoints.up('md')]: {
+      width: '50%',
+    },
+    [theme.breakpoints.up('lg')]: {
+      width: '40%',
+    },
+    [theme.breakpoints.up('xl')]: {
+      width: '35%',
+    }
   },
   appBarRoot: {
     boxShadow: 'none'
@@ -235,6 +244,7 @@ export class MessageBox extends React.Component {
               messages={this.state.messages}
               setMessage={this.setMessage}
               onDelete={this.onDelete}
+              selected={this.state.selected}
             />
           ) : null}
           {this.state.view === 'message' ? (

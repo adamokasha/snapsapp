@@ -5,9 +5,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import ArrowDropDownCircleOutlinedIcon from '@material-ui/icons/ArrowDropDownCircleOutlined';
+import ArrowDropDownRoundedIcon from '@material-ui/icons/ArrowDropDownRounded';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 
 const styles = theme => ({
@@ -25,6 +26,9 @@ const styles = theme => ({
   },
   menu: {
     marginLeft: 'auto'
+  },
+  dropDownIcon: {
+    color: '#fff'
   }
 });
 
@@ -58,7 +62,7 @@ class MessageBoxAppBar extends React.Component {
 
   render() {
     const { anchorEl } = this.state;
-    const { classes } = this.props;
+    const { classes, view, listType } = this.props;
 
     return (
       <AppBar
@@ -70,7 +74,7 @@ class MessageBoxAppBar extends React.Component {
           <Typography variant="title" color="inherit">
             Message Box
           </Typography>
-          {this.props.view === 'list' ? null : (
+          {view === 'list' ? null : (
             <IconButton
               onClick={() => {
                 this.props.goBack(this.props.listType);
@@ -80,14 +84,18 @@ class MessageBoxAppBar extends React.Component {
               <KeyboardBackspaceIcon />
             </IconButton>
           )}
-          <div className={this.props.view === 'list' ? classes.menu : null}>
-            <IconButton
+          <div className={view === 'list' ? classes.menu : null}>
+            <Button
+              variant="contained"
+              color="secondary"
+              size="small"
               aria-owns={anchorEl ? 'simple-menu' : null}
               aria-haspopup="true"
               onClick={this.handleClick}
             >
-              <ArrowDropDownCircleOutlinedIcon />
-            </IconButton>
+              {listType}
+              <ArrowDropDownRoundedIcon className={classes.dropDownIcon} />
+            </Button>
             <Menu
               id="simple-menu"
               anchorEl={anchorEl}
