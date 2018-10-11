@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import compose from 'recompose/compose';
 import PropTypes from 'prop-types';
+import Paper from '@material-ui/core/Paper'
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -17,18 +18,19 @@ import moment from 'moment';
 const styles = theme => ({
   root: {
     width: '100%',
-    position: 'relative'
+    height: '348px',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
   },
   listRoot: {
-    height: '200px',
+    height: '252px',
     overflowY: 'scroll'
   },
   form: {
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    position: 'absolute',
-    bottom: 0
   },
   dateText: {
     textAlign: 'right'
@@ -46,7 +48,8 @@ export class Message extends React.Component {
       body: '',
       message: this.props.message,
       currentPage: this.props.currentMessagePage,
-      hasMoreReplies: this.props.hasMoreReplies
+      hasMoreReplies: this.props.hasMoreReplies,
+      isSending: false
     };
 
     this.bottomRef = React.createRef();
@@ -68,39 +71,43 @@ export class Message extends React.Component {
     }
   }
 
-  onSubmit = async e => {
+  onSubmit = e => {
     try {
       e.preventDefault();
-      const res = await axios.post(
-        `/api/message/reply/${this.props.message._id}`,
-        {
-          body: this.state.body
-        }
-      );
-      const { body, createdAt } = res.data;
-      const reply = {
-        createdAt,
-        body,
-        _owner: {
-          profilePhoto: this.props.auth.profilePhoto
-        }
-      };
-      const updatedReplies = this.state.message.replies.push(reply);
-      this.setState(
-        {
-          ...this.state,
-          message: {
-            ...this.state.message,
-            replies: [...this.state.message.replies, ...updatedReplies]
+      this.setState({ isSending: true }, async () => {
+        const res = await axios.post(
+          `/api/message/reply/${this.props.message._id}`,
+          {
+            body: this.state.body
+          }
+        );
+        const { body, createdAt } = res.data;
+        const reply = {
+          createdAt,
+          body,
+          _owner: {
+            profilePhoto: this.props.auth.profilePhoto
+          }
+        };
+        const updatedReplies = this.state.message.replies.push(reply);
+        this.setState(
+          {
+            ...this.state,
+            message: {
+              ...this.state.message,
+              replies: [...this.state.message.replies, ...updatedReplies]
+            },
+            body: '',
+            isSending: false
           },
-          body: ''
-        },
-        () => {
-          this.bottomRef.current.scrollIntoView();
-        }
-      );
+          () => {
+            this.bottomRef.current.scrollIntoView();
+          }
+        );
+      });
     } catch (e) {
       console.log(e);
+      this.setState({ isSending: false });
     }
   };
 
@@ -122,7 +129,7 @@ export class Message extends React.Component {
   render() {
     const { message, classes } = this.props;
     return (
-      <div className={classes.root}>
+      <Paper className={classes.root}>
         <List classes={{ root: classes.listRoot }}>
           <ListItem>
             <Button
@@ -159,13 +166,18 @@ export class Message extends React.Component {
             rows={1}
             onChange={this.onBodyChange}
             value={this.state.body}
+            disabled={this.state.isSending}
           />
-          <Button type="submit" variant="contained">
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={this.state.isSending}
+          >
             <SendOutlinedIcon className={classes.leftIcon} />
             Reply
           </Button>
         </form>
-      </div>
+      </Paper>
     );
   }
 }

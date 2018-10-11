@@ -113,7 +113,7 @@ export class MessageBox extends React.Component {
     this.setState({ selected: [...allMessageIds] });
   };
 
-  setMessage = (messageId, currentPage) => {
+  setMessage = (messageId) => {
     try {
       this.setState({ isLoading: true }, async () => {
         const res = await axios.get(
@@ -194,7 +194,8 @@ export class MessageBox extends React.Component {
           view: 'list',
           listType: listView,
           hasMoreLists: false,
-          isLoading: false
+          isLoading: false, 
+          messages: []
         },
         () => {}
       );
