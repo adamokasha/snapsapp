@@ -21,13 +21,13 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column',
     [theme.breakpoints.up('md')]: {
-      width: '50%',
+      width: '50%'
     },
     [theme.breakpoints.up('lg')]: {
-      width: '40%',
+      width: '40%'
     },
     [theme.breakpoints.up('xl')]: {
-      width: '35%',
+      width: '35%'
     }
   },
   appBarRoot: {
@@ -117,62 +117,46 @@ export class MessageBox extends React.Component {
 
   // Passed as prop to MessageBoxAppBar to reset currentListPage to 0 when switching b/w listType
   switchListType = listType => {
-    this.setState({ currentListPage: 0 }, () => {
+    this.setState({ currentListPage: 0, messages: [] }, () => {
       this.setList(listType);
     });
   };
 
   setList = async listView => {
-    if (listView === 'unread') {
-      const res = await axios.get(
-        `/api/message/unread/${this.state.currentListPage}`
-      );
-      if (!res.data._unread) {
-        return this.setState(
-          {
-            view: 'list',
-            listType: 'unread',
-            hasMoreLists: false,
-            currentListPage: this.state.currentListPage - 1
-          },
-          () => {}
+    let res;
+    switch (listView) {
+      case 'unread':
+        res = await axios.get(
+          `/api/message/unread/${this.state.currentListPage}`
         );
-      }
+        break;
+      case 'all':
+        res = await axios.get(`/api/message/all/${this.state.currentListPage}`);
+        break;
+      case 'sent':
+        res = await axios.get(
+          `/api/message/sent/${this.state.currentListPage}`
+        );
+    }
+
+    if (!res.data[`_${listView}`]) {
       return this.setState(
-        { view: 'list', listType: 'unread', messages: [...res.data._unread] },
+        {
+          view: 'list',
+          listType: listView,
+          hasMoreLists: false,
+          currentListPage: this.state.currentListPage - 1
+        },
         () => {}
       );
     }
-    if (listView === 'all') {
-      const res = await axios.get(
-        `/api/message/all/${this.state.currentListPage}`
-      );
-      if (!res.data._all) {
-        return this.setState(
-          { view: 'list', listType: 'all', hasMoreLists: false },
-          () => {}
-        );
-      }
-      return this.setState(
-        { view: 'list', listType: 'all', messages: [...res.data._all] },
-        () => {}
-      );
-    }
-    if (listView === 'sent') {
-      const res = await axios.get(
-        `/api/message/sent/${this.state.currentListPage}`
-      );
-      if (!res.data._sent) {
-        return this.setState(
-          { view: 'list', listType: 'sent', hasMoreLists: false },
-          () => {}
-        );
-      }
-      return this.setState(
-        { view: 'list', listType: 'sent', messages: [...res.data._sent] },
-        () => {}
-      );
-    }
+
+    const messages = res.data[`_${listView}`];
+
+    return this.setState(
+      { view: 'list', listType: listView, messages: [...messages] },
+      () => {}
+    );
   };
 
   goBack = async listType => {
