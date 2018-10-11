@@ -27,7 +27,10 @@ const styles = theme => ({
   menu: {
     marginLeft: 'auto'
   },
-  dropDownIcon: {
+  dropDownButton:{
+    minWidth: '88px'
+  },
+  iconColor: {
     color: '#fff'
   }
 });
@@ -81,7 +84,7 @@ class MessageBoxAppBar extends React.Component {
               }}
               className={classes.menu}
             >
-              <KeyboardBackspaceIcon />
+              <KeyboardBackspaceIcon className={classes.iconColor} />
             </IconButton>
           )}
           <div className={view === 'list' ? classes.menu : null}>
@@ -89,12 +92,13 @@ class MessageBoxAppBar extends React.Component {
               variant="contained"
               color="secondary"
               size="small"
+              classes={{root: classes.dropDownButton}}
               aria-owns={anchorEl ? 'simple-menu' : null}
               aria-haspopup="true"
               onClick={this.handleClick}
             >
               {listType}
-              <ArrowDropDownRoundedIcon className={classes.dropDownIcon} />
+              <ArrowDropDownRoundedIcon className={classes.iconColor} />
             </Button>
             <Menu
               id="simple-menu"

@@ -37,6 +37,15 @@ const styles = theme => ({
   selectAllContainer: {
     display: 'flex',
     alignItems: 'center'
+  },
+  listItem: {
+    cursor: 'pointer'
+  },
+  listItemTextContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center'
   }
 });
 
@@ -71,24 +80,28 @@ export const MessageList = props => {
       <List classes={{ root: classes.messageListRoot }}>
         {messages ? (
           messages.map(message => (
-              <ListItem divider={true} selected={props.selected.includes(message._id)}>
-                <Checkbox
-                  onClick={() => props.onSelectOne(message._id)}
-                  checked={props.selected.includes(message._id)}
-                />
+            <ListItem
+              className={classes.listItem}
+              divider={true}
+              selected={props.selected.includes(message._id)}
+              key={message._id}
+            >
+              <Checkbox
+                onClick={() => props.onSelectOne(message._id)}
+                checked={props.selected.includes(message._id)}
+              />
+              <div
+                onClick={() => props.setMessage(message._id)}
+                className={classes.listItemTextContainer}
+              >
                 <Avatar src={message._from.profilePhoto} />
+                <ListItemText primary={message._from.displayName} />
+                <ListItemText primary={message.title} />
                 <ListItemText
-                  onClick={() => props.setMessage(message._id)}
-                  primary={message._from.displayName}
+                  secondary={moment(message.lastReplied).fromNow()}
                 />
-                <ListItemText
-                  onClick={() => props.setMessage(message._id)}
-                  primary={message.title}
-                />
-                <ListItemText
-                  primary={moment(message.lastReplied).fromNow()}
-                />
-              </ListItem>
+              </div>
+            </ListItem>
           ))
         ) : (
           <Typography align="center" variant="body2">

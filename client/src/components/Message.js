@@ -7,10 +7,12 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
+import { Link } from 'react-router-dom';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import Button from '@material-ui/core/Button';
 import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
 import axios from 'axios';
+import moment from 'moment';
 
 const styles = theme => ({
   root: {
@@ -27,6 +29,9 @@ const styles = theme => ({
     flexDirection: 'column',
     position: 'absolute',
     bottom: 0
+  },
+  dateText: {
+    textAlign: 'right'
   }
 });
 
@@ -113,12 +118,20 @@ export class Message extends React.Component {
       <div className={classes.root}>
         <List classes={{ root: classes.listRoot }}>
           <ListItem>
-            {this.props.hasMoreReplies && <Button onClick={this.loadPrevious}>Load Previous</Button>}
+            {this.props.hasMoreReplies && (
+              <Button onClick={this.loadPrevious}>Load Previous</Button>
+            )}
           </ListItem>
           {this.state.message.replies.map(reply => (
-            <ListItem>
-              <Avatar src={reply._owner.profilePhoto} />
+            <ListItem key={reply._id}>
+              <Link to={`/profile/${reply._owner.displayName}`}>
+                <Avatar src={reply._owner.profilePhoto} />
+              </Link>
               <ListItemText primary={reply.body} />
+              <ListItemText
+                classes={{ root: classes.dateText }}
+                secondary={moment(reply.createdAt).fromNow()}
+              />
             </ListItem>
           ))}
           <div ref={this.bottomRef} />

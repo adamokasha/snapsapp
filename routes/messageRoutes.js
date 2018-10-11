@@ -5,6 +5,7 @@ const Message = mongoose.model('Message');
 const MessageBox = mongoose.model('MessageBox');
 
 module.exports = app => {
+  // Aggregation pipeline takes in list type: _unread, _all, _sent.
   const setListAggrPipeline = (list, userId, page) => [
     { $match: { _owner: mongoose.Types.ObjectId(userId) } },
     {
@@ -131,8 +132,8 @@ module.exports = app => {
             title: 1,
             createdAt: 1,
             _to: 1,
-            _from: 1,
             replies: {
+              _id: 1,
               body: 1,
               createdAt: 1,
               _owner: { _id: 1, displayName: 1, profilePhoto: 1 }
