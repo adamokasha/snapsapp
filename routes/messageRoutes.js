@@ -132,6 +132,7 @@ module.exports = app => {
             title: 1,
             createdAt: 1,
             _to: 1,
+            _from:1,
             replies: {
               _id: 1,
               body: 1,
