@@ -5,6 +5,7 @@ import compose from 'recompose/compose';
 import Paper from '@material-ui/core/Paper';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import axios from 'axios';
 
 import MessageList from './MessageList';
@@ -20,6 +21,7 @@ const styles = theme => ({
     margin: '0 auto',
     display: 'flex',
     flexDirection: 'column',
+    position: 'relative',
     [theme.breakpoints.up('md')]: {
       width: '50%'
     },
@@ -35,6 +37,11 @@ const styles = theme => ({
   },
   toolbarRoot: {
     minHeight: '48px'
+  },
+  linearProgress: {
+    position: 'absolute',
+    top: -2,
+    width: '100%'
   },
   box: {
     display: 'flex',
@@ -115,11 +122,14 @@ export class MessageBox extends React.Component {
     }
   };
 
-  // Passed as prop to MessageBoxAppBar to reset currentListPage to 0 when switching b/w listType
+  // Passed as prop to MessageBoxAppBar to reset state b/w listType
   switchListType = listType => {
-    this.setState({ currentListPage: 0, messages: [] }, () => {
-      this.setList(listType);
-    });
+    this.setState(
+      { currentListPage: 0, messages: [], hasMoreLists: true, isLoading: true },
+      () => {
+        this.setList(listType);
+      }
+    );
   };
 
   setList = async listView => {
@@ -145,7 +155,7 @@ export class MessageBox extends React.Component {
           view: 'list',
           listType: listView,
           hasMoreLists: false,
-          currentListPage: this.state.currentListPage - 1
+          isLoading: false
         },
         () => {}
       );
@@ -154,7 +164,12 @@ export class MessageBox extends React.Component {
     const messages = res.data[`_${listView}`];
 
     return this.setState(
-      { view: 'list', listType: listView, messages: [...messages] },
+      {
+        view: 'list',
+        listType: listView,
+        messages: [...messages],
+        isLoading: false
+      },
       () => {}
     );
   };
@@ -209,6 +224,9 @@ export class MessageBox extends React.Component {
     const { classes } = this.props;
     return (
       <Paper className={classes.root}>
+        {this.state.isLoading && (
+          <LinearProgress color="secondary" className={classes.linearProgress} />
+        )}
         <div className={classes.header}>
           <MessageBoxAppBar
             switchListType={this.switchListType}
