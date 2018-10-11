@@ -32,6 +32,9 @@ const styles = theme => ({
   },
   dateText: {
     textAlign: 'right'
+  },
+  loadMoreButton: {
+    margin: '0 auto'
   }
 });
 
@@ -42,7 +45,7 @@ export class Message extends React.Component {
     this.state = {
       body: '',
       message: this.props.message,
-      currentPage: 0,
+      currentPage: this.props.currentMessagePage,
       hasMoreReplies: this.props.hasMoreReplies
     };
 
@@ -55,11 +58,14 @@ export class Message extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.message.replies !== prevProps.message.replies) {
-      this.setState({ message: this.props.message }, () =>
-        this.bottomRef.current.scrollIntoView()
+      this.setState(
+        {
+          message: this.props.message,
+          currentPage: this.props.currentMessagePage
+        },
+        () => {}
       );
     }
-    this.bottomRef.current.scrollIntoView();
   }
 
   onSubmit = async e => {
@@ -89,7 +95,9 @@ export class Message extends React.Component {
           },
           body: ''
         },
-        () => {}
+        () => {
+          this.bottomRef.current.scrollIntoView();
+        }
       );
     } catch (e) {
       console.log(e);
@@ -102,11 +110,10 @@ export class Message extends React.Component {
 
   loadPrevious = async () => {
     try {
-      await this.props.setMessage(
+      await this.props.setPrevMessageReplies(
         this.props.message._id,
-        this.state.currentPage
+        this.props.currentMessagePage
       );
-      this.setState({ currentPage: this.state.currentPage + 1 });
     } catch (e) {
       console.log(e);
     }
@@ -118,22 +125,32 @@ export class Message extends React.Component {
       <div className={classes.root}>
         <List classes={{ root: classes.listRoot }}>
           <ListItem>
-            {this.props.hasMoreReplies && (
-              <Button onClick={this.loadPrevious}>Load Previous</Button>
-            )}
+            <Button
+              className={classes.loadMoreButton}
+              variant="outlined"
+              size="small"
+              onClick={this.loadPrevious}
+              disabled={
+                this.state.message.replies.length < 5 ||
+                !this.props.hasMoreReplies
+              }
+            >
+              Load Previous
+            </Button>
           </ListItem>
-          {this.state.message.replies.map(reply => (
-            <ListItem key={reply._id}>
-              <Link to={`/profile/${reply._owner.displayName}`}>
-                <Avatar src={reply._owner.profilePhoto} />
-              </Link>
-              <ListItemText primary={reply.body} />
-              <ListItemText
-                classes={{ root: classes.dateText }}
-                secondary={moment(reply.createdAt).fromNow()}
-              />
-            </ListItem>
-          ))}
+          {this.state.message &&
+            this.state.message.replies.map(reply => (
+              <ListItem key={reply._id}>
+                <Link to={`/profile/${reply._owner.displayName}`}>
+                  <Avatar src={reply._owner.profilePhoto} />
+                </Link>
+                <ListItemText primary={reply.body} />
+                <ListItemText
+                  classes={{ root: classes.dateText }}
+                  secondary={moment(reply.createdAt).fromNow()}
+                />
+              </ListItem>
+            ))}
           <div ref={this.bottomRef} />
         </List>
         <form onSubmit={this.onSubmit} className={classes.form}>

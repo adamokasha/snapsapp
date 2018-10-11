@@ -109,15 +109,16 @@ module.exports = app => {
     }
   });
 
-  // Get single message
+  // Get single message and replies
   app.get('/api/message/get/:id/:page', requireAuth, async (req, res) => {
     try {
       const message = await Message.aggregate([
         { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
         { $unwind: '$replies' },
-        { $sort: { 'replies.createdAt': 1 } },
+        { $sort: { 'replies.createdAt': -1 } },
         { $skip: 5 * req.params.page },
         { $limit: 5 },
+        { $sort: { 'replies.createdAt': 1 } },
         {
           $lookup: {
             from: 'users',
@@ -152,6 +153,10 @@ module.exports = app => {
           }
         }
       ]);
+
+      if (!message[0]) {
+        return res.send(null);
+      }
 
       // If req.user is not the recipient or the sender = 401
       // Additional layer of security but most likely unnecessary

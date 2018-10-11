@@ -40,7 +40,7 @@ const styles = theme => ({
     minHeight: '48px'
   },
   loadingOpacity: {
-    opacity: .4,
+    opacity: 0.4,
     pointerEvents: 'none'
   },
   linearProgress: {
@@ -113,15 +113,49 @@ export class MessageBox extends React.Component {
     this.setState({ selected: [...allMessageIds] });
   };
 
-  setMessage = async (messageId, currentPage) => {
+  setMessage = (messageId, currentPage) => {
     try {
-      const res = await axios.get(
-        `/api/message/get/${messageId}/${currentPage + 1 || 0}`
-      );
-      if (!res.data) {
-        return this.setState({ hasMoreReplies: false });
-      }
-      this.setState({ view: 'message', currentMessage: res.data });
+      this.setState({ isLoading: true }, async () => {
+        const res = await axios.get(
+          `/api/message/get/${messageId}/${this.state.currentMessagePage}`
+        );
+        this.setState({
+          view: 'message',
+          isLoading: false,
+          currentMessage: res.data,
+          currentMessagePage: this.state.currentMessagePage + 1
+        });
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  setPrevMessageReplies = (messageId, currentPage) => {
+    try {
+      this.setState({ isLoading: true }, async () => {
+        const res = await axios.get(
+          `/api/message/get/${messageId}/${currentPage}`
+        );
+        if (!res.data) {
+          return this.setState({ hasMoreReplies: false, isLoading: false });
+        }
+        this.setState(
+          {
+            view: 'message',
+            isLoading: false,
+            currentMessage: {
+              ...this.state.currentMessage,
+              replies: [
+                ...res.data.replies,
+                ...this.state.currentMessage.replies
+              ]
+            },
+            currentMessagePage: this.state.currentMessagePage + 1
+          },
+          () => {}
+        );
+      });
     } catch (e) {
       console.log(e);
     }
@@ -172,19 +206,29 @@ export class MessageBox extends React.Component {
       {
         messages: []
       },
-      () => {this.setState({
-        view: 'list',
-        listType: listView,
-        messages: [...messages],
-        isLoading: false
-      })}
+      () => {
+        this.setState({
+          view: 'list',
+          listType: listView,
+          messages: [...messages],
+          isLoading: false
+        });
+      }
     );
   };
 
   goBack = async listType => {
-    this.setState({ hasMoreReplies: true, isLoading: true }, () => {
-      this.setList(listType);
-    });
+    this.setState(
+      {
+        hasMoreReplies: true,
+        isLoading: true,
+        currentListPage: 0,
+        currentMessagePage: 0
+      },
+      () => {
+        this.setList(listType);
+      }
+    );
   };
 
   onDelete = async () => {
@@ -207,7 +251,11 @@ export class MessageBox extends React.Component {
         return;
       }
       this.setState(
-        { currentListPage: this.state.currentListPage - 1, isLoading: true, hasMoreLists: true },
+        {
+          currentListPage: this.state.currentListPage - 1,
+          isLoading: true,
+          hasMoreLists: true
+        },
         () => {
           this.setList(this.state.listType);
         }
@@ -219,9 +267,12 @@ export class MessageBox extends React.Component {
 
   onListBack = () => {
     try {
-      this.setState({ currentListPage: this.state.currentListPage + 1, isLoading: true }, () => {
-        this.setList(this.state.listType);
-      });
+      this.setState(
+        { currentListPage: this.state.currentListPage + 1, isLoading: true },
+        () => {
+          this.setList(this.state.listType);
+        }
+      );
     } catch (e) {
       console.log(e);
     }
@@ -269,7 +320,9 @@ export class MessageBox extends React.Component {
           {this.state.view === 'message' ? (
             <Message
               setMessage={this.setMessage}
+              setPrevMessageReplies={this.setPrevMessageReplies}
               message={this.state.currentMessage}
+              currentMessagePage={this.state.currentMessagePage}
               hasMoreReplies={this.state.hasMoreReplies}
             />
           ) : null}
