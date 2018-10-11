@@ -71,7 +71,7 @@ export const MessageList = props => {
               <DeleteIcon />
             </IconButton>
           )}
-          <IconButton onClick={() => props.setList(props.listType)}>
+          <IconButton onClick={() => props.refreshList(props.listType)}>
             <RefreshIcon />
           </IconButton>
         </div>

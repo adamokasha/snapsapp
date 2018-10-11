@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import compose from 'recompose/compose';
+import classNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
@@ -37,6 +38,10 @@ const styles = theme => ({
   },
   toolbarRoot: {
     minHeight: '48px'
+  },
+  loadingOpacity: {
+    opacity: .4,
+    pointerEvents: 'none'
   },
   linearProgress: {
     position: 'absolute',
@@ -122,10 +127,10 @@ export class MessageBox extends React.Component {
     }
   };
 
-  // Passed as prop to MessageBoxAppBar to reset state b/w listType
+  // Passed as prop to MessageBoxAppBar to reset state b/w listType switching
   switchListType = listType => {
     this.setState(
-      { currentListPage: 0, messages: [], hasMoreLists: true, isLoading: true },
+      { currentListPage: 0, hasMoreLists: true, isLoading: true },
       () => {
         this.setList(listType);
       }
@@ -165,17 +170,19 @@ export class MessageBox extends React.Component {
 
     return this.setState(
       {
+        messages: []
+      },
+      () => {this.setState({
         view: 'list',
         listType: listView,
         messages: [...messages],
         isLoading: false
-      },
-      () => {}
+      })}
     );
   };
 
   goBack = async listType => {
-    this.setState({ hasMoreReplies: true }, () => {
+    this.setState({ hasMoreReplies: true, isLoading: true }, () => {
       this.setList(listType);
     });
   };
@@ -200,7 +207,7 @@ export class MessageBox extends React.Component {
         return;
       }
       this.setState(
-        { currentListPage: this.state.currentListPage - 1, hasMoreLists: true },
+        { currentListPage: this.state.currentListPage - 1, isLoading: true, hasMoreLists: true },
         () => {
           this.setList(this.state.listType);
         }
@@ -212,7 +219,7 @@ export class MessageBox extends React.Component {
 
   onListBack = () => {
     try {
-      this.setState({ currentListPage: this.state.currentListPage + 1 }, () => {
+      this.setState({ currentListPage: this.state.currentListPage + 1, isLoading: true }, () => {
         this.setList(this.state.listType);
       });
     } catch (e) {
@@ -225,7 +232,10 @@ export class MessageBox extends React.Component {
     return (
       <Paper className={classes.root}>
         {this.state.isLoading && (
-          <LinearProgress color="secondary" className={classes.linearProgress} />
+          <LinearProgress
+            color="secondary"
+            className={classes.linearProgress}
+          />
         )}
         <div className={classes.header}>
           <MessageBoxAppBar
@@ -235,10 +245,17 @@ export class MessageBox extends React.Component {
             goBack={this.goBack}
           />
         </div>
-        <div className={classes.box}>
+        <div
+          className={
+            this.state.isLoading
+              ? classNames(classes.loadingOpacity, classes.box)
+              : classes.box
+          }
+        >
           {this.state.view === 'list' ? (
             <MessageList
               setList={this.setList}
+              refreshList={this.switchListType}
               listType={this.state.listType}
               selected={this.state.selected}
               onSelectOne={this.onSelectOne}
