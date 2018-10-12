@@ -142,7 +142,9 @@ export class ProfileNetwork extends React.Component {
                     Message
                   </Button>
                 }
-                modalComponent={<MessageForm userId={userid} />}
+                modalComponent={
+                  <MessageForm withSnackbar={true} userId={userid} />
+                }
               />
             </div>
           </div>

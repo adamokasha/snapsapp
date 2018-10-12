@@ -24,7 +24,7 @@ class ModalView extends React.Component {
   };
 
   onSnackbarSet = (variant, message) => {
-    this.setState({ snackbarVar: variant, snackbarMessage: message}, () => {
+    this.setState({ snackbarVar: variant, snackbarMessage: message }, () => {
       this.onSnackbarOpen();
     });
   };
@@ -40,10 +40,15 @@ class ModalView extends React.Component {
   render() {
     const { classes, modalComponent, togglerComponent } = this.props;
 
-    const ModalComponent = React.cloneElement(modalComponent, {
-      handleClose: this.handleClose,
-      onSnackbarSet: this.onSnackbarSet
-    });
+    // Add snackbar functionality if modalComponent.props.withSnackbar = true,
+    const ModalComponent = modalComponent.props.withSnackbar
+      ? React.cloneElement(modalComponent, {
+          handleClose: this.handleClose,
+          onSnackbarSet: this.onSnackbarSet
+        })
+      : React.cloneElement(modalComponent, {
+          handleClose: this.handleClose
+        });
 
     return (
       <React.Fragment>
@@ -59,16 +64,15 @@ class ModalView extends React.Component {
             {ModalComponent}
           </Modal>
         </div>
-        <CustomSnackbar
-          variant={this.state.snackbarVar}
-          message={
-            this.state.snackbarOpen &&
-            this.state.snackbarMessage
-          }
-          onSnackbarOpen={this.onSnackbarOpen}
-          onSnackbarClose={this.onSnackbarClose}
-          snackbarOpen={this.state.snackbarOpen}
-        />
+        {modalComponent.props.withSnackbar && (
+          <CustomSnackbar
+            variant={this.state.snackbarVar}
+            message={this.state.snackbarOpen && this.state.snackbarMessage}
+            onSnackbarOpen={this.onSnackbarOpen}
+            onSnackbarClose={this.onSnackbarClose}
+            snackbarOpen={this.state.snackbarOpen}
+          />
+        )}
       </React.Fragment>
     );
   }

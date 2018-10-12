@@ -146,7 +146,9 @@ export class MessageForm extends React.Component {
 
 MessageForm.propTypes = {
   displayName: PropTypes.string.isRequired,
-  userId: PropTypes.string.isRequired
+  userId: PropTypes.string.isRequired,
+  withSnackbar: PropTypes.bool.isRequired,
+  onSnackbarSet: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(MessageForm);
