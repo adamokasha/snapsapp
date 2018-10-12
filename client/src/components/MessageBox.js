@@ -7,13 +7,14 @@ import Paper from '@material-ui/core/Paper';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import IconButton from '@material-ui/core/IconButton';
+import Divider from '@material-ui/core/Divider';
 import axios from 'axios';
 
 import MessageList from './MessageList';
 import Message from './Message';
 import MessageBoxAppBar from './MessageBoxAppBar';
-import IconButton from '@material-ui/core/IconButton';
-import Divider from '@material-ui/core/Divider';
+import CustomSnackbar from './CustomSnackbar';
 import { updateMboxNotif } from '../actions/auth';
 
 const styles = theme => ({
@@ -72,7 +73,8 @@ export class MessageBox extends React.Component {
       currentMessage: null,
       currentMessagePage: 0,
       hasMoreReplies: true,
-      isLoading: false
+      isLoading: false,
+      snackbarOpen: false
     };
   }
 
@@ -127,7 +129,7 @@ export class MessageBox extends React.Component {
         });
       });
     } catch (e) {
-      this.setState({ isLoading: false });
+      this.setState({ isLoading: false, snackbarOpen: true });
     }
   };
 
@@ -157,7 +159,7 @@ export class MessageBox extends React.Component {
         );
       });
     } catch (e) {
-      this.setState({ isLoading: false });
+      this.setState({ isLoading: false, snackbarOpen: true });
     }
   };
 
@@ -172,50 +174,56 @@ export class MessageBox extends React.Component {
   };
 
   setList = async listView => {
-    let res;
-    switch (listView) {
-      case 'unread':
-        res = await axios.get(
-          `/api/message/unread/${this.state.currentListPage}`
-        );
-        break;
-      case 'all':
-        res = await axios.get(`/api/message/all/${this.state.currentListPage}`);
-        break;
-      case 'sent':
-        res = await axios.get(
-          `/api/message/sent/${this.state.currentListPage}`
-        );
-    }
+    try {
+      let res;
+      switch (listView) {
+        case 'unread':
+          res = await axios.get(
+            `/api/message/unread/${this.state.currentListPage}`
+          );
+          break;
+        case 'all':
+          res = await axios.get(
+            `/api/message/all/${this.state.currentListPage}`
+          );
+          break;
+        case 'sent':
+          res = await axios.get(
+            `/api/message/sent/${this.state.currentListPage}`
+          );
+      }
 
-    if (!res.data[`_${listView}`]) {
+      if (!res.data[`_${listView}`]) {
+        return this.setState(
+          {
+            view: 'list',
+            listType: listView,
+            hasMoreLists: false,
+            isLoading: false,
+            messages: []
+          },
+          () => {}
+        );
+      }
+
+      const messages = res.data[`_${listView}`];
+
       return this.setState(
         {
-          view: 'list',
-          listType: listView,
-          hasMoreLists: false,
-          isLoading: false,
           messages: []
         },
-        () => {}
+        () => {
+          this.setState({
+            view: 'list',
+            listType: listView,
+            messages: [...messages],
+            isLoading: false
+          });
+        }
       );
+    } catch (e) {
+      this.setState({ isLoading: false, snackbarOpen: true });
     }
-
-    const messages = res.data[`_${listView}`];
-
-    return this.setState(
-      {
-        messages: []
-      },
-      () => {
-        this.setState({
-          view: 'list',
-          listType: listView,
-          messages: [...messages],
-          isLoading: false
-        });
-      }
-    );
   };
 
   goBack = async listType => {
@@ -246,116 +254,125 @@ export class MessageBox extends React.Component {
           () => {}
         );
       } catch (e) {
-        this.setState({ isLoading: false });
+        this.setState({ isLoading: false, snackbarOpen: true });
       }
     });
   };
 
   onListForward = async () => {
-    try {
-      if (this.state.currentListPage === 0) {
-        return;
-      }
-      this.setState(
-        {
-          currentListPage: this.state.currentListPage - 1,
-          isLoading: true,
-          hasMoreLists: true,
-          selected: []
-        },
-        () => {
-          this.setList(this.state.listType);
-        }
-      );
-    } catch (e) {
-      this.setState({ isLoading: false });
+    if (this.state.currentListPage === 0) {
+      return;
     }
+    this.setState(
+      {
+        currentListPage: this.state.currentListPage - 1,
+        isLoading: true,
+        hasMoreLists: true,
+        selected: []
+      },
+      () => {
+        this.setList(this.state.listType);
+      }
+    );
   };
 
   onListBack = () => {
-    try {
-      this.setState(
-        {
-          currentListPage: this.state.currentListPage + 1,
-          isLoading: true,
-          selected: []
-        },
-        () => {
-          this.setList(this.state.listType);
-        }
-      );
-    } catch (e) {
-      this.setState({ isLoading: false });
-    }
+    this.setState(
+      {
+        currentListPage: this.state.currentListPage + 1,
+        isLoading: true,
+        selected: []
+      },
+      () => {
+        this.setList(this.state.listType);
+      }
+    );
+  };
+
+  onSnackbarOpen = () => {
+    this.setState({ snackbarOpen: true }, () => {});
+  };
+
+  onSnackbarClose = () => {
+    this.setState({ snackbarOpen: false }, () => {});
   };
 
   render() {
     const { classes } = this.props;
     return (
-      <Paper className={classes.root}>
-        {this.state.isLoading && (
-          <LinearProgress
-            color="secondary"
-            className={classes.linearProgress}
-          />
-        )}
-        <div className={classes.header}>
-          <MessageBoxAppBar
-            switchListType={this.switchListType}
-            view={this.state.view}
-            listType={this.state.listType}
-            goBack={this.goBack}
-          />
-        </div>
-        <div
-          className={
-            this.state.isLoading
-              ? classNames(classes.loadingOpacity, classes.box)
-              : classes.box
-          }
-        >
-          {this.state.view === 'list' ? (
-            <MessageList
-              setList={this.setList}
-              refreshList={this.switchListType}
+      <React.Fragment>
+        <Paper className={classes.root}>
+          {this.state.isLoading && (
+            <LinearProgress
+              color="secondary"
+              className={classes.linearProgress}
+            />
+          )}
+          <div className={classes.header}>
+            <MessageBoxAppBar
+              switchListType={this.switchListType}
+              view={this.state.view}
               listType={this.state.listType}
-              messages={this.state.messages}
-              setMessage={this.setMessage}
-              selected={this.state.selected}
-              onSelectOne={this.onSelectOne}
-              onSelectAll={this.onSelectAll}
-              onDelete={this.onDelete}
+              goBack={this.goBack}
             />
-          ) : null}
-          {this.state.view === 'message' ? (
-            <Message
-              message={this.state.currentMessage}
-              setPrevMessageReplies={this.setPrevMessageReplies}
-              currentMessagePage={this.state.currentMessagePage}
-              hasMoreReplies={this.state.hasMoreReplies}
-            />
-          ) : null}
-        </div>
-        <Divider />
-        {this.state.view === 'list' && (
-          <div className={classes.paginationControls}>
-            <IconButton
-              onClick={this.onListBack}
-              disabled={
-                this.state.messages.length < 5 || !this.state.hasMoreLists
-              }
-            >
-              <ArrowLeftIcon />
-            </IconButton>
-            <IconButton
-              onClick={this.onListForward}
-              disabled={this.state.currentListPage > 0 ? false : true}
-            >
-              <ArrowRightIcon />
-            </IconButton>
           </div>
-        )}
-      </Paper>
+          <div
+            className={
+              this.state.isLoading
+                ? classNames(classes.loadingOpacity, classes.box)
+                : classes.box
+            }
+          >
+            {this.state.view === 'list' ? (
+              <MessageList
+                setList={this.setList}
+                refreshList={this.switchListType}
+                listType={this.state.listType}
+                messages={this.state.messages}
+                setMessage={this.setMessage}
+                selected={this.state.selected}
+                onSelectOne={this.onSelectOne}
+                onSelectAll={this.onSelectAll}
+                onDelete={this.onDelete}
+              />
+            ) : null}
+            {this.state.view === 'message' ? (
+              <Message
+                message={this.state.currentMessage}
+                setPrevMessageReplies={this.setPrevMessageReplies}
+                currentMessagePage={this.state.currentMessagePage}
+                hasMoreReplies={this.state.hasMoreReplies}
+              />
+            ) : null}
+          </div>
+          <Divider />
+          {this.state.view === 'list' && (
+            <div className={classes.paginationControls}>
+              <IconButton
+                onClick={this.onListBack}
+                disabled={
+                  this.state.messages.length < 5 || !this.state.hasMoreLists
+                }
+              >
+                <ArrowLeftIcon />
+              </IconButton>
+              <IconButton
+                onClick={this.onListForward}
+                disabled={this.state.currentListPage > 0 ? false : true}
+              >
+                <ArrowRightIcon />
+              </IconButton>
+            </div>
+          )}
+        </Paper>
+        <CustomSnackbar
+          variant="error"
+          message="Something went wrong! Try again..."
+          onSnackbarOpen={this.onSnackbarOpen}
+          onSnackbarClose={this.onSnackbarClose}
+          snackbarOpen={this.state.snackbarOpen}
+        />
+      </React.Fragment>
     );
   }
 }

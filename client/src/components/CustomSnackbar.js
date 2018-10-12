@@ -142,6 +142,7 @@ class CustomSnackbar extends React.Component {
 CustomSnackbar.propTypes = {
   classes: PropTypes.object.isRequired,
   variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']),
+  message: PropTypes.string,
   onSnackbarOpen: PropTypes.func,
   onSnackbarClose: PropTypes.func,
   snackbarOpen: PropTypes.bool
