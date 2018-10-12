@@ -60,7 +60,7 @@ export class Message extends React.Component {
   }
 
   componentDidMount() {
-    this.bottomRef.current.scrollIntoView();
+    this.bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'start', inline: "nearest" });
   }
 
   componentDidUpdate(prevProps) {
@@ -105,7 +105,7 @@ export class Message extends React.Component {
             isSending: false
           },
           () => {
-            this.bottomRef.current.scrollIntoView();
+            this.bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'start', inline: "nearest" });
           }
         );
       });
