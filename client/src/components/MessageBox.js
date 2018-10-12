@@ -113,7 +113,7 @@ export class MessageBox extends React.Component {
     this.setState({ selected: [...allMessageIds] });
   };
 
-  setMessage = (messageId) => {
+  setMessage = messageId => {
     try {
       this.setState({ isLoading: true }, async () => {
         const res = await axios.get(
@@ -127,7 +127,7 @@ export class MessageBox extends React.Component {
         });
       });
     } catch (e) {
-      console.log(e);
+      this.setState({ isLoading: false });
     }
   };
 
@@ -157,14 +157,14 @@ export class MessageBox extends React.Component {
         );
       });
     } catch (e) {
-      console.log(e);
+      this.setState({ isLoading: false });
     }
   };
 
   // Passed as prop to MessageBoxAppBar to reset state b/w listType switching
   switchListType = listType => {
     this.setState(
-      { currentListPage: 0, hasMoreLists: true, isLoading: true },
+      { currentListPage: 0, hasMoreLists: true, isLoading: true, selected: [] },
       () => {
         this.setList(listType);
       }
@@ -194,7 +194,7 @@ export class MessageBox extends React.Component {
           view: 'list',
           listType: listView,
           hasMoreLists: false,
-          isLoading: false, 
+          isLoading: false,
           messages: []
         },
         () => {}
@@ -232,18 +232,23 @@ export class MessageBox extends React.Component {
     );
   };
 
-  onDelete = async () => {
-    try {
-      await axios.delete(`/api/message/delete`, {
-        data: { deletions: this.state.selected }
-      });
-      const updatedMessages = this.state.messages.filter(
-        message => !this.state.selected.includes(message._id)
-      );
-      this.setState({ messages: updatedMessages, selected: [] }, () => {});
-    } catch (e) {
-      console.log(e);
-    }
+  onDelete = () => {
+    this.setState({ isLoading: true }, async () => {
+      try {
+        await axios.delete(`/api/message/delete`, {
+          data: { deletions: this.state.selected }
+        });
+        const updatedMessages = this.state.messages.filter(
+          message => !this.state.selected.includes(message._id)
+        );
+        this.setState(
+          { messages: updatedMessages, selected: [], isLoading: false },
+          () => {}
+        );
+      } catch (e) {
+        this.setState({ isLoading: false });
+      }
+    });
   };
 
   onListForward = async () => {
@@ -255,27 +260,32 @@ export class MessageBox extends React.Component {
         {
           currentListPage: this.state.currentListPage - 1,
           isLoading: true,
-          hasMoreLists: true
+          hasMoreLists: true,
+          selected: []
         },
         () => {
           this.setList(this.state.listType);
         }
       );
     } catch (e) {
-      console.log(e);
+      this.setState({ isLoading: false });
     }
   };
 
   onListBack = () => {
     try {
       this.setState(
-        { currentListPage: this.state.currentListPage + 1, isLoading: true },
+        {
+          currentListPage: this.state.currentListPage + 1,
+          isLoading: true,
+          selected: []
+        },
         () => {
           this.setList(this.state.listType);
         }
       );
     } catch (e) {
-      console.log(e);
+      this.setState({ isLoading: false });
     }
   };
 
@@ -309,20 +319,18 @@ export class MessageBox extends React.Component {
               setList={this.setList}
               refreshList={this.switchListType}
               listType={this.state.listType}
+              messages={this.state.messages}
+              setMessage={this.setMessage}
               selected={this.state.selected}
               onSelectOne={this.onSelectOne}
               onSelectAll={this.onSelectAll}
-              messages={this.state.messages}
-              setMessage={this.setMessage}
               onDelete={this.onDelete}
-              selected={this.state.selected}
             />
           ) : null}
           {this.state.view === 'message' ? (
             <Message
-              setMessage={this.setMessage}
-              setPrevMessageReplies={this.setPrevMessageReplies}
               message={this.state.currentMessage}
+              setPrevMessageReplies={this.setPrevMessageReplies}
               currentMessagePage={this.state.currentMessagePage}
               hasMoreReplies={this.state.hasMoreReplies}
             />

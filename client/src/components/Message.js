@@ -183,7 +183,10 @@ export class Message extends React.Component {
 }
 
 Message.propTypes = {
-  message: PropTypes.object
+  message: PropTypes.object.isRequired,
+  setPrevMessageReplies: PropTypes.func.isRequired,
+  currentMessagePage: PropTypes.number.isRequired,
+  hasMoreReplies: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = ({ auth }) => ({

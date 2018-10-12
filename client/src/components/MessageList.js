@@ -1,17 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 import moment from 'moment';
 
 import Avatar from '@material-ui/core/Avatar';
@@ -114,10 +111,15 @@ export const MessageList = props => {
 };
 
 MessageList.propTypes = {
-  messages: PropTypes.array,
-  onSelect: PropTypes.func,
-  onSelectAll: PropTypes.func,
-  setMessage: PropTypes.func
+  setList: PropTypes.func.isRequired,
+  refreshList: PropTypes.func.isRequired,
+  listType: PropTypes.string.isRequired,
+  messages: PropTypes.array.isRequired,
+  selected: PropTypes.array.isRequired,
+  onSelectOne: PropTypes.func.isRequired,
+  onSelectAll: PropTypes.func.isRequired,
+  setMessage: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(MessageList);

@@ -1,5 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -87,7 +88,7 @@ class MessageBoxAppBar extends React.Component {
               <KeyboardBackspaceIcon className={classes.iconColor} />
             </IconButton>
           )}
-          <div className={view === 'list' ? classes.menu : null}>
+          <div className={view === 'list' && classes.menu}>
             <Button
               variant="contained"
               color="secondary"
@@ -115,6 +116,14 @@ class MessageBoxAppBar extends React.Component {
       </AppBar>
     );
   }
+}
+
+MessageBoxAppBar.propTypes = {
+  classes: PropTypes.object.isRequired,
+  switchListType: PropTypes.func.isRequired,
+  view: PropTypes.string.isRequired,
+  listType: PropTypes.string.isRequired,
+  goBack: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(MessageBoxAppBar);
