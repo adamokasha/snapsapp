@@ -11,6 +11,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { Link } from 'react-router-dom';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import Button from '@material-ui/core/Button';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
 import axios from 'axios';
 import moment from 'moment';
@@ -31,6 +32,9 @@ const styles = theme => ({
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
+  },
+  leftIcon: {
+    marginRight: `${theme.spacing.unit}px`
   },
   dateText: {
     textAlign: 'right'
@@ -127,7 +131,7 @@ export class Message extends React.Component {
   };
 
   render() {
-    const { message, classes } = this.props;
+    const { classes } = this.props;
     return (
       <Paper className={classes.root}>
         <List classes={{ root: classes.listRoot }}>
@@ -167,11 +171,18 @@ export class Message extends React.Component {
             onChange={this.onBodyChange}
             value={this.state.body}
             disabled={this.state.isSending}
+            inputProps={{ maxLength: 120 }}
+            endAdornment={
+                <InputAdornment position="end">
+                  {this.state.body.length}
+                  /120
+                </InputAdornment>
+              }
           />
           <Button
             type="submit"
             variant="contained"
-            disabled={this.state.isSending}
+            disabled={this.state.isSending || this.state.body.length < 1}
           >
             <SendOutlinedIcon className={classes.leftIcon} />
             Reply
