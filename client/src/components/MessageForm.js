@@ -58,7 +58,9 @@ export class MessageForm extends React.Component {
 
     this.state = {
       title: '',
-      body: ''
+      body: '',
+      snackbarVar: null,
+      snackbarMessage: null
     };
   }
 
@@ -77,10 +79,19 @@ export class MessageForm extends React.Component {
         title: this.state.title,
         body: this.state.body
       });
+      this.setState({snackbarVar: 'success', snackbarMessage: 'Your message was sent successfully!'});
+      this.props.handleClose();
+      this.props.onSnackbarSet(this.state.snackbarVar, this.state.snackbarMessage);
     } catch (e) {
-      console.log(e);
+      this.setState({snackbarVar: 'error', snackbarMessage: 'Something went wrong! Try again!'});
+      this.props.onSnackbarSet(this.state.snackbarVar, this.state.snackbarMessage);
     }
   };
+
+  onSnackbarSet = () => {
+    const {snackbarVar, snackbarMessage} = this.state;
+    this.props.onSnackbarSet(snackbarVar, snackbarMessage);
+  }
 
   render() {
     const { classes } = this.props;
