@@ -23,10 +23,13 @@ module.exports = app => {
   app.get("/api/profile/get/:user", async (req, res) => {
     try {
       const user = await User.findOne({ displayName: req.params.user });
+      if (!user) {
+        throw new Error();
+      }
       res.status(200).send(user);
     } catch (e) {
       console.log(e);
-      res.send({ error: "Profile not found." });
+      res.status(404).send({ error: "Profile not found." });
     }
   });
 

@@ -117,19 +117,20 @@ export class Profile extends React.Component {
 
     this.state = {
       id: "",
+      displayName: "",
+      profilePhoto: "",
+      joined: "",
+      name: "",
+      website: "",
+      facebook: "",
+      gplus: "",
+      twitter: "",
+      about: "",
       editEnabled: false,
       ownProfile: false,
-      displayName: this.props.profile ? this.profile.displayName : "",
-      profilePhoto: this.props.profile ? this.profile.profilePhoto : "",
-      joined: this.props.profile ? this.display.joined : "",
-      name: this.props.profile ? this.props.profile.name : "",
-      website: this.props.profile ? this.props.profile.website : "",
-      facebook: this.props.profile ? this.props.profile.facebook : "",
-      gplus: this.props.profile ? this.props.profile.gplus : "",
-      twitter: this.props.profile ? this.props.profile.twitter : "",
-      about: this.props.profile ? this.props.profile.about : "",
       isLoading: false,
-      snackbarOpen: false
+      snackbarOpen: false,
+      snackbarMessage: null
     };
   }
 
@@ -146,7 +147,10 @@ export class Profile extends React.Component {
         }
       );
     } catch (e) {
-      this.setState({ snackbarOpen: true }, () => {});
+      this.setState(
+        { snackbarOpen: true, snackbarMessage: "Could not find profile." },
+        () => {}
+      );
     }
   }
 
@@ -192,7 +196,11 @@ export class Profile extends React.Component {
         this.props.updateProfile(profile);
         this.setState({ editEnabled: false, isLoading: false });
       } catch (e) {
-        this.setState({ isLoading: false, snackbarOpen: true });
+        this.setState({
+          isLoading: false,
+          snackbarOpen: true,
+          snackbarMessage: "Could not update profile! Try again."
+        });
       }
     });
   };
@@ -392,7 +400,7 @@ export class Profile extends React.Component {
         </div>
         <CustomSnackbar
           variant="error"
-          message="Something went wrong! Please try again..."
+          message={this.state.snackbarMessage}
           snackbarOpen={this.state.snackbarOpen}
         />
       </React.Fragment>
