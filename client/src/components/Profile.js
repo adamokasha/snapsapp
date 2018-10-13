@@ -25,14 +25,15 @@ const styles = theme => ({
     width: "100%"
   },
   paper: {
-    width: "90%",
+    width: "100%",
     display: "flex",
     flexDirection: "column",
     position: "relative",
-    marginTop: `${theme.spacing.unit * 3}px`,
+    marginTop: 0,
     padding: `${theme.spacing.unit * 2}px`,
     [theme.breakpoints.up("sm")]: {
-      width: "65%"
+      marginTop: `${theme.spacing.unit * 3}px`,
+      width: "80%"
     },
     [theme.breakpoints.up("md")]: {
       width: "55%"
@@ -56,9 +57,19 @@ const styles = theme => ({
   userText: {
     marginLeft: `${theme.spacing.unit}px`
   },
+  networkDivider: {
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "block"
+    }
+  },
   form: {
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "block"
+    }
   },
   fieldGroup: {
     display: "flex",
@@ -211,7 +222,7 @@ export class Profile extends React.Component {
           />
           <Divider />
           <ProfileNetwork userid={this.state.id} />
-          <Divider />
+          <Divider className={classes.networkDivider} />
           <form onSubmit={this.onSubmit} className={classes.form}>
             {(this.state.name || this.state.editEnabled) && (
               <div className={classes.fieldGroup}>

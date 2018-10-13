@@ -1,18 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
+import React from "react";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Typography from "@material-ui/core/Typography";
 
-import ScrollView from './ScrollView';
+import ScrollView from "./ScrollView";
 
 const styles = theme => ({
   root: {
-    marginTop: `${theme.spacing.unit * 3}px`,
+    marginTop: 0,
     backgroundColor: theme.palette.background.paper,
-    width: '100%'
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      marginTop: `${theme.spacing.unit * 3}px`
+    }
   }
 });
 
@@ -48,12 +51,14 @@ class FullWidthTabs extends React.Component {
           </Tabs>
         </AppBar>
         {this.state.value === 0 ? (
-          <ScrollView context="userFaves" user={this.props.user} /> 
+          <ScrollView context="userFaves" user={this.props.user} />
         ) : null}
         {this.state.value === 1 ? (
           <ScrollView context="userPosts" user={this.props.user} />
         ) : null}
-        {this.state.value === 2 ? <ScrollView context="userAlbums" user={this.props.user} /> : null}
+        {this.state.value === 2 ? (
+          <ScrollView context="userAlbums" user={this.props.user} />
+        ) : null}
       </div>
     );
   }
