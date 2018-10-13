@@ -1,13 +1,13 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const requireAuth = require('../middlewares/requireAuth');
-const User = mongoose.model('User');
-const Follows = mongoose.model('Follows');
-const Followers = mongoose.model('Followers');
+const requireAuth = require("../middlewares/requireAuth");
+const User = mongoose.model("User");
+const Follows = mongoose.model("Follows");
+const Followers = mongoose.model("Followers");
 
 module.exports = app => {
   // Update Profile
-  app.post('/api/profile/update', requireAuth, async (req, res) => {
+  app.post("/api/profile/update", requireAuth, async (req, res) => {
     try {
       const user = await User.findByIdAndUpdate(
         { _id: req.user.id },
@@ -20,22 +20,23 @@ module.exports = app => {
   });
 
   // Get a user's profile
-  app.get('/api/profile/get/:user', async (req, res) => {
+  app.get("/api/profile/get/:user", async (req, res) => {
     try {
       const user = await User.findOne({ displayName: req.params.user });
       res.status(200).send(user);
     } catch (e) {
       console.log(e);
+      res.send({ error: "Profile not found." });
     }
   });
 
   // Search for profile(s)
-  app.post('/api/profile/search/:page', async (req, res) => {
+  app.post("/api/profile/search/:page", async (req, res) => {
     try {
       const { searchTerms } = req.body;
       const { page } = req.params;
       const regexArr = searchTerms.map(term => {
-        return new RegExp(term, 'g');
+        return new RegExp(term, "g");
       });
       const users = await User.find({ displayName_lower: { $in: regexArr } })
         .limit(20)
@@ -48,7 +49,7 @@ module.exports = app => {
   });
 
   // Get following and followers count and clientFollows (for ProfileNetwork component)
-  app.get('/api/profile/count/:userId', async (req, res) => {
+  app.get("/api/profile/count/:userId", async (req, res) => {
     try {
       let clientId;
       req.user
@@ -58,22 +59,22 @@ module.exports = app => {
       const userId = mongoose.Types.ObjectId(req.params.userId);
       const follows = await Follows.aggregate([
         { $match: { _owner: userId } },
-        { $addFields: { followsCount: { $size: '$follows' } } },
+        { $addFields: { followsCount: { $size: "$follows" } } },
         {
           $lookup: {
-            from: 'followers',
-            localField: '_owner',
-            foreignField: '_owner',
-            as: 'followers'
+            from: "followers",
+            localField: "_owner",
+            foreignField: "_owner",
+            as: "followers"
           }
         },
-        { $unwind: { path: '$followers', preserveNullAndEmptyArrays: true } },
+        { $unwind: { path: "$followers", preserveNullAndEmptyArrays: true } },
         {
           $addFields: {
-            followersCount: { $size: '$followers.followers' },
+            followersCount: { $size: "$followers.followers" },
             clientFollows: {
               $cond: [
-                { $setIsSubset: [[clientId], '$followers.followers'] },
+                { $setIsSubset: [[clientId], "$followers.followers"] },
                 true,
                 false
               ]
@@ -93,19 +94,20 @@ module.exports = app => {
       res.send(follows);
     } catch (e) {
       console.log(e);
+      res.status(400).send({ error: "Not found" });
     }
   });
 
   // Get a user's followers
-  app.get('/api/profile/followers/:id/:page', async (req, res) => {
+  app.get("/api/profile/followers/:id/:page", async (req, res) => {
     try {
       const { id, page } = req.params;
       const followersDoc = await Followers.find({ _owner: id })
         .limit(25)
         .skip(25 * page)
         .populate({
-          path: 'followers',
-          select: 'displayName profilePhoto'
+          path: "followers",
+          select: "displayName profilePhoto"
         })
         .exec();
 
@@ -118,15 +120,15 @@ module.exports = app => {
   });
 
   // Get a user's follows
-  app.get('/api/profile/follows/:id/:page', async (req, res) => {
+  app.get("/api/profile/follows/:id/:page", async (req, res) => {
     try {
       const { id, page } = req.params;
-      const followsDoc = await Follows.find({ _owner: id }, 'follows')
+      const followsDoc = await Follows.find({ _owner: id }, "follows")
         .limit(25)
         .skip(25 * page)
         .populate({
-          path: 'follows',
-          select: 'displayName profilePhoto'
+          path: "follows",
+          select: "displayName profilePhoto"
         })
         .exec();
 
@@ -139,7 +141,7 @@ module.exports = app => {
   });
 
   // Follow a user
-  app.post('/api/profile/follows/add/:id', requireAuth, async (req, res) => {
+  app.post("/api/profile/follows/add/:id", requireAuth, async (req, res) => {
     try {
       const clientId = req.user.id;
       const { id } = req.params;
@@ -164,7 +166,7 @@ module.exports = app => {
   });
 
   // Unfollow a user
-  app.delete('/api/profile/follows/unf/:id', requireAuth, async (req, res) => {
+  app.delete("/api/profile/follows/unf/:id", requireAuth, async (req, res) => {
     try {
       const clientId = req.user.id;
       const { id } = req.params;

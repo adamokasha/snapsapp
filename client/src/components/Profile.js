@@ -2,6 +2,7 @@ import React from "react";
 import Paper from "@material-ui/core/Paper";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
+import { withRouter } from "react-router";
 import PropTypes from "prop-types";
 import compose from "recompose/compose";
 import classNames from "classnames";
@@ -16,7 +17,6 @@ import ProfileHeader from "./ProfileHeader";
 import ProfileNetwork from "./ProfileNetwork";
 import CustomSnackbar from "./CustomSnackbar";
 import { updateProfile } from "../actions/auth";
-import { relative } from "path";
 
 const styles = theme => ({
   root: {
@@ -135,7 +135,9 @@ export class Profile extends React.Component {
 
   async componentDidMount() {
     try {
-      const res = await axios.get(`/api/profile/get/${this.props.user}`);
+      const res = await axios.get(
+        `/api/profile/get/${this.props.match.params.user}`
+      );
       const { profilePhoto, joined, displayName, profile, _id } = res.data;
       this.setState(
         { id: _id, profilePhoto, displayName, joined, ...profile },
@@ -149,7 +151,10 @@ export class Profile extends React.Component {
   }
 
   checkIfProfileOwner = () => {
-    if (this.props.auth && this.props.auth.displayName === this.props.user) {
+    if (
+      this.props.auth &&
+      this.props.auth.displayName === this.props.match.params.user
+    ) {
       this.setState({ ownProfile: true }, () => {});
     }
   };
@@ -409,4 +414,4 @@ export default compose(
     mapStateToProps,
     { updateProfile }
   )
-)(Profile);
+)(withRouter(Profile));

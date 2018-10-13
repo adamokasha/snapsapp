@@ -1,34 +1,34 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-import compose from 'recompose/compose';
-import PropTypes from 'prop-types';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import axios from 'axios';
-import MailOutlinedIcon from '@material-ui/icons/MailOutlined';
-import PersonAddOutlined from '@material-ui/icons/PersonAdd';
+import React from "react";
+import { connect } from "react-redux";
+import { withStyles } from "@material-ui/core/styles";
+import compose from "recompose/compose";
+import PropTypes from "prop-types";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
+import axios from "axios";
+import MailOutlinedIcon from "@material-ui/icons/MailOutlined";
+import PersonAddOutlined from "@material-ui/icons/PersonAdd";
 
-import ModalView from './ModalView';
-import ProfileNetworkTabs from './ProfileNetworkTabs';
-import MessageForm from './MessageForm';
+import ModalView from "./ModalView";
+import ProfileNetworkTabs from "./ProfileNetworkTabs";
+import MessageForm from "./MessageForm";
 
 const styles = theme => ({
   root: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
     padding: `${theme.spacing.unit}px`
   },
   info: {
-    display: 'flex',
-    width: '80%',
-    justifyContent: 'center',
-    alignItems: 'center'
+    display: "flex",
+    width: "80%",
+    justifyContent: "center",
+    alignItems: "center"
   },
   actions: {
-    display: 'flex',
-    flexDirection: 'column'
+    display: "flex",
+    flexDirection: "column"
   },
   leftIcon: {
     marginRight: theme.spacing.unit
@@ -43,16 +43,20 @@ export class ProfileNetwork extends React.Component {
     super(props);
 
     this.state = {
-      followersCount: '',
-      followsCount: '',
+      followersCount: "",
+      followsCount: "",
       clientFollows: null
     };
   }
 
   async componentDidUpdate(prevProps) {
     if (prevProps.userid !== this.props.userid) {
-      console.log('called!');
+      console.log("called!");
       try {
+        // User navigated to a profile that doesn't exist
+        if (!this.props.userid) {
+          throw new Error();
+        }
         const res = await axios.get(`/api/profile/count/${this.props.userid}`);
         const { followsCount, followersCount, clientFollows } = res.data[0];
         this.setState(
