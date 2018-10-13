@@ -213,105 +213,117 @@ export class Profile extends React.Component {
           <ProfileNetwork userid={this.state.id} />
           <Divider />
           <form onSubmit={this.onSubmit} className={classes.form}>
-            <div className={classes.fieldGroup}>
-              <Typography variant="body2">Name:</Typography>
-              <TextField
-                margin="normal"
-                inputProps={{ style: { color: "#000" } }}
-                disabled={this.state.editEnabled ? false : true}
-                className={classes.textField}
-                value={this.state.name}
-                onChange={this.onNameChange}
-              />
-            </div>
+            {(this.state.name || this.state.editEnabled) && (
+              <div className={classes.fieldGroup}>
+                <Typography variant="body2">Name:</Typography>
+                <TextField
+                  margin="normal"
+                  inputProps={{ style: { color: "#000" } }}
+                  disabled={this.state.editEnabled ? false : true}
+                  className={classes.textField}
+                  value={this.state.name}
+                  onChange={this.onNameChange}
+                />
+              </div>
+            )}
 
-            <div className={classes.fieldGroup}>
-              <Typography variant="body2">Website: </Typography>
-              <TextField
-                className={classes.textField}
-                margin="normal"
-                inputProps={
-                  !this.state.editEnabled && this.state.website
-                    ? { style: { cursor: "pointer", color: "#3b5999" } }
-                    : {}
-                }
-                disabled={this.state.editEnabled ? false : true}
-                onClick={this.state.editEnabled ? null : this.onLinkClick}
-                value={this.state.website}
-                onChange={this.onWebsiteChange}
-              />
-            </div>
+            {(this.state.website || this.state.editEnabled) && (
+              <div className={classes.fieldGroup}>
+                <Typography variant="body2">Website: </Typography>
+                <TextField
+                  className={classes.textField}
+                  margin="normal"
+                  inputProps={
+                    !this.state.editEnabled && this.state.website
+                      ? { style: { cursor: "pointer", color: "#3b5999" } }
+                      : {}
+                  }
+                  disabled={this.state.editEnabled ? false : true}
+                  onClick={this.state.editEnabled ? null : this.onLinkClick}
+                  value={this.state.website}
+                  onChange={this.onWebsiteChange}
+                />
+              </div>
+            )}
 
-            <div className={classes.fieldGroup}>
-              <Typography className={classes.socialText} variant="body2">
-                Facebook:{" "}
-              </Typography>
-              <TextField
-                margin="normal"
-                className={classes.textField}
-                inputProps={
-                  !this.state.editEnabled && this.state.facebook
-                    ? { style: { cursor: "pointer", color: "#3b5999" } }
-                    : {}
-                }
-                disabled={this.state.editEnabled ? false : true}
-                onClick={this.state.editEnabled ? null : this.onLinkClick}
-                value={this.state.facebook}
-                onChange={this.onFacebookChange}
-              />
-            </div>
+            {(this.state.facebook || this.state.editEnabled) && (
+              <div className={classes.fieldGroup}>
+                <Typography className={classes.socialText} variant="body2">
+                  Facebook:{" "}
+                </Typography>
+                <TextField
+                  margin="normal"
+                  className={classes.textField}
+                  inputProps={
+                    !this.state.editEnabled && this.state.facebook
+                      ? { style: { cursor: "pointer", color: "#3b5999" } }
+                      : {}
+                  }
+                  disabled={this.state.editEnabled ? false : true}
+                  onClick={this.state.editEnabled ? null : this.onLinkClick}
+                  value={this.state.facebook}
+                  onChange={this.onFacebookChange}
+                />
+              </div>
+            )}
 
-            <div className={classes.fieldGroup}>
-              <Typography className={classes.socialText} variant="body2">
-                Google+:{" "}
-              </Typography>
-              <TextField
-                margin="normal"
-                className={classes.textField}
-                inputProps={
-                  !this.state.editEnabled && this.state.gplus
-                    ? { style: { cursor: "pointer", color: "#3b5999" } }
-                    : {}
-                }
-                disabled={this.state.editEnabled ? false : true}
-                onClick={this.state.editEnabled ? null : this.onLinkClick}
-                value={this.state.gplus}
-                onChange={this.onGplusChange}
-              />
-            </div>
+            {(this.state.gplus || this.state.editEnabled) && (
+              <div className={classes.fieldGroup}>
+                <Typography className={classes.socialText} variant="body2">
+                  Google+:{" "}
+                </Typography>
+                <TextField
+                  margin="normal"
+                  className={classes.textField}
+                  inputProps={
+                    !this.state.editEnabled && this.state.gplus
+                      ? { style: { cursor: "pointer", color: "#3b5999" } }
+                      : {}
+                  }
+                  disabled={this.state.editEnabled ? false : true}
+                  onClick={this.state.editEnabled ? null : this.onLinkClick}
+                  value={this.state.gplus}
+                  onChange={this.onGplusChange}
+                />
+              </div>
+            )}
 
-            <div className={classes.fieldGroup}>
-              <Typography className={classes.socialText} variant="body2">
-                Twitter:{" "}
-              </Typography>
-              <TextField
-                margin="normal"
-                className={classes.textField}
-                inputProps={
-                  !this.state.editEnabled && this.state.twitter
-                    ? { style: { cursor: "pointer", color: "#3b5999" } }
-                    : {}
-                }
-                disabled={this.state.editEnabled ? false : true}
-                onClick={this.state.editEnabled ? null : this.onLinkClick}
-                value={this.state.twitter}
-                onChange={this.onTwitterChange}
-              />
-            </div>
+            {(this.state.twitter || this.state.editEnabled) && (
+              <div className={classes.fieldGroup}>
+                <Typography className={classes.socialText} variant="body2">
+                  Twitter:{" "}
+                </Typography>
+                <TextField
+                  margin="normal"
+                  className={classes.textField}
+                  inputProps={
+                    !this.state.editEnabled && this.state.twitter
+                      ? { style: { cursor: "pointer", color: "#3b5999" } }
+                      : {}
+                  }
+                  disabled={this.state.editEnabled ? false : true}
+                  onClick={this.state.editEnabled ? null : this.onLinkClick}
+                  value={this.state.twitter}
+                  onChange={this.onTwitterChange}
+                />
+              </div>
+            )}
 
-            <div className={classes.fieldGroup}>
-              <Typography variant="body2">About Me: </Typography>
-              <TextField
-                margin="normal"
-                multiline
-                rows={3}
-                inputProps={{ style: { color: "#000" } }}
-                className={classes.textField}
-                disabled={this.state.editEnabled ? false : true}
-                value={this.state.about}
-                onChange={this.onAboutChange}
-              />
-            </div>
+            {(this.state.about || this.state.editEnabled) && (
+              <div className={classes.fieldGroup}>
+                <Typography variant="body2">About Me: </Typography>
+                <TextField
+                  margin="normal"
+                  multiline
+                  rows={3}
+                  inputProps={{ style: { color: "#000" } }}
+                  className={classes.textField}
+                  disabled={this.state.editEnabled ? false : true}
+                  value={this.state.about}
+                  onChange={this.onAboutChange}
+                />
+              </div>
+            )}
 
             {this.state.ownProfile ? (
               <Button
