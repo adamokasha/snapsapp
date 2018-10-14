@@ -2,13 +2,18 @@ import React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import compose from "recompose/compose";
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import MailOutlinedIcon from "@material-ui/icons/MailOutlined";
 import PersonAddOutlined from "@material-ui/icons/PersonAdd";
+import PersonIcon from "@material-ui/icons/Person";
 
 import ModalView from "./ModalView";
 import ProfileNetworkTabs from "./ProfileNetworkTabs";
@@ -28,12 +33,29 @@ const styles = theme => ({
     justifyContent: "center",
     alignItems: "center"
   },
-  actions: {
-    display: "flex",
-    flexDirection: "column"
+  buttonControls: {
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "flex",
+      flexDirection: "column"
+    }
+  },
+  moreVertIcon: {
+    color: "#000"
+  },
+  menuControls: {
+    [theme.breakpoints.up("sm")]: {
+      display: "none"
+    }
+  },
+  msgModal: {
+    display: "flex"
   },
   leftIcon: {
     marginRight: theme.spacing.unit
+  },
+  unFollowedIcon: {
+    color: "rgba(0,0,0,.7)"
   },
   following: {
     marginLeft: `${theme.spacing.unit}px`
@@ -45,6 +67,7 @@ export class ProfileNetwork extends React.Component {
     super(props);
 
     this.state = {
+      anchorEl: null,
       followersCount: "",
       followsCount: "",
       clientFollows: null
@@ -78,7 +101,6 @@ export class ProfileNetwork extends React.Component {
         if (!this.props.userId) {
           throw new Error();
         }
-        // const res = await axios.get(`/api/profile/count/${this.props.userId}`);
         const data = await fetchFollows(this.signal.token, this.props.userId);
         const { followsCount, followersCount, clientFollows } = data;
         this.setState(
@@ -101,10 +123,14 @@ export class ProfileNetwork extends React.Component {
   onFollow = async () => {
     try {
       await onFollow(this.signal.token, this.props.userId);
+      this.setState({ clientFollows: true }, () => {
+        this.handleClose();
+      });
     } catch (e) {
       if (axios.isCancel(e)) {
         return console.log(e.message);
       }
+      this.handleClose();
       console.log(e);
     }
   };
@@ -112,12 +138,24 @@ export class ProfileNetwork extends React.Component {
   onUnfollow = async () => {
     try {
       await onUnfollow(this.signal.token, this.props.userId);
+      this.setState({ clientFollows: false }, () => {
+        this.handleClose();
+      });
     } catch (e) {
       if (axios.isCancel(e)) {
         return console.log(e.message);
       }
+      this.handleClose();
       console.log(e);
     }
+  };
+
+  handleClick = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
   };
 
   render() {
@@ -160,11 +198,67 @@ export class ProfileNetwork extends React.Component {
         </div>
         {auth &&
           !ownProfile && (
-            <div className={classes.actions}>
+            <div className={classes.menuControls}>
+              <IconButton
+                variant="contained"
+                className={classes.moreVertIcon}
+                aria-owns={this.state.anchorEl ? "simple-menu" : null}
+                aria-haspopup="true"
+                onClick={this.handleClick}
+              >
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                id="simple-menu"
+                anchorEl={this.state.anchorEl}
+                open={Boolean(this.state.anchorEl)}
+                onClose={this.handleClose}
+              >
+                {this.state.clientFollows ? (
+                  <MenuItem size="small" onClick={this.onUnfollow}>
+                    <PersonIcon
+                      className={classNames(
+                        classes.unFollowedIcon,
+                        classes.leftIcon
+                      )}
+                    />
+                    Unfollow
+                  </MenuItem>
+                ) : (
+                  <MenuItem size="small" onClick={this.onFollow}>
+                    <PersonAddOutlined className={classes.leftIcon} />
+                    Follow
+                  </MenuItem>
+                )}
+                <MenuItem>
+                  <ModalView
+                    togglerComponent={
+                      <div className={classes.msgModal}>
+                        <MailOutlinedIcon className={classes.leftIcon} />
+                        Message
+                      </div>
+                    }
+                    modalComponent={
+                      <MessageForm withSnackbar={true} userId={userId} />
+                    }
+                  />
+                </MenuItem>
+              </Menu>{" "}
+            </div>
+          )}
+
+        {auth &&
+          !ownProfile && (
+            <div className={classes.buttonControls}>
               <div>
                 {this.state.clientFollows ? (
                   <Button size="small" onClick={this.onUnfollow}>
-                    <PersonAddOutlined className={classes.leftIcon} />
+                    <PersonIcon
+                      className={classNames(
+                        classes.unFollowedIcon,
+                        classes.leftIcon
+                      )}
+                    />
                     Unfollow
                   </Button>
                 ) : (

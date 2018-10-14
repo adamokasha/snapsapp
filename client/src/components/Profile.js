@@ -282,7 +282,7 @@ export class Profile extends React.Component {
                 cancelEdit={this.cancelEdit}
                 enableEdit={this.enableEdit}
               />
-              <Divider />
+              <Divider className={classes.networkDivider} />
               <ProfileNetwork
                 ownProfile={this.state.ownProfile}
                 userId={this.state.id}
