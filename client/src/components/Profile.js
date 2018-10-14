@@ -282,13 +282,11 @@ export class Profile extends React.Component {
                 cancelEdit={this.cancelEdit}
                 enableEdit={this.enableEdit}
               />
-              <Divider className={classes.hidingDivider} />
               <ProfileNetwork
                 ownProfile={this.state.ownProfile}
                 userId={this.state.id}
               />
             </div>
-            <Divider className={classes.hidingDivider} />
             <form
               onSubmit={this.onSubmit}
               className={
@@ -297,6 +295,8 @@ export class Profile extends React.Component {
                   : classes.form
               }
             >
+              <Divider className={classes.hidingDivider} />
+
               {(this.state.name || this.state.editEnabled) && (
                 <div className={classes.fieldGroup}>
                   <Typography variant="body2">Name:</Typography>

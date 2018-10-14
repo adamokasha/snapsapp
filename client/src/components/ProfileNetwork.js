@@ -10,6 +10,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import MailOutlinedIcon from "@material-ui/icons/MailOutlined";
 import PersonAddOutlined from "@material-ui/icons/PersonAdd";
 import UndoIcon from "@material-ui/icons/Undo";
+import DoneOutlinedIcon from "@material-ui/icons/DoneOutlined";
 import axios from "axios";
 
 import ModalView from "./ModalView";
@@ -28,7 +29,7 @@ const styles = theme => ({
     display: "flex",
     width: "80%",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "baseline"
   },
   buttonControls: {
     display: "flex",
@@ -49,6 +50,9 @@ const styles = theme => ({
   },
   following: {
     marginLeft: `${theme.spacing.unit}px`
+  },
+  isFollowingText: {
+    color: "#00a152"
   }
 });
 
@@ -184,6 +188,13 @@ export class ProfileNetwork extends React.Component {
                 <ProfileNetworkTabs tabPosition={1} userId={userId} />
               }
             />
+            <Typography className={classes.isFollowingText} variant="caption">
+              {this.state.clientFollows && (
+                <React.Fragment>
+                  <DoneOutlinedIcon fontSize="inherit" /> Following{" "}
+                </React.Fragment>
+              )}
+            </Typography>
           </div>
         </div>
         {auth &&
