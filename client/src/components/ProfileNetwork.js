@@ -163,7 +163,7 @@ export class ProfileNetwork extends React.Component {
                 </Typography>
               }
               modalComponent={
-                <ProfileNetworkTabs tabPosition={1} userId={userId} />
+                <ProfileNetworkTabs tabPosition={0} userId={userId} />
               }
             />
           </div>

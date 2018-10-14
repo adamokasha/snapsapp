@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
@@ -6,7 +6,8 @@ const userSchema = new Schema({
   facebookId: String,
   profilePhoto: String,
   displayName: String,
-  displayName_lower: {type: String, lowercase: true},
+  displayName_lower: { type: String, lowercase: true },
+  joined: Number,
   profile: {
     name: String,
     website: String,
@@ -15,9 +16,9 @@ const userSchema = new Schema({
     twitter: String,
     about: String
   },
-  albums: [{ type: Schema.Types.ObjectId, ref: 'Album'}],
-  faves: [{ type: Schema.Types.ObjectId, ref: 'Faves'}],
-  registered: {type: Boolean, default: false}
+  albums: [{ type: Schema.Types.ObjectId, ref: "Album" }],
+  faves: [{ type: Schema.Types.ObjectId, ref: "Faves" }],
+  registered: { type: Boolean, default: false }
 });
 
-mongoose.model('User', userSchema);
+mongoose.model("User", userSchema);

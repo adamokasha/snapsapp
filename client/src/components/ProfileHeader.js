@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
+import moment from "moment";
 
 const styles = theme => ({
   root: {
@@ -34,55 +35,56 @@ const styles = theme => ({
   }
 });
 
-export class ProfileHeader extends React.Component {
-  render() {
-    const { classes } = this.props;
+export const ProfileHeader = props => {
+  const {
+    classes,
+    cancelEdit,
+    enableEdit,
+    ownProfile,
+    editEnabled,
+    profilePhoto,
+    displayName,
+    joined
+  } = props;
 
-    return (
-      <div className={classes.root}>
-        <div
-          className={
-            this.props.ownProfile
-              ? classes.editButtons
-              : classes.hideEditButtons
-          }
-        >
-          {this.props.editEnabled ? (
-            <IconButton onClick={this.props.cancelEdit}>
-              <CancelTwoToneIcon />
-            </IconButton>
-          ) : (
-            <IconButton onClick={this.props.enableEdit}>
-              <EditTwoToneIcon />
-            </IconButton>
-          )}
-        </div>
-        <div className={classes.avatarContainer}>
-          <Avatar>
-            <img src={`${this.props.profilePhoto}`} alt="avatar" />
-          </Avatar>
-          <div className={classes.userText}>
-            <Typography variant="body2">{this.props.displayName}</Typography>
-            <Typography variant="caption">
-              Member since {this.props.joined}
-            </Typography>
-          </div>
+  return (
+    <div className={classes.root}>
+      <div
+        className={ownProfile ? classes.editButtons : classes.hideEditButtons}
+      >
+        {editEnabled ? (
+          <IconButton onClick={cancelEdit}>
+            <CancelTwoToneIcon />
+          </IconButton>
+        ) : (
+          <IconButton onClick={enableEdit}>
+            <EditTwoToneIcon />
+          </IconButton>
+        )}
+      </div>
+      <div className={classes.avatarContainer}>
+        <Avatar>
+          <img src={`${profilePhoto}`} alt="avatar" />
+        </Avatar>
+        <div className={classes.userText}>
+          <Typography variant="body2">{displayName}</Typography>
+          <Typography variant="caption">
+            Joined {moment(joined).format("MMM YY")}
+          </Typography>
         </div>
       </div>
-    );
-  }
-}
-
-const mapStateToProps = ({ auth }) => ({
-  auth
-});
+    </div>
+  );
+};
 
 ProfileHeader.propTypes = {
-  // ownProfile,
-  // editEnabled,
-  // profilePhoto,
-  // displayName,
-  // joined
+  ownProfile: PropTypes.bool.isRequired,
+  editEnabled: PropTypes.bool.isRequired,
+  profilePhoto: PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired,
+  joined: PropTypes.number.isRequired,
+  cancelEdit: PropTypes.func,
+  enableEdit: PropTypes.func
 };
 
 export default withStyles(styles)(ProfileHeader);

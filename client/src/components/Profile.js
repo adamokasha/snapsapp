@@ -76,7 +76,7 @@ const styles = theme => ({
   userText: {
     marginLeft: `${theme.spacing.unit}px`
   },
-  networkDivider: {
+  hidingDivider: {
     display: "none",
     [theme.breakpoints.up("sm")]: {
       display: "block"
@@ -282,13 +282,13 @@ export class Profile extends React.Component {
                 cancelEdit={this.cancelEdit}
                 enableEdit={this.enableEdit}
               />
-              <Divider className={classes.networkDivider} />
+              <Divider className={classes.hidingDivider} />
               <ProfileNetwork
                 ownProfile={this.state.ownProfile}
                 userId={this.state.id}
               />
             </div>
-            <Divider className={classes.networkDivider} />
+            <Divider className={classes.hidingDivider} />
             <form
               onSubmit={this.onSubmit}
               className={
@@ -445,7 +445,7 @@ const mapStateToProps = ({ auth }) => ({
 });
 
 Profile.propTypes = {
-  // user: PropTypes.string
+  classes: PropTypes.object.isRequired
 };
 
 export default compose(

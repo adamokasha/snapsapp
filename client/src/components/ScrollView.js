@@ -1,28 +1,31 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import compose from 'recompose/compose';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Button from '@material-ui/core/Button';
-import NavigationIcon from '@material-ui/icons/Navigation';
-import axios from 'axios';
+import React from "react";
+import { connect } from "react-redux";
+import compose from "recompose/compose";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Button from "@material-ui/core/Button";
+import NavigationIcon from "@material-ui/icons/Navigation";
+import axios from "axios";
 
-import ImageGrid from './ImageGrid';
-import { setPostContext, setPosts } from '../actions/posts';
-import AlbumList from './AlbumList';
-import ProfileList from './ProfileList';
+import ImageGrid from "./ImageGrid";
+import { setPostContext, setPosts } from "../actions/posts";
+import AlbumList from "./AlbumList";
+import ProfileList from "./ProfileList";
 
 const styles = theme => ({
+  root: {
+    backgroundColor: `${theme.palette.background.paper}`
+  },
   circularLoader: {
-    margin: '16px auto',
-    display: 'block'
+    margin: "16px auto",
+    display: "block"
   },
   toTopButton: {
     margin: theme.spacing.unit,
-    position: 'fixed',
-    bottom: '5%',
-    right: '5%',
+    position: "fixed",
+    bottom: "5%",
+    right: "5%",
     zIndex: 5000
   },
   navIcon: {
@@ -93,7 +96,7 @@ export class ScrollView extends React.Component {
       }
     }
 
-    window.addEventListener('scroll', this.onScroll, false);
+    window.addEventListener("scroll", this.onScroll, false);
   }
 
   loadData = () => {
@@ -105,33 +108,33 @@ export class ScrollView extends React.Component {
       const { context } = this.props;
       let res;
       switch (context) {
-        case 'popular':
+        case "popular":
           res = await axios.get(`/api/posts/popular/${this.state.currentPage}`);
           break;
-        case 'new':
+        case "new":
           res = await axios.get(`/api/posts/new/${this.state.currentPage}`);
           break;
-        case 'following':
+        case "following":
           res = await axios.get(`/api/posts/follows/${this.state.currentPage}`);
           break;
-        case 'userPosts':
+        case "userPosts":
           res = await axios.get(
             `/api/posts/user/all/${this.props.user}/${this.state.currentPage}`
           );
           break;
-        case 'userFaves':
+        case "userFaves":
           res = await axios.get(
             `/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`
           );
           break;
-        case 'userAlbums':
+        case "userAlbums":
           res = await axios.get(`/api/albums/all/${this.props.user}`);
           return this.setState({
             albums: [...res.data],
             isFetching: false,
             morePagesAvailable: false
           });
-        case 'userFollows':
+        case "userFollows":
           res = await axios.get(
             `/api/profile/follows/${this.props.userId}/${
               this.state.currentPage
@@ -148,7 +151,7 @@ export class ScrollView extends React.Component {
             currentPage: this.state.currentPage + 1,
             isFetching: false
           });
-        case 'userFollowers':
+        case "userFollowers":
           res = await axios.get(
             `/api/profile/followers/${this.props.userId}/${
               this.state.currentPage
@@ -165,7 +168,7 @@ export class ScrollView extends React.Component {
             currentPage: this.state.currentPage + 1,
             isFetching: false
           });
-        case 'searchPosts':
+        case "searchPosts":
           res = await axios.post(
             `/api/posts/search/${this.state.currentPage}`,
             {
@@ -173,7 +176,7 @@ export class ScrollView extends React.Component {
             }
           );
           break;
-        case 'searchUsers':
+        case "searchUsers":
           res = await axios.post(
             `/api/profile/search/${this.state.currentPage}`,
             { searchTerms: this.props.searchTerms }
@@ -219,7 +222,7 @@ export class ScrollView extends React.Component {
     // New search
     if (this.props.searchTerms !== prevProps.searchTerms) {
       // User search
-      if (this.props.context === 'searchUsers') {
+      if (this.props.context === "searchUsers") {
         this.setState(
           { currentPage: 0, isFetching: true, profilePages: [] },
           async () => {
@@ -241,7 +244,7 @@ export class ScrollView extends React.Component {
       }
 
       // Post search
-      if (this.props.context === 'searchPosts') {
+      if (this.props.context === "searchPosts") {
         this.setState(
           { currentPage: 0, isFetching: true, pages: [] },
           async () => {
@@ -271,7 +274,7 @@ export class ScrollView extends React.Component {
 
   componentWillUnmount() {
     // Prevent memory leak
-    window.removeEventListener('scroll', this.onScroll, false);
+    window.removeEventListener("scroll", this.onScroll, false);
   }
 
   goTop = () => {
@@ -282,7 +285,7 @@ export class ScrollView extends React.Component {
     const { classes, context, posts } = this.props;
 
     return (
-      <div>
+      <div className={classes.root}>
         {this.state.showNavToTop ? (
           <Button
             id="goTopButton"
@@ -302,18 +305,18 @@ export class ScrollView extends React.Component {
             ))
           : null}
 
-        {this.state.albums && context === 'userAlbums' ? (
+        {this.state.albums && context === "userAlbums" ? (
           <AlbumList albums={this.state.albums} />
         ) : null}
 
-        {this.state.profilePages && context === 'searchUsers'
+        {this.state.profilePages && context === "searchUsers"
           ? this.state.profilePages.map((profiles, i) => (
               <ProfileList key={i} profiles={profiles} />
             ))
           : null}
 
-        {(this.state.profilePages && context === 'userFollows') ||
-        (this.state.profilePages && context === 'userFollowers')
+        {(this.state.profilePages && context === "userFollows") ||
+        (this.state.profilePages && context === "userFollowers")
           ? this.state.profilePages.map((profiles, i) => (
               <ProfileList key={i} profiles={profiles} />
             ))

@@ -1,29 +1,39 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
+import React from "react";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 
-import ScrollView from './ScrollView';
+import ScrollView from "./ScrollView";
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    width: '30%',
-    position: 'absolute',
-    top: '15%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    width: "300px",
+    position: "absolute",
+    top: "10%",
+    left: "50%",
+    transform: "translateX(-50%)",
     paddingBottom: `${theme.spacing.unit}px`,
-    borderRadius: '3px'
+    borderRadius: "3px"
+  },
+  scrollViewRoot: {
+    paddingTop: `${theme.spacing.unit * 2}px`,
+    height: "400px",
+    overflowY: "scroll",
+    [theme.breakpoints.up("sm")]: {
+      height: "500px"
+    }
+  },
+  circularLoader: {
+    margin: "0 auto"
   }
 });
 
 class FullWidthTabs extends React.Component {
   state = {
-    value: 1
+    value: this.props.tabPosition
   };
 
   handleChange = (event, value) => {
@@ -35,7 +45,7 @@ class FullWidthTabs extends React.Component {
   };
 
   render() {
-    const { classes, theme } = this.props;
+    const { classes } = this.props;
 
     return (
       <div className={classes.root}>
@@ -51,22 +61,33 @@ class FullWidthTabs extends React.Component {
             <Tab label="Following" />
           </Tabs>
         </AppBar>
-        {this.state.value === 0 ? (
-          <ScrollView context="userFollowers" userId={this.props.userId} />
-        ) : null}
-        {this.state.value === 1 ? (
-          <ScrollView context="userFollows" userId={this.props.userId} />
-        ) : null}
+        {this.state.value === 0 && (
+          <ScrollView
+            classes={{
+              root: classes.scrollViewRoot,
+              circularLoader: classes.circularLoader
+            }}
+            context="userFollowers"
+            userId={this.props.userId}
+          />
+        )}
+        {this.state.value === 1 && (
+          <ScrollView
+            classes={{
+              root: classes.scrollViewRoot,
+              circularLoader: classes.circularLoader
+            }}
+            context="userFollows"
+            userId={this.props.userId}
+          />
+        )}
       </div>
     );
   }
 }
 
-/*<ScrollView context="userFollowing" user={this.props.userId} />*/
-
 FullWidthTabs.propTypes = {
   classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
   userId: PropTypes.string.isRequired,
   tabPosition: PropTypes.number.isRequired
 };
