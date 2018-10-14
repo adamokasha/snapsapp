@@ -14,9 +14,13 @@ const styles = theme => ({
     width: "100%"
   },
   editButtons: {
+    display: "none",
     position: "absolute",
     top: "1%",
-    right: "2%"
+    right: "2%",
+    [theme.breakpoints.up("sm")]: {
+      display: "inline-flex"
+    }
   },
   hideEditButtons: {
     display: "none"

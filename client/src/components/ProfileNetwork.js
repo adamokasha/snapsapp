@@ -5,15 +5,12 @@ import compose from "recompose/compose";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
-import axios from "axios";
+import Tooltip from "@material-ui/core/Tooltip";
 import MailOutlinedIcon from "@material-ui/icons/MailOutlined";
 import PersonAddOutlined from "@material-ui/icons/PersonAdd";
-import PersonIcon from "@material-ui/icons/Person";
+import UndoIcon from "@material-ui/icons/Undo";
+import axios from "axios";
 
 import ModalView from "./ModalView";
 import ProfileNetworkTabs from "./ProfileNetworkTabs";
@@ -34,25 +31,18 @@ const styles = theme => ({
     alignItems: "center"
   },
   buttonControls: {
-    display: "none",
-    [theme.breakpoints.up("sm")]: {
-      display: "flex",
-      flexDirection: "column"
-    }
+    display: "flex",
+    flexDirection: "column",
+    margin: `0 ${theme.spacing.unit}px`
   },
-  moreVertIcon: {
-    color: "#000"
+  reversedButtons: {
+    flexDirection: "column-reverse"
   },
-  menuControls: {
-    [theme.breakpoints.up("sm")]: {
-      display: "none"
-    }
+  buttonRoot: {
+    minWidth: "56px"
   },
-  msgModal: {
-    display: "flex"
-  },
-  leftIcon: {
-    marginRight: theme.spacing.unit
+  topIcon: {
+    marginBottom: `${theme.spacing.unit}px`
   },
   unFollowedIcon: {
     color: "rgba(0,0,0,.7)"
@@ -198,89 +188,50 @@ export class ProfileNetwork extends React.Component {
         </div>
         {auth &&
           !ownProfile && (
-            <div className={classes.menuControls}>
-              <IconButton
-                variant="contained"
-                className={classes.moreVertIcon}
-                aria-owns={this.state.anchorEl ? "simple-menu" : null}
-                aria-haspopup="true"
-                onClick={this.handleClick}
-              >
-                <MoreVertIcon />
-              </IconButton>
-              <Menu
-                id="simple-menu"
-                anchorEl={this.state.anchorEl}
-                open={Boolean(this.state.anchorEl)}
-                onClose={this.handleClose}
-              >
-                {this.state.clientFollows ? (
-                  <MenuItem size="small" onClick={this.onUnfollow}>
-                    <PersonIcon
-                      className={classNames(
-                        classes.unFollowedIcon,
-                        classes.leftIcon
-                      )}
-                    />
-                    Unfollow
-                  </MenuItem>
-                ) : (
-                  <MenuItem size="small" onClick={this.onFollow}>
-                    <PersonAddOutlined className={classes.leftIcon} />
-                    Follow
-                  </MenuItem>
-                )}
-                <MenuItem>
-                  <ModalView
-                    togglerComponent={
-                      <div className={classes.msgModal}>
-                        <MailOutlinedIcon className={classes.leftIcon} />
-                        Message
-                      </div>
-                    }
-                    modalComponent={
-                      <MessageForm withSnackbar={true} userId={userId} />
-                    }
-                  />
-                </MenuItem>
-              </Menu>{" "}
-            </div>
-          )}
-
-        {auth &&
-          !ownProfile && (
-            <div className={classes.buttonControls}>
+            <div
+              className={
+                this.state.clientFollows
+                  ? classNames(classes.buttonControls, classes.reversedButtons)
+                  : classes.buttonControls
+              }
+            >
               <div>
                 {this.state.clientFollows ? (
-                  <Button size="small" onClick={this.onUnfollow}>
-                    <PersonIcon
-                      className={classNames(
-                        classes.unFollowedIcon,
-                        classes.leftIcon
-                      )}
-                    />
-                    Unfollow
-                  </Button>
-                ) : (
-                  <Button size="small" onClick={this.onFollow}>
-                    <PersonAddOutlined className={classes.leftIcon} />
-                    Follow
-                  </Button>
-                )}
-              </div>
-              <div>
-                <ModalView
-                  togglerComponent={
-                    <Button size="small">
-                      <MailOutlinedIcon className={classes.leftIcon} />
-                      Message
+                  <Tooltip title="Unfollow" placement="bottom">
+                    <Button
+                      classes={{ root: classes.buttonRoot }}
+                      size="small"
+                      onClick={this.onUnfollow}
+                      className={classes.topIcon}
+                    >
+                      <UndoIcon
+                        fontSize="small"
+                        className={classes.unFollowedIcon}
+                      />
                     </Button>
-                  }
-                  modalComponent={
-                    <MessageForm withSnackbar={true} userId={userId} />
-                  }
-                />
+                  </Tooltip>
+                ) : (
+                  <Button
+                    classes={{ root: classes.buttonRoot }}
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    onClick={this.onFollow}
+                  >
+                    <PersonAddOutlined fontSize="small" />
+                  </Button>
+                )}
               </div>
+              <ModalView
+                togglerComponent={
+                  <Button classes={{ root: classes.buttonRoot }} size="small">
+                    <MailOutlinedIcon fontSize="small" />
+                  </Button>
+                }
+                modalComponent={
+                  <MessageForm withSnackbar={true} userId={userId} />
+                }
+              />
             </div>
           )}
       </div>
