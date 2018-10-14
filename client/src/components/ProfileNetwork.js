@@ -204,10 +204,7 @@ export class ProfileNetwork extends React.Component {
                       onClick={this.onUnfollow}
                       className={classes.topIcon}
                     >
-                      <UndoIcon
-                        fontSize="small"
-                        className={classes.unFollowedIcon}
-                      />
+                      <UndoIcon className={classes.unFollowedIcon} />
                     </Button>
                   </Tooltip>
                 ) : (
@@ -218,14 +215,14 @@ export class ProfileNetwork extends React.Component {
                     color="primary"
                     onClick={this.onFollow}
                   >
-                    <PersonAddOutlined fontSize="small" />
+                    <PersonAddOutlined />
                   </Button>
                 )}
               </div>
               <ModalView
                 togglerComponent={
                   <Button classes={{ root: classes.buttonRoot }} size="small">
-                    <MailOutlinedIcon fontSize="small" />
+                    <MailOutlinedIcon />
                   </Button>
                 }
                 modalComponent={

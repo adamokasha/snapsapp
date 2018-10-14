@@ -128,7 +128,7 @@ export class Profile extends React.Component {
       id: "",
       displayName: "",
       profilePhoto: "",
-      joined: "",
+      joined: null,
       name: "",
       website: "",
       facebook: "",

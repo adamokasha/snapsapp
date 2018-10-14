@@ -69,7 +69,7 @@ export const ProfileHeader = props => {
         <div className={classes.userText}>
           <Typography variant="body2">{displayName}</Typography>
           <Typography variant="caption">
-            Joined {moment(joined).format("MMM YY")}
+            {joined && `Joined ${moment(joined).format("MMM YY")}`}
           </Typography>
         </div>
       </div>
@@ -78,11 +78,11 @@ export const ProfileHeader = props => {
 };
 
 ProfileHeader.propTypes = {
-  ownProfile: PropTypes.bool.isRequired,
-  editEnabled: PropTypes.bool.isRequired,
+  ownProfile: PropTypes.bool,
+  editEnabled: PropTypes.bool,
   profilePhoto: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,
-  joined: PropTypes.number.isRequired,
+  joined: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]),
   cancelEdit: PropTypes.func,
   enableEdit: PropTypes.func
 };

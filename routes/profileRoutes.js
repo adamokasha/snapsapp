@@ -110,7 +110,7 @@ module.exports = app => {
         .skip(25 * page)
         .populate({
           path: "followers",
-          select: "displayName profilePhoto"
+          select: "displayName profilePhoto joined"
         })
         .exec();
 
@@ -131,7 +131,7 @@ module.exports = app => {
         .skip(25 * page)
         .populate({
           path: "follows",
-          select: "displayName profilePhoto"
+          select: "displayName profilePhoto joined"
         })
         .exec();
 
