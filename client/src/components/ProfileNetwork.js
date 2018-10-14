@@ -14,7 +14,7 @@ import ModalView from "./ModalView";
 import ProfileNetworkTabs from "./ProfileNetworkTabs";
 import MessageForm from "./MessageForm";
 
-import { fetchFollows } from "../async/profiles";
+import { fetchFollows, onFollow, onUnfollow } from "../async/profiles";
 
 const styles = theme => ({
   root: {
@@ -56,30 +56,30 @@ export class ProfileNetwork extends React.Component {
   async componentDidMount() {
     try {
       // User navigated to a profile that doesn't exist
-      if (!this.props.userid) {
+      if (!this.props.userId) {
         throw new Error();
       }
-      const data = await fetchFollows(this.signal.token, this.props.userid);
+      const data = await fetchFollows(this.signal.token, this.props.userId);
       const { followsCount, followersCount, clientFollows } = data;
       this.setState({ followersCount, followsCount, clientFollows }, () => {});
     } catch (e) {
       if (axios.isCancel(e)) {
-        console.log(e.message);
+        return console.log(e.message);
       }
       console.log(e);
     }
   }
 
   async componentDidUpdate(prevProps) {
-    if (prevProps.userid !== this.props.userid) {
+    if (prevProps.userId !== this.props.userId) {
       console.log("called!");
       try {
         // User navigated to a profile that doesn't exist
-        if (!this.props.userid) {
+        if (!this.props.userId) {
           throw new Error();
         }
-        // const res = await axios.get(`/api/profile/count/${this.props.userid}`);
-        const data = await fetchFollows(this.signal.token, this.props.userid);
+        // const res = await axios.get(`/api/profile/count/${this.props.userId}`);
+        const data = await fetchFollows(this.signal.token, this.props.userId);
         const { followsCount, followersCount, clientFollows } = data;
         this.setState(
           { followersCount, followsCount, clientFollows },
@@ -87,31 +87,41 @@ export class ProfileNetwork extends React.Component {
         );
       } catch (e) {
         if (axios.isCancel(e)) {
-          console.log(e.message);
+          return console.log(e.message);
         }
         console.log(e);
       }
     }
   }
 
+  componentWillUnmount() {
+    this.signal.cancel("Async call cancelled.");
+  }
+
   onFollow = async () => {
     try {
-      await axios.post(`/api/profile/follows/add/${this.props.userid}`);
+      await onFollow(this.signal.token, this.props.userId);
     } catch (e) {
+      if (axios.isCancel(e)) {
+        return console.log(e.message);
+      }
       console.log(e);
     }
   };
 
   onUnfollow = async () => {
     try {
-      await axios.delete(`/api/profile/follows/unf/${this.props.userid}`);
+      await onUnfollow(this.signal.token, this.props.userId);
     } catch (e) {
+      if (axios.isCancel(e)) {
+        return console.log(e.message);
+      }
       console.log(e);
     }
   };
 
   render() {
-    const { classes, userid, auth, ownProfile } = this.props;
+    const { classes, userId, auth, ownProfile } = this.props;
     return (
       <div className={classes.root}>
         <div className={classes.info}>
@@ -125,7 +135,7 @@ export class ProfileNetwork extends React.Component {
                 </Typography>
               }
               modalComponent={
-                <ProfileNetworkTabs tabPosition={1} userId={userid} />
+                <ProfileNetworkTabs tabPosition={1} userId={userId} />
               }
             />
           </div>
@@ -143,7 +153,7 @@ export class ProfileNetwork extends React.Component {
                 </Typography>
               }
               modalComponent={
-                <ProfileNetworkTabs tabPosition={1} userId={userid} />
+                <ProfileNetworkTabs tabPosition={1} userId={userId} />
               }
             />
           </div>
@@ -173,7 +183,7 @@ export class ProfileNetwork extends React.Component {
                     </Button>
                   }
                   modalComponent={
-                    <MessageForm withSnackbar={true} userId={userid} />
+                    <MessageForm withSnackbar={true} userId={userId} />
                   }
                 />
               </div>
@@ -189,7 +199,7 @@ const mapStateToProps = ({ auth }) => ({
 });
 
 ProfileNetwork.propTypes = {
-  userid: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
   ownProfile: PropTypes.bool.isRequired
 };
 

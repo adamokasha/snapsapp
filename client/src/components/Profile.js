@@ -16,7 +16,9 @@ import axios from "axios";
 import ProfileHeader from "./ProfileHeader";
 import ProfileNetwork from "./ProfileNetwork";
 import CustomSnackbar from "./CustomSnackbar";
+
 import { updateProfile } from "../actions/auth";
+import { fetchProfile, setProfile } from "../async/profiles";
 
 const styles = theme => ({
   root: {
@@ -139,14 +141,17 @@ export class Profile extends React.Component {
       snackbarOpen: false,
       snackbarMessage: null
     };
+
+    this.signal = axios.CancelToken.source();
   }
 
   async componentDidMount() {
     try {
-      const res = await axios.get(
-        `/api/profile/get/${this.props.match.params.user}`
+      const { data } = await fetchProfile(
+        this.signal.token,
+        this.props.match.params.user
       );
-      const { profilePhoto, joined, displayName, profile, _id } = res.data;
+      const { profilePhoto, joined, displayName, profile, _id } = data;
       this.setState(
         { id: _id, profilePhoto, displayName, joined, ...profile },
         () => {
@@ -154,11 +159,18 @@ export class Profile extends React.Component {
         }
       );
     } catch (e) {
+      if (axios.isCancel(e)) {
+        return console.log(e.message);
+      }
       this.setState(
         { snackbarOpen: true, snackbarMessage: "Could not find profile." },
         () => {}
       );
     }
+  }
+
+  componentWillUnmount() {
+    this.signal.cancel("Async call cancelled.");
   }
 
   checkIfProfileOwner = () => {
@@ -189,20 +201,22 @@ export class Profile extends React.Component {
       try {
         const { name, website, facebook, gplus, twitter, about } = this.state;
         const profile = {
-          profile: {
-            name,
-            website,
-            facebook,
-            gplus,
-            twitter,
-            about
-          }
+          name,
+          website,
+          facebook,
+          gplus,
+          twitter,
+          about
         };
-        await axios.post("/api/profile/update", profile);
+        await setProfile(this.signal.token, profile);
+
         console.log(profile);
         this.props.updateProfile(profile);
         this.setState({ editEnabled: false, isLoading: false });
       } catch (e) {
+        if (axios.isCancel(e)) {
+          return console.log(e.message);
+        }
         this.setState({
           isLoading: false,
           snackbarOpen: true,
@@ -271,7 +285,7 @@ export class Profile extends React.Component {
               <Divider />
               <ProfileNetwork
                 ownProfile={this.state.ownProfile}
-                userid={this.state.id}
+                userId={this.state.id}
               />
             </div>
             <Divider className={classes.networkDivider} />
@@ -431,7 +445,7 @@ const mapStateToProps = ({ auth }) => ({
 });
 
 Profile.propTypes = {
-  user: PropTypes.string.isRequired
+  // user: PropTypes.string
 };
 
 export default compose(

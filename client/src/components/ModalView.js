@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Modal from '@material-ui/core/Modal';
+import React from "react";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import Modal from "@material-ui/core/Modal";
 
-import CustomSnackbar from './CustomSnackbar';
+import CustomSnackbar from "./CustomSnackbar";
 
 const styles = theme => ({});
 
@@ -12,7 +12,7 @@ class ModalView extends React.Component {
     open: false,
     snackbarOpen: false,
     snackbarVar: null,
-    snackbarMessage: null
+    snackbarMessage: ""
   };
 
   handleOpen = () => {
@@ -67,7 +67,7 @@ class ModalView extends React.Component {
         {modalComponent.props.withSnackbar && (
           <CustomSnackbar
             variant={this.state.snackbarVar}
-            message={this.state.snackbarOpen && this.state.snackbarMessage}
+            message={this.state.snackbarMessage}
             onSnackbarOpen={this.onSnackbarOpen}
             onSnackbarClose={this.onSnackbarClose}
             snackbarOpen={this.state.snackbarOpen}
