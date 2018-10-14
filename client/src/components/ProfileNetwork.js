@@ -14,6 +14,8 @@ import ModalView from "./ModalView";
 import ProfileNetworkTabs from "./ProfileNetworkTabs";
 import MessageForm from "./MessageForm";
 
+import { fetchFollows } from "../async/profiles";
+
 const styles = theme => ({
   root: {
     display: "flex",
@@ -47,6 +49,25 @@ export class ProfileNetwork extends React.Component {
       followsCount: "",
       clientFollows: null
     };
+
+    this.signal = axios.CancelToken.source();
+  }
+
+  async componentDidMount() {
+    try {
+      // User navigated to a profile that doesn't exist
+      if (!this.props.userid) {
+        throw new Error();
+      }
+      const data = await fetchFollows(this.signal.token, this.props.userid);
+      const { followsCount, followersCount, clientFollows } = data;
+      this.setState({ followersCount, followsCount, clientFollows }, () => {});
+    } catch (e) {
+      if (axios.isCancel(e)) {
+        console.log(e.message);
+      }
+      console.log(e);
+    }
   }
 
   async componentDidUpdate(prevProps) {
@@ -57,13 +78,17 @@ export class ProfileNetwork extends React.Component {
         if (!this.props.userid) {
           throw new Error();
         }
-        const res = await axios.get(`/api/profile/count/${this.props.userid}`);
-        const { followsCount, followersCount, clientFollows } = res.data[0];
+        // const res = await axios.get(`/api/profile/count/${this.props.userid}`);
+        const data = await fetchFollows(this.signal.token, this.props.userid);
+        const { followsCount, followersCount, clientFollows } = data;
         this.setState(
           { followersCount, followsCount, clientFollows },
           () => {}
         );
       } catch (e) {
+        if (axios.isCancel(e)) {
+          console.log(e.message);
+        }
         console.log(e);
       }
     }
@@ -86,7 +111,7 @@ export class ProfileNetwork extends React.Component {
   };
 
   render() {
-    const { classes, userid, auth } = this.props;
+    const { classes, userid, auth, ownProfile } = this.props;
     return (
       <div className={classes.root}>
         <div className={classes.info}>
@@ -123,36 +148,37 @@ export class ProfileNetwork extends React.Component {
             />
           </div>
         </div>
-        {auth ? (
-          <div className={classes.actions}>
-            <div>
-              {this.state.clientFollows ? (
-                <Button onClick={this.onUnfollow}>
-                  <PersonAddOutlined className={classes.leftIcon} />
-                  Unfollow
-                </Button>
-              ) : (
-                <Button onClick={this.onFollow}>
-                  <PersonAddOutlined className={classes.leftIcon} />
-                  Follow
-                </Button>
-              )}
-            </div>
-            <div>
-              <ModalView
-                togglerComponent={
-                  <Button>
-                    <MailOutlinedIcon className={classes.leftIcon} />
-                    Message
+        {auth &&
+          !ownProfile && (
+            <div className={classes.actions}>
+              <div>
+                {this.state.clientFollows ? (
+                  <Button size="small" onClick={this.onUnfollow}>
+                    <PersonAddOutlined className={classes.leftIcon} />
+                    Unfollow
                   </Button>
-                }
-                modalComponent={
-                  <MessageForm withSnackbar={true} userId={userid} />
-                }
-              />
+                ) : (
+                  <Button size="small" onClick={this.onFollow}>
+                    <PersonAddOutlined className={classes.leftIcon} />
+                    Follow
+                  </Button>
+                )}
+              </div>
+              <div>
+                <ModalView
+                  togglerComponent={
+                    <Button size="small">
+                      <MailOutlinedIcon className={classes.leftIcon} />
+                      Message
+                    </Button>
+                  }
+                  modalComponent={
+                    <MessageForm withSnackbar={true} userId={userid} />
+                  }
+                />
+              </div>
             </div>
-          </div>
-        ) : null}
+          )}
       </div>
     );
   }
@@ -163,7 +189,8 @@ const mapStateToProps = ({ auth }) => ({
 });
 
 ProfileNetwork.propTypes = {
-  userid: PropTypes.string.isRequired
+  userid: PropTypes.string.isRequired,
+  ownProfile: PropTypes.bool.isRequired
 };
 
 export default compose(

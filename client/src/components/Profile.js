@@ -42,6 +42,13 @@ const styles = theme => ({
       width: "35%"
     }
   },
+  profileHeading: {
+    display: "flex",
+    flexDirection: "row"
+  },
+  profileHeadingMR: {
+    marginRight: `${theme.spacing.unit * 3}px`
+  },
   linearLoader: {
     width: "100%",
     position: "absolute",
@@ -245,17 +252,28 @@ export class Profile extends React.Component {
                 color="secondary"
               />
             )}
-            <ProfileHeader
-              ownProfile={this.state.ownProfile}
-              editEnabled={this.state.editEnabled}
-              profilePhoto={this.state.profilePhoto}
-              displayName={this.state.displayName}
-              joined={this.state.joined}
-              cancelEdit={this.cancelEdit}
-              enableEdit={this.enableEdit}
-            />
-            <Divider />
-            <ProfileNetwork userid={this.state.id} />
+            <div
+              className={
+                this.state.ownProfile
+                  ? classNames(classes.profileHeading, classes.profileHeadingMR)
+                  : classes.profileHeading
+              }
+            >
+              <ProfileHeader
+                ownProfile={this.state.ownProfile}
+                editEnabled={this.state.editEnabled}
+                profilePhoto={this.state.profilePhoto}
+                displayName={this.state.displayName}
+                joined={this.state.joined}
+                cancelEdit={this.cancelEdit}
+                enableEdit={this.enableEdit}
+              />
+              <Divider />
+              <ProfileNetwork
+                ownProfile={this.state.ownProfile}
+                userid={this.state.id}
+              />
+            </div>
             <Divider className={classes.networkDivider} />
             <form
               onSubmit={this.onSubmit}
