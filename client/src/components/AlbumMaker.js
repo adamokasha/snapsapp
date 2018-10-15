@@ -17,6 +17,7 @@ import axios from "axios";
 import AlbumMakerImageView from "./AlbumMakerImageView";
 import CustomSnackbar from "./CustomSnackbar";
 import { fetchUserPosts } from "../actions/posts";
+import { fetchAlbumPosts, createAlbum, updateAlbum } from "../async/albums";
 
 const styles = theme => ({
   root: {
@@ -142,15 +143,12 @@ class AlbumMaker extends React.Component {
         this.setState({ posts: [...res] }, async () => {
           // retrieve current album posts from db (editing an album)
           if (this.props.albumId) {
-            const res = await axios.get(
-              `/api/albums/get/${this.props.albumId}`
-            );
-            console.log(res);
-            const currentAlbumPostIds = res.data.map(imgData => imgData._id);
+            const { data } = await fetchAlbumPosts(this.props.albumId);
+            const currentAlbumPostIds = data.map(imgData => imgData._id);
             return this.setState(
               {
                 selected: [...currentAlbumPostIds],
-                currentAlbumPosts: [...res.data],
+                currentAlbumPosts: [...data],
                 isLoading: false
               },
               () => {}
@@ -198,11 +196,9 @@ class AlbumMaker extends React.Component {
     e.preventDefault();
     this.setState({ isSaving: true }, async () => {
       try {
+        const { selected, albumName } = this.state;
         if (this.props.method === "patch") {
-          await axios.patch(`/api/albums/update/${this.props.albumId}`, {
-            albumPosts: this.state.selected,
-            albumName: this.state.albumName
-          });
+          await updateAlbum(this.props.albumId, albumName, selected);
           return this.setState(
             {
               isSaving: false,
@@ -215,8 +211,7 @@ class AlbumMaker extends React.Component {
             }
           );
         }
-        const { selected, albumName } = this.state;
-        await axios.post("/api/albums", { albumPosts: selected, albumName });
+        await createAlbum(selected, albumName);
         this.setState(
           {
             isSaving: false,
