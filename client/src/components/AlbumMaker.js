@@ -1,6 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
-import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -12,10 +10,11 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import SaveIcon from "@material-ui/icons/Save";
 import CloseIcon from "@material-ui/icons/Close";
+import axios from "axios";
 
 import AlbumMakerImageView from "./AlbumMakerImageView";
 import CustomSnackbar from "./CustomSnackbar";
-import { fetchUserPosts } from "../actions/posts";
+import { fetchUserPosts } from "../async/posts";
 import { fetchAlbumPosts, createAlbum, updateAlbum } from "../async/albums";
 
 const styles = theme => ({
@@ -119,30 +118,39 @@ const styles = theme => ({
 });
 
 class AlbumMaker extends React.Component {
-  // selected should always be only a list of post _id's
-  // posts and album posts are objs with _id and imgUrl keys
-  state = {
-    value: 1,
-    currentAlbumPosts: [],
-    posts: [],
-    selected: [],
-    albumName: this.props.albumName || "",
-    isLoading: false,
-    isSaving: false,
-    snackbarOpen: false,
-    snackbarVar: "",
-    snackbarMessage: "success"
-  };
+  constructor(props) {
+    super(props);
+
+    // selected should always be only a list of post _id's
+    // posts and album posts are objs with _id and imgUrl keys
+    this.state = {
+      value: 1,
+      currentAlbumPosts: [],
+      posts: [],
+      selected: [],
+      albumName: this.props.albumName || "",
+      isLoading: false,
+      isSaving: false,
+      snackbarOpen: false,
+      snackbarVar: "success",
+      snackbarMessage: "success"
+    };
+
+    this.signal = axios.CancelToken.source();
+  }
 
   componentDidMount() {
     this.setState({ isLoading: true }, async () => {
       try {
         // fetch all posts
-        const res = await this.props.fetchUserPosts();
-        this.setState({ posts: [...res] }, async () => {
+        const { data } = await fetchUserPosts(this.signal.token);
+        this.setState({ posts: [...data] }, async () => {
           // retrieve current album posts from db (editing an album)
           if (this.props.albumId) {
-            const { data } = await fetchAlbumPosts(this.props.albumId);
+            const { data } = await fetchAlbumPosts(
+              this.signal.token,
+              this.props.albumId
+            );
             const currentAlbumPostIds = data.map(imgData => imgData._id);
             return this.setState(
               {
@@ -156,6 +164,9 @@ class AlbumMaker extends React.Component {
           this.setState({ isLoading: false });
         });
       } catch (e) {
+        if (axios.isCancel(e)) {
+          return console.log(e.message);
+        }
         this.setState(
           {
             isSaving: false,
@@ -168,6 +179,10 @@ class AlbumMaker extends React.Component {
         );
       }
     });
+  }
+
+  componentWillUnmount() {
+    this.signal.cancel("Async call cancelled.");
   }
 
   filterAlbumPhotos = () => {
@@ -206,7 +221,12 @@ class AlbumMaker extends React.Component {
       try {
         const { selected, albumName } = this.state;
         if (this.props.method === "patch") {
-          await updateAlbum(this.props.albumId, albumName, selected);
+          await updateAlbum(
+            this.signal.token,
+            this.props.albumId,
+            albumName,
+            selected
+          );
           return this.setState(
             {
               isSaving: false,
@@ -219,7 +239,7 @@ class AlbumMaker extends React.Component {
             }
           );
         }
-        await createAlbum(selected, albumName);
+        await createAlbum(this.signal.token, selected, albumName);
         this.setState(
           {
             isSaving: false,
@@ -232,6 +252,9 @@ class AlbumMaker extends React.Component {
           }
         );
       } catch (e) {
+        if (axios.isCancel(e)) {
+          return console.log(e.message);
+        }
         this.setState(
           {
             isSaving: false,
@@ -365,10 +388,4 @@ AlbumMaker.propTypes = {
   withSnackbar: PropTypes.bool.isRequired
 };
 
-export default compose(
-  withStyles(styles),
-  connect(
-    null,
-    { fetchUserPosts }
-  )
-)(AlbumMaker);
+export default withStyles(styles)(AlbumMaker);
