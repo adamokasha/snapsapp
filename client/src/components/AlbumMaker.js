@@ -6,9 +6,11 @@ import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import SaveIcon from "@material-ui/icons/Save";
+import CloseIcon from "@material-ui/icons/Close";
 import axios from "axios";
 
 import AlbumMakerImageView from "./AlbumMakerImageView";
@@ -49,6 +51,12 @@ const styles = theme => ({
       fontSize: ".7rem"
     }
   },
+  circularProgress: {
+    position: "absolute",
+    top: "40%",
+    left: "50%",
+    transform: "translate(-50%, -50%)"
+  },
   imgContainer: {
     position: "relative"
   },
@@ -85,7 +93,10 @@ const styles = theme => ({
   formContainer: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column"
+    }
   },
   textField: {
     marginLeft: theme.spacing.unit,
@@ -107,28 +118,38 @@ class AlbumMaker extends React.Component {
     currentAlbumPosts: [],
     posts: [],
     selected: [],
-    albumName: this.props.albumName || ""
+    albumName: this.props.albumName || "",
+    isLoading: false
   };
 
-  async componentDidMount() {
-    try {
-      // fetch all posts
-      const res = await this.props.fetchUserPosts();
-      this.setState({ posts: [...res] });
-
-      // retrieve current album from db
-      // set album as state.currentAlbumPosts and state.selected
-      // do sync
-      if (this.props.albumId) {
-        const res = await axios.get(`/api/albums/get/${this.props.albumId}`);
-        console.log(res);
-        const currentAlbumPostIds = res.data.map(imgData => imgData._id);
-        await this.setState({ selected: [...currentAlbumPostIds] }, () => {});
-        await this.setState({ currentAlbumPosts: [...res.data] }, () => {});
+  componentDidMount() {
+    this.setState({ isLoading: true }, async () => {
+      try {
+        // fetch all posts
+        const res = await this.props.fetchUserPosts();
+        this.setState({ posts: [...res] }, async () => {
+          // retrieve current album posts from db (editing an album)
+          if (this.props.albumId) {
+            const res = await axios.get(
+              `/api/albums/get/${this.props.albumId}`
+            );
+            console.log(res);
+            const currentAlbumPostIds = res.data.map(imgData => imgData._id);
+            return this.setState(
+              {
+                selected: [...currentAlbumPostIds],
+                currentAlbumPosts: [...res.data],
+                isLoading: false
+              },
+              () => {}
+            );
+          }
+          this.setState({ isLoading: false });
+        });
+      } catch (e) {
+        console.log(e);
       }
-    } catch (e) {
-      console.log(e);
-    }
+    });
   }
 
   filterAlbumPhotos = () => {
@@ -164,13 +185,15 @@ class AlbumMaker extends React.Component {
   onSaveAlbum = async e => {
     e.preventDefault();
     if (this.props.method === "patch") {
-      return await axios.patch(`/api/albums/update/${this.props.albumId}`, {
+      await axios.patch(`/api/albums/update/${this.props.albumId}`, {
         albumPosts: this.state.selected,
         albumName: this.state.albumName
       });
+      return this.props.handleClose();
     }
     const { selected, albumName } = this.state;
     await axios.post("/api/albums", { albumPosts: selected, albumName });
+    this.props.handleClose();
   };
 
   render() {
@@ -205,6 +228,11 @@ class AlbumMaker extends React.Component {
             />
           </Tabs>
         </AppBar>
+        {this.state.isLoading && (
+          <div className={classes.circularProgress}>
+            <CircularProgress color="secondary" />
+          </div>
+        )}
         {this.state.value === 0 ? (
           <AlbumMakerImageView
             selected={this.state.selected}
@@ -227,29 +255,31 @@ class AlbumMaker extends React.Component {
           />
         ) : null}
 
-        <div className={classes.formContainer}>
-          <form onSubmit={this.onSaveAlbum}>
-            <TextField
-              id="outlined-name-input"
-              label="Album Name"
-              className={classes.textField}
-              type="text"
-              name="name"
-              margin="normal"
-              variant="filled"
-              onChange={this.onAlbumNameChange}
-              value={this.state.albumName}
-            />
-            <Button
-              variant="contained"
-              type="submit"
-              className={classes.button}
-            >
-              <SaveIcon className={classes.leftIcon} />
-              Save
-            </Button>
-          </form>
-        </div>
+        <form className={classes.formContainer} onSubmit={this.onSaveAlbum}>
+          <TextField
+            id="outlined-name-input"
+            label="Album Name"
+            className={classes.textField}
+            type="text"
+            name="name"
+            margin="normal"
+            variant="filled"
+            onChange={this.onAlbumNameChange}
+            value={this.state.albumName}
+          />
+          <Button variant="contained" type="submit" className={classes.button}>
+            <SaveIcon className={classes.leftIcon} />
+            Save
+          </Button>
+          <Button
+            variant="contained"
+            className={classes.button}
+            onClick={() => this.props.handleClose()}
+          >
+            <CloseIcon className={classes.leftIcon} />
+            Close
+          </Button>
+        </form>
       </div>
     );
   }

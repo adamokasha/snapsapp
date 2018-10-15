@@ -17,7 +17,7 @@ const styles = theme => ({
   root: {
     backgroundColor: `${theme.palette.background.paper}`
   },
-  circularLoader: {
+  circularProgress: {
     margin: "16px auto",
     display: "block"
   },
@@ -323,7 +323,7 @@ export class ScrollView extends React.Component {
           : null}
 
         {this.state.isFetching ? (
-          <CircularProgress className={classes.circularLoader} size={50} />
+          <CircularProgress className={classes.circularProgress} size={50} />
         ) : null}
       </div>
     );
