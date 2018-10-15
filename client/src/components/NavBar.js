@@ -1,27 +1,27 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
-import compose from 'recompose/compose';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import AppBar from '@material-ui/core/AppBar';
-import Avatar from '@material-ui/core/Avatar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/Inbox';
-import CameraIcon from '@material-ui/icons/Camera';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import Button from '@material-ui/core/Button';
-import Badge from '@material-ui/core/Badge';
-import axios from 'axios';
+import React from "react";
+import { connect } from "react-redux";
+import { withStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
+import compose from "recompose/compose";
+import classNames from "classnames";
+import PropTypes from "prop-types";
+import AppBar from "@material-ui/core/AppBar";
+import Avatar from "@material-ui/core/Avatar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import InboxIcon from "@material-ui/icons/Inbox";
+import CameraIcon from "@material-ui/icons/Camera";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@material-ui/core/Menu";
+import Button from "@material-ui/core/Button";
+import Badge from "@material-ui/core/Badge";
+import axios from "axios";
 
-import ModalView from './ModalView';
-import ImageUploadForm from './ImageUploadForm';
-import { updateMboxNotif } from '../actions/auth';
+import ModalView from "./ModalView";
+import ImageUploadForm from "./ImageUploadForm";
+import { updateMboxNotif } from "../actions/auth";
 
 const styles = theme => ({
   root: {
@@ -31,22 +31,22 @@ const styles = theme => ({
     flexGrow: 1
   },
   logo: {
-    display: 'flex'
+    display: "flex"
   },
   logoIcon: {
     marginRight: `${theme.spacing.unit}px`
   },
   nav: {
-    display: 'flex',
-    marginLeft: 'auto'
+    display: "flex",
+    marginLeft: "auto"
   },
   iconButton: {
-    color: '#fff !important'
+    color: "#fff !important"
   },
   aTag: {
     padding: 0,
-    color: 'inherit',
-    textDecoration: 'none'
+    color: "inherit",
+    textDecoration: "none"
   }
 });
 
@@ -62,7 +62,7 @@ class NavBar extends React.Component {
 
   async componentDidMount() {
     try {
-      const res = await axios.get('/api/message/count');
+      const res = await axios.get("/api/message/count");
       this.props.updateMboxNotif(res.data.size);
       this.setState({ mBoxUnreadCount: res.data.size }, () => {});
     } catch (e) {
@@ -89,7 +89,7 @@ class NavBar extends React.Component {
   };
 
   selectPostFormView = () => {
-    const {classes} = this.props;
+    const { classes } = this.props;
     if (window.screen.width < 600 || window.innerWidth < 600) {
       return (
         <Link to="/upload">
@@ -130,7 +130,7 @@ class NavBar extends React.Component {
         </Link>
 
         <IconButton
-          aria-owns={open ? 'menu-appbar' : null}
+          aria-owns={open ? "menu-appbar" : null}
           aria-haspopup="true"
           onClick={this.handleMenu}
           color="inherit"
@@ -141,12 +141,12 @@ class NavBar extends React.Component {
           id="menu-appbar"
           anchorEl={anchorEl}
           anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right'
+            vertical: "top",
+            horizontal: "right"
           }}
           transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right'
+            vertical: "top",
+            horizontal: "right"
           }}
           open={open}
           onClose={this.handleClose}

@@ -7,7 +7,6 @@ const Faves = mongoose.model("Faves");
 const Follows = mongoose.model("Follows");
 const Followers = mongoose.model("Followers");
 const MessageBox = mongoose.model("MessageBox");
-const Message = mongoose.model("Message");
 
 module.exports = app => {
   app.get(
@@ -44,18 +43,14 @@ module.exports = app => {
   app.post("/auth/register", requireAuth, async (req, res) => {
     try {
       if (req.user.registered === true) {
-        return res.status(400).send({
-          error: "You have already registered."
-        });
+        throw new Error("You have already registered.");
       }
       const existingUser = await User.findOne({
-        displayName_lower: req.body.displayName
+        displayName_lower: req.body.displayName.toLowerCase()
       });
 
       if (existingUser) {
-        return res.status(400).send({
-          error: "Display name already in use. Please choose another."
-        });
+        throw new Error("Display name already in use! Try another.");
       }
 
       await User.findByIdAndUpdate(
@@ -82,9 +77,11 @@ module.exports = app => {
         _owner: req.user.id
       }).save();
 
-      res.redirect("/");
+      res
+        .status(200)
+        .send({ success: "You have been registered successfully!" });
     } catch (e) {
-      res.send({ error: "Something went wrong. Please try again" });
+      res.status(400).send({ error: e.message });
     }
   });
 

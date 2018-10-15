@@ -5,7 +5,7 @@ const userSchema = new Schema({
   googleId: String,
   facebookId: String,
   profilePhoto: String,
-  displayName: String,
+  displayName: { type: String, minlength: 4, maxlength: 12 },
   displayName_lower: { type: String, lowercase: true },
   joined: Number,
   profile: {
