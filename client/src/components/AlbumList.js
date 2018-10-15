@@ -1,38 +1,38 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import IconButton from '@material-ui/core/IconButton';
-import axios from 'axios';
+import React from "react";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import GridList from "@material-ui/core/GridList";
+import GridListTile from "@material-ui/core/GridListTile";
+import GridListTileBar from "@material-ui/core/GridListTileBar";
+import IconButton from "@material-ui/core/IconButton";
+import axios from "axios";
 
-import ModalView from './ModalView';
-import AlbumMaker from './AlbumMaker';
+import ModalView from "./ModalView";
+import AlbumMaker from "./AlbumMaker";
 
 const styles = theme => ({
   root: {},
   gridListRoot: {
-    width: '100%',
+    width: "100%",
     margin: `${theme.spacing.unit * 3}px auto`,
-    minHeight: '500px'
+    minHeight: "500px"
   },
   gridList: {
-    width: '100%',
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'center'
+    width: "100%",
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center"
   },
   listTile: {
-    height: '200px !important',
-    width: '200px !important'
+    height: "200px !important",
+    width: "200px !important"
   },
   icon: {
-    color: 'rgba(255, 255, 255, 0.54)',
-    visibility: 'hidden',
-    opacity: '0',
-    transition: 'visibility 0s, opacity .3s ease'
+    color: "rgba(255, 255, 255, 0.54)",
+    visibility: "hidden",
+    opacity: "0",
+    transition: "visibility 0s, opacity .3s ease"
   }
 });
 
@@ -55,14 +55,14 @@ class AlbumList extends React.Component {
       'button[class*="MuiIconButton"]'
     )[0];
 
-    if (actionIcon && e.type === 'mouseenter') {
-      actionIcon.style.visibility = 'visible';
-      actionIcon.style.opacity = '1';
+    if (actionIcon && e.type === "mouseenter") {
+      actionIcon.style.visibility = "visible";
+      actionIcon.style.opacity = "1";
       return;
     }
-    if (actionIcon && e.type === 'mouseleave') {
-      actionIcon.style.visibility = 'hidden';
-      actionIcon.style.opacity = '0';
+    if (actionIcon && e.type === "mouseleave") {
+      actionIcon.style.visibility = "hidden";
+      actionIcon.style.opacity = "0";
       return;
     }
   };
@@ -83,9 +83,7 @@ class AlbumList extends React.Component {
             >
               <Link
                 to={{
-                  pathname: `/albums/${
-                    album._owner.displayName
-                  }/${album._id}`,
+                  pathname: `/albums/${album._owner.displayName}/${album._id}`,
                   state: { albumId: album._id }
                 }}
               >
@@ -113,6 +111,7 @@ class AlbumList extends React.Component {
                       <AlbumMaker
                         albumId={album._id}
                         albumName={album.name}
+                        withSnackbar={true}
                         method="patch"
                       />
                     }

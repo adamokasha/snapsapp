@@ -15,6 +15,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import axios from "axios";
 
 import AlbumMakerImageView from "./AlbumMakerImageView";
+import CustomSnackbar from "./CustomSnackbar";
 import { fetchUserPosts } from "../actions/posts";
 
 const styles = theme => ({
@@ -127,7 +128,10 @@ class AlbumMaker extends React.Component {
     selected: [],
     albumName: this.props.albumName || "",
     isLoading: false,
-    isSaving: false
+    isSaving: false,
+    snackbarOpen: false,
+    snackbarVar: "",
+    snackbarMessage: "success"
   };
 
   componentDidMount() {
@@ -199,17 +203,40 @@ class AlbumMaker extends React.Component {
             albumPosts: this.state.selected,
             albumName: this.state.albumName
           });
-          return this.setState({ isSaving: false }, () =>
-            this.props.handleClose()
+          return this.setState(
+            {
+              isSaving: false,
+              snackbarVar: "success",
+              snackbarMessage: "Album updated successfully!"
+            },
+            () => {
+              this.onSnackbarSet();
+              this.props.handleClose();
+            }
           );
         }
         const { selected, albumName } = this.state;
         await axios.post("/api/albums", { albumPosts: selected, albumName });
-        this.setState({ isSaving: false }, () => this.props.handleClose());
+        this.setState(
+          {
+            isSaving: false,
+            snackbarVar: "success",
+            snackbarMessage: "Album created successfully!"
+          },
+          () => {
+            this.onSnackbarSet();
+            this.props.handleClose();
+          }
+        );
       } catch (e) {
         console.log(e);
       }
     });
+  };
+
+  onSnackbarSet = () => {
+    const { snackbarVar, snackbarMessage } = this.state;
+    this.props.onSnackbarSet(snackbarVar, snackbarMessage);
   };
 
   render() {
@@ -308,6 +335,13 @@ class AlbumMaker extends React.Component {
             Close
           </Button>
         </form>
+        <CustomSnackbar
+          variant={this.state.snackbarVar}
+          snackbarOpen={this.state.snackbarOpen}
+          message={this.state.snackbarMessage}
+          onSnackbarOpen={this.onSnackbarOpen}
+          onSnackbarClose={this.onSnackbarClose}
+        />
       </div>
     );
   }
@@ -315,7 +349,8 @@ class AlbumMaker extends React.Component {
 
 AlbumMaker.propTypes = {
   classes: PropTypes.object.isRequired,
-  method: PropTypes.string.isRequired
+  method: PropTypes.string.isRequired,
+  withSnackbar: PropTypes.bool.isRequired
 };
 
 export default compose(

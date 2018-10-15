@@ -1,20 +1,20 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import AddPhotoAlternate from '@material-ui/icons/AddPhotoAlternate';
-import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
+import React from "react";
+import Typography from "@material-ui/core/Typography";
+import AddPhotoAlternate from "@material-ui/icons/AddPhotoAlternate";
+import Button from "@material-ui/core/Button";
+import { withStyles } from "@material-ui/core/styles";
 
-import AlbumList from '../components/AlbumList';
-import NavBar from '../components/NavBar';
-import ModalView from '../components/ModalView';
-import AlbumMaker from '../components/AlbumMaker';
-import axios from 'axios';
+import AlbumList from "../components/AlbumList";
+import NavBar from "../components/NavBar";
+import ModalView from "../components/ModalView";
+import AlbumMaker from "../components/AlbumMaker";
+import axios from "axios";
 
 const styles = theme => ({
   fab: {
-    position: 'fixed',
-    bottom: '10%',
-    right: '5%'
+    position: "fixed",
+    bottom: "10%",
+    right: "5%"
   }
 });
 
@@ -28,7 +28,7 @@ export class AlbumsPage extends React.Component {
   }
 
   async componentDidMount() {
-    const albums = await axios.get('/api/albums/myalbums');
+    const albums = await axios.get("/api/albums/myalbums");
     this.setState({ albums: [...albums.data] });
   }
 
@@ -57,7 +57,7 @@ export class AlbumsPage extends React.Component {
               <AddPhotoAlternate />
             </Button>
           }
-          modalComponent={<AlbumMaker method="post" />}
+          modalComponent={<AlbumMaker withSnackbar={true} method="post" />}
         />
         <AlbumList albums={this.state.albums} />
       </div>
