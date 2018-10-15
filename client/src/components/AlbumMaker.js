@@ -1,81 +1,103 @@
-import React from 'react';
-import {connect} from 'react-redux';
-import compose from 'recompose/compose';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import SaveIcon from '@material-ui/icons/Save';
-import axios from 'axios';
+import React from "react";
+import { connect } from "react-redux";
+import compose from "recompose/compose";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import SaveIcon from "@material-ui/icons/Save";
+import axios from "axios";
 
-import AlbumMakerImageView from './AlbumMakerImageView';
-import {fetchUserPosts} from '../actions/posts';
+import AlbumMakerImageView from "./AlbumMakerImageView";
+import { fetchUserPosts } from "../actions/posts";
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
-    width: '80%',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    width: "95%",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
     paddingBottom: `${theme.spacing.unit}px`,
-    borderRadius: '3px'
+    borderRadius: "3px",
+    [theme.breakpoints.up("sm")]: {
+      width: "80%"
+    },
+    [theme.breakpoints.up("md")]: {
+      width: "60%"
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "40%"
+    },
+    [theme.breakpoints.up("xl")]: {
+      width: "30%"
+    }
+  },
+  tabLabelContainer: {
+    [theme.breakpoints.down("sm")]: {
+      padding: "6px",
+      fontWeight: 600
+    }
+  },
+  tabLabel: {
+    [theme.breakpoints.down("sm")]: {
+      fontSize: ".7rem"
+    }
   },
   imgContainer: {
-    position: 'relative'
+    position: "relative"
   },
   dummyImg: {
-    height: '200px',
-    width: 'auto',
-    marginLeft: '8px'
+    height: "200px",
+    width: "auto",
+    marginLeft: "8px"
   },
   checkIconContainer: {
-    position: 'absolute',
-    top: '1%',
-    right: '1%',
-    backgroundColor: '#fff',
-    width: '28px',
-    height: '28px',
-    borderRadius: '5px',
-    opacity: '0.8'
+    position: "absolute",
+    top: "1%",
+    right: "1%",
+    backgroundColor: "#fff",
+    width: "28px",
+    height: "28px",
+    borderRadius: "5px",
+    opacity: "0.8"
   },
   hiddenIconContainer: {
-    display: 'none'
+    display: "none"
   },
   checkIcon: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)'
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)"
   },
   imgSelected: {
-    height: '200px',
-    width: 'auto',
-    marginLeft: '8px',
-    border: '2px solid #000'
+    height: "200px",
+    width: "auto",
+    marginLeft: "8px",
+    border: "2px solid #000"
   },
   formContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center'
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center"
   },
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit
   },
   button: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing.unit
   },
   leftIcon: {
-    marginRight: theme.spacing.unit,
+    marginRight: theme.spacing.unit
   }
 });
-
 
 class AlbumMaker extends React.Component {
   // selected should always be only a list of post _id's
@@ -85,34 +107,35 @@ class AlbumMaker extends React.Component {
     currentAlbumPosts: [],
     posts: [],
     selected: [],
-    albumName: this.props.albumName || ''
+    albumName: this.props.albumName || ""
   };
 
   async componentDidMount() {
     try {
-    // fetch all posts
-    const res = await this.props.fetchUserPosts();
-    this.setState({posts: [...res]})
+      // fetch all posts
+      const res = await this.props.fetchUserPosts();
+      this.setState({ posts: [...res] });
 
-    // retrieve current album from db
-    // set album as state.currentAlbumPosts and state.selected
-    // do sync
-    if(this.props.albumId) {
- 
-      const res = await axios.get(`/api/albums/get/${this.props.albumId}`);
-      console.log(res);
-      const currentAlbumPostIds = res.data.map(imgData => imgData._id);
-      await this.setState({selected: [...currentAlbumPostIds]}, () => {});
-      await this.setState({currentAlbumPosts: [...res.data]},  () => {});
+      // retrieve current album from db
+      // set album as state.currentAlbumPosts and state.selected
+      // do sync
+      if (this.props.albumId) {
+        const res = await axios.get(`/api/albums/get/${this.props.albumId}`);
+        console.log(res);
+        const currentAlbumPostIds = res.data.map(imgData => imgData._id);
+        await this.setState({ selected: [...currentAlbumPostIds] }, () => {});
+        await this.setState({ currentAlbumPosts: [...res.data] }, () => {});
+      }
+    } catch (e) {
+      console.log(e);
     }
-      
-    } catch(e) { console.log(e)}
-    
   }
 
   filterAlbumPhotos = () => {
-    if(this.state.currentAlbumPosts.length > 0) {
-      const currentAlbumPhotoIds = this.state.currentAlbumPosts.map(img => img._id);
+    if (this.state.currentAlbumPosts.length > 0) {
+      const currentAlbumPhotoIds = this.state.currentAlbumPosts.map(
+        img => img._id
+      );
       return this.state.posts.filter(
         img => !currentAlbumPhotoIds.includes(img._id)
       );
@@ -134,17 +157,20 @@ class AlbumMaker extends React.Component {
     this.setState({ selected: [...this.state.selected, imgId] });
   };
 
-  onAlbumNameChange = (e) => {
-    this.setState({albumName: e.target.value})
-  }
+  onAlbumNameChange = e => {
+    this.setState({ albumName: e.target.value });
+  };
 
-  onSaveAlbum = async (e) => {
+  onSaveAlbum = async e => {
     e.preventDefault();
-    if(this.props.method === "patch") {
-      return await axios.patch(`/api/albums/update/${this.props.albumId}`, {albumPosts:this.state.selected, albumName: this.state.albumName});
+    if (this.props.method === "patch") {
+      return await axios.patch(`/api/albums/update/${this.props.albumId}`, {
+        albumPosts: this.state.selected,
+        albumName: this.state.albumName
+      });
     }
-    const {selected, albumName } = this.state;
-    await axios.post('/api/albums', {albumPosts: selected, albumName});
+    const { selected, albumName } = this.state;
+    await axios.post("/api/albums", { albumPosts: selected, albumName });
   };
 
   render() {
@@ -155,53 +181,74 @@ class AlbumMaker extends React.Component {
       <div className={classes.root}>
         <AppBar position="static">
           <Tabs value={value} onChange={this.onTabChange} centered>
-            <Tab label="All Photos" />
-            <Tab label="Non-Album Photos" />
-            <Tab label="This Album's Photos" href="#basic-tabs" />
+            <Tab
+              classes={{
+                labelContainer: classes.tabLabelContainer,
+                label: classes.tabLabel
+              }}
+              label="All Photos"
+            />
+            <Tab
+              classes={{
+                labelContainer: classes.tabLabelContainer,
+                label: classes.tabLabel
+              }}
+              label="Non-Album Photos"
+            />
+            <Tab
+              classes={{
+                labelContainer: classes.tabLabelContainer,
+                label: classes.tabLabel
+              }}
+              label="Album Photos"
+              href="#basic-tabs"
+            />
           </Tabs>
         </AppBar>
-          {this.state.value === 0 ? (
-            <AlbumMakerImageView
-              selected={this.state.selected}
-              onImageSelect={this.onImageSelect}
-              imgData={this.state.posts}
-            />
-          ) : null}
-          {this.state.value === 1 ? (
-            <AlbumMakerImageView
-              selected={this.state.selected}
-              onImageSelect={this.onImageSelect}
-              imgData={this.filterAlbumPhotos()}
-            />
-          ) : null}
-          {this.state.value === 2 ? (
-            <AlbumMakerImageView
-              selected={this.state.selected}
-              onImageSelect={this.onImageSelect}
-              imgData={this.state.currentAlbumPosts}
-            />
-          ) : null}
-        
-        <div className={classes.formContainer}>
-        <form onSubmit={this.onSaveAlbum}>
-          <TextField
-            id="outlined-name-input"
-            label="Album Name"
-            className={classes.textField}
-            type="text"
-            name="name"
-            margin="normal"
-            variant="filled"
-            onChange={this.onAlbumNameChange}
-            value={this.state.albumName}
+        {this.state.value === 0 ? (
+          <AlbumMakerImageView
+            selected={this.state.selected}
+            onImageSelect={this.onImageSelect}
+            imgData={this.state.posts}
           />
-          <Button variant="contained" type="submit" className={classes.button}>
-            <SaveIcon
-              className={classes.leftIcon}
+        ) : null}
+        {this.state.value === 1 ? (
+          <AlbumMakerImageView
+            selected={this.state.selected}
+            onImageSelect={this.onImageSelect}
+            imgData={this.filterAlbumPhotos()}
+          />
+        ) : null}
+        {this.state.value === 2 ? (
+          <AlbumMakerImageView
+            selected={this.state.selected}
+            onImageSelect={this.onImageSelect}
+            imgData={this.state.currentAlbumPosts}
+          />
+        ) : null}
+
+        <div className={classes.formContainer}>
+          <form onSubmit={this.onSaveAlbum}>
+            <TextField
+              id="outlined-name-input"
+              label="Album Name"
+              className={classes.textField}
+              type="text"
+              name="name"
+              margin="normal"
+              variant="filled"
+              onChange={this.onAlbumNameChange}
+              value={this.state.albumName}
             />
-            Save
-          </Button>
-        </form>
+            <Button
+              variant="contained"
+              type="submit"
+              className={classes.button}
+            >
+              <SaveIcon className={classes.leftIcon} />
+              Save
+            </Button>
+          </form>
         </div>
       </div>
     );
@@ -215,5 +262,8 @@ AlbumMaker.propTypes = {
 
 export default compose(
   withStyles(styles),
-  connect(null, {fetchUserPosts})
-)(AlbumMaker)
+  connect(
+    null,
+    { fetchUserPosts }
+  )
+)(AlbumMaker);
