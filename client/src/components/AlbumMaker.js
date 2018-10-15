@@ -7,6 +7,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import SaveIcon from "@material-ui/icons/Save";
@@ -56,6 +57,12 @@ const styles = theme => ({
     top: "40%",
     left: "50%",
     transform: "translate(-50%, -50%)"
+  },
+  linearProgress: {
+    width: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0
   },
   imgContainer: {
     position: "relative"
@@ -119,7 +126,8 @@ class AlbumMaker extends React.Component {
     posts: [],
     selected: [],
     albumName: this.props.albumName || "",
-    isLoading: false
+    isLoading: false,
+    isSaving: false
   };
 
   componentDidMount() {
@@ -182,18 +190,26 @@ class AlbumMaker extends React.Component {
     this.setState({ albumName: e.target.value });
   };
 
-  onSaveAlbum = async e => {
+  onSaveAlbum = e => {
     e.preventDefault();
-    if (this.props.method === "patch") {
-      await axios.patch(`/api/albums/update/${this.props.albumId}`, {
-        albumPosts: this.state.selected,
-        albumName: this.state.albumName
-      });
-      return this.props.handleClose();
-    }
-    const { selected, albumName } = this.state;
-    await axios.post("/api/albums", { albumPosts: selected, albumName });
-    this.props.handleClose();
+    this.setState({ isSaving: true }, async () => {
+      try {
+        if (this.props.method === "patch") {
+          await axios.patch(`/api/albums/update/${this.props.albumId}`, {
+            albumPosts: this.state.selected,
+            albumName: this.state.albumName
+          });
+          return this.setState({ isSaving: false }, () =>
+            this.props.handleClose()
+          );
+        }
+        const { selected, albumName } = this.state;
+        await axios.post("/api/albums", { albumPosts: selected, albumName });
+        this.setState({ isSaving: false }, () => this.props.handleClose());
+      } catch (e) {
+        console.log(e);
+      }
+    });
   };
 
   render() {
@@ -228,6 +244,12 @@ class AlbumMaker extends React.Component {
             />
           </Tabs>
         </AppBar>
+        {this.state.isSaving && (
+          <LinearProgress
+            className={classes.linearProgress}
+            color="secondary"
+          />
+        )}
         {this.state.isLoading && (
           <div className={classes.circularProgress}>
             <CircularProgress color="secondary" />
@@ -267,7 +289,12 @@ class AlbumMaker extends React.Component {
             onChange={this.onAlbumNameChange}
             value={this.state.albumName}
           />
-          <Button variant="contained" type="submit" className={classes.button}>
+          <Button
+            variant="contained"
+            type="submit"
+            className={classes.button}
+            disabled={this.state.isSaving}
+          >
             <SaveIcon className={classes.leftIcon} />
             Save
           </Button>
@@ -275,6 +302,7 @@ class AlbumMaker extends React.Component {
             variant="contained"
             className={classes.button}
             onClick={() => this.props.handleClose()}
+            disabled={this.state.isSaving}
           >
             <CloseIcon className={classes.leftIcon} />
             Close
