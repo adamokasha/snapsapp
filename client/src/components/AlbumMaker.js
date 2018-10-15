@@ -12,7 +12,6 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import SaveIcon from "@material-ui/icons/Save";
 import CloseIcon from "@material-ui/icons/Close";
-import axios from "axios";
 
 import AlbumMakerImageView from "./AlbumMakerImageView";
 import CustomSnackbar from "./CustomSnackbar";
@@ -157,7 +156,16 @@ class AlbumMaker extends React.Component {
           this.setState({ isLoading: false });
         });
       } catch (e) {
-        console.log(e);
+        this.setState(
+          {
+            isSaving: false,
+            snackbarVar: "error",
+            snackbarMessage: "Something went wrong! Try again."
+          },
+          () => {
+            this.onSnackbarSet();
+          }
+        );
       }
     });
   }
@@ -224,7 +232,16 @@ class AlbumMaker extends React.Component {
           }
         );
       } catch (e) {
-        console.log(e);
+        this.setState(
+          {
+            isSaving: false,
+            snackbarVar: "error",
+            snackbarMessage: "Something went wrong! Try again."
+          },
+          () => {
+            this.onSnackbarSet();
+          }
+        );
       }
     });
   };
