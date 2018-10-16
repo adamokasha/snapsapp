@@ -15,7 +15,8 @@ export class FullPostPage extends React.Component {
       post: this.props.location.state ? this.props.location.state.post : null,
       commentsPage: 0,
       comments: [],
-      fetchingComments: false
+      fetchingComments: false,
+      hasMoreComments: true
     };
 
     this.signal = axios.CancelToken.source();
@@ -42,7 +43,6 @@ export class FullPostPage extends React.Component {
               );
               this.setState({
                 comments: [...comments],
-                commentsPage: this.state.commentsPage + 1,
                 fetchingComments: false
               });
             }
@@ -57,57 +57,69 @@ export class FullPostPage extends React.Component {
         );
         this.setState({
           comments: [...comments],
-          commentsPage: this.state.commentsPage + 1,
           fetchingComments: false
         });
       } catch (e) {
         if (axios.isCancel(e)) {
           return console.log(e.message);
         }
-        console.log(e);
+        this.setState({ fetchingComments: false });
       }
     });
   }
 
-  onFetchComments = async () => {
-    try {
-      const { post, commentsPage } = this.state;
-      const { data: comments } = await fetchPostComments(
-        this.signal.token,
-        post._id,
-        commentsPage
-      );
-      this.setState(
-        {
-          commentPage: this.state.commentsPage + 1,
-          comments: [...comments]
-        },
-        () => {}
-      );
-    } catch (e) {
-      console.log(e);
-    }
+  onLoadPrevious = () => {
+    this.setState({ fetchingComments: true, comments: [] }, async () => {
+      try {
+        const { data: comments } = await fetchPostComments(
+          this.signal.token,
+          this.state.post._id,
+          this.state.commentsPage + 1
+        );
+        if (!comments.length) {
+          return this.setState({
+            hasMoreComments: false,
+            fetchingComments: false
+          });
+        }
+        this.setState({
+          commentsPage: this.state.commentsPage + 1,
+          comments: [...comments],
+          fetchingComments: false
+        });
+      } catch (e) {
+        if (axios.isCancel(e)) {
+          return console.log(e.message);
+        }
+        this.setState({ fetchingComments: false });
+      }
+    });
   };
 
-  // onLoadPrevious = () => {
-  //   try {
-  //     const { data: comments } = await fetchPostComments(
-  //       this.signal.token,
-  //       this.state.post._id,
-  //       this.state.commentsPage
-  //     );
-  //   } catch (e) {
-
-  //   }
-  // };
-
-  // onLoadNext = () => {
-  //   try {
-
-  //   } catch (e) {
-
-  //   }
-  // };
+  onLoadNext = () => {
+    this.setState({ fetchingComments: true, comments: [] }, async () => {
+      try {
+        if (this.state.commentsPage === 0) {
+          return this.setState({ fetchingComments: false }, () => {});
+        }
+        const { data: comments } = await fetchPostComments(
+          this.signal.token,
+          this.state.post._id,
+          this.state.commentsPage - 1
+        );
+        this.setState({
+          commentsPage: this.state.commentsPage - 1,
+          comments: [...comments],
+          fetchingComments: false
+        });
+      } catch (e) {
+        if (axios.isCancel(e)) {
+          return console.log(e.message);
+        }
+        this.setState({ fetchingComments: false }, () => {});
+      }
+    });
+  };
 
   componentDidUpdate(prevProps) {
     // Case of uploading new post in modal while FullPostPage is mounted
@@ -129,10 +141,13 @@ export class FullPostPage extends React.Component {
         <NavBar />
         {this.state.post && (
           <FullPost
-            onFetchComments={this.onFetchComments}
-            comments={this.state.comments}
             post={this.state.post}
+            comments={this.state.comments}
+            commentsPage={this.state.commentsPage}
             fetchingComments={this.state.fetchingComments}
+            onLoadNext={this.onLoadNext}
+            onLoadPrevious={this.onLoadPrevious}
+            hasMoreComments={this.state.hasMoreComments}
           />
         )}
       </div>

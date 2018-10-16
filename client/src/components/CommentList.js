@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
 import Comment from "./Comment";
 
@@ -14,14 +16,52 @@ const styles = theme => ({
   },
   circularProgress: {
     margin: `${theme.spacing.unit * 3}px auto`
+  },
+  paginationControls: {
+    marginBottom: `${theme.spacing.unit}px`
+  },
+  leftButton: {
+    marginRight: `${theme.spacing.unit}px`
+  },
+  leftIcon: {
+    marginRight: "4px"
+  },
+  rightIcon: {
+    marginLeft: "4px"
   }
 });
 
 export const CommentList = props => {
-  const { classes, fetchingComments, onFetchComments, comments } = props;
+  const {
+    classes,
+    comments,
+    commentsPage,
+    hasMoreComments,
+    fetchingComments,
+    onLoadNext,
+    onLoadPrevious
+  } = props;
   return (
     <div className={classes.root}>
-      <Button onClick={onFetchComments}>Load Previous</Button>
+      <div className={classes.paginationControls}>
+        <Button
+          variant="contained"
+          size="small"
+          className={classes.leftButton}
+          onClick={onLoadPrevious}
+          disabled={!hasMoreComments || comments.length < 20}
+        >
+          <ArrowBackIcon className={classes.leftIcon} />
+        </Button>
+        <Button
+          variant="contained"
+          size="small"
+          onClick={onLoadNext}
+          disabled={commentsPage === 0}
+        >
+          <ArrowForwardIcon className={classes.rightIcon} />
+        </Button>
+      </div>
       {fetchingComments && (
         <CircularProgress
           className={classes.circularProgress}
@@ -38,7 +78,12 @@ export const CommentList = props => {
 };
 
 CommentList.propTypes = {
-  postId: PropTypes.string
+  comments: PropTypes.array.isRequired,
+  commentsPage: PropTypes.number.isRequired,
+  fetchingComments: PropTypes.bool.isRequired,
+  onLoadNext: PropTypes.func.isRequired,
+  onLoadPrevious: PropTypes.func.isRequired,
+  hasMoreComments: PropTypes.bool.isRequired
 };
 
 export default withStyles(styles)(CommentList);

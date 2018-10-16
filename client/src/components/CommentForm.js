@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import Button from "@material-ui/core/Button";
@@ -46,6 +45,7 @@ export class CommentForm extends React.Component {
       <form onSubmit={this.onSubmit} className={classes.form}>
         <OutlinedInput
           onChange={this.onBodyChange}
+          labelWidth={-25}
           multiline
           rows={3}
           value={this.state.commentBody}

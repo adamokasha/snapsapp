@@ -10,9 +10,7 @@ import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import moment from "moment";
-import axios from "axios";
 
-import NavBar from "./NavBar";
 import CommentForm from "./CommentForm";
 import CommentList from "./CommentList";
 
@@ -143,9 +141,11 @@ export const FullPost = props => {
             <div className={classes.commentsContainer}>
               <CommentList
                 comments={props.comments}
+                commentsPage={props.commentsPage}
                 fetchingComments={props.fetchingComments}
-                onFetchComments={props.onFetchComments}
-                postId={post._id}
+                onLoadNext={props.onLoadNext}
+                onLoadPrevious={props.onLoadPrevious}
+                hasMoreComments={props.hasMoreComments}
               />
               <CommentForm postId={post._id} />
             </div>
@@ -162,7 +162,13 @@ const mapStateToProps = ({ auth }) => ({
 
 FullPost.propTypes = {
   classes: PropTypes.object.isRequired,
-  post: PropTypes.object.isRequired
+  post: PropTypes.object.isRequired,
+  comments: PropTypes.array.isRequired,
+  commentsPage: PropTypes.number.isRequired,
+  fetchingComments: PropTypes.bool.isRequired,
+  onLoadNext: PropTypes.func.isRequired,
+  onLoadPrevious: PropTypes.func.isRequired,
+  hasMoreComments: PropTypes.bool.isRequired
 };
 
 export default compose(
