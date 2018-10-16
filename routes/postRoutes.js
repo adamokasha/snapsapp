@@ -1,14 +1,14 @@
-const requireAuth = require('../middlewares/requireAuth');
-const mongoose = require('mongoose');
+const requireAuth = require("../middlewares/requireAuth");
+const mongoose = require("mongoose");
 
-const Post = mongoose.model('Post');
-const User = mongoose.model('User');
-const Faves = mongoose.model('Faves');
-const Follows = mongoose.model('Follows');
+const Post = mongoose.model("Post");
+const User = mongoose.model("User");
+const Faves = mongoose.model("Faves");
+const Follows = mongoose.model("Follows");
 
 module.exports = app => {
   // ScrollView context: New
-  app.get('/api/posts/new/:page', async (req, res) => {
+  app.get("/api/posts/new/:page", async (req, res) => {
     try {
       const { page } = req.params;
 
@@ -17,15 +17,15 @@ module.exports = app => {
         .limit(12)
         .skip(12 * page)
         .populate({
-          path: '_owner',
-          select: 'profilePhoto displayName'
+          path: "_owner",
+          select: "profilePhoto displayName"
         })
         .exec();
 
       if (req.user) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
-          '_faves',
+          "_faves",
           { lean: true }
         );
         const { _faves } = favesDoc;
@@ -46,7 +46,7 @@ module.exports = app => {
   });
 
   // ScrollView context: Popular
-  app.get('/api/posts/popular/:page', async (req, res) => {
+  app.get("/api/posts/popular/:page", async (req, res) => {
     try {
       const { page } = req.params;
 
@@ -58,14 +58,14 @@ module.exports = app => {
       ]).exec();
 
       await Post.populate(posts, {
-        path: '_owner',
-        select: 'displayName profilePhoto'
+        path: "_owner",
+        select: "displayName profilePhoto"
       });
 
       if (req.user) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
-          '_faves',
+          "_faves",
           { lean: true }
         );
         const { _faves } = favesDoc;
@@ -86,16 +86,16 @@ module.exports = app => {
   });
 
   // ScrollView context: Follows Feed
-  app.get('/api/posts/follows/:page', requireAuth, async (req, res) => {
+  app.get("/api/posts/follows/:page", requireAuth, async (req, res) => {
     try {
       const { page } = req.params;
-      const follows = await Follows.find({ _owner: req.user.id }, 'follows');
-      console.log('FOLLOWS: ', follows[0].follows);
+      const follows = await Follows.find({ _owner: req.user.id }, "follows");
+      console.log("FOLLOWS: ", follows[0].follows);
       const posts = await Post.find({ _owner: { $in: follows[0].follows } })
         .sort({ createdAt: -1 })
         .limit(12)
         .skip(12 * page)
-        .populate({ path: '_owner', select: 'displayName profilePhoto' })
+        .populate({ path: "_owner", select: "displayName profilePhoto" })
         .exec();
 
       res.status(200).send(posts);
@@ -105,17 +105,17 @@ module.exports = app => {
   });
 
   // ScrollView context: User posts all
-  app.get('/api/posts/user/all/:user/:page', async (req, res) => {
+  app.get("/api/posts/user/all/:user/:page", async (req, res) => {
     try {
       const { page, user } = req.params;
       console.log(page, user);
 
-      const userId = await User.find({ displayName: user }, '_id');
+      const userId = await User.find({ displayName: user }, "_id");
       console.log(userId);
       const posts = await Post.find({ _owner: userId })
         .populate({
-          path: '_owner',
-          select: 'profilePhoto displayName'
+          path: "_owner",
+          select: "profilePhoto displayName"
         })
         .limit(6)
         .skip(6 * page)
@@ -124,7 +124,7 @@ module.exports = app => {
       if (req.user) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
-          '_faves',
+          "_faves",
           { lean: true }
         );
         const { _faves } = favesDoc;
@@ -145,22 +145,22 @@ module.exports = app => {
   });
 
   // ScrollView context: User faves all
-  app.get('/api/posts/user/faves/:user/:page', async (req, res) => {
+  app.get("/api/posts/user/faves/:user/:page", async (req, res) => {
     try {
       const { page, user } = req.params;
 
-      const userId = await User.find({ displayName: user }, '_id');
+      const userId = await User.find({ displayName: user }, "_id");
       const faves = await Faves.find({ _owner: userId })
         .populate({
-          path: '_faves',
-          select: '_id'
+          path: "_faves",
+          select: "_id"
         })
         .exec();
 
       const favesArray = faves[0]._faves;
 
       const posts = await Post.find({ _id: { $in: favesArray } })
-        .populate({ path: '_owner', select: 'profilePhoto displayName' })
+        .populate({ path: "_owner", select: "profilePhoto displayName" })
         .limit(6)
         .skip(6 * page)
         .exec();
@@ -168,7 +168,7 @@ module.exports = app => {
       if (req.user) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
-          '_faves',
+          "_faves",
           { lean: true }
         );
         const { _faves } = favesDoc;
@@ -189,10 +189,10 @@ module.exports = app => {
   });
 
   // Get all user posts (protected)
-  app.get('/api/posts/myposts/all', requireAuth, async (req, res) => {
+  app.get("/api/posts/myposts/all", requireAuth, async (req, res) => {
     try {
       const userId = req.user.id;
-      const posts = await Post.find({ _owner: userId }, 'imgUrl');
+      const posts = await Post.find({ _owner: userId }, "imgUrl");
       res.status(200).send(posts);
     } catch (e) {
       console.log(e);
@@ -200,46 +200,46 @@ module.exports = app => {
   });
 
   // Get single post
-  app.get('/api/posts/single/:id', async (req, res) => {
+  app.get("/api/posts/single/:id", async (req, res) => {
     try {
-      const post = await Post.findOne({_id: req.params.id}, '-comments');
-      res.status(200).send(post)
+      const post = await Post.findOne({ _id: req.params.id }, "-comments");
+      res.status(200).send(post);
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-  })
+  });
 
   // Get post comments
-  app.get('/api/posts/comments/all/:postId/:page', async (req, res) => {
+  app.get("/api/posts/comments/all/:postId/:page", async (req, res) => {
     try {
       const { postId, page } = req.params;
 
       const postComments = await Post.aggregate([
         { $match: { _id: mongoose.Types.ObjectId(postId) } },
-        { $unwind: '$comments' },
+        { $unwind: "$comments" },
         {
           $lookup: {
-            from: 'users',
-            localField: 'comments._owner',
-            foreignField: '_id',
-            as: 'comments._owner'
+            from: "users",
+            localField: "comments._owner",
+            foreignField: "_id",
+            as: "comments._owner"
           }
         },
         {
           $project: {
-            'comments._id': 1,
-            'comments.createdAt': 1,
-            'comments.body': 1,
-            'comments._owner._id': 1,
-            'comments._owner.displayName': 1,
-            'comments._owner.profilePhoto': 1
+            "comments._id": 1,
+            "comments.createdAt": 1,
+            "comments.body": 1,
+            "comments._owner._id": 1,
+            "comments._owner.displayName": 1,
+            "comments._owner.profilePhoto": 1
           }
         },
-        { $unwind: '$comments._owner' },
-        { $replaceRoot: { newRoot: '$comments' } },
+        { $unwind: "$comments._owner" },
+        { $replaceRoot: { newRoot: "$comments" } },
         { $sort: { createdAt: -1 } },
-        { $skip: 50 * page },
-        { $limit: 50 }
+        { $skip: 20 * page },
+        { $limit: 20 }
       ]);
 
       // await Post.populate(postComments, {
@@ -254,7 +254,7 @@ module.exports = app => {
   });
 
   // Add a comment
-  app.post('/api/posts/comments/add/:postId', requireAuth, async (req, res) => {
+  app.post("/api/posts/comments/add/:postId", requireAuth, async (req, res) => {
     try {
       const { commentBody } = req.body;
       const comment = {
@@ -267,14 +267,14 @@ module.exports = app => {
         { $push: { comments: comment } },
         { new: true }
       );
-      res.status(200).send({ success: 'Comment added' });
+      res.status(200).send({ success: "Comment added" });
     } catch (e) {
       console.log(e);
     }
   });
 
   // Search by tag or title
-  app.post('/api/posts/search/:page', async (req, res) => {
+  app.post("/api/posts/search/:page", async (req, res) => {
     try {
       const { searchTerms } = req.body;
       const { page } = req.params;
@@ -285,7 +285,7 @@ module.exports = app => {
           { title_lower: { $in: searchTerms } }
         ]
       })
-        .populate({ path: '_owner', select: 'profilePhoto displayName' })
+        .populate({ path: "_owner", select: "profilePhoto displayName" })
         .limit(12)
         .skip(12 * page)
         .exec();
@@ -297,7 +297,7 @@ module.exports = app => {
   });
 
   // Fave
-  app.post('/api/posts/fave/:id', requireAuth, async (req, res) => {
+  app.post("/api/posts/fave/:id", requireAuth, async (req, res) => {
     try {
       const postId = mongoose.Types.ObjectId(req.params.id);
       const fave = await Faves.findOne(
@@ -305,7 +305,7 @@ module.exports = app => {
           _owner: req.user.id,
           _faves: postId
         },
-        { '_faves.$': postId }
+        { "_faves.$": postId }
       );
       console.log(fave);
       if (!fave) {
@@ -319,7 +319,7 @@ module.exports = app => {
           { $inc: { faveCount: 1 } },
           { new: true }
         );
-        return res.status(200).send({ success: 'Post faved!' });
+        return res.status(200).send({ success: "Post faved!" });
       }
 
       fave.remove({ $pull: { _faves: postId } });
@@ -329,7 +329,7 @@ module.exports = app => {
         { new: true }
       );
 
-      res.status(200).send({ success: 'Post unfaved!' });
+      res.status(200).send({ success: "Post unfaved!" });
     } catch (e) {
       console.log(e);
     }
