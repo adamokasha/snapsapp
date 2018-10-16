@@ -87,76 +87,73 @@ const styles = theme => ({
   }
 });
 
-export class FullPost extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      // post: this.props.post ? this.props.post : null
-    };
-  }
+export const FullPost = props => {
+  const { classes } = props;
+  const { post } = props;
 
-  render() {
-    const { classes } = this.props;
-    const { post } = this.props;
-
-    return (
-      <React.Fragment>
-        {this.props.post && (
-          <div className={classes.root}>
-            <div className={classes.imgContainer}>
-              <img
-                className={classes.img}
-                src={`https://s3.amazonaws.com/img-share-kasho/${post.imgUrl}`}
-              />
-            </div>
-            <div className={classes.postInfo}>
-              <div className={classes.infoLeft}>
-                <div className={classes.avatarContainer}>
-                  <Avatar
-                    to={`/profile/${post._owner.displayName}`}
-                    component={Link}
-                    src={post._owner.profilePhoto}
-                    className={classes.avatar}
-                  />
-                  <div>
-                    <Typography variant="body2">{post.title}</Typography>
-                    <Typography variant="caption" gutterBottom>
-                      {post._owner.displayName}
-                    </Typography>
-                  </div>
-                </div>
-                <div className={classes.descContainer}>
-                  <Typography variant="caption">
-                    {moment(post.createdAt).fromNow()}
+  return (
+    <React.Fragment>
+      {props.post && (
+        <div className={classes.root}>
+          <div className={classes.imgContainer}>
+            <img
+              className={classes.img}
+              src={`https://s3.amazonaws.com/img-share-kasho/${post.imgUrl}`}
+            />
+          </div>
+          <div className={classes.postInfo}>
+            <div className={classes.infoLeft}>
+              <div className={classes.avatarContainer}>
+                <Avatar
+                  to={`/profile/${post._owner.displayName}`}
+                  component={Link}
+                  src={post._owner.profilePhoto}
+                  className={classes.avatar}
+                />
+                <div>
+                  <Typography variant="body2">{post.title}</Typography>
+                  <Typography variant="caption" gutterBottom>
+                    {post._owner.displayName}
                   </Typography>
-                  <Typography variant="body1">{post.description}</Typography>
                 </div>
               </div>
-              <div className={classes.infoRight}>
-                <div className={classes.infoRightButtons}>
-                  <Button size="small">
-                    <FavoriteTwoToneIcon
-                      color="inherit"
-                      className={classes.leftIcon}
-                    />
-                    {post.faveCount}
-                  </Button>
-                  <Button size="small" className={classes.buttonMargin}>
-                    <ShareTwoToneIcon />
-                  </Button>
-                </div>
+              <div className={classes.descContainer}>
+                <Typography variant="caption">
+                  {moment(post.createdAt).fromNow()}
+                </Typography>
+                <Typography variant="body1">{post.description}</Typography>
               </div>
             </div>
-            <div className={classes.commentsContainer}>
-              <CommentList postId={post._id} />
-              <CommentForm postId={post._id} />
+            <div className={classes.infoRight}>
+              <div className={classes.infoRightButtons}>
+                <Button size="small">
+                  <FavoriteTwoToneIcon
+                    color="inherit"
+                    className={classes.leftIcon}
+                  />
+                  {post.faveCount}
+                </Button>
+                <Button size="small" className={classes.buttonMargin}>
+                  <ShareTwoToneIcon />
+                </Button>
+              </div>
             </div>
           </div>
-        )}
-      </React.Fragment>
-    );
-  }
-}
+          {props.comments && (
+            <div className={classes.commentsContainer}>
+              <CommentList
+                comments={props.comments}
+                onFetchComment={props.onFetchComments}
+                postId={post._id}
+              />
+              <CommentForm postId={post._id} />
+            </div>
+          )}
+        </div>
+      )}
+    </React.Fragment>
+  );
+};
 
 const mapStateToProps = ({ auth }) => ({
   auth
