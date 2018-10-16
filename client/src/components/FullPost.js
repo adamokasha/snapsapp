@@ -143,7 +143,8 @@ export const FullPost = props => {
             <div className={classes.commentsContainer}>
               <CommentList
                 comments={props.comments}
-                onFetchComment={props.onFetchComments}
+                fetchingComments={props.fetchingComments}
+                onFetchComments={props.onFetchComments}
                 postId={post._id}
               />
               <CommentForm postId={post._id} />

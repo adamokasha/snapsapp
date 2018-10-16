@@ -14,40 +14,100 @@ export class FullPostPage extends React.Component {
     this.state = {
       post: this.props.location.state ? this.props.location.state.post : null,
       commentsPage: 0,
-      comments: []
+      comments: [],
+      fetchingComments: false
     };
 
     this.signal = axios.CancelToken.source();
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     window.scrollTo(0, 0);
-    try {
-      if (!this.props.location.state) {
-        const { id } = this.props.match.params;
-        const { data: post } = await fetchSinglePost(this.signal.token, id);
+
+    this.setState({ fetchingComments: true }, async () => {
+      try {
+        if (!this.props.location.state) {
+          const { id } = this.props.match.params;
+          const { data: post } = await fetchSinglePost(this.signal.token, id);
+
+          return this.setState(
+            {
+              post
+            },
+            async () => {
+              const { data: comments } = await fetchPostComments(
+                this.signal.token,
+                id,
+                this.state.commentsPage
+              );
+              this.setState({
+                comments: [...comments],
+                commentsPage: this.state.commentsPage + 1,
+                fetchingComments: false
+              });
+            }
+          );
+        }
+
+        const { post } = this.props.location.state;
         const { data: comments } = await fetchPostComments(
           this.signal.token,
-          id,
+          post._id,
           this.state.commentsPage
         );
-        return this.setState({ post, comments: [...comments] }, () => {});
+        this.setState({
+          comments: [...comments],
+          commentsPage: this.state.commentsPage + 1,
+          fetchingComments: false
+        });
+      } catch (e) {
+        if (axios.isCancel(e)) {
+          return console.log(e.message);
+        }
+        console.log(e);
       }
+    });
+  }
 
-      const { post } = this.props.location.state;
+  onFetchComments = async () => {
+    try {
+      const { post, commentsPage } = this.state;
       const { data: comments } = await fetchPostComments(
         this.signal.token,
         post._id,
-        this.state.commentsPage
+        commentsPage
       );
-      this.setState({ post: post, comments: [...comments] });
+      this.setState(
+        {
+          commentPage: this.state.commentsPage + 1,
+          comments: [...comments]
+        },
+        () => {}
+      );
     } catch (e) {
-      if (axios.isCancel(e)) {
-        return console.log(e.message);
-      }
       console.log(e);
     }
-  }
+  };
+
+  // onLoadPrevious = () => {
+  //   try {
+  //     const { data: comments } = await fetchPostComments(
+  //       this.signal.token,
+  //       this.state.post._id,
+  //       this.state.commentsPage
+  //     );
+  //   } catch (e) {
+
+  //   }
+  // };
+
+  // onLoadNext = () => {
+  //   try {
+
+  //   } catch (e) {
+
+  //   }
+  // };
 
   componentDidUpdate(prevProps) {
     // Case of uploading new post in modal while FullPostPage is mounted
@@ -63,34 +123,16 @@ export class FullPostPage extends React.Component {
     this.signal.cancel("Async call cancelled.");
   }
 
-  onFetchComments = async () => {
-    try {
-      const res = await axios.get(
-        `/api/posts/comments/all/${this.state.post._id}/${
-          this.state.commentPage
-        }`
-      );
-      this.setState(
-        {
-          commentPage: this.state.currentPage + 1,
-          comments: [...res.data]
-        },
-        () => {}
-      );
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   render() {
     return (
       <div>
         <NavBar />
         {this.state.post && (
           <FullPost
-            onFetchComment={this.onFetchComments}
+            onFetchComments={this.onFetchComments}
             comments={this.state.comments}
             post={this.state.post}
+            fetchingComments={this.state.fetchingComments}
           />
         )}
       </div>
