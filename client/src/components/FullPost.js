@@ -20,7 +20,8 @@ const styles = theme => ({
   root: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
+    background: "#f9f9f9"
   },
   imgContainer: {
     width: "100%",
@@ -90,43 +91,17 @@ export class FullPost extends React.Component {
   constructor() {
     super();
     this.state = {
-      post: null
+      // post: this.props.post ? this.props.post : null
     };
-  }
-
-  async componentDidMount() {
-    window.scrollTo(0, 0);
-    if (!this.props.location.state) {
-      try {
-        const res = await axios.get(
-          `/api/posts/single/${this.props.match.params.id}`
-        );
-        return this.setState({ post: res.data }, () => {});
-      } catch (e) {
-        console.log(e);
-      }
-    }
-    this.setState({ post: this.props.location.state.post });
-  }
-
-  componentDidUpdate(prevProps) {
-    // Case of uploading new post while FullPost is mounted
-    if (
-      this.props.location.state &&
-      this.props.location.state.post !== prevProps.location.state.post
-    ) {
-      this.setState({ post: this.props.location.state.post }, () => {});
-    }
   }
 
   render() {
     const { classes } = this.props;
-    const { post } = this.state;
+    const { post } = this.props;
 
     return (
       <React.Fragment>
-        <NavBar />
-        {this.state.post && (
+        {this.props.post && (
           <div className={classes.root}>
             <div className={classes.imgContainer}>
               <img
@@ -188,8 +163,8 @@ const mapStateToProps = ({ auth }) => ({
 });
 
 FullPost.propTypes = {
-  location: PropTypes.object.isRequired,
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  post: PropTypes.object.isRequired
 };
 
 export default compose(

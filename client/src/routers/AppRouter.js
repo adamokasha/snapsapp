@@ -15,7 +15,7 @@ import { fetchUser } from "../async/auth";
 import AlbumMaker from "../components/AlbumMaker";
 import MyAlbumsPage from "../pages/MyAlbumsPage";
 import SingleAlbumPage from "../pages/SingleAlbumPage";
-import FullPost from "../components/FullPost";
+import FullPostPage from "../pages/FullPostPage";
 import ProfilePage from "../pages/ProfilePage";
 import MessageBoxPage from "../pages/MessageBoxPage";
 
@@ -52,7 +52,8 @@ export class AppRouter extends React.Component {
 
           <PrivateRoute exact path="/myalbums" component={MyAlbumsPage} />
           <Route path="/albums/:user/:albumid" component={SingleAlbumPage} />
-          <Route path="/post/:id" component={FullPost} />
+          {/* <Route path="/post/:id" component={FullPost} /> */}
+          <Route path="/post/:id" component={FullPostPage} />
           <Route path="/profile/:user" component={ProfilePage} />
         </Switch>
       </BrowserRouter>
