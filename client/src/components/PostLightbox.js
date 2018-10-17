@@ -47,7 +47,7 @@ const styles = theme => ({
     margin: "0 auto",
     overflow: "hidden"
   },
-  postInfo: {
+  postHeader: {
     width: "95%",
     display: "flex",
     justifyContent: "space-between",
@@ -56,108 +56,20 @@ const styles = theme => ({
       marginLeft: `${theme.spacing.unit}px`
     }
   },
-  // headerElement: {
-  //   display: "flex",
-  //   justifyContent: "space-between",
-  //   height: "10%",
-  //   padding: `${theme.spacing.unit * 2}px`
-  // },
-  // headerLeft: {
-  //   display: "flex"
-  // },
-  // headerLeftText: {
-  //   display: "flex",
-  //   flexDirection: "column"
-  // },
-  // headerRight: {
-  //   display: "flex"
-  // },
-  // headerRightButtons: {},
-  // leftIcon: {
-  //   marginRight: `${theme.spacing.unit}px`,
-  //   color: "rgba(0, 0, 0, 0.70)"
-  // },
-  // buttonMargin: {
-  //   marginLeft: `${theme.spacing.unit}px`
-  // },
-  // ionicon: {
-  //   fontSize: "24px",
-  //   color: "rgba(0, 0, 0, 0.70)"
-  // },
-  // avatar: {
-  //   width: "50px",
-  //   height: "50px",
-  //   marginRight: `${theme.spacing.unit * 2}px`
-  // },
-
-  // imgContainer: {
-  //   width: "100%",
-  //   height: "80%",
-  //   margin: "0",
-  //   position: "relative",
-  //   display: "inline-block",
-  //   overflow: "hidden"
-  // },
-  // navIcons: {
-  //   position: "absolute",
-  //   top: "50%",
-  //   transform: "translateY(-50%)",
-  //   fontSize: "48px",
-  //   cursor: "pointer",
-  //   color: "rgba(0, 0, 0, 0.80)"
-  // },
-  // navLeft: {
-  //   left: "2%"
-  // },
-  // navRight: {
-  //   right: "2%"
-  // },
-  // disabledNav: {
-  //   display: "none"
-  // },
-  // loader: {
-  //   position: "absolute",
-  //   top: "50%",
-  //   left: "50%",
-  //   transformOrigin: "-50%, -50%"
-  // },
-  // img: {
-  //   // maintain aspect ratio
-  //   maxWidth: "100%",
-  //   maxHeight: "100%",
-  //   width: "auto",
-  //   height: "auto",
-  //   display: "block",
-  //   position: "absolute",
-  //   top: "50%",
-  //   left: "50%",
-  //   transform: "translate(-50%, -50%)",
-  //   opacity: 1
-  // },
-  // imgHidden: {
-  //   opacity: 0
-  // },
-  bottom: {
-    display: "flex",
-    justifyContent: "space-around",
-    height: "10%",
-    padding: `${theme.spacing.unit * 2}px`
-  },
-  bottomLeft: {
-    overflow: "hidden",
-    width: "35%"
-  },
-  bottomRight: {
-    display: "flex",
-    justifyContent: "flex-start",
-    overflow: "hidden",
-    width: "65%",
+  postFooter: {
+    display: "none",
     [theme.breakpoints.up("md")]: {
-      justifyContent: "flex-end"
+      display: "flex",
+      justifyContent: "space-around",
+      height: "20%",
+      padding: `${theme.spacing.unit * 2}px`
+    },
+    [theme.breakpoints.up("lg")]: {
+      display: "flex",
+      justifyContent: "space-around",
+      height: "10%",
+      padding: `${theme.spacing.unit * 2}px`
     }
-  },
-  chip: {
-    marginLeft: `${theme.spacing.unit}px`
   }
 });
 
@@ -255,27 +167,27 @@ class PostLightbox extends React.Component {
     const {
       _id,
       _owner,
-      imgUrl,
       title,
+      createdAt,
+      imgUrl,
+      description,
+      tags,
       faveCount,
-      isFave,
-      description
+      isFave
     } = this.state.currentSlide;
 
     return (
       <div className={classes.root}>
         <div className={classes.content}>
-          <div className={classes.postInfo}>
+          <div className={classes.postHeader}>
             {this.state.currentSlide && (
               <React.Fragment>
-                <div className={classes.postInfo}>
-                  <PostHeading
-                    profilePhoto={_owner.profilePhoto}
-                    displayName={_owner.displayName}
-                    title={title}
-                  />
-                  <PostActions faveCount={faveCount} />
-                </div>
+                <PostHeading
+                  profilePhoto={_owner.profilePhoto}
+                  displayName={_owner.displayName}
+                  title={title}
+                />
+                <PostActions faveCount={faveCount} isFave={isFave} />
               </React.Fragment>
             )}
           </div>
@@ -288,19 +200,13 @@ class PostLightbox extends React.Component {
             start={this.state.start}
             end={this.state.end}
           />
-          <div className={classes.bottom}>
-            <div className={classes.bottomLeft}>
-              <Typography variant="body2">{description}</Typography>
-            </div>
-            <div className={classes.bottomRight}>
-              <Typography variant="body2">Tags: </Typography>
-              <Chip label="Nature" className={classes.chip} />
-              <Chip label="Forest" className={classes.chip} />
-              <Chip label="Plants" className={classes.chip} />
-              <Chip label="Mountains" className={classes.chip} />
-              <Chip label="Hiking" className={classes.chip} />
-              <Chip label="Trail" className={classes.chip} />
-            </div>
+          <div className={classes.postFooter}>
+            <PostDescription
+              createdAt={createdAt}
+              description={description}
+              substring={true}
+            />
+            <PostTags tags={tags} />
           </div>
         </div>
       </div>

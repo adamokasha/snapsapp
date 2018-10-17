@@ -1,5 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
@@ -15,9 +16,14 @@ const styles = theme => ({
       flexDirection: "row"
     }
   },
-  leftIcon: {
-    marginRight: `${theme.spacing.unit}px`,
+  iconColor: {
     color: "rgba(0, 0, 0, 0.70)"
+  },
+  favedIcon: {
+    color: `${theme.palette.secondary.main}`
+  },
+  leftIcon: {
+    marginRight: `${theme.spacing.unit}px`
   },
   buttons: {
     marginLeft: `${theme.spacing.unit}px`,
@@ -26,15 +32,21 @@ const styles = theme => ({
 });
 
 export const PostActions = props => {
-  const { classes, faveCount } = props;
+  const { classes, faveCount, isFave } = props;
   return (
     <div className={classes.root}>
       <Button size="small" className={classes.buttons}>
-        <FavoriteTwoToneIcon color="inherit" className={classes.leftIcon} />
-        {faveCount || 0}
+        <FavoriteTwoToneIcon
+          className={
+            isFave
+              ? classNames(classes.favedIcon, classes.leftIcon)
+              : classNames(classes.iconColor, classes.leftIcon)
+          }
+        />
+        {faveCount}
       </Button>
       <Button size="small" className={classes.buttons}>
-        <CommentOutlinedIcon color="inherit" className={classes.leftIcon} />
+        <CommentOutlinedIcon className={classes.leftIcon} color="inherit" />
         15
       </Button>
       <Button size="small" className={classes.buttons}>
@@ -46,7 +58,8 @@ export const PostActions = props => {
 
 PostActions.propTypes = {
   classes: PropTypes.object.isRequired,
-  faveCount: PropTypes.number.isRequired
+  faveCount: PropTypes.number.isRequired,
+  isFave: PropTypes.bool.isRequired
 };
 
 export default withStyles(styles)(PostActions);
