@@ -60,7 +60,7 @@ export class FullPostPage extends React.Component {
     this.state = {
       post: this.props.location.state ? this.props.location.state.post : null,
       commentsPage: 0,
-      comments: [],
+      comments: null,
       fetchingComments: false,
       hasMoreComments: true,
       addingComment: false

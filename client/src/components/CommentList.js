@@ -45,7 +45,7 @@ export const CommentList = props => {
     <div className={classes.root}>
       <div className={classes.paginationControls}>
         <Button
-          variant="contained"
+          variant="outlined"
           size="small"
           className={classes.leftButton}
           onClick={onLoadPrevious}
@@ -54,7 +54,7 @@ export const CommentList = props => {
           <ArrowBackIcon className={classes.leftIcon} />
         </Button>
         <Button
-          variant="contained"
+          variant="outlined"
           size="small"
           onClick={onLoadNext}
           disabled={commentsPage === 0}
@@ -68,11 +68,10 @@ export const CommentList = props => {
           color="primary"
         />
       )}
-      {comments.length > 0 ? (
-        comments.map((comment, i) => <Comment key={i} comment={comment} />)
-      ) : (
-        <Typography>Be the first to comment!</Typography>
-      )}
+      {comments &&
+        comments.map((comment, i) => <Comment key={i} comment={comment} />)}
+      {!comments &&
+        !fetchingComments && <Typography>No comments yet.</Typography>}
     </div>
   );
 };
