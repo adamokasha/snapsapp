@@ -14,7 +14,12 @@ import PostDescription from "../components/PostDescription";
 import PostTags from "../components/PostTags";
 import CommentList from "../components/CommentList";
 import CommentForm from "../components/CommentForm";
-import { fetchSinglePost, fetchPostComments, addComment } from "../async/posts";
+import {
+  fetchSinglePost,
+  fetchPostComments,
+  addComment,
+  favePost
+} from "../async/posts";
 
 const styles = theme => ({
   root: {
@@ -63,7 +68,8 @@ export class FullPostPage extends React.Component {
       comments: null,
       fetchingComments: false,
       hasMoreComments: true,
-      addingComment: false
+      addingComment: false,
+      isFaving: false
     };
 
     this.signal = axios.CancelToken.source();
@@ -210,6 +216,30 @@ export class FullPostPage extends React.Component {
     });
   };
 
+  onFavePost = () => {
+    this.setState({ isFaving: true }, async () => {
+      try {
+        await favePost(this.signal.token, this.state.post._id);
+        this.setState({
+          post: {
+            ...this.state.post,
+            isFave: !this.state.post.isFave,
+            faveCount: this.state.post.faveCount
+              ? this.state.post.faveCount - 1
+              : this.state.post.faveCount + 1
+          },
+          isFaving: false
+        });
+      } catch (e) {
+        if (axios.isCancel(e)) {
+          return console.log(e.message);
+        }
+        console.log(e);
+        this.setState({ isFaving: false }, () => {});
+      }
+    });
+  };
+
   render() {
     const { classes, auth } = this.props;
     const {
@@ -218,7 +248,8 @@ export class FullPostPage extends React.Component {
       commentsPage,
       fetchingComments,
       hasMoreComments,
-      addingComment
+      addingComment,
+      isFaving
     } = this.state;
 
     return (
@@ -234,7 +265,13 @@ export class FullPostPage extends React.Component {
                   displayName={post._owner.displayName}
                   title={post.title}
                 />
-                <PostActions isFave={post.isFave} faveCount={post.faveCount} />
+                <PostActions
+                  canFave={auth ? true : false}
+                  onFavePost={this.onFavePost}
+                  isFaving={isFaving}
+                  isFave={post.isFave}
+                  faveCount={post.faveCount}
+                />
               </div>
             </React.Fragment>
           )}

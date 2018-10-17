@@ -19,7 +19,7 @@ export const PostTags = props => {
   const { classes, tags } = props;
   return (
     <div className={classes.root}>
-      {tags.length &&
+      {tags.length > 0 &&
         tags.map(tag => <Chip label={tag} className={classes.chip} />)}
     </div>
   );

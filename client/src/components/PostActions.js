@@ -3,6 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
+import Tooltip from "@material-ui/core/Tooltip";
 import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
 import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
 import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
@@ -32,23 +33,46 @@ const styles = theme => ({
 });
 
 export const PostActions = props => {
-  const { classes, faveCount, isFave } = props;
+  const { classes, faveCount, canFave, onFavePost, isFave, isFaving } = props;
   return (
     <div className={classes.root}>
-      <Button size="small" className={classes.buttons}>
-        <FavoriteTwoToneIcon
-          className={
-            isFave
-              ? classNames(classes.favedIcon, classes.leftIcon)
-              : classNames(classes.iconColor, classes.leftIcon)
-          }
-        />
-        {faveCount}
-      </Button>
+      {canFave && (
+        <Button
+          onClick={onFavePost}
+          size="small"
+          className={classes.buttons}
+          disabled={isFaving}
+        >
+          <FavoriteTwoToneIcon
+            className={
+              isFave
+                ? classNames(classes.favedIcon, classes.leftIcon)
+                : classNames(classes.iconColor, classes.leftIcon)
+            }
+          />
+          {faveCount}
+        </Button>
+      )}
+      {!canFave && (
+        <Tooltip title={"You need to signup or login to fave this post."}>
+          <Button size="small" className={classes.buttons}>
+            <FavoriteTwoToneIcon
+              className={
+                isFave
+                  ? classNames(classes.favedIcon, classes.leftIcon)
+                  : classNames(classes.iconColor, classes.leftIcon)
+              }
+            />
+            {faveCount}
+          </Button>
+        </Tooltip>
+      )}
+
       <Button size="small" className={classes.buttons}>
         <CommentOutlinedIcon className={classes.leftIcon} color="inherit" />
         15
       </Button>
+
       <Button size="small" className={classes.buttons}>
         <ShareTwoToneIcon />
       </Button>
@@ -59,7 +83,10 @@ export const PostActions = props => {
 PostActions.propTypes = {
   classes: PropTypes.object.isRequired,
   faveCount: PropTypes.number.isRequired,
-  isFave: PropTypes.bool.isRequired
+  isFave: PropTypes.bool.isRequired,
+  canFave: PropTypes.bool.isRequired,
+  onFavePost: PropTypes.func.isRequired,
+  isFaving: PropTypes.bool.isRequired
 };
 
 export default withStyles(styles)(PostActions);

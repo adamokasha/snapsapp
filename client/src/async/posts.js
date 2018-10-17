@@ -27,3 +27,7 @@ export const addComment = async (cancelToken, postId, commentBody) => {
     { cancelToken }
   );
 };
+
+export const favePost = async (cancelToken, postId) => {
+  await axios.post(`/api/posts/fave/${postId}`, {}, { cancelToken });
+};
