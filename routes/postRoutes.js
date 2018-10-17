@@ -203,6 +203,20 @@ module.exports = app => {
   app.get("/api/posts/single/:id", async (req, res) => {
     try {
       const post = await Post.findOne({ _id: req.params.id }, "-comments");
+      if (req.user) {
+        const favesDoc = await Faves.findOne(
+          { _owner: req.user.id },
+          "_faves",
+          { lean: true }
+        );
+        const { _faves } = favesDoc;
+
+        if (_faves.toString().includes(post._id)) {
+          post.isFave = true;
+        }
+
+        return res.status(200).send(post);
+      }
       res.status(200).send(post);
     } catch (e) {
       console.log(e);

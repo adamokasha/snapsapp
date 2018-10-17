@@ -234,18 +234,18 @@ export class FullPostPage extends React.Component {
                   displayName={post._owner.displayName}
                   title={post.title}
                 />
-                <PostActions />
+                <PostActions isFave={post.isFave} faveCount={post.faveCount} />
               </div>
             </React.Fragment>
           )}
           <div className={classes.commentsContainer}>
-            {this.state.post.description && (
+            {this.state.post && (
               <PostDescription
                 createdAt={post.createdAt}
                 description={post.description}
               />
             )}
-            {this.state.post.tags && <PostTags tags={this.state.post.tags} />}
+            {this.state.post && <PostTags tags={this.state.post.tags} />}
 
             {this.state.comments && (
               <CommentList
