@@ -9,14 +9,19 @@ import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
 const styles = theme => ({
   root: {
     display: "flex",
-    alignItems: "baseline"
+    flexDirection: "column",
+    alignItems: "baseline",
+    [theme.breakpoints.up("sm")]: {
+      flexDirection: "row"
+    }
   },
   leftIcon: {
     marginRight: `${theme.spacing.unit}px`,
     color: "rgba(0, 0, 0, 0.70)"
   },
-  buttonMargin: {
-    marginLeft: `${theme.spacing.unit}px`
+  buttons: {
+    marginLeft: `${theme.spacing.unit}px`,
+    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`
   }
 });
 
@@ -24,15 +29,15 @@ export const PostActions = props => {
   const { classes, faveCount } = props;
   return (
     <div className={classes.root}>
-      <Button size="small">
+      <Button size="small" className={classes.buttons}>
         <FavoriteTwoToneIcon color="inherit" className={classes.leftIcon} />
-        {faveCount}
+        {faveCount || 1}
       </Button>
-      <Button className={classes.buttonMargin}>
+      <Button size="small" className={classes.buttons}>
         <CommentOutlinedIcon color="inherit" className={classes.leftIcon} />
         15
       </Button>
-      <Button size="small" className={classes.buttonMargin}>
+      <Button size="small" className={classes.buttons}>
         <ShareTwoToneIcon />
       </Button>
     </div>

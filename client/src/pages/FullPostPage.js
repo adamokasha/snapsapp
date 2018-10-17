@@ -7,32 +7,49 @@ import PropTypes from "prop-types";
 import axios from "axios";
 
 import NavBar from "../components/NavBar";
-import { fetchSinglePost, fetchPostComments, addComment } from "../async/posts";
-
 import FullPostImage from "../components/FullPostImage";
 import PostHeading from "../components/PostHeading";
 import PostActions from "../components/PostActions";
+import PostDescription from "../components/PostDescription";
+import PostTags from "../components/PostTags";
 import CommentList from "../components/CommentList";
 import CommentForm from "../components/CommentForm";
+import { fetchSinglePost, fetchPostComments, addComment } from "../async/posts";
 
 const styles = theme => ({
   root: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
+    alignItems: "flex-start",
     background: "#f9f9f9"
   },
   postInfo: {
     width: "95%",
     display: "flex",
     justifyContent: "space-between",
-    padding: `${theme.spacing.unit}px 0`
+    padding: `${theme.spacing.unit}px 0`,
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: `${theme.spacing.unit}px`
+    }
   },
   commentsContainer: {
     width: "95%",
     padding: `${theme.spacing.unit}px 0`,
+    margin: `0 auto`,
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    [theme.breakpoints.up("sm")]: {
+      width: "50%",
+      marginLeft: `${theme.spacing.unit}px`
+    },
+    [theme.breakpoints.up("md")]: {
+      width: "40%",
+      marginLeft: `${theme.spacing.unit}px`
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "30%",
+      marginLeft: `${theme.spacing.unit}px`
+    }
   }
 });
 
@@ -199,6 +216,7 @@ export class FullPostPage extends React.Component {
       post,
       comments,
       commentsPage,
+      fetchingComments,
       hasMoreComments,
       addingComment
     } = this.state;
@@ -221,22 +239,31 @@ export class FullPostPage extends React.Component {
             </React.Fragment>
           )}
           <div className={classes.commentsContainer}>
+            {this.state.post.description && (
+              <PostDescription
+                createdAt={post.createdAt}
+                description={post.description}
+              />
+            )}
+            {this.state.post.tags && <PostTags tags={this.state.post.tags} />}
+
             {this.state.comments && (
               <CommentList
                 comments={comments}
                 commentsPage={commentsPage}
                 hasMoreComments={hasMoreComments}
-                fetchingComments={this.fetchingComments}
+                fetchingComments={fetchingComments}
                 onLoadNext={this.onLoadNext}
                 onLoadPrevious={this.onLoadPrevious}
               />
             )}
-            {auth && (
-              <CommentForm
-                onAddComment={this.onAddComment}
-                addingComment={addingComment}
-              />
-            )}
+            {auth &&
+              !fetchingComments && (
+                <CommentForm
+                  onAddComment={this.onAddComment}
+                  addingComment={addingComment}
+                />
+              )}
           </div>
         </div>
       </React.Fragment>
