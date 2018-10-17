@@ -337,7 +337,7 @@ module.exports = app => {
         return res.status(200).send({ success: "Post faved!" });
       }
 
-      fave.remove({ $pull: { _faves: postId } });
+      await fave.update({ $pull: { _faves: postId } });
       await Post.findOneAndUpdate(
         { _id: postId },
         { $inc: { faveCount: -1 } },

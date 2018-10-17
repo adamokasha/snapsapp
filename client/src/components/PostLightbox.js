@@ -2,16 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import compose from "recompose/compose";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import classNames from "classnames";
-import Avatar from "@material-ui/core/Avatar";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import NavigateNextIcon from "@material-ui/icons/NavigateNext";
-import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
-import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
-import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
-import Chip from "@material-ui/core/Chip";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 
