@@ -31,7 +31,7 @@ export const PostActions = props => {
     <div className={classes.root}>
       <Button size="small" className={classes.buttons}>
         <FavoriteTwoToneIcon color="inherit" className={classes.leftIcon} />
-        {faveCount || 1}
+        {faveCount || 0}
       </Button>
       <Button size="small" className={classes.buttons}>
         <CommentOutlinedIcon color="inherit" className={classes.leftIcon} />

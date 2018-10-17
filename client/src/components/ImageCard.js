@@ -1,23 +1,23 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import compose from 'recompose/compose';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import FavoriteTwoToneIcon from '@material-ui/icons/FavoriteTwoTone';
-import Divider from '@material-ui/core/Divider';
-import axios from 'axios';
+import React from "react";
+import { connect } from "react-redux";
+import compose from "recompose/compose";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import CardMedia from "@material-ui/core/CardMedia";
+import CardContent from "@material-ui/core/CardContent";
+import CardActions from "@material-ui/core/CardActions";
+import Avatar from "@material-ui/core/Avatar";
+import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
+import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
+import Divider from "@material-ui/core/Divider";
+import axios from "axios";
 
-import ModalView from './ModalView';
-import ImageModalView from './ImageModalView';
+import ModalView from "./ModalView";
+import PostLightbox from "./PostLightbox";
 
 const styles = theme => ({
   card: {
@@ -26,31 +26,31 @@ const styles = theme => ({
   },
   media: {
     height: 0,
-    paddingTop: '56.25%', // 16:9
-    cursor: 'pointer'
+    paddingTop: "56.25%", // 16:9
+    cursor: "pointer"
   },
   actions: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   actionsLeft: {
-    display: 'flex'
+    display: "flex"
   },
   iconButtonRoot: {
-    width: '32px',
-    height: '32px'
+    width: "32px",
+    height: "32px"
   },
   modalRoot: {
-    top: '3%',
-    width: '100%',
-    height: '100%',
-    [theme.breakpoints.down('md')]: {
-      top: '18%'
+    top: "3%",
+    width: "100%",
+    height: "100%",
+    [theme.breakpoints.down("md")]: {
+      top: "18%"
     }
   },
   albumHidden: {
-    display: 'none'
+    display: "none"
   }
 });
 
@@ -58,23 +58,23 @@ class ImageCard extends React.Component {
   state = {
     imgId: this.props.post._id,
     faved: this.props.post.isFave,
-    faveColor: 'default',
+    faveColor: "default",
     open: false
   };
 
   handleOpen = () => {
-    let goTopButton = document.getElementById('goTopButton');
+    let goTopButton = document.getElementById("goTopButton");
     if (goTopButton) {
-      goTopButton.style.display = 'none';
+      goTopButton.style.display = "none";
     }
     this.setState({ open: true });
   };
 
   handleClose = () => {
     this.setState({ open: false });
-    let goTopButton = document.getElementById('goTopButton');
+    let goTopButton = document.getElementById("goTopButton");
     if (goTopButton) {
-      goTopButton.style.display = 'inline-flex';
+      goTopButton.style.display = "inline-flex";
     }
   };
 
@@ -94,7 +94,7 @@ class ImageCard extends React.Component {
     const { imgUrl, _id } = this.props.post;
     // Don't open modal on small screens
     if (
-      context === 'album' ||
+      context === "album" ||
       window.screen.width < 600 ||
       window.innerWidth < 600
     ) {
@@ -108,7 +108,7 @@ class ImageCard extends React.Component {
           <CardMedia
             className={classes.media}
             image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}`}
-            title={title || 'Image Title'}
+            title={title || "Image Title"}
           />
         </Link>
       );
@@ -120,10 +120,10 @@ class ImageCard extends React.Component {
           <CardMedia
             className={classes.media}
             image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}`}
-            title={title || 'Untitled'}
+            title={title || "Untitled"}
           />
         }
-        modalComponent={<ImageModalView post={this.props.post} />}
+        modalComponent={<PostLightbox post={this.props.post} />}
       />
     );
   };
@@ -140,10 +140,7 @@ class ImageCard extends React.Component {
 
     return (
       <div>
-        <Card
-          className={classes.card}
-          raised
-        >
+        <Card className={classes.card} raised>
           <CardHeader
             avatar={
               <Avatar
@@ -155,19 +152,19 @@ class ImageCard extends React.Component {
                 <img src={_owner.profilePhoto} alt="avatar" />
               </Avatar>
             }
-            title={title || 'Aerial Photo'}
-            subheader={_owner.displayName || 'September 14, 2016'}
-            className={context === 'album' ? classes.albumHidden : null}
+            title={title || "Aerial Photo"}
+            subheader={_owner.displayName || "September 14, 2016"}
+            className={context === "album" ? classes.albumHidden : null}
           />
           {this.selectView()}
           <CardContent>
-            {context === 'album' ? (
+            {context === "album" ? (
               <div>
                 <Typography variant="body2">{title}</Typography>
                 <Typography variant="caption">Posted {createdAt}</Typography>
               </div>
             ) : null}
-            <Typography>{context === 'album' ? null : description}</Typography>
+            <Typography>{context === "album" ? null : description}</Typography>
           </CardContent>
           <Divider />
           <CardActions className={classes.actions} disableActionSpacing>
@@ -182,7 +179,7 @@ class ImageCard extends React.Component {
                   <IconButton
                     aria-label="Add to favorites"
                     onClick={this.onFave}
-                    color={this.state.faved ? 'secondary' : 'default'}
+                    color={this.state.faved ? "secondary" : "default"}
                     classes={{
                       root: classes.iconButtonRoot
                     }}
