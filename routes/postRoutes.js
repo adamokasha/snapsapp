@@ -239,7 +239,8 @@ module.exports = app => {
         { $replaceRoot: { newRoot: "$comments" } },
         { $sort: { createdAt: -1 } },
         { $skip: 20 * page },
-        { $limit: 20 }
+        { $limit: 20 },
+        { $sort: { createdAt: 1 } }
       ]);
 
       // await Post.populate(postComments, {

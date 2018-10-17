@@ -1,11 +1,13 @@
 import React from "react";
+import { connect } from "react-redux";
 import { withRouter } from "react-router";
 import { withStyles } from "@material-ui/core/styles";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
 
 import NavBar from "../components/NavBar";
-import { fetchSinglePost, fetchPostComments } from "../async/posts";
+import { fetchSinglePost, fetchPostComments, addComment } from "../async/posts";
 
 import FullPostImage from "../components/FullPostImage";
 import PostHeading from "../components/PostHeading";
@@ -43,7 +45,8 @@ export class FullPostPage extends React.Component {
       commentsPage: 0,
       comments: [],
       fetchingComments: false,
-      hasMoreComments: true
+      hasMoreComments: true,
+      addingComment: false
     };
 
     this.signal = axios.CancelToken.source();
@@ -93,6 +96,20 @@ export class FullPostPage extends React.Component {
         this.setState({ fetchingComments: false });
       }
     });
+  }
+
+  componentDidUpdate(prevProps) {
+    // Case of uploading new post in modal while FullPostPage is mounted
+    if (
+      this.props.location.state &&
+      this.props.location.state.post !== prevProps.location.state.post
+    ) {
+      this.setState({ post: this.props.location.state.post }, () => {});
+    }
+  }
+
+  componentWillUnmount() {
+    this.signal.cancel("Async call cancelled.");
   }
 
   onLoadPrevious = () => {
@@ -148,23 +165,43 @@ export class FullPostPage extends React.Component {
     });
   };
 
-  componentDidUpdate(prevProps) {
-    // Case of uploading new post in modal while FullPostPage is mounted
-    if (
-      this.props.location.state &&
-      this.props.location.state.post !== prevProps.location.state.post
-    ) {
-      this.setState({ post: this.props.location.state.post }, () => {});
-    }
-  }
-
-  componentWillUnmount() {
-    this.signal.cancel("Async call cancelled.");
-  }
+  onAddComment = commentBody => {
+    this.setState({ addingComment: true }, async () => {
+      try {
+        await addComment(this.signal.token, this.state.post._id, commentBody);
+        // Generate comment client side to avoid another MongoDB operation
+        const { displayName, profilePhoto } = this.props.auth;
+        const comment = {
+          _id: Math.floor(Math.random() * 100),
+          body: commentBody,
+          createdAt: Date.now(),
+          _owner: {
+            displayName,
+            profilePhoto
+          }
+        };
+        this.setState({
+          comments: [...this.state.comments, { ...comment }],
+          addingComment: false
+        });
+      } catch (e) {
+        if (axios.isCancel(e)) {
+          return console.log(e.message);
+        }
+        this.setState({ addingComment: false });
+      }
+    });
+  };
 
   render() {
-    const { classes } = this.props;
-    const { post, comments, commentsPage, hasMoreComments } = this.state;
+    const { classes, auth } = this.props;
+    const {
+      post,
+      comments,
+      commentsPage,
+      hasMoreComments,
+      addingComment
+    } = this.state;
 
     return (
       <React.Fragment>
@@ -194,7 +231,12 @@ export class FullPostPage extends React.Component {
                 onLoadPrevious={this.onLoadPrevious}
               />
             )}
-            <CommentForm postId={post._id} />
+            {auth && (
+              <CommentForm
+                onAddComment={this.onAddComment}
+                addingComment={addingComment}
+              />
+            )}
           </div>
         </div>
       </React.Fragment>
@@ -202,8 +244,16 @@ export class FullPostPage extends React.Component {
   }
 }
 
+const mapStateToProps = ({ auth }) => ({
+  auth
+});
+
 FullPostPage.propTypes = {
-  location: PropTypes.object
+  location: PropTypes.object,
+  auth: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
 };
 
-export default withStyles(styles)(withRouter(FullPostPage));
+export default compose(
+  withStyles(styles),
+  connect(mapStateToProps)
+)(withRouter(FullPostPage));

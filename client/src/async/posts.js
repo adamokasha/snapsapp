@@ -17,3 +17,13 @@ export const fetchPostComments = async (cancelToken, postId, page) => {
   });
   return res;
 };
+
+export const addComment = async (cancelToken, postId, commentBody) => {
+  await axios.post(
+    `/api/posts/comments/add/${postId}`,
+    {
+      commentBody
+    },
+    { cancelToken }
+  );
+};

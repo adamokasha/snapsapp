@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import Button from "@material-ui/core/Button";
-import axios from "axios";
 
 const styles = theme => ({
   form: {
@@ -15,23 +14,13 @@ const styles = theme => ({
 
 export class CommentForm extends React.Component {
   state = {
-    commentBody: "",
-    isSending: false
+    commentBody: ""
   };
 
   onSubmit = e => {
     e.preventDefault();
-    this.setState({ isSending: true }, async () => {
-      try {
-        await axios.post(`/api/posts/comments/add/${this.props.postId}`, {
-          commentBody: this.state.commentBody
-        });
-        this.setState({ isSending: false, commentBody: "" }, () => {});
-      } catch (e) {
-        console.log(e);
-        this.setState({ isSending: false }, () => {});
-      }
-    });
+    this.props.onAddComment(this.state.commentBody);
+    this.setState({ commentBody: "" });
   };
 
   onBodyChange = e => {
@@ -39,7 +28,7 @@ export class CommentForm extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, addingComment } = this.props;
 
     return (
       <form onSubmit={this.onSubmit} className={classes.form}>
@@ -56,7 +45,7 @@ export class CommentForm extends React.Component {
                 variant="contained"
                 color="primary"
                 type="submit"
-                disabled={this.state.commentBody < 1 || this.state.isSending}
+                disabled={this.state.commentBody < 1 || addingComment}
               >
                 Add Comment
               </Button>
@@ -69,7 +58,9 @@ export class CommentForm extends React.Component {
 }
 
 CommentForm.propTypes = {
-  postId: PropTypes.string.isRequired
+  classes: PropTypes.object.isRequired,
+  onAddComment: PropTypes.func.isRequired,
+  addingComment: PropTypes.bool.isRequired
 };
 
 export default withStyles(styles)(CommentForm);
