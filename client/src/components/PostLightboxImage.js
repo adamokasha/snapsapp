@@ -100,7 +100,7 @@ PostLightboxImage.propTypes = {
   classes: PropTypes.object.isRequired,
   imgUrl: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  onLoad: PropTypes.func.isRequired,
+  onImgLoad: PropTypes.func.isRequired,
   onPrevSlide: PropTypes.func.isRequired,
   onNextSlide: PropTypes.func.isRequired,
   start: PropTypes.bool.isRequired,

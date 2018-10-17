@@ -1,15 +1,17 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { withStyles } from "@material-ui/core/styles";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 import PostHeading from "../components/PostHeading";
 import PostActions from "../components/PostActions";
 import PostLighboxImage from "./PostLightboxImage";
 import PostDescription from "../components/PostDescription";
 import PostTags from "../components/PostTags";
+import { favePost } from "../async/posts";
 
 const styles = theme => ({
   root: {
@@ -73,8 +75,11 @@ class PostLightbox extends React.Component {
       currentIndex: null,
       isLoading: true,
       start: false,
-      end: false
+      end: false,
+      isFaving: false
     };
+
+    this.signal = axios.CancelToken.source();
   }
 
   componentDidMount() {
@@ -152,6 +157,30 @@ class PostLightbox extends React.Component {
     this.setState({ isLoading: false });
   };
 
+  onFavePost = () => {
+    this.setState({ isFaving: true }, async () => {
+      try {
+        await favePost(this.signal.token, this.state.currentSlide._id);
+        this.setState({
+          currentSlide: {
+            ...this.state.currentSlide,
+            isFave: !this.state.currentSlide.isFave,
+            faveCount: this.state.currentSlide.faveCount
+              ? this.state.currentSlide.faveCount - 1
+              : this.state.currentSlide.faveCount + 1
+          },
+          isFaving: false
+        });
+      } catch (e) {
+        if (axios.isCancel(e)) {
+          return console.log(e.message);
+        }
+        console.log(e);
+        this.setState({ isFaving: false }, () => {});
+      }
+    });
+  };
+
   render() {
     const { classes } = this.props;
     const {
@@ -177,7 +206,13 @@ class PostLightbox extends React.Component {
                   displayName={_owner.displayName}
                   title={title}
                 />
-                <PostActions faveCount={faveCount} isFave={isFave} />
+                <PostActions
+                  faveCount={faveCount}
+                  isFave={isFave}
+                  canFave={this.props.auth}
+                  onFavePost={this.onFavePost}
+                  isFaving={this.state.isFaving}
+                />
               </React.Fragment>
             )}
           </div>
@@ -205,7 +240,8 @@ class PostLightbox extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  slides: state.posts.postData
+  slides: state.posts.postData,
+  auth: state.auth
 });
 
 PostLightbox.propTypes = {

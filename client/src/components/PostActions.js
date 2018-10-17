@@ -84,7 +84,7 @@ PostActions.propTypes = {
   classes: PropTypes.object.isRequired,
   faveCount: PropTypes.number.isRequired,
   isFave: PropTypes.bool.isRequired,
-  canFave: PropTypes.bool.isRequired,
+  canFave: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
   onFavePost: PropTypes.func.isRequired,
   isFaving: PropTypes.bool.isRequired
 };
