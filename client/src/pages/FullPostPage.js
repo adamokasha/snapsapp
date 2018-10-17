@@ -1,11 +1,38 @@
 import React from "react";
 import { withRouter } from "react-router";
+import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import axios from "axios";
 
 import NavBar from "../components/NavBar";
-import FullPost from "../components/FullPost";
 import { fetchSinglePost, fetchPostComments } from "../async/posts";
+
+import FullPostImage from "../components/FullPostImage";
+import PostHeading from "../components/PostHeading";
+import PostActions from "../components/PostActions";
+import CommentList from "../components/CommentList";
+import CommentForm from "../components/CommentForm";
+
+const styles = theme => ({
+  root: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    background: "#f9f9f9"
+  },
+  postInfo: {
+    width: "95%",
+    display: "flex",
+    justifyContent: "space-between",
+    padding: `${theme.spacing.unit}px 0`
+  },
+  commentsContainer: {
+    width: "95%",
+    padding: `${theme.spacing.unit}px 0`,
+    display: "flex",
+    flexDirection: "column"
+  }
+});
 
 export class FullPostPage extends React.Component {
   constructor(props) {
@@ -136,21 +163,41 @@ export class FullPostPage extends React.Component {
   }
 
   render() {
+    const { classes } = this.props;
+    const { post, comments, commentsPage, hasMoreComments } = this.state;
+
     return (
-      <div>
+      <React.Fragment>
         <NavBar />
-        {this.state.post && (
-          <FullPost
-            post={this.state.post}
-            comments={this.state.comments}
-            commentsPage={this.state.commentsPage}
-            fetchingComments={this.state.fetchingComments}
-            onLoadNext={this.onLoadNext}
-            onLoadPrevious={this.onLoadPrevious}
-            hasMoreComments={this.state.hasMoreComments}
-          />
-        )}
-      </div>
+        <div className={classes.root}>
+          {this.state.post && (
+            <React.Fragment>
+              <FullPostImage imgUrl={post.imgUrl} />
+              <div className={classes.postInfo}>
+                <PostHeading
+                  profilePhoto={post._owner.profilePhoto}
+                  displayName={post._owner.displayName}
+                  title={post.title}
+                />
+                <PostActions />
+              </div>
+            </React.Fragment>
+          )}
+          <div className={classes.commentsContainer}>
+            {this.state.comments && (
+              <CommentList
+                comments={comments}
+                commentsPage={commentsPage}
+                hasMoreComments={hasMoreComments}
+                fetchingComments={this.fetchingComments}
+                onLoadNext={this.onLoadNext}
+                onLoadPrevious={this.onLoadPrevious}
+              />
+            )}
+            <CommentForm postId={post._id} />
+          </div>
+        </div>
+      </React.Fragment>
     );
   }
 }
@@ -159,4 +206,4 @@ FullPostPage.propTypes = {
   location: PropTypes.object
 };
 
-export default withRouter(FullPostPage);
+export default withStyles(styles)(withRouter(FullPostPage));
