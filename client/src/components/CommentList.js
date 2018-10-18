@@ -20,11 +20,17 @@ const styles = theme => ({
   paginationControls: {
     marginBottom: `${theme.spacing.unit}px`
   },
+  buttonRoot: {
+    minWidth: `48px`
+  },
   leftButton: {
     marginRight: `${theme.spacing.unit}px`
   },
   leftIcon: {
     marginRight: "4px"
+  },
+  iconRoot: {
+    fontSize: "16px"
   },
   rightIcon: {
     marginLeft: "4px"
@@ -45,21 +51,29 @@ export const CommentList = props => {
     <div className={classes.root}>
       <div className={classes.paginationControls}>
         <Button
+          classes={{ root: classes.buttonRoot }}
           variant="outlined"
           size="small"
           className={classes.leftButton}
           onClick={onLoadPrevious}
           disabled={!hasMoreComments || comments.length < 20}
         >
-          <ArrowBackIcon className={classes.leftIcon} />
+          <ArrowBackIcon
+            classes={{ root: classes.iconRoot }}
+            className={classes.leftIcon}
+          />
         </Button>
         <Button
+          classes={{ root: classes.buttonRoot }}
           variant="outlined"
           size="small"
           onClick={onLoadNext}
           disabled={commentsPage === 0}
         >
-          <ArrowForwardIcon className={classes.rightIcon} />
+          <ArrowForwardIcon
+            classes={{ root: classes.iconRoot }}
+            className={classes.rightIcon}
+          />
         </Button>
       </div>
       {fetchingComments && (
