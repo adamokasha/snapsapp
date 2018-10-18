@@ -219,56 +219,37 @@ export class ScrollView extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    // New search
+    // Case: context switching
+    if (this.props.context !== prevProps.context) {
+      return this.setState(
+        {
+          currentPage: 0,
+          isFetching: false,
+          pages: [],
+          morePagesAvailable: true
+        },
+        () => {
+          this.loadData();
+        }
+      );
+    }
+
+    // Case: search terms change
     if (this.props.searchTerms !== prevProps.searchTerms) {
-      // User search
-      if (this.props.context === "searchUsers") {
-        this.setState(
-          { currentPage: 0, isFetching: true, profilePages: [] },
-          async () => {
-            const res = await axios.post(
-              `/api/profile/search/${this.state.currentPage}`,
-              { searchTerms: this.props.searchTerms }
-            );
-
-            this.setState(
-              {
-                profilePages: [res.data],
-                currentPage: this.state.currentPage + 1,
-                isFetching: false
-              },
-              () => {}
-            );
-          }
-        );
-      }
-
-      // Post search
-      if (this.props.context === "searchPosts") {
-        this.setState(
-          { currentPage: 0, isFetching: true, pages: [] },
-          async () => {
-            const res = await axios.post(
-              `/api/posts/search/${this.state.currentPage}`,
-              {
-                searchTerms: this.props.searchTerms
-              }
-            );
-
-            this.setState(
-              {
-                pages: [res.data],
-                currentPage: this.state.currentPage + 1,
-                isFetching: false
-              },
-              () => {
-                this.props.setPostContext(this.props.context);
-                this.props.setPosts(res.data);
-              }
-            );
-          }
-        );
-      }
+      return this.setState(
+        {
+          currentPage: 0,
+          morePagesAvailable: true,
+          isFetching: false,
+          pages: [],
+          albums: [],
+          profilePages: [],
+          showNavToTop: false
+        },
+        () => {
+          this.loadData();
+        }
+      );
     }
   }
 

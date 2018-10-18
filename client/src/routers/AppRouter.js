@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
-import HomePage from "../pages/HomePage";
+import MainPage from "../pages/MainPage";
 import RegisterOrLogin from "../pages/RegisterOrLogin";
 import RegisterUserPage from "../pages/RegisterUserPage";
 import ImageUploadPage from "../pages/ImageUploadPage";
@@ -34,7 +34,7 @@ export class AppRouter extends React.Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Route exact path="/" component={HomePage} />
+          <Route exact path="/" component={MainPage} />
           <PublicRoute
             path="/register"
             component={() => <RegisterOrLogin registerOrLogin="register" />}
