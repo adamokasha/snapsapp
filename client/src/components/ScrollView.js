@@ -10,6 +10,7 @@ import axios from "axios";
 
 import Grid from "./Grid";
 import { setPostContext, setPosts } from "../actions/posts";
+import * as async from "../async/scrollview";
 
 const styles = theme => ({
   root: {
@@ -41,11 +42,12 @@ export class ScrollView extends React.Component {
       isFetching: false,
       pages: [],
       gridContext: "posts",
-      albums: [],
-      profilePages: [],
       showNavToTop: false
     };
 
+    this.signal = axios.CancelToken.source();
+
+    /* Scroll Event Handler */
     /* global pageYOffset, innerHeight */
     let pageYOffset,
       innerHeight,
@@ -98,106 +100,113 @@ export class ScrollView extends React.Component {
     window.addEventListener("scroll", this.onScroll, false);
   }
 
+  setGridContext = context => {
+    let gridContext;
+    const needsPostsGrid = [
+      "popular",
+      "new",
+      "following",
+      "userPosts",
+      "userFaves",
+      "searchPosts"
+    ];
+    const needsAlbumsGrid = ["userAlbums"];
+    const needsAlbumPostsGrid = ["albumPosts"];
+    const needsProfileGrid = ["userFollows", "userFollowers", "searchUsers"];
+
+    if (needsPostsGrid.includes(context)) {
+      gridContext = "posts";
+    }
+    if (needsAlbumsGrid.includes(context)) {
+      gridContext = "albums";
+    }
+    if (needsAlbumPostsGrid.includes(context)) {
+      gridContext = "albumPosts";
+    }
+    if (needsProfileGrid.includes(context)) {
+      gridContext = "profiles";
+    }
+
+    return gridContext;
+  };
+
   loadData = () => {
     if (this.state.isFetching || !this.state.morePagesAvailable) {
       return;
     }
 
     this.setState({ isFetching: true }, async () => {
-      const { context } = this.props;
-      let res;
-      let gridContext;
-      switch (context) {
-        case "popular":
-          res = await axios.get(`/api/posts/popular/${this.state.currentPage}`);
-          gridContext = "posts";
-          break;
-        case "new":
-          res = await axios.get(`/api/posts/new/${this.state.currentPage}`);
-          gridContext = "posts";
-          break;
-        case "following":
-          res = await axios.get(`/api/posts/follows/${this.state.currentPage}`);
-          gridContext = "profiles";
-          break;
-        case "userPosts":
-          res = await axios.get(
-            `/api/posts/user/all/${this.props.user}/${this.state.currentPage}`
-          );
-          gridContext = "posts";
-          break;
-        case "albumPosts":
-          res = await axios.get(
-            `/api/albums/full/${this.props.albumId}/${this.state.currentPage}`
-          );
-          gridContext = "albumPosts";
-          break;
-        case "userFaves":
-          res = await axios.get(
-            `/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`
-          );
-          gridContext = "posts";
-          break;
-        case "userAlbums":
-          res = await axios.get(
-            `/api/albums/all/${this.props.user}/${this.state.currentPage}`
-          );
-          gridContext = "albums";
-          break;
-        case "userFollows":
-          res = await axios.get(
-            `/api/profile/follows/${this.props.userId}/${
-              this.state.currentPage
-            }`
-          );
-          gridContext = "profiles";
-          break;
-        case "userFollowers":
-          res = await axios.get(
-            `/api/profile/followers/${this.props.userId}/${
-              this.state.currentPage
-            }`
-          );
-          gridContext = "profiles";
-          break;
-        case "searchPosts":
-          res = await axios.post(
-            `/api/posts/search/${this.state.currentPage}`,
-            {
-              searchTerms: this.props.searchTerms
-            }
-          );
-          gridContext = "posts";
-          break;
-        case "searchUsers":
-          res = await axios.post(
-            `/api/profile/search/${this.state.currentPage}`,
-            { searchTerms: this.props.searchTerms }
-          );
-          gridContext = "profiles";
-          break;
-        default:
-          return (res = []);
-      }
+      try {
+        const { context, user, userId, albumId, searchTerms } = this.props;
+        const { currentPage: page } = this.state;
+        const { token: cancelToken } = this.signal;
+        let res;
+        // Set the context of the grid rendered by ScrollView
+        const gridContext = this.setGridContext(context);
 
-      if (!res.data.length) {
-        return this.setState(
-          { morePagesAvailable: false, isFetching: false },
-          () => {}
-        );
-      }
-
-      return this.setState(
-        {
-          currentPage: this.state.currentPage + 1,
-          pages: [...this.state.pages, res.data],
-          gridContext,
-          isFetching: false
-        },
-        () => {
-          this.props.setPosts(res.data);
+        switch (context) {
+          case "popular":
+            res = await async.fetchPopular(cancelToken, page);
+            break;
+          case "new":
+            res = await async.fetchNew(cancelToken, page);
+            break;
+          case "following":
+            res = await async.fetchFollowing(cancelToken, page);
+            break;
+          case "userPosts":
+            res = await async.fetchUserPosts(cancelToken, user, page);
+            break;
+          case "albumPosts":
+            res = await async.fetchAlbumPosts(cancelToken, albumId, page);
+            break;
+          case "userFaves":
+            res = await async.fetchUserFaves(cancelToken, user, page);
+            break;
+          case "userAlbums":
+            res = await async.fetchUserAlbums(cancelToken, user, page);
+            break;
+          case "userFollows":
+            res = await async.fetchUserFollows(cancelToken, userId, page);
+            break;
+          case "userFollowers":
+            res = await async.fetchUserFollowers(cancelToken, userId, page);
+            break;
+          case "searchPosts":
+            res = await async.searchPosts(cancelToken, searchTerms, page);
+            break;
+          case "searchUsers":
+            res = await async.searchUsers(cancelToken, searchTerms, page);
+            break;
+          default:
+            return (res = []);
         }
-      );
+
+        if (!res.data.length) {
+          return this.setState(
+            { morePagesAvailable: false, isFetching: false },
+            () => {}
+          );
+        }
+
+        return this.setState(
+          {
+            currentPage: this.state.currentPage + 1,
+            pages: [...this.state.pages, res.data],
+            gridContext,
+            isFetching: false
+          },
+          () => {
+            this.props.setPosts(res.data);
+          }
+        );
+      } catch (e) {
+        if (axios.isCancel(e)) {
+          return console.log(e.message);
+        }
+        console.log(e);
+        this.setState({ isFetching: false }, () => {});
+      }
     });
   };
 
@@ -243,6 +252,7 @@ export class ScrollView extends React.Component {
   componentWillUnmount() {
     // Prevent memory leak
     window.removeEventListener("scroll", this.onScroll, false);
+    this.signal.cancel("Async call cancelled.");
   }
 
   goTop = () => {
@@ -287,9 +297,12 @@ export class ScrollView extends React.Component {
 const mapStateToProps = ({ posts }) => ({
   posts
 });
-
+// user, userId, albumId
 ScrollView.propTypes = {
   context: PropTypes.string.isRequired,
+  user: PropTypes.string,
+  userId: PropTypes.string,
+  albumId: PropTypes.string,
   searchTerms: PropTypes.array
 };
 
