@@ -54,7 +54,7 @@ const styles = theme => ({
   }
 });
 
-class ImageCard extends React.Component {
+class PostCard extends React.Component {
   state = {
     imgId: this.props.post._id,
     faved: this.props.post.isFave,
@@ -207,7 +207,7 @@ class ImageCard extends React.Component {
   }
 }
 
-ImageCard.propTypes = {
+PostCard.propTypes = {
   classes: PropTypes.object.isRequired,
   post: PropTypes.object.isRequired,
   cardContext: PropTypes.oneOf(["post", "album"])
@@ -220,4 +220,4 @@ const mapStateToProps = ({ auth }) => ({
 export default compose(
   withStyles(styles),
   connect(mapStateToProps)
-)(ImageCard);
+)(PostCard);

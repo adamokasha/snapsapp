@@ -5,7 +5,7 @@ import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 
 import Album from "./Album";
-import ImageCard from "./ImageCard";
+import PostCard from "./PostCard";
 import ProfileHeader from "./ProfileHeader";
 
 const styles = theme => ({
@@ -40,7 +40,7 @@ const styles = theme => ({
   }
 });
 
-function ImageGridList(props) {
+function Grid(props) {
   const { classes, posts, gridContext, gridData } = props;
 
   const renderGridTiles = data => {
@@ -51,12 +51,12 @@ function ImageGridList(props) {
         break;
       case "posts":
         tiles = data.map(post => (
-          <ImageCard post={post} key={post._id} cardContext="post" />
+          <PostCard post={post} key={post._id} cardContext="post" />
         ));
         break;
       case "albumPosts":
         tiles = data.map(post => (
-          <ImageCard post={post} key={post._id} cardContext="album" />
+          <PostCard post={post} key={post._id} cardContext="album" />
         ));
         break;
       case "profiles":
@@ -96,9 +96,9 @@ function ImageGridList(props) {
   );
 }
 
-ImageGridList.propTypes = {
+Grid.propTypes = {
   classes: PropTypes.object.isRequired,
   posts: PropTypes.array.isRequired
 };
 
-export default withStyles(styles)(ImageGridList);
+export default withStyles(styles)(Grid);

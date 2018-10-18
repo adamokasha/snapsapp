@@ -7,7 +7,7 @@ import PublicRoute from "./PublicRoute";
 import MainPage from "../pages/MainPage";
 import RegisterOrLogin from "../pages/RegisterOrLogin";
 import RegisterUserPage from "../pages/RegisterUserPage";
-import ImageUploadPage from "../pages/ImageUploadPage";
+import AddPostPage from "../pages/AddPostPage";
 import PrivacyPolicy from "../components/PrivacyPolicy";
 import { setUser } from "../actions/auth";
 import { fetchUser } from "../async/auth";
@@ -46,7 +46,7 @@ export class AppRouter extends React.Component {
             registerOrLogin="login"
           />
           <PublicRoute path="/privacy" component={PrivacyPolicy} />
-          <PrivateRoute path="/upload" component={ImageUploadPage} />
+          <PrivateRoute path="/upload" component={AddPostPage} />
           <PrivateRoute path="/mbox" component={MessageBoxPage} />
           <Route path="/albummaker" component={AlbumMaker} />
 

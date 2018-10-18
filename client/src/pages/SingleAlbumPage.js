@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router";
 import NavBar from "../components/NavBar";
-import ImageGrid from "../components/ImageGrid";
 import ScrollView from "../components/ScrollView";
 
 export class SingleAlbumPage extends React.Component {

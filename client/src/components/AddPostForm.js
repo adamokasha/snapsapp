@@ -1,72 +1,71 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import compose from 'recompose/compose';
-import classNames from 'classnames';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import Paper from '@material-ui/core/Paper';
-import Avatar from '@material-ui/core/Avatar';
-import AddPhotoAlternate from '@material-ui/icons/AddPhotoAlternate';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Input from '@material-ui/core/Input';
-import IconButton from '@material-ui/core/IconButton';
-import Close from '@material-ui/icons/Close';
-import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutlined';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
-import Chip from '@material-ui/core/Chip';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import filesize from 'filesize';
-import withStyles from '@material-ui/core/styles/withStyles';
+import React from "react";
+import { connect } from "react-redux";
+import { withRouter } from "react-router";
+import compose from "recompose/compose";
+import classNames from "classnames";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import Paper from "@material-ui/core/Paper";
+import Avatar from "@material-ui/core/Avatar";
+import AddPhotoAlternate from "@material-ui/icons/AddPhotoAlternate";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import Input from "@material-ui/core/Input";
+import IconButton from "@material-ui/core/IconButton";
+import Close from "@material-ui/icons/Close";
+import InsertDriveFileOutlinedIcon from "@material-ui/icons/InsertDriveFileOutlined";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import Chip from "@material-ui/core/Chip";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import filesize from "filesize";
+import withStyles from "@material-ui/core/styles/withStyles";
 
-import CustomSnackbar from './CustomSnackbar';
+import CustomSnackbar from "./CustomSnackbar";
 
 const styles = theme => ({
   paper: {
-    width: '95%',
-    display: 'block',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    width: "95%",
+    display: "block",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
       .spacing.unit * 3}px`,
-    [theme.breakpoints.up('sm')]: {
-      width: '80%'
+    [theme.breakpoints.up("sm")]: {
+      width: "80%"
     },
-    [theme.breakpoints.up('md')]: {
-      width: '65%'
+    [theme.breakpoints.up("md")]: {
+      width: "65%"
     },
-    [theme.breakpoints.up('lg')]: {
-      width: '45%'
+    [theme.breakpoints.up("lg")]: {
+      width: "45%"
     }
   },
   paperModal: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)'
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)"
   },
   paperPage: {
-    margin: '0 auto'
+    margin: "0 auto"
   },
   linearLoader: {
-    position: 'fixed',
-    top: '0',
-    width: '100%'
+    position: "fixed",
+    top: "0",
+    width: "100%"
   },
   linearLoaderModal: {
-    position: 'absolute',
-    top: '0',
-    width: '100%'
+    position: "absolute",
+    top: "0",
+    width: "100%"
   },
   closeButton: {
-    position: 'absolute',
-    right: '4%',
-    cursor: 'pointer',
-    color: 'rgba(0, 0, 0, 1)'
+    position: "absolute",
+    right: "4%",
+    cursor: "pointer",
+    color: "rgba(0, 0, 0, 1)"
   },
   heading: {
     marginBottom: `${theme.spacing.unit}px`
@@ -76,60 +75,60 @@ const styles = theme => ({
     backgroundColor: theme.palette.secondary.main
   },
   form: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%'
+    display: "flex",
+    flexDirection: "column",
+    width: "100%"
   },
   blankImage: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100px',
-    border: '1px dashed rgba(0, 0, 0, .5)',
-    width: '50%',
-    margin: '0 auto',
-    borderRadius: '3%',
-    [theme.breakpoints.up('sm')]: {
-      width: '30%'
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100px",
+    border: "1px dashed rgba(0, 0, 0, .5)",
+    width: "50%",
+    margin: "0 auto",
+    borderRadius: "3%",
+    [theme.breakpoints.up("sm")]: {
+      width: "30%"
     },
-    [theme.breakpoints.up('md')]: {
-      width: '20%'
+    [theme.breakpoints.up("md")]: {
+      width: "20%"
     }
   },
   blankIcon: {
-    fontSize: '48px',
-    color: 'rgba(0, 0, 0, .5)'
+    fontSize: "48px",
+    color: "rgba(0, 0, 0, .5)"
   },
   previewImage: {
-    maxHeight: '100px',
-    maxWidth: '100%',
-    width: 'auto',
-    height: 'auto',
-    margin: '0 auto',
-    display: 'block'
+    maxHeight: "100px",
+    maxWidth: "100%",
+    width: "auto",
+    height: "auto",
+    margin: "0 auto",
+    display: "block"
   },
   fileInputContainer: {
-    width: '85%',
-    [theme.breakpoints.up('sm')]: {
-      width: '50%'
+    width: "85%",
+    [theme.breakpoints.up("sm")]: {
+      width: "50%"
     },
-    [theme.breakpoints.up('md')]: {
-      width: '40%'
+    [theme.breakpoints.up("md")]: {
+      width: "40%"
     },
-    margin: '0 auto'
+    margin: "0 auto"
   },
   fileInput: {
-    display: 'none'
+    display: "none"
   },
   textField: {
     marginTop: theme.spacing.unit * 2,
     marginRight: theme.spacing.unit * 2,
-    width: '100%'
+    width: "100%"
   },
   tagContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    width: '100%',
+    display: "flex",
+    flexWrap: "wrap",
+    width: "100%",
     padding: `${theme.spacing.unit}px`
   },
   chipTag: {
@@ -137,23 +136,23 @@ const styles = theme => ({
     marginBottom: `${theme.spacing.unit}px`
   },
   button: {
-    width: '100%',
-    marginTop: '5%'
+    width: "100%",
+    marginTop: "5%"
   },
   aTag: {
-    color: 'inherit',
-    textDecoration: 'none'
+    color: "inherit",
+    textDecoration: "none"
   }
 });
 
-class ImageUploadForm extends React.Component {
+class AddPostForm extends React.Component {
   state = {
     post: {
-      title: '',
+      title: "",
       tags: [],
-      description: ''
+      description: ""
     },
-    previewImage: '',
+    previewImage: "",
     file: null,
     fileSize: null,
     isLoading: false,
@@ -177,17 +176,17 @@ class ImageUploadForm extends React.Component {
 
   onTitleChange = e => {
     const str = e.target.value;
-    const cleanedStr = str.replace(/[^\w\s]/gi, '');
+    const cleanedStr = str.replace(/[^\w\s]/gi, "");
     this.setState({ post: { ...this.state.post, title: cleanedStr } });
   };
 
   onTagsChange = e => {
     const textInput = e.target.value;
     const tagsArr = textInput
-      .replace(/[^\w\s]/gi, '')
+      .replace(/[^\w\s]/gi, "")
       .trim()
-      .replace(/\s\s+/g, ' ')
-      .split(' ');
+      .replace(/\s\s+/g, " ")
+      .split(" ");
 
     const cleanedTagsArr = tagsArr
       .map(tag => tag.slice(0, 12))
@@ -211,15 +210,15 @@ class ImageUploadForm extends React.Component {
 
       const data = new FormData();
       // name must match multer upload('name')
-      data.append('image', file);
-      data.append('data', JSON.stringify(post));
+      data.append("image", file);
+      data.append("data", JSON.stringify(post));
 
-      fetch('/api/upload', {
-        mode: 'no-cors',
-        method: 'POST',
+      fetch("/api/upload", {
+        mode: "no-cors",
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-          Accept: 'application/json; charset=utf-8'
+          "Content-Type": "application/json; charset=utf-8",
+          Accept: "application/json; charset=utf-8"
         },
         body: data
       })
@@ -246,8 +245,8 @@ class ImageUploadForm extends React.Component {
                 this.setState(
                   {
                     snackbarOpen: true,
-                    snackbarVar: 'success',
-                    snackbarMessage: 'Click here to see your post!'
+                    snackbarVar: "success",
+                    snackbarMessage: "Click here to see your post!"
                   },
                   () => {}
                 );
@@ -256,12 +255,12 @@ class ImageUploadForm extends React.Component {
           });
         })
         .catch(e => {
-          console.log('CATCH BLOCK TRIGGERED!!!!');
+          console.log("CATCH BLOCK TRIGGERED!!!!");
           this.setState(
             {
               snackbarOpen: true,
-              snackbarVar: 'error',
-              snackbarMessage: 'Could not add post! Try again.',
+              snackbarVar: "error",
+              snackbarMessage: "Could not add post! Try again.",
               isLoading: false
             },
             () => {}
@@ -279,7 +278,7 @@ class ImageUploadForm extends React.Component {
   };
 
   setSnackbarMessage = variant => {
-    if (variant === 'success') {
+    if (variant === "success") {
       return (
         <Link
           onClick={this.props.handleClose}
@@ -290,7 +289,7 @@ class ImageUploadForm extends React.Component {
         </Link>
       );
     }
-    if (variant === 'error') {
+    if (variant === "error") {
       return <p>Could not add post! Please check fields.</p>;
     }
   };
@@ -302,14 +301,18 @@ class ImageUploadForm extends React.Component {
       <React.Fragment>
         <Paper
           className={
-            view === 'modal'
+            view === "modal"
               ? classNames(classes.paper, classes.paperModal)
               : classNames(classes.paper, classes.paperPage)
           }
         >
           {this.state.isLoading && (
             <LinearProgress
-              className={view === 'modal' ? classes.linearLoaderModal : classes.linearLoader}
+              className={
+                view === "modal"
+                  ? classes.linearLoaderModal
+                  : classes.linearLoader
+              }
               color="secondary"
             />
           )}
@@ -321,7 +324,7 @@ class ImageUploadForm extends React.Component {
               Add Post
             </Typography>
           </div>
-          {view === 'modal' && (
+          {view === "modal" && (
             <IconButton
               onClick={this.props.handleClose}
               className={classes.closeButton}
@@ -351,11 +354,11 @@ class ImageUploadForm extends React.Component {
                 <Typography variant="caption">Limit: 2 MB</Typography>
                 <Typography
                   color={
-                    this.state.fileSize > 2097152 ? 'secondary' : 'default'
+                    this.state.fileSize > 2097152 ? "secondary" : "default"
                   }
                   variant="caption"
                 >
-                  File size:{' '}
+                  File size:{" "}
                   {this.state.file &&
                     filesize(this.state.file.size, { exponent: 2 })}
                 </Typography>
@@ -368,7 +371,7 @@ class ImageUploadForm extends React.Component {
                 name="image"
                 type="file"
                 onChange={this.onFileSelect}
-                inputProps={{ accept: 'image/*' }}
+                inputProps={{ accept: "image/*" }}
               />
               <label htmlFor="hidden-file-input">
                 <Button
@@ -379,7 +382,7 @@ class ImageUploadForm extends React.Component {
                   Browse for an Image File
                 </Button>
               </label>
-            </div>{' '}
+            </div>{" "}
             <TextField
               id="full-width"
               label="Title"
@@ -398,11 +401,11 @@ class ImageUploadForm extends React.Component {
               }}
               value={this.state.post.title}
               required
-            />{' '}
+            />{" "}
             <div className={classes.tagContainer}>
               {this.state.post.tags &&
                 this.state.post.tags.map(tag => {
-                  if (tag === '') {
+                  if (tag === "") {
                     return;
                   }
                   return <Chip className={classes.chipTag} label={tag} />;
@@ -423,7 +426,7 @@ class ImageUploadForm extends React.Component {
                   </InputAdornment>
                 )
               }}
-            />{' '}
+            />{" "}
             <TextField
               id="full-width"
               label="Description"
@@ -475,10 +478,10 @@ class ImageUploadForm extends React.Component {
   }
 }
 
-ImageUploadForm.propTypes = {
+AddPostForm.propTypes = {
   classes: PropTypes.object.isRequired,
   handleClose: PropTypes.func,
-  view: PropTypes.oneOf(['modal', 'page'])
+  view: PropTypes.oneOf(["modal", "page"])
 };
 
 const mapStateToProps = ({ auth }) => ({
@@ -488,4 +491,4 @@ const mapStateToProps = ({ auth }) => ({
 export default compose(
   withStyles(styles),
   connect(mapStateToProps)
-)(withRouter(ImageUploadForm));
+)(withRouter(AddPostForm));

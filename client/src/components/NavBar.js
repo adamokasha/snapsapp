@@ -20,7 +20,7 @@ import Badge from "@material-ui/core/Badge";
 import axios from "axios";
 
 import ModalView from "./ModalView";
-import ImageUploadForm from "./ImageUploadForm";
+import AddPostForm from "./AddPostForm";
 import { updateMboxNotif } from "../actions/auth";
 
 const styles = theme => ({
@@ -107,7 +107,7 @@ class NavBar extends React.Component {
             <CloudUploadIcon />
           </IconButton>
         }
-        modalComponent={<ImageUploadForm view="modal" />}
+        modalComponent={<AddPostForm view="modal" />}
       />
     );
   };

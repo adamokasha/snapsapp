@@ -8,7 +8,7 @@ import Button from "@material-ui/core/Button";
 import NavigationIcon from "@material-ui/icons/Navigation";
 import axios from "axios";
 
-import ImageGrid from "./ImageGrid";
+import Grid from "./Grid";
 import { setPostContext, setPosts } from "../actions/posts";
 
 const styles = theme => ({
@@ -269,7 +269,7 @@ export class ScrollView extends React.Component {
 
         {this.state.pages
           ? this.state.pages.map((page, i) => (
-              <ImageGrid
+              <Grid
                 key={i}
                 gridData={page}
                 gridContext={this.state.gridContext}
