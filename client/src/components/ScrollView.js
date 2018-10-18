@@ -10,8 +10,6 @@ import axios from "axios";
 
 import ImageGrid from "./ImageGrid";
 import { setPostContext, setPosts } from "../actions/posts";
-import AlbumList from "./AlbumList";
-import ProfileList from "./ProfileList";
 
 const styles = theme => ({
   root: {
@@ -42,6 +40,7 @@ export class ScrollView extends React.Component {
       morePagesAvailable: true,
       isFetching: false,
       pages: [],
+      gridContext: "posts",
       albums: [],
       profilePages: [],
       showNavToTop: false
@@ -107,67 +106,54 @@ export class ScrollView extends React.Component {
     this.setState({ isFetching: true }, async () => {
       const { context } = this.props;
       let res;
+      let gridContext;
       switch (context) {
         case "popular":
           res = await axios.get(`/api/posts/popular/${this.state.currentPage}`);
+          gridContext = "posts";
           break;
         case "new":
           res = await axios.get(`/api/posts/new/${this.state.currentPage}`);
+          gridContext = "posts";
           break;
         case "following":
           res = await axios.get(`/api/posts/follows/${this.state.currentPage}`);
+          gridContext = "profiles";
           break;
         case "userPosts":
           res = await axios.get(
             `/api/posts/user/all/${this.props.user}/${this.state.currentPage}`
           );
+          gridContext = "posts";
           break;
         case "userFaves":
           res = await axios.get(
             `/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`
           );
+          gridContext = "posts";
           break;
         case "userAlbums":
-          res = await axios.get(`/api/albums/all/${this.props.user}`);
-          return this.setState({
-            albums: [...res.data],
-            isFetching: false,
-            morePagesAvailable: false
-          });
+          res = await axios.get(
+            `/api/albums/all/${this.props.user}/${this.state.currentPage}`
+          );
+          gridContext = "albums";
+          break;
         case "userFollows":
           res = await axios.get(
             `/api/profile/follows/${this.props.userId}/${
               this.state.currentPage
             }`
           );
-          if (!res.data.length) {
-            return this.setState(
-              { morePagesAvailable: false, isFetching: false },
-              () => {}
-            );
-          }
-          return this.setState({
-            profilePages: [...this.state.pages, res.data],
-            currentPage: this.state.currentPage + 1,
-            isFetching: false
-          });
+          gridContext = "profiles";
+          break;
         case "userFollowers":
           res = await axios.get(
             `/api/profile/followers/${this.props.userId}/${
               this.state.currentPage
             }`
           );
-          if (!res.data.length) {
-            return this.setState(
-              { morePagesAvailable: false, isFetching: false },
-              () => {}
-            );
-          }
-          return this.setState({
-            profilePages: [...this.state.pages, res.data],
-            currentPage: this.state.currentPage + 1,
-            isFetching: false
-          });
+          gridContext = "profiles";
+          break;
         case "searchPosts":
           res = await axios.post(
             `/api/posts/search/${this.state.currentPage}`,
@@ -175,23 +161,17 @@ export class ScrollView extends React.Component {
               searchTerms: this.props.searchTerms
             }
           );
+          gridContext = "posts";
           break;
         case "searchUsers":
           res = await axios.post(
             `/api/profile/search/${this.state.currentPage}`,
             { searchTerms: this.props.searchTerms }
           );
-          if (!res.data.length) {
-            return this.setState(
-              { morePagesAvailable: false, isFetching: false },
-              () => {}
-            );
-          }
-          return this.setState({
-            profilePages: [...this.state.pages, res.data],
-            currentPage: this.state.currentPage + 1,
-            isFetching: false
-          });
+          gridContext = "profiles";
+          break;
+        default:
+          return (res = []);
       }
 
       if (!res.data.length) {
@@ -205,6 +185,7 @@ export class ScrollView extends React.Component {
         {
           currentPage: this.state.currentPage + 1,
           pages: [...this.state.pages, res.data],
+          gridContext,
           isFetching: false
         },
         () => {
@@ -282,27 +263,13 @@ export class ScrollView extends React.Component {
 
         {this.state.pages
           ? this.state.pages.map((page, i) => (
-              <ImageGrid key={i} posts={page} />
+              <ImageGrid
+                key={i}
+                gridData={page}
+                gridContext={this.state.gridContext}
+              />
             ))
           : null}
-
-        {this.state.albums && context === "userAlbums" ? (
-          <AlbumList albums={this.state.albums} />
-        ) : null}
-
-        {this.state.profilePages && context === "searchUsers"
-          ? this.state.profilePages.map((profiles, i) => (
-              <ProfileList key={i} profiles={profiles} />
-            ))
-          : null}
-
-        {(this.state.profilePages && context === "userFollows") ||
-        (this.state.profilePages && context === "userFollowers")
-          ? this.state.profilePages.map((profiles, i) => (
-              <ProfileList key={i} profiles={profiles} />
-            ))
-          : null}
-
         {this.state.isFetching ? (
           <CircularProgress className={classes.circularProgress} size={50} />
         ) : null}

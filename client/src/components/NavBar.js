@@ -151,7 +151,11 @@ class NavBar extends React.Component {
           open={open}
           onClose={this.handleClose}
         >
-          <MenuItem to="/myalbums" component={Link} onClick={this.handleClose}>
+          <MenuItem
+            to={{ pathname: "/myalbums", state: { user: auth.displayName } }}
+            component={Link}
+            onClick={this.handleClose}
+          >
             Albums
           </MenuItem>
           <MenuItem

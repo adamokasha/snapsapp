@@ -90,11 +90,11 @@ class ImageCard extends React.Component {
 
   // Will select view based on width: Modal(m+) or redirect to full page view(s-)
   selectView = () => {
-    const { classes, title, context } = this.props;
+    const { classes, title, cardContext } = this.props;
     const { imgUrl, _id } = this.props.post;
     // Don't open modal on small screens
     if (
-      context === "album" ||
+      cardContext === "album" ||
       window.screen.width < 600 ||
       window.innerWidth < 600
     ) {
@@ -129,7 +129,7 @@ class ImageCard extends React.Component {
   };
 
   render() {
-    const { classes, context } = this.props;
+    const { classes, cardContext } = this.props;
     const {
       _owner,
       title,
@@ -154,17 +154,19 @@ class ImageCard extends React.Component {
             }
             title={title || "Aerial Photo"}
             subheader={_owner.displayName || "September 14, 2016"}
-            className={context === "album" ? classes.albumHidden : null}
+            className={cardContext === "album" ? classes.albumHidden : null}
           />
           {this.selectView()}
           <CardContent>
-            {context === "album" ? (
+            {cardContext === "album" ? (
               <div>
                 <Typography variant="body2">{title}</Typography>
                 <Typography variant="caption">Posted {createdAt}</Typography>
               </div>
             ) : null}
-            <Typography>{context === "album" ? null : description}</Typography>
+            <Typography>
+              {cardContext === "album" ? null : description}
+            </Typography>
           </CardContent>
           <Divider />
           <CardActions className={classes.actions} disableActionSpacing>
@@ -208,7 +210,7 @@ class ImageCard extends React.Component {
 ImageCard.propTypes = {
   classes: PropTypes.object.isRequired,
   post: PropTypes.object.isRequired,
-  context: PropTypes.string
+  cardContext: PropTypes.oneOf(["post", "album"])
 };
 
 const mapStateToProps = ({ auth }) => ({

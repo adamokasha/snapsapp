@@ -1,20 +1,20 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const requireAuth = require('../middlewares/requireAuth');
+const requireAuth = require("../middlewares/requireAuth");
 
-const Album = mongoose.model('Album');
-const Post = mongoose.model('Post');
-const User = mongoose.model('User');
+const Album = mongoose.model("Album");
+const Post = mongoose.model("Post");
+const User = mongoose.model("User");
 
 module.exports = app => {
   // Add new album
-  app.post('/api/albums', requireAuth, async (req, res) => {
+  app.post("/api/albums", requireAuth, async (req, res) => {
     try {
       const { albumName, albumPosts } = req.body;
 
       // Default cover image: last image in array
       const coverImgId = albumPosts[albumPosts.length - 1];
-      const coverImgDoc = await Post.findById({_id: coverImgId}, 'imgUrl');
+      const coverImgDoc = await Post.findById({ _id: coverImgId }, "imgUrl");
 
       const album = await new Album({
         name: albumName,
@@ -28,23 +28,31 @@ module.exports = app => {
       console.log(e);
     }
   });
-  
+
   // ScrollView context: User albums
-  app.get('/api/albums/all/:user', async (req, res) => {
+  app.get("/api/albums/all/:user/:page", async (req, res) => {
     try {
-      const userId = await User.find({displayName: req.params.user}, '_id');
-      const albums = await Album.find({_owner: userId}, '_id name coverImg').populate('_owner', 'displayName');
+      const { user, page } = req.params;
+      const userId = await User.find({ displayName: user }, "_id");
+      const albums = await Album.find({ _owner: userId }, "_id name coverImg")
+        .sort({ createdAt: -1 })
+        .limit(15)
+        .skip(15 * page)
+        .populate("_owner", "displayName");
       res.status(200).send(albums);
-    } catch(e) {
-      console.log(e)
+    } catch (e) {
+      console.log(e);
     }
-  })
+  });
 
   // Get a user's albums (protected)
-  app.get('/api/albums/myalbums', requireAuth, async (req, res) => {
+  app.get("/api/albums/myalbums", requireAuth, async (req, res) => {
     try {
       const userId = req.user.id;
-      const albums = await Album.find({ _owner: userId }, '_id name coverImg').populate('_owner', 'displayName');
+      const albums = await Album.find(
+        { _owner: userId },
+        "_id name coverImg"
+      ).populate("_owner", "displayName");
       res.status(200).send(albums);
     } catch (e) {
       console.log(e);
@@ -52,41 +60,46 @@ module.exports = app => {
   });
 
   // Get a single album, only imgUrls (for AlbumMaker)
-  app.get('/api/albums/get/:id', async (req, res) => {
+  app.get("/api/albums/get/:id", async (req, res) => {
     try {
-      const album = await Album.findById(req.params.id, 'posts');
-      const posts = await Post.find({_id: {$in: album.posts}}, 'imgUrl');
+      const album = await Album.findById(req.params.id, "posts");
+      const posts = await Post.find({ _id: { $in: album.posts } }, "imgUrl");
       res.status(200).send(posts);
     } catch (e) {
       console.log(e);
     }
-  })
+  });
 
   // Get a single album with all Post properties (for SingleAlbumPage)
-  app.get('/api/albums/full/:id', async (req, res) => {
+  app.get("/api/albums/full/:id", async (req, res) => {
     try {
-      const album = await Album.findById(req.params.id, 'posts');
-      const posts = await Post.find({_id: {$in: album.posts}}).populate('_owner', 'displayName profilePhoto');
+      const album = await Album.findById(req.params.id, "posts");
+      const posts = await Post.find({ _id: { $in: album.posts } }).populate(
+        "_owner",
+        "displayName profilePhoto"
+      );
       res.status(200).send(posts);
     } catch (e) {
       console.log(e);
     }
-  })
+  });
 
   // Update an album
-  app.patch('/api/albums/update/:id', requireAuth, async (req, res) => {
+  app.patch("/api/albums/update/:id", requireAuth, async (req, res) => {
     try {
       const { albumName, albumPosts } = req.body;
-      const album = await Album.findById({_id: req.params.id});
+      const album = await Album.findById({ _id: req.params.id });
 
       if (album._owner.toHexString() !== req.user.id) {
-        return res.status(401).send({error: 'You are not authorized to edit this album'})
+        return res
+          .status(401)
+          .send({ error: "You are not authorized to edit this album" });
       }
 
-      await album.update({name: albumName, posts: [...albumPosts]});
+      await album.update({ name: albumName, posts: [...albumPosts] });
       res.status(200).send(album);
     } catch (e) {
       console.log(e);
     }
-  })
+  });
 };

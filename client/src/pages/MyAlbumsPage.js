@@ -4,8 +4,7 @@ import AddPhotoAlternate from "@material-ui/icons/AddPhotoAlternate";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 
-import AlbumList from "../components/AlbumList";
-import NavBar from "../components/NavBar";
+import ScrollView from "../components/ScrollView";
 import ModalView from "../components/ModalView";
 import AlbumMaker from "../components/AlbumMaker";
 import axios from "axios";
@@ -27,39 +26,20 @@ export class AlbumsPage extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    const albums = await axios.get("/api/albums/myalbums");
-    this.setState({ albums: [...albums.data] });
-  }
+  // async componentDidMount() {
+  //   const albums = await axios.get("/api/albums/myalbums");
+  //   this.setState({ albums: [...albums.data] });
+  // }
 
   render() {
     const { classes } = this.props;
 
     return (
       <div>
-        <Typography
-          variant="display3"
-          align="center"
-          color="textPrimary"
-          gutterBottom
-        >
-          Albums
-        </Typography>
-        <ModalView
-          togglerComponent={
-            <Button
-              onClick={this.handleOpen}
-              variant="fab"
-              color="secondary"
-              aria-label="Add"
-              className={classes.fab}
-            >
-              <AddPhotoAlternate />
-            </Button>
-          }
-          modalComponent={<AlbumMaker withSnackbar={true} method="post" />}
+        <ScrollView
+          context="userAlbums"
+          user={this.props.location.state.user}
         />
-        <AlbumList albums={this.state.albums} />
       </div>
     );
   }

@@ -1,15 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import GridList from "@material-ui/core/GridList";
-import GridListTile from "@material-ui/core/GridListTile";
-import GridListTileBar from "@material-ui/core/GridListTileBar";
-import IconButton from "@material-ui/core/IconButton";
-import axios from "axios";
 
-import ModalView from "./ModalView";
-import AlbumMaker from "./AlbumMaker";
+import Album from "./Album";
+import { GridListTile } from "@material-ui/core";
 
 const styles = theme => ({
   root: {},
@@ -74,50 +69,8 @@ class AlbumList extends React.Component {
       <div className={classes.gridListRoot}>
         <GridList cellHeight="auto" cols={8} className={classes.gridList}>
           {this.props.albums.map((album, i) => (
-            <GridListTile
-              onMouseLeave={this.toggleEditIcon}
-              onMouseEnter={this.toggleEditIcon}
-              albumid={`img-album-${i}`}
-              className={classes.listTile}
-              key={album._id}
-            >
-              <Link
-                to={{
-                  pathname: `/albums/${album._owner.displayName}/${album._id}`,
-                  state: { albumId: album._id }
-                }}
-              >
-                <img
-                  src={`https://d14ed1d2q7cc9f.cloudfront.net/200x200/smart/${
-                    album.coverImg
-                  }`}
-                  className={classes.image}
-                  alt={album.name}
-                />
-              </Link>
-              <GridListTileBar
-                title={album.name}
-                actionIcon={
-                  <ModalView
-                    togglerComponent={
-                      <IconButton
-                        albumid={album._id}
-                        classes={{ root: classes.icon }}
-                      >
-                        <ion-icon name="settings" />
-                      </IconButton>
-                    }
-                    modalComponent={
-                      <AlbumMaker
-                        albumId={album._id}
-                        albumName={album.name}
-                        withSnackbar={true}
-                        method="patch"
-                      />
-                    }
-                  />
-                }
-              />
+            <GridListTile>
+              <Album album={album} key={i} />
             </GridListTile>
           ))}
         </GridList>
