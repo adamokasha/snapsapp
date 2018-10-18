@@ -56,3 +56,27 @@ export const onUnfollow = async (cancelToken, userId) => {
     throw e;
   }
 };
+
+// ScrollView
+export const fetchUserFollows = async (cancelToken, userId, page) => {
+  const res = await axios.get(`/api/profile/follows/${userId}/${page}`, {
+    cancelToken
+  });
+  return res;
+};
+
+export const fetchUserFollowers = async (cancelToken, userId, page) => {
+  const res = await axios.get(`/api/profile/followers/${userId}/${page}`, {
+    cancelToken
+  });
+  return res;
+};
+
+export const searchUsers = async (cancelToken, searchTerms, page) => {
+  const res = await axios.post(
+    `/api/profile/search/${page}`,
+    { searchTerms },
+    { cancelToken }
+  );
+  return res;
+};

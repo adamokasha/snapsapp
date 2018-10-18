@@ -24,3 +24,18 @@ export const updateAlbum = async (
     { cancelToken }
   );
 };
+
+// ScrollView
+export const fetchAlbumPostsPaginated = async (cancelToken, albumId, page) => {
+  const res = await axios.get(`/api/albums/full/${albumId}/${page}`, {
+    cancelToken
+  });
+  return res;
+};
+
+export const fetchUserAlbums = async (cancelToken, user, page) => {
+  const res = await axios.get(`/api/albums/all/${user}/${page}`, {
+    cancelToken
+  });
+  return res;
+};

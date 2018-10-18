@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const fetchUserPosts = async cancelToken => {
+export const fetchAllUserPosts = async cancelToken => {
   const res = await axios.get("/api/posts/myposts/all", { cancelToken });
   return res;
 };
@@ -30,4 +30,46 @@ export const addComment = async (cancelToken, postId, commentBody) => {
 
 export const favePost = async (cancelToken, postId) => {
   await axios.post(`/api/posts/fave/${postId}`, {}, { cancelToken });
+};
+
+// ScrollView
+export const fetchPopular = async (cancelToken, page) => {
+  const res = await axios.get(`/api/posts/popular/${page}`, { cancelToken });
+  return res;
+};
+
+export const fetchNew = async (cancelToken, page) => {
+  const res = axios.get(`/api/posts/new/${page}`, { cancelToken });
+  return res;
+};
+
+export const fetchFollowing = async (cancelToken, page) => {
+  const res = await axios.get(`/api/posts/follows/${page}`, { cancelToken });
+  return res;
+};
+
+export const fetchUserPosts = async (cancelToken, user, page) => {
+  const res = await axios.get(`/api/posts/user/all/${user}/${page}`, {
+    cancelToken
+  });
+
+  return res;
+};
+
+export const fetchUserFaves = async (cancelToken, user, page) => {
+  const res = await axios.get(`/api/posts/user/faves/${user}/${page}`, {
+    cancelToken
+  });
+  return res;
+};
+
+export const searchPosts = async (cancelToken, searchTerms, page) => {
+  const res = await axios.post(
+    `/api/posts/search/${page}`,
+    {
+      searchTerms
+    },
+    { cancelToken }
+  );
+  return res;
 };

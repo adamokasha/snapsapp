@@ -140,49 +140,20 @@ export class ScrollView extends React.Component {
         const { context, user, userId, albumId, searchTerms } = this.props;
         const { currentPage: page } = this.state;
         const { token: cancelToken } = this.signal;
-        let res;
         // Set the context of the grid rendered by ScrollView
         const gridContext = this.setGridContext(context);
 
-        switch (context) {
-          case "popular":
-            res = await async.fetchPopular(cancelToken, page);
-            break;
-          case "new":
-            res = await async.fetchNew(cancelToken, page);
-            break;
-          case "following":
-            res = await async.fetchFollowing(cancelToken, page);
-            break;
-          case "userPosts":
-            res = await async.fetchUserPosts(cancelToken, user, page);
-            break;
-          case "albumPosts":
-            res = await async.fetchAlbumPosts(cancelToken, albumId, page);
-            break;
-          case "userFaves":
-            res = await async.fetchUserFaves(cancelToken, user, page);
-            break;
-          case "userAlbums":
-            res = await async.fetchUserAlbums(cancelToken, user, page);
-            break;
-          case "userFollows":
-            res = await async.fetchUserFollows(cancelToken, userId, page);
-            break;
-          case "userFollowers":
-            res = await async.fetchUserFollowers(cancelToken, userId, page);
-            break;
-          case "searchPosts":
-            res = await async.searchPosts(cancelToken, searchTerms, page);
-            break;
-          case "searchUsers":
-            res = await async.searchUsers(cancelToken, searchTerms, page);
-            break;
-          default:
-            return (res = []);
-        }
+        const { data } = await async.fetchScrollViewData(
+          cancelToken,
+          context,
+          user,
+          userId,
+          albumId,
+          searchTerms,
+          page
+        );
 
-        if (!res.data.length) {
+        if (!data.length) {
           return this.setState(
             { morePagesAvailable: false, isFetching: false },
             () => {}
@@ -192,12 +163,12 @@ export class ScrollView extends React.Component {
         return this.setState(
           {
             currentPage: this.state.currentPage + 1,
-            pages: [...this.state.pages, res.data],
+            pages: [...this.state.pages, data],
             gridContext,
             isFetching: false
           },
           () => {
-            this.props.setPosts(res.data);
+            this.props.setPosts(data);
           }
         );
       } catch (e) {

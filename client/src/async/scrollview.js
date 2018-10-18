@@ -1,79 +1,61 @@
-import axios from "axios";
+import {
+  fetchPopular,
+  fetchNew,
+  fetchFollowing,
+  fetchUserPosts,
+  fetchUserFaves,
+  searchPosts
+} from "./posts";
+import { fetchAlbumPostsPaginated, fetchUserAlbums } from "./albums";
+import { fetchUserFollows, fetchUserFollowers, searchUsers } from "./profiles";
 
-export const fetchPopular = async (cancelToken, page) => {
-  const res = await axios.get(`/api/posts/popular/${page}`, { cancelToken });
-  return res;
-};
+export const fetchScrollViewData = async (
+  cancelToken,
+  context,
+  user,
+  userId,
+  albumId,
+  searchTerms,
+  page
+) => {
+  let res;
+  switch (context) {
+    case "popular":
+      res = await fetchPopular(cancelToken, page);
+      break;
+    case "new":
+      res = await fetchNew(cancelToken, page);
+      break;
+    case "following":
+      res = await fetchFollowing(cancelToken, page);
+      break;
+    case "userPosts":
+      res = await fetchUserPosts(cancelToken, user, page);
+      break;
+    case "albumPosts":
+      res = await fetchAlbumPostsPaginated(cancelToken, albumId, page);
+      break;
+    case "userFaves":
+      res = await fetchUserFaves(cancelToken, user, page);
+      break;
+    case "userAlbums":
+      res = await fetchUserAlbums(cancelToken, user, page);
+      break;
+    case "userFollows":
+      res = await fetchUserFollows(cancelToken, userId, page);
+      break;
+    case "userFollowers":
+      res = await fetchUserFollowers(cancelToken, userId, page);
+      break;
+    case "searchPosts":
+      res = await searchPosts(cancelToken, searchTerms, page);
+      break;
+    case "searchUsers":
+      res = await searchUsers(cancelToken, searchTerms, page);
+      break;
+    default:
+      return (res = []);
+  }
 
-export const fetchNew = async (cancelToken, page) => {
-  const res = axios.get(`/api/posts/new/${page}`, { cancelToken });
-  return res;
-};
-
-export const fetchFollowing = async (cancelToken, page) => {
-  const res = await axios.get(`/api/posts/follows/${page}`, { cancelToken });
-  return res;
-};
-
-export const fetchUserPosts = async (cancelToken, user, page) => {
-  const res = await axios.get(`/api/posts/user/all/${user}/${page}`, {
-    cancelToken
-  });
-
-  return res;
-};
-
-export const fetchAlbumPosts = async (cancelToken, albumId, page) => {
-  const res = await axios.get(`/api/albums/full/${albumId}/${page}`, {
-    cancelToken
-  });
-  return res;
-};
-
-export const fetchUserFaves = async (cancelToken, user, page) => {
-  const res = await axios.get(`/api/posts/user/faves/${user}/${page}`, {
-    cancelToken
-  });
-  return res;
-};
-
-export const fetchUserAlbums = async (cancelToken, user, page) => {
-  const res = await axios.get(`/api/albums/all/${user}/${page}`, {
-    cancelToken
-  });
-  return res;
-};
-
-export const fetchUserFollows = async (cancelToken, userId, page) => {
-  const res = await axios.get(`/api/profile/follows/${userId}/${page}`, {
-    cancelToken
-  });
-  return res;
-};
-
-export const fetchUserFollowers = async (cancelToken, userId, page) => {
-  const res = await axios.get(`/api/profile/followers/${userId}/${page}`, {
-    cancelToken
-  });
-  return res;
-};
-
-export const searchPosts = async (cancelToken, searchTerms, page) => {
-  const res = await axios.post(
-    `/api/posts/search/${page}`,
-    {
-      searchTerms
-    },
-    { cancelToken }
-  );
-  return res;
-};
-
-export const searchUsers = async (cancelToken, searchTerms, page) => {
-  const res = await axios.post(
-    `/api/profile/search/${page}`,
-    { searchTerms },
-    { cancelToken }
-  );
   return res;
 };

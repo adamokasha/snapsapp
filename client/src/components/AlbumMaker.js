@@ -14,7 +14,7 @@ import axios from "axios";
 
 import AlbumMakerImageView from "./AlbumMakerImageView";
 import CustomSnackbar from "./CustomSnackbar";
-import { fetchUserPosts } from "../async/posts";
+import { fetchAllUserPosts } from "../async/posts";
 import { fetchAlbumPosts, createAlbum, updateAlbum } from "../async/albums";
 
 const styles = theme => ({
@@ -143,7 +143,7 @@ class AlbumMaker extends React.Component {
     this.setState({ isLoading: true }, async () => {
       try {
         // fetch all posts
-        const { data } = await fetchUserPosts(this.signal.token);
+        const { data } = await fetchAllUserPosts(this.signal.token);
         this.setState({ posts: [...data] }, async () => {
           // retrieve current album posts from db (editing an album)
           if (this.props.albumId) {
