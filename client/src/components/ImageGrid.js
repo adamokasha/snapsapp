@@ -54,6 +54,11 @@ function ImageGridList(props) {
           <ImageCard post={post} key={post._id} cardContext="post" />
         ));
         break;
+      case "albumPosts":
+        tiles = data.map(post => (
+          <ImageCard post={post} key={post._id} cardContext="album" />
+        ));
+        break;
       case "profiles":
         tiles = data.map(profile => (
           <ProfileHeader

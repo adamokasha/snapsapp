@@ -302,7 +302,6 @@ class AlbumMaker extends React.Component {
                 label: classes.tabLabel
               }}
               label="Album Photos"
-              href="#basic-tabs"
             />
           </Tabs>
         </AppBar>

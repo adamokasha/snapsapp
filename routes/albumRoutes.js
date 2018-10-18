@@ -71,13 +71,16 @@ module.exports = app => {
   });
 
   // Get a single album with all Post properties (for SingleAlbumPage)
-  app.get("/api/albums/full/:id", async (req, res) => {
+  app.get("/api/albums/full/:id/:page", async (req, res) => {
     try {
-      const album = await Album.findById(req.params.id, "posts");
-      const posts = await Post.find({ _id: { $in: album.posts } }).populate(
-        "_owner",
-        "displayName profilePhoto"
-      );
+      const { id, page } = req.params;
+      const album = await Album.findById(id, "posts");
+
+      const posts = await Post.find({ _id: { $in: album.posts } })
+        .limit(10)
+        .skip(10 * page)
+        .populate("_owner", "displayName profilePhoto");
+
       res.status(200).send(posts);
     } catch (e) {
       console.log(e);

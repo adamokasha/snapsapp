@@ -126,6 +126,12 @@ export class ScrollView extends React.Component {
           );
           gridContext = "posts";
           break;
+        case "albumPosts":
+          res = await axios.get(
+            `/api/albums/full/${this.props.albumId}/${this.state.currentPage}`
+          );
+          gridContext = "albumPosts";
+          break;
         case "userFaves":
           res = await axios.get(
             `/api/posts/user/faves/${this.props.user}/${this.state.currentPage}`

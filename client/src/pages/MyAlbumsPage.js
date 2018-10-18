@@ -40,6 +40,21 @@ export class AlbumsPage extends React.Component {
           context="userAlbums"
           user={this.props.location.state.user}
         />
+
+        <ModalView
+          togglerComponent={
+            <Button
+              onClick={this.handleOpen}
+              variant="fab"
+              color="secondary"
+              aria-label="Add"
+              className={classes.fab}
+            >
+              <AddPhotoAlternate />
+            </Button>
+          }
+          modalComponent={<AlbumMaker withSnackbar={true} method="post" />}
+        />
       </div>
     );
   }
