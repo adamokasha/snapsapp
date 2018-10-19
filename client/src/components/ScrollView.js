@@ -46,58 +46,96 @@ export class ScrollView extends React.Component {
     };
 
     this.signal = axios.CancelToken.source();
+  }
 
-    /* Scroll Event Handler */
+  onScroll = () => {
     /* global pageYOffset, innerHeight */
     let pageYOffset,
       innerHeight,
       docOffsetHeight,
       ticking = false;
 
-    this.onScroll = function() {
-      pageYOffset = window.pageYOffset;
-      innerHeight = window.innerHeight;
-      docOffsetHeight = document.body.offsetHeight;
-      requestTick();
-    };
-
-    // Scroll optimization using raf
-    const raf =
-      window.requestAnimationFrame ||
-      window.webkitRequestAnimationFrame ||
-      window.mozRequestAnimationFrame ||
-      window.msRequestAnimationFrame ||
-      window.oRequestAnimationFrame;
-
-    function requestTick() {
+    const requestTick = () => {
       if (!ticking) {
-        raf(update);
+        requestAnimationFrame(update);
       }
       ticking = true;
-    }
+    };
 
-    const loadData = this.loadData.bind(this);
-    const boundSetState = this.setState.bind(this);
-
-    function update() {
+    const update = () => {
       ticking = false;
 
       const currentPageYOffset = pageYOffset;
       const currentInnerHeight = innerHeight;
       const currentDocOffsetHeight = docOffsetHeight;
 
-      if (currentPageYOffset > currentInnerHeight) {
-        boundSetState({ showNavToTop: true });
+      if (
+        this.state.showNavToTop === false &&
+        currentPageYOffset > currentInnerHeight
+      ) {
+        this.setState({ showNavToTop: true });
       }
-      if (currentPageYOffset < currentInnerHeight) {
-        boundSetState({ showNavToTop: false });
+      if (
+        this.state.showNavToTop === true &&
+        currentPageYOffset < currentInnerHeight
+      ) {
+        this.setState({ showNavToTop: false });
       }
       if (currentInnerHeight + currentPageYOffset >= currentDocOffsetHeight) {
-        loadData();
+        this.loadData();
       }
+    };
+
+    pageYOffset = window.pageYOffset;
+    innerHeight = window.innerHeight;
+    docOffsetHeight = document.body.offsetHeight;
+    requestTick();
+  };
+
+  componentDidMount() {
+    window.addEventListener("scroll", this.onScroll, false);
+    this.loadData();
+  }
+
+  componentDidUpdate(prevProps) {
+    // Case: context switching
+    if (this.props.context !== prevProps.context) {
+      return this.setState(
+        {
+          currentPage: 0,
+          isFetching: false,
+          pages: [],
+          morePagesAvailable: true
+        },
+        () => {
+          this.loadData();
+        }
+      );
     }
 
-    window.addEventListener("scroll", this.onScroll, false);
+    // Case: search terms change
+    if (this.props.searchTerms !== prevProps.searchTerms) {
+      return this.setState(
+        {
+          currentPage: 0,
+          morePagesAvailable: true,
+          isFetching: false,
+          pages: [],
+          albums: [],
+          profilePages: [],
+          showNavToTop: false
+        },
+        () => {
+          this.loadData();
+        }
+      );
+    }
+  }
+
+  componentWillUnmount() {
+    // Prevent memory leak
+    window.removeEventListener("scroll", this.onScroll, false);
+    this.signal.cancel("Async call cancelled.");
   }
 
   setGridContext = context => {
@@ -181,58 +219,13 @@ export class ScrollView extends React.Component {
     });
   };
 
-  componentDidMount() {
-    this.loadData();
-  }
-
-  componentDidUpdate(prevProps) {
-    // Case: context switching
-    if (this.props.context !== prevProps.context) {
-      return this.setState(
-        {
-          currentPage: 0,
-          isFetching: false,
-          pages: [],
-          morePagesAvailable: true
-        },
-        () => {
-          this.loadData();
-        }
-      );
-    }
-
-    // Case: search terms change
-    if (this.props.searchTerms !== prevProps.searchTerms) {
-      return this.setState(
-        {
-          currentPage: 0,
-          morePagesAvailable: true,
-          isFetching: false,
-          pages: [],
-          albums: [],
-          profilePages: [],
-          showNavToTop: false
-        },
-        () => {
-          this.loadData();
-        }
-      );
-    }
-  }
-
-  componentWillUnmount() {
-    // Prevent memory leak
-    window.removeEventListener("scroll", this.onScroll, false);
-    this.signal.cancel("Async call cancelled.");
-  }
-
   goTop = () => {
     window.scrollTo(0, 0);
   };
 
   render() {
     const { classes, context, posts } = this.props;
-
+    console.log("ScrollView Rendered");
     return (
       <div className={classes.root}>
         {this.state.showNavToTop ? (
