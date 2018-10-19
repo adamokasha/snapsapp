@@ -1,25 +1,30 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cookieSession = require('cookie-session');
-const passport = require('passport');
-const bodyParser = require('body-parser');
-const keys = require('./config/keys');
+const express = require("express");
+const compression = require("compression");
+const mongoose = require("mongoose");
+const cookieSession = require("cookie-session");
+const passport = require("passport");
+const bodyParser = require("body-parser");
+const keys = require("./config/keys");
 
-require('./models/User');
-require('./models/Faves');
-require('./models/Album');
-require('./models/Post');
-require('./models/Followers');
-require('./models/Follows');
-require('./models/MessageBox');
-require('./models/Message');
-require('./services/passport');
+require("./models/User");
+require("./models/Faves");
+require("./models/Album");
+require("./models/Post");
+require("./models/Followers");
+require("./models/Follows");
+require("./models/MessageBox");
+require("./models/Message");
+require("./services/passport");
 
 mongoose.Promise = global.Promise;
-mongoose.connect(keys.mongoURI, { useNewUrlParser: true });
+mongoose.connect(
+  keys.mongoURI,
+  { useNewUrlParser: true }
+);
 
 const app = express();
 
+app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
@@ -31,19 +36,19 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-require('./routes/authRoutes')(app);
-require('./routes/uploadRoutes')(app);
-require('./routes/postRoutes')(app);
-require('./routes/albumRoutes')(app);
-require('./routes/profileRoutes')(app);
-require('./routes/messageRoutes')(app);
+require("./routes/authRoutes")(app);
+require("./routes/uploadRoutes")(app);
+require("./routes/postRoutes")(app);
+require("./routes/albumRoutes")(app);
+require("./routes/profileRoutes")(app);
+require("./routes/messageRoutes")(app);
 
-if (['production', 'ci'].includes(process.env.NODE_ENV)) {
-  app.use(express.static('client/build'));
+if (["production", "ci"].includes(process.env.NODE_ENV)) {
+  app.use(express.static("client/build"));
 
-  const path = require('path');
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve('client', 'build', 'index.html'));
+  const path = require("path");
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve("client", "build", "index.html"));
   });
 }
 

@@ -16,6 +16,7 @@
     "@material-ui/core": "^3.1.1",
     "aws-sdk": "^2.317.0",
     "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
     "cookie-session": "^2.0.0-beta.3",
     "express": "^4.16.3",
     "filesize": "^3.6.1",
