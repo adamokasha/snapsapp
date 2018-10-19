@@ -5,6 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
 import Bar from "@material-ui/core/GridListTileBar";
 
+import SettingsIcon from "../icons/Settings";
 import ModalView from "./ModalView";
 import AlbumMaker from "./AlbumMaker";
 
@@ -19,6 +20,10 @@ const styles = theme => ({
     visibility: "hidden",
     opacity: "0",
     transition: "visibility 0s, opacity .3s ease"
+  },
+  settingsIcon: {
+    height: "24px",
+    width: "24px"
   }
 });
 
@@ -72,7 +77,7 @@ class Album extends React.Component {
                   albumid={album._id}
                   classes={{ root: classes.icon }}
                 >
-                  <ion-icon name="settings" />
+                  <SettingsIcon classes={{ root: classes.settingsIcon }} />
                 </IconButton>
               }
               modalComponent={
