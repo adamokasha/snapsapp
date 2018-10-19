@@ -9,7 +9,7 @@ import NavigationIcon from "@material-ui/icons/Navigation";
 import axios from "axios";
 
 import Grid from "./Grid";
-import { setPostContext, setPosts } from "../actions/posts";
+import { setPosts } from "../actions/posts";
 import * as async from "../async/scrollview";
 
 const styles = theme => ({
@@ -39,7 +39,7 @@ export class ScrollView extends React.Component {
     this.state = {
       currentPage: 0,
       morePagesAvailable: true,
-      isFetching: false,
+      isFetching: true,
       pages: [],
       gridContext: "posts",
       showNavToTop: false
@@ -92,9 +92,17 @@ export class ScrollView extends React.Component {
     requestTick();
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     window.addEventListener("scroll", this.onScroll, false);
-    this.loadData();
+    try {
+      const { data } = await this.doAsync();
+      this.updateState(data);
+    } catch (e) {
+      if (axios.isCancel(e)) {
+        return console.log(e.message);
+      }
+      console.log(e);
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -175,40 +183,8 @@ export class ScrollView extends React.Component {
 
     this.setState({ isFetching: true }, async () => {
       try {
-        const { context, user, userId, albumId, searchTerms } = this.props;
-        const { currentPage: page } = this.state;
-        const { token: cancelToken } = this.signal;
-        // Set the context of the grid rendered by ScrollView
-        const gridContext = this.setGridContext(context);
-
-        const { data } = await async.fetchScrollViewData(
-          cancelToken,
-          context,
-          user,
-          userId,
-          albumId,
-          searchTerms,
-          page
-        );
-
-        if (!data.length) {
-          return this.setState(
-            { morePagesAvailable: false, isFetching: false },
-            () => {}
-          );
-        }
-
-        return this.setState(
-          {
-            currentPage: this.state.currentPage + 1,
-            pages: [...this.state.pages, data],
-            gridContext,
-            isFetching: false
-          },
-          () => {
-            this.props.setPosts(data);
-          }
-        );
+        const { data } = await this.doAsync();
+        this.updateState(data);
       } catch (e) {
         if (axios.isCancel(e)) {
           return console.log(e.message);
@@ -217,6 +193,48 @@ export class ScrollView extends React.Component {
         this.setState({ isFetching: false }, () => {});
       }
     });
+  };
+
+  doAsync = async () => {
+    try {
+      const { context, user, userId, albumId, searchTerms } = this.props;
+      const { currentPage: page } = this.state;
+      const { token: cancelToken } = this.signal;
+
+      return await async.fetchScrollViewData(
+        cancelToken,
+        context,
+        user,
+        userId,
+        albumId,
+        searchTerms,
+        page
+      );
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  updateState = data => {
+    const { context } = this.props;
+    const gridContext = this.setGridContext(context);
+    if (!data.length) {
+      return this.setState(
+        { morePagesAvailable: false, isFetching: false },
+        () => {}
+      );
+    }
+    return this.setState(
+      {
+        currentPage: this.state.currentPage + 1,
+        pages: [...this.state.pages, data],
+        gridContext,
+        isFetching: false
+      },
+      () => {
+        this.props.setPosts(data);
+      }
+    );
   };
 
   goTop = () => {
@@ -241,7 +259,7 @@ export class ScrollView extends React.Component {
           </Button>
         ) : null}
 
-        {this.state.pages
+        {this.state.pages.length > 0
           ? this.state.pages.map((page, i) => (
               <Grid
                 key={i}
@@ -274,6 +292,6 @@ export default compose(
   withStyles(styles),
   connect(
     mapStateToProps,
-    { setPosts, setPostContext }
+    { setPosts }
   )
 )(ScrollView);

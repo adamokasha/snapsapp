@@ -62,6 +62,7 @@ function Grid(props) {
       case "profiles":
         tiles = data.map(profile => (
           <ProfileHeader
+            key={profile._id}
             profilePhoto={profile.profilePhoto}
             displayName={profile.displayName}
             joined={profile.joined}
@@ -77,10 +78,10 @@ function Grid(props) {
   return (
     <div className={classes.root}>
       <GridList className={classes.gridList} cols={3}>
-        {renderGridTiles(gridData).map(tile => {
+        {renderGridTiles(gridData).map((tile, i) => {
           return (
             <GridListTile
-              key={tile._id}
+              key={i}
               cols={1}
               classes={{
                 root: classes.gridTileRoot,
@@ -98,7 +99,7 @@ function Grid(props) {
 
 Grid.propTypes = {
   classes: PropTypes.object.isRequired,
-  posts: PropTypes.array.isRequired
+  gridData: PropTypes.array.isRequired
 };
 
 export default withStyles(styles)(Grid);
