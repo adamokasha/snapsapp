@@ -1,7 +1,5 @@
 import React from "react";
-import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
-import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import List from "@material-ui/core/List";
@@ -13,7 +11,6 @@ import OutlinedInput from "@material-ui/core/OutlinedInput";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SendOutlinedIcon from "@material-ui/icons/SendOutlined";
-import axios from "axios";
 import moment from "moment";
 
 const styles = theme => ({
@@ -162,6 +159,7 @@ export class MessageReplies extends React.Component {
 }
 
 MessageReplies.propTypes = {
+  classes: PropTypes.object.isRequired,
   message: PropTypes.object.isRequired,
   onSubmitMessageReply: PropTypes.func.isRequired,
   isSending: PropTypes.bool.isRequired,
@@ -170,11 +168,4 @@ MessageReplies.propTypes = {
   hasMoreReplies: PropTypes.bool.isRequired
 };
 
-const mapStateToProps = ({ auth }) => ({
-  auth
-});
-
-export default compose(
-  withStyles(styles),
-  connect(mapStateToProps)
-)(MessageReplies);
+export default withStyles(styles)(MessageReplies);

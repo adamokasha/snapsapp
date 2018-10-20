@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
 import compose from "recompose/compose";
 import classNames from "classnames";
 import Paper from "@material-ui/core/Paper";
@@ -61,8 +62,8 @@ const styles = theme => ({
 });
 
 export class MessageBox extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
     this.state = {
       messages: [],
@@ -232,24 +233,17 @@ export class MessageBox extends React.Component {
   setList = async listView => {
     try {
       let res;
+      const { token: cancelToken } = this.signal;
+      const { currentListPage } = this.state;
       switch (listView) {
         case "unread":
-          res = await async.fetchUnread(
-            this.signal.token,
-            this.state.currentListPage
-          );
+          res = await async.fetchUnread(cancelToken, currentListPage);
           break;
         case "all":
-          res = await async.fetchAll(
-            this.signal.token,
-            this.state.currentListPage
-          );
+          res = await async.fetchAll(cancelToken, currentListPage);
           break;
         case "sent":
-          res = await async.fetchSent(
-            this.signal.token,
-            this.state.currentListPage
-          );
+          res = await async.fetchSent(cancelToken, currentListPage);
       }
 
       if (!res.data[`_${listView}`]) {
@@ -446,6 +440,10 @@ export class MessageBox extends React.Component {
 const mapStateToProps = ({ auth }) => ({
   auth
 });
+
+MessageBox.propTypes = {
+  auth: PropTypes.object.isRequired
+};
 
 export default compose(
   withStyles(styles),
