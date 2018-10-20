@@ -45,15 +45,11 @@ const styles = theme => ({
 });
 
 export class MessageReplies extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
     this.state = {
-      body: "",
-      message: this.props.message,
-      currentPage: this.props.currentMessagePage,
-      hasMoreReplies: this.props.hasMoreReplies,
-      isSending: false
+      body: ""
     };
 
     this.bottomRef = React.createRef();
@@ -71,56 +67,22 @@ export class MessageReplies extends React.Component {
     if (this.props.message.replies !== prevProps.message.replies) {
       this.setState(
         {
-          message: this.props.message,
-          currentPage: this.props.currentMessagePage
+          body: ""
         },
-        () => {}
+        () => {
+          this.bottomRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+            inline: "nearest"
+          });
+        }
       );
     }
   }
 
-  onSubmit = e => {
-    try {
-      e.preventDefault();
-      this.setState({ isSending: true }, async () => {
-        const res = await axios.post(
-          `/api/message/reply/${this.props.message._id}`,
-          {
-            body: this.state.body
-          }
-        );
-        const { body, createdAt } = res.data;
-        const reply = {
-          createdAt,
-          body,
-          _owner: {
-            profilePhoto: this.props.auth.profilePhoto
-          }
-        };
-        const updatedReplies = this.state.message.replies.push(reply);
-        this.setState(
-          {
-            ...this.state,
-            message: {
-              ...this.state.message,
-              replies: [...this.state.message.replies, ...updatedReplies]
-            },
-            body: "",
-            isSending: false
-          },
-          () => {
-            this.bottomRef.current.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-              inline: "nearest"
-            });
-          }
-        );
-      });
-    } catch (e) {
-      console.log(e);
-      this.setState({ isSending: false });
-    }
+  onSubmit = async e => {
+    e.preventDefault();
+    await this.props.onSubmitMessageReply(this.state.body);
   };
 
   onBodyChange = e => {
@@ -129,10 +91,7 @@ export class MessageReplies extends React.Component {
 
   loadPrevious = async () => {
     try {
-      await this.props.setPrevMessageReplies(
-        this.props.message._id,
-        this.props.currentMessagePage
-      );
+      await this.props.setPrevMessageReplies();
     } catch (e) {
       console.log(e);
     }
@@ -150,15 +109,15 @@ export class MessageReplies extends React.Component {
               size="small"
               onClick={this.loadPrevious}
               disabled={
-                this.state.message.replies.length < 5 ||
+                this.props.message.replies.length < 5 ||
                 !this.props.hasMoreReplies
               }
             >
               Load Previous
             </Button>
           </ListItem>
-          {this.state.message &&
-            this.state.message.replies.map(reply => (
+          {this.props.message &&
+            this.props.message.replies.map(reply => (
               <ListItem key={reply._id}>
                 <Link to={`/profile/${reply._owner.displayName}`}>
                   <Avatar src={reply._owner.profilePhoto} />
@@ -179,7 +138,7 @@ export class MessageReplies extends React.Component {
             rows={1}
             onChange={this.onBodyChange}
             value={this.state.body}
-            disabled={this.state.isSending}
+            disabled={this.props.isSending}
             inputProps={{ maxLength: 120 }}
             endAdornment={
               <InputAdornment position="end">
@@ -191,7 +150,7 @@ export class MessageReplies extends React.Component {
           <Button
             type="submit"
             variant="contained"
-            disabled={this.state.isSending || this.state.body.length < 1}
+            disabled={this.props.isSending || this.state.body.length < 1}
           >
             <SendOutlinedIcon className={classes.leftIcon} />
             Reply
@@ -204,6 +163,8 @@ export class MessageReplies extends React.Component {
 
 MessageReplies.propTypes = {
   message: PropTypes.object.isRequired,
+  onSubmitMessageReply: PropTypes.func.isRequired,
+  isSending: PropTypes.bool.isRequired,
   setPrevMessageReplies: PropTypes.func.isRequired,
   currentMessagePage: PropTypes.number.isRequired,
   hasMoreReplies: PropTypes.bool.isRequired

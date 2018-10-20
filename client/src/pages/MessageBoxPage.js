@@ -16,6 +16,7 @@ import MessageReplies from "../components/MessageReplies";
 import MessageBoxAppBar from "../components/MessageBoxAppBar";
 import CustomSnackbar from "../components/CustomSnackbar";
 import { updateMboxNotif } from "../actions/auth";
+import * as async from "../async/messages";
 
 const styles = theme => ({
   root: {
@@ -72,10 +73,13 @@ export class MessageBox extends React.Component {
       listType: "unread",
       currentMessage: null,
       currentMessagePage: 0,
+      isSending: false,
       hasMoreReplies: true,
       isLoading: false,
       snackbarOpen: false
     };
+
+    this.signal = axios.CancelToken.source();
   }
 
   async componentDidMount() {
@@ -87,10 +91,21 @@ export class MessageBox extends React.Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (this.state.message !== prevState.messages) {
-      const res = await axios.get("/api/message/count");
-      this.props.updateMboxNotif(res.data.size);
+    if (this.state.messages !== prevState.messages) {
+      try {
+        const { data } = await async.fetchMessageCount(this.signal.token);
+        this.props.updateMboxNotif(data.size);
+      } catch (e) {
+        if (axios.isCancel()) {
+          console.log(e.message);
+        }
+        console.log(e);
+      }
     }
+  }
+
+  componentWillUnmount() {
+    this.signal.cancel("Async call cancelled.");
   }
 
   onSelectOne = messageId => {
@@ -118,28 +133,69 @@ export class MessageBox extends React.Component {
   setMessage = messageId => {
     try {
       this.setState({ isLoading: true }, async () => {
-        const res = await axios.get(
-          `/api/message/get/${messageId}/${this.state.currentMessagePage}`
+        const { data } = await async.fetchMessage(
+          this.signal.token,
+          messageId,
+          this.state.currentMessagePage
         );
         this.setState({
           view: "message",
           isLoading: false,
-          currentMessage: res.data,
+          currentMessage: data,
           currentMessagePage: this.state.currentMessagePage + 1
         });
       });
     } catch (e) {
+      if (axios.isCancel()) {
+        return console.log(e.message);
+      }
       this.setState({ isLoading: false, snackbarOpen: true });
     }
   };
 
-  setPrevMessageReplies = (messageId, currentPage) => {
+  onSubmitMessageReply = async replyBody => {
+    try {
+      const { data } = await async.submitMessageReply(
+        this.signal.token,
+        this.state.currentMessage._id,
+        replyBody
+      );
+      const { body, createdAt } = data;
+      const reply = {
+        _id: Math.random() * 10,
+        createdAt,
+        body,
+        _owner: {
+          profilePhoto: this.props.auth.profilePhoto,
+          displayName: this.props.auth.displayName
+        }
+      };
+      this.setState({
+        ...this.state,
+        currentMessage: {
+          ...this.state.currentMessage,
+          replies: [...this.state.currentMessage.replies, reply]
+        },
+        isSending: false
+      });
+    } catch (e) {
+      if (axios.isCancel()) {
+        return console.log(e.message);
+      }
+      console.log(e);
+      this.setState({ isSending: false, snackbarOpen: true });
+    }
+  };
+
+  setPrevMessageReplies = () => {
     try {
       this.setState({ isLoading: true }, async () => {
-        const res = await axios.get(
-          `/api/message/get/${messageId}/${currentPage}`
+        const { data } = await async.fetchMessage(
+          this.signal.token,
+          this.state.currentMessage._id,
+          this.state.currentMessagePage
         );
-        if (!res.data) {
+        if (!data) {
           return this.setState({ hasMoreReplies: false, isLoading: false });
         }
         this.setState(
@@ -148,10 +204,7 @@ export class MessageBox extends React.Component {
             isLoading: false,
             currentMessage: {
               ...this.state.currentMessage,
-              replies: [
-                ...res.data.replies,
-                ...this.state.currentMessage.replies
-              ]
+              replies: [...data.replies, ...this.state.currentMessage.replies]
             },
             currentMessagePage: this.state.currentMessagePage + 1
           },
@@ -159,6 +212,9 @@ export class MessageBox extends React.Component {
         );
       });
     } catch (e) {
+      if (axios.isCancel()) {
+        return console.log(e.message);
+      }
       this.setState({ isLoading: false, snackbarOpen: true });
     }
   };
@@ -178,18 +234,21 @@ export class MessageBox extends React.Component {
       let res;
       switch (listView) {
         case "unread":
-          res = await axios.get(
-            `/api/message/unread/${this.state.currentListPage}`
+          res = await async.fetchUnread(
+            this.signal.token,
+            this.state.currentListPage
           );
           break;
         case "all":
-          res = await axios.get(
-            `/api/message/all/${this.state.currentListPage}`
+          res = await async.fetchAll(
+            this.signal.token,
+            this.state.currentListPage
           );
           break;
         case "sent":
-          res = await axios.get(
-            `/api/message/sent/${this.state.currentListPage}`
+          res = await async.fetchSent(
+            this.signal.token,
+            this.state.currentListPage
           );
       }
 
@@ -222,6 +281,9 @@ export class MessageBox extends React.Component {
         }
       );
     } catch (e) {
+      if (axios.isCancel()) {
+        return console.log(e.message);
+      }
       this.setState({ isLoading: false, snackbarOpen: true });
     }
   };
@@ -243,9 +305,7 @@ export class MessageBox extends React.Component {
   onDelete = () => {
     this.setState({ isLoading: true }, async () => {
       try {
-        await axios.delete(`/api/message/delete`, {
-          data: { deletions: this.state.selected }
-        });
+        await async.deleteMessage(this.signal.token, this.state.selected);
         const updatedMessages = this.state.messages.filter(
           message => !this.state.selected.includes(message._id)
         );
@@ -254,6 +314,10 @@ export class MessageBox extends React.Component {
           () => {}
         );
       } catch (e) {
+        if (axios.isCancel()) {
+          return console.log(e.message);
+        }
+        console.log(e);
         this.setState({ isLoading: false, snackbarOpen: true });
       }
     });
@@ -339,6 +403,8 @@ export class MessageBox extends React.Component {
             {this.state.view === "message" ? (
               <MessageReplies
                 message={this.state.currentMessage}
+                onSubmitMessageReply={this.onSubmitMessageReply}
+                isSending={this.state.isSending}
                 setPrevMessageReplies={this.setPrevMessageReplies}
                 currentMessagePage={this.state.currentMessagePage}
                 hasMoreReplies={this.state.hasMoreReplies}
@@ -377,10 +443,14 @@ export class MessageBox extends React.Component {
   }
 }
 
+const mapStateToProps = ({ auth }) => ({
+  auth
+});
+
 export default compose(
   withStyles(styles),
   connect(
-    null,
+    mapStateToProps,
     { updateMboxNotif }
   )
 )(MessageBox);
