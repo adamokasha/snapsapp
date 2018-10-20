@@ -1,27 +1,35 @@
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React from "react";
+import { Route, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 
-import NavBar from '../components/NavBar';
+import NavBar from "../components/NavBar";
 
-export const PrivateRoute = ({ isAuth, component: Component, ...rest }) => (
-  <Route
-    {...rest}
-    render={props =>
-      isAuth ? (
+const routeUser = (auth, Component, props) => {
+  if (auth) {
+    if (auth.registered) {
+      return (
         <div>
           <NavBar />
           <Component {...props} />
         </div>
-      ) : (
-        <Redirect to="/" />
-      )
+      );
     }
+    return <Redirect to="/register_user" />;
+  }
+  return <Redirect to="/" />;
+};
+
+export const PrivateRoute = ({ auth, component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props => {
+      return routeUser(auth, Component, props);
+    }}
   />
 );
 
 const mapStateToProps = ({ auth }) => ({
-  isAuth: auth
+  auth
 });
 
 export default connect(mapStateToProps)(PrivateRoute);

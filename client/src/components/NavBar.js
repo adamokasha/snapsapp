@@ -17,6 +17,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import Button from "@material-ui/core/Button";
 import Badge from "@material-ui/core/Badge";
+import Tooltip from "@material-ui/core/Tooltip";
 import axios from "axios";
 
 import ModalView from "./ModalView";
@@ -42,6 +43,9 @@ const styles = theme => ({
   },
   iconButton: {
     color: "#fff !important"
+  },
+  disabledNavButton: {
+    opacity: "0.54"
   },
   aTag: {
     padding: 0,
@@ -89,18 +93,21 @@ class NavBar extends React.Component {
   };
 
   selectPostFormView = () => {
-    const { classes } = this.props;
+    const { classes, auth } = this.props;
     if (window.screen.width < 600 || window.innerWidth < 600) {
       return (
         <Link to="/upload">
-          <IconButton className={classes.iconButton}>
+          <IconButton
+            className={classes.iconButton}
+            disabled={!auth.registered}
+          >
             <CloudUploadIcon />
           </IconButton>
         </Link>
       );
     }
 
-    return (
+    return auth.registered ? (
       <ModalView
         togglerComponent={
           <IconButton className={classes.iconButton}>
@@ -109,6 +116,14 @@ class NavBar extends React.Component {
         }
         modalComponent={<AddPostForm view="modal" />}
       />
+    ) : (
+      <Tooltip placement="bottom" title="Register to enable">
+        <div className={classes.disabledNavButton}>
+          <IconButton className={classes.iconButton} disabled>
+            <CloudUploadIcon />
+          </IconButton>
+        </div>
+      </Tooltip>
     );
   };
 
@@ -121,13 +136,25 @@ class NavBar extends React.Component {
       <div className={classes.nav}>
         {this.selectPostFormView()}
 
-        <Link to="/mbox">
-          <IconButton className={classes.iconButton}>
-            <Badge badgeContent={auth.mBoxNotif || 0} color="secondary">
-              <InboxIcon />
-            </Badge>
-          </IconButton>
-        </Link>
+        {auth.registered ? (
+          <Link to="/mbox">
+            <IconButton className={classes.iconButton}>
+              <Badge badgeContent={auth.mBoxNotif || 0} color="secondary">
+                <InboxIcon />
+              </Badge>
+            </IconButton>
+          </Link>
+        ) : (
+          <Tooltip placement="bottom" title="Register to enable">
+            <div className={classes.disabledNavButton}>
+              <IconButton className={classes.iconButton} disabled>
+                <Badge badgeContent={auth.mBoxNotif || 0} color="secondary">
+                  <InboxIcon />
+                </Badge>
+              </IconButton>
+            </div>
+          </Tooltip>
+        )}
 
         <IconButton
           aria-owns={open ? "menu-appbar" : null}
@@ -151,20 +178,41 @@ class NavBar extends React.Component {
           open={open}
           onClose={this.handleClose}
         >
-          <MenuItem
-            to={{ pathname: "/myalbums", state: { user: auth.displayName } }}
-            component={Link}
-            onClick={this.handleClose}
-          >
-            Albums
-          </MenuItem>
-          <MenuItem
-            to={`/profile/${auth.displayName}`}
-            component={Link}
-            onClick={this.handleClose}
-          >
-            Profile
-          </MenuItem>
+          {auth.registered && (
+            <React.Fragment>
+              <MenuItem
+                to={{
+                  pathname: "/myalbums",
+                  state: { user: auth.displayName }
+                }}
+                component={Link}
+                onClick={this.handleClose}
+              >
+                Albums
+              </MenuItem>
+              <MenuItem
+                to={`/profile/${auth.displayName}`}
+                component={Link}
+                onClick={this.handleClose}
+              >
+                Profile
+              </MenuItem>
+            </React.Fragment>
+          )}
+          {!auth.register && (
+            <React.Fragment>
+              <MenuItem to={`/`} component={Link} onClick={this.handleClose}>
+                Home
+              </MenuItem>
+              <MenuItem
+                to={`/register_user/`}
+                component={Link}
+                onClick={this.handleClose}
+              >
+                Register
+              </MenuItem>
+            </React.Fragment>
+          )}
           <MenuItem
             href="/auth/logout"
             component="a"
