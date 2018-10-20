@@ -1,28 +1,11 @@
-import axios from "axios";
-
-// export const fetchUser = () => async dispatch => {
-//   try {
-//     const res = await axios.get("/api/current_user");
-//     dispatch({ type: "FETCH_USER", payload: res.data });
-//   } catch (e) {
-//     console.log(e);
-//   }
-// };
-
 export const setUser = userData => ({
   type: "FETCH_USER",
   payload: userData
 });
 
-// export const registerUser = displayName => async dispatch => {
-//   try {
-//     const res = await axios.post("/auth/register", { displayName });
-
-//     dispatch({ type: "FETCH_USER", payload: res.data });
-//   } catch (e) {
-//     return e.response.data.error;
-//   }
-// };
+export const setRegistered = () => ({
+  type: "SET_REGISTERED"
+});
 
 export const updateMboxNotif = size => ({
   type: "UPDATE_MBOX_NOTIF",

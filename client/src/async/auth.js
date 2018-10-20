@@ -6,15 +6,6 @@ export const fetchUser = async () => {
   return res;
 };
 
-// export const registerUser = async displayName => {
-//   try {
-//     const res = await axios.post("/auth/register", { displayName });
-//     return res;
-//   } catch (e) {
-//     return e.response.error;
-//   }
-// };
-
 export const registerUser = async displayName => {
   const res = await axios.post("/auth/register", { displayName });
   return res;
