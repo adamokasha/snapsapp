@@ -128,6 +128,7 @@ export class MessageForm extends React.Component {
         </div>
         <form className={classes.form} onSubmit={this.onSubmit}>
           <OutlinedInput
+            labelWidth={-25}
             placeholder="Title"
             type="text"
             onChange={this.onTitleChange}
@@ -140,6 +141,7 @@ export class MessageForm extends React.Component {
             }
           />
           <OutlinedInput
+            labelWidth={-25}
             multiline
             rows={3}
             onChange={this.onBodyChange}
@@ -170,7 +172,6 @@ export class MessageForm extends React.Component {
 }
 
 MessageForm.propTypes = {
-  displayName: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
   withSnackbar: PropTypes.bool.isRequired,
   onSnackbarSet: PropTypes.func.isRequired

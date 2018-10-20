@@ -1,55 +1,55 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-import compose from 'recompose/compose';
-import PropTypes from 'prop-types';
-import Paper from '@material-ui/core/Paper'
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import { Link } from 'react-router-dom';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import Button from '@material-ui/core/Button';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import SendOutlinedIcon from '@material-ui/icons/SendOutlined';
-import axios from 'axios';
-import moment from 'moment';
+import React from "react";
+import { connect } from "react-redux";
+import { withStyles } from "@material-ui/core/styles";
+import compose from "recompose/compose";
+import PropTypes from "prop-types";
+import Paper from "@material-ui/core/Paper";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Avatar from "@material-ui/core/Avatar";
+import { Link } from "react-router-dom";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+import Button from "@material-ui/core/Button";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import SendOutlinedIcon from "@material-ui/icons/SendOutlined";
+import axios from "axios";
+import moment from "moment";
 
 const styles = theme => ({
   root: {
-    width: '100%',
-    height: '348px',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
+    width: "100%",
+    height: "348px",
+    position: "relative",
+    display: "flex",
+    flexDirection: "column"
   },
   listRoot: {
-    height: '252px',
-    overflowY: 'scroll'
+    height: "252px",
+    overflowY: "scroll"
   },
   form: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
+    width: "100%",
+    display: "flex",
+    flexDirection: "column"
   },
   leftIcon: {
     marginRight: `${theme.spacing.unit}px`
   },
   dateText: {
-    textAlign: 'right'
+    textAlign: "right"
   },
   loadMoreButton: {
-    margin: '0 auto'
+    margin: "0 auto"
   }
 });
 
-export class Message extends React.Component {
+export class MessageReplies extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      body: '',
+      body: "",
       message: this.props.message,
       currentPage: this.props.currentMessagePage,
       hasMoreReplies: this.props.hasMoreReplies,
@@ -60,7 +60,11 @@ export class Message extends React.Component {
   }
 
   componentDidMount() {
-    this.bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'start', inline: "nearest" });
+    this.bottomRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest"
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -101,11 +105,15 @@ export class Message extends React.Component {
               ...this.state.message,
               replies: [...this.state.message.replies, ...updatedReplies]
             },
-            body: '',
+            body: "",
             isSending: false
           },
           () => {
-            this.bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'start', inline: "nearest" });
+            this.bottomRef.current.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+              inline: "nearest"
+            });
           }
         );
       });
@@ -167,17 +175,18 @@ export class Message extends React.Component {
         <form onSubmit={this.onSubmit} className={classes.form}>
           <OutlinedInput
             multiline
+            labelWidth={-25}
             rows={1}
             onChange={this.onBodyChange}
             value={this.state.body}
             disabled={this.state.isSending}
             inputProps={{ maxLength: 120 }}
             endAdornment={
-                <InputAdornment position="end">
-                  {this.state.body.length}
-                  /120
-                </InputAdornment>
-              }
+              <InputAdornment position="end">
+                {this.state.body.length}
+                /120
+              </InputAdornment>
+            }
           />
           <Button
             type="submit"
@@ -193,7 +202,7 @@ export class Message extends React.Component {
   }
 }
 
-Message.propTypes = {
+MessageReplies.propTypes = {
   message: PropTypes.object.isRequired,
   setPrevMessageReplies: PropTypes.func.isRequired,
   currentMessagePage: PropTypes.number.isRequired,
@@ -207,4 +216,4 @@ const mapStateToProps = ({ auth }) => ({
 export default compose(
   withStyles(styles),
   connect(mapStateToProps)
-)(Message);
+)(MessageReplies);

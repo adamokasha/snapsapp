@@ -1,38 +1,38 @@
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+import React from "react";
+import { withStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
 
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import ArrowDropDownRoundedIcon from '@material-ui/icons/ArrowDropDownRounded';
-import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
+import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import ArrowDropDownRoundedIcon from "@material-ui/icons/ArrowDropDownRounded";
+import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace";
 
 const styles = theme => ({
   root: {
-    width: '40%',
-    margin: '0 auto',
-    display: 'flex',
-    flexDirection: 'column'
+    width: "40%",
+    margin: "0 auto",
+    display: "flex",
+    flexDirection: "column"
   },
   appBarRoot: {
-    boxShadow: 'none'
+    boxShadow: "none"
   },
   toolbarRoot: {
-    minHeight: '48px'
+    minHeight: "48px"
   },
   menu: {
-    marginLeft: 'auto'
+    marginLeft: "auto"
   },
-  dropDownButton:{
-    minWidth: '88px'
+  dropDownButton: {
+    minWidth: "88px"
   },
   iconColor: {
-    color: '#fff'
+    color: "#fff"
   }
 });
 
@@ -51,17 +51,17 @@ class MessageBoxAppBar extends React.Component {
 
   onSetUnread = () => {
     this.handleClose();
-    this.props.switchListType('unread');
+    this.props.switchListType("unread");
   };
 
   onSetAll = () => {
     this.handleClose();
-    this.props.switchListType('all');
+    this.props.switchListType("all");
   };
 
   onSetSent = () => {
     this.handleClose();
-    this.props.switchListType('sent');
+    this.props.switchListType("sent");
   };
 
   render() {
@@ -78,7 +78,7 @@ class MessageBoxAppBar extends React.Component {
           <Typography variant="title" color="inherit">
             Message Box
           </Typography>
-          {view === 'list' ? null : (
+          {view === "list" ? null : (
             <IconButton
               onClick={() => {
                 this.props.goBack(this.props.listType);
@@ -88,13 +88,13 @@ class MessageBoxAppBar extends React.Component {
               <KeyboardBackspaceIcon className={classes.iconColor} />
             </IconButton>
           )}
-          <div className={view === 'list' && classes.menu}>
+          <div className={view === "list" ? classes.menu : null}>
             <Button
               variant="contained"
               color="secondary"
               size="small"
-              classes={{root: classes.dropDownButton}}
-              aria-owns={anchorEl ? 'simple-menu' : null}
+              classes={{ root: classes.dropDownButton }}
+              aria-owns={anchorEl ? "simple-menu" : null}
               aria-haspopup="true"
               onClick={this.handleClick}
             >
@@ -124,6 +124,6 @@ MessageBoxAppBar.propTypes = {
   view: PropTypes.string.isRequired,
   listType: PropTypes.string.isRequired,
   goBack: PropTypes.func.isRequired
-}
+};
 
 export default withStyles(styles)(MessageBoxAppBar);
