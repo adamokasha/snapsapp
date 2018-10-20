@@ -17,9 +17,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import Button from "@material-ui/core/Button";
 import Badge from "@material-ui/core/Badge";
-import Tooltip from "@material-ui/core/Tooltip";
 import axios from "axios";
 
+import NavBarIconButton from "./NavBarIconButton";
 import ModalView from "./ModalView";
 import AddPostForm from "./AddPostForm";
 import { updateMboxNotif } from "../actions/auth";
@@ -96,34 +96,25 @@ class NavBar extends React.Component {
     const { classes, auth } = this.props;
     if (window.screen.width < 600 || window.innerWidth < 600) {
       return (
-        <Link to="/upload">
-          <IconButton
-            className={classes.iconButton}
-            disabled={!auth.registered}
-          >
-            <CloudUploadIcon />
-          </IconButton>
-        </Link>
+        <NavBarIconButton
+          component={Link}
+          to="/upload"
+          isDisabled={!auth.registered}
+        >
+          <CloudUploadIcon />
+        </NavBarIconButton>
       );
     }
 
-    return auth.registered ? (
+    return (
       <ModalView
         togglerComponent={
-          <IconButton className={classes.iconButton}>
+          <NavBarIconButton isDisabled={!auth.registered}>
             <CloudUploadIcon />
-          </IconButton>
+          </NavBarIconButton>
         }
         modalComponent={<AddPostForm view="modal" />}
       />
-    ) : (
-      <Tooltip placement="bottom" title="Register to enable">
-        <div className={classes.disabledNavButton}>
-          <IconButton className={classes.iconButton} disabled>
-            <CloudUploadIcon />
-          </IconButton>
-        </div>
-      </Tooltip>
     );
   };
 
@@ -145,15 +136,13 @@ class NavBar extends React.Component {
             </IconButton>
           </Link>
         ) : (
-          <Tooltip placement="bottom" title="Register to enable">
-            <div className={classes.disabledNavButton}>
-              <IconButton className={classes.iconButton} disabled>
-                <Badge badgeContent={auth.mBoxNotif || 0} color="secondary">
-                  <InboxIcon />
-                </Badge>
-              </IconButton>
-            </div>
-          </Tooltip>
+          <div className={classes.disabledNavButton}>
+            <IconButton className={classes.iconButton} disabled>
+              <Badge badgeContent={auth.mBoxNotif || 0} color="secondary">
+                <InboxIcon />
+              </Badge>
+            </IconButton>
+          </div>
         )}
 
         <IconButton
@@ -178,41 +167,45 @@ class NavBar extends React.Component {
           open={open}
           onClose={this.handleClose}
         >
-          {auth.registered && (
-            <React.Fragment>
-              <MenuItem
-                to={{
-                  pathname: "/myalbums",
-                  state: { user: auth.displayName }
-                }}
-                component={Link}
-                onClick={this.handleClose}
-              >
-                Albums
-              </MenuItem>
-              <MenuItem
-                to={`/profile/${auth.displayName}`}
-                component={Link}
-                onClick={this.handleClose}
-              >
-                Profile
-              </MenuItem>
-            </React.Fragment>
-          )}
-          {!auth.register && (
-            <React.Fragment>
-              <MenuItem to={`/`} component={Link} onClick={this.handleClose}>
-                Home
-              </MenuItem>
-              <MenuItem
-                to={`/register_user/`}
-                component={Link}
-                onClick={this.handleClose}
-              >
-                Register
-              </MenuItem>
-            </React.Fragment>
-          )}
+          {auth.registered && [
+            <MenuItem
+              key={1}
+              to={{
+                pathname: "/myalbums",
+                state: { user: auth.displayName }
+              }}
+              component={Link}
+              onClick={this.handleClose}
+            >
+              Albums
+            </MenuItem>,
+            <MenuItem
+              key={2}
+              to={`/profile/${auth.displayName}`}
+              component={Link}
+              onClick={this.handleClose}
+            >
+              Profile
+            </MenuItem>
+          ]}
+          {!auth.registered && [
+            <MenuItem
+              key={3}
+              to={`/`}
+              component={Link}
+              onClick={this.handleClose}
+            >
+              Home
+            </MenuItem>,
+            <MenuItem
+              key={4}
+              to={`/register_user/`}
+              component={Link}
+              onClick={this.handleClose}
+            >
+              Register
+            </MenuItem>
+          ]}
           <MenuItem
             href="/auth/logout"
             component="a"
