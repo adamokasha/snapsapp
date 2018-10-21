@@ -8,6 +8,9 @@ import compose from "recompose/compose";
 import classNames from "classnames";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
+import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
+import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import axios from "axios";
 
 import NavBar from "../components/NavBar";
@@ -50,10 +53,24 @@ const styles = theme => ({
   },
   profileHeading: {
     display: "flex",
-    flexDirection: "row"
+    flexDirection: "row",
+    position: "relative"
   },
   profileHeadingMR: {
     marginRight: `${theme.spacing.unit * 3}px`
+  },
+  editButtons: {
+    display: "none",
+    position: "absolute",
+    top: 0,
+    right: 0,
+    transform: "translate(75%,-20%)",
+    [theme.breakpoints.up("sm")]: {
+      display: "inline-flex"
+    }
+  },
+  hideEditButtons: {
+    display: "none"
   },
   linearLoader: {
     width: "100%",
@@ -64,14 +81,6 @@ const styles = theme => ({
   loadingOpacity: {
     opacity: 0.4,
     pointerEvents: "none"
-  },
-  editButtons: {
-    position: "absolute",
-    top: "1%",
-    right: "2%"
-  },
-  hideEditButtons: {
-    display: "none"
   },
   avatarContainer: {
     display: "flex",
@@ -91,7 +100,7 @@ const styles = theme => ({
   }
 });
 
-export class Profile extends React.Component {
+export class ProfilePage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -182,6 +191,25 @@ export class Profile extends React.Component {
     });
   };
 
+  renderEditButtons = () => {
+    const { classes } = this.props;
+    return (
+      this.state.ownProfile && (
+        <div className={classes.editButtons}>
+          {this.state.editEnabled ? (
+            <IconButton onClick={this.cancelEdit}>
+              <CancelTwoToneIcon />
+            </IconButton>
+          ) : (
+            <IconButton onClick={this.enableEdit}>
+              <EditTwoToneIcon />
+            </IconButton>
+          )}
+        </div>
+      )
+    );
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -209,17 +237,16 @@ export class Profile extends React.Component {
             >
               <ProfileHeader
                 ownProfile={this.state.ownProfile}
-                editEnabled={this.state.editEnabled}
                 profilePhoto={this.state.profilePhoto}
                 displayName={this.state.displayName}
                 joined={this.state.joined}
-                cancelEdit={this.cancelEdit}
-                enableEdit={this.enableEdit}
               />
               <ProfileNetwork
                 ownProfile={this.state.ownProfile}
                 userId={this.state.id}
               />
+
+              {this.renderEditButtons()}
             </div>
             <Divider className={classes.hidingDivider} />
 
@@ -257,8 +284,9 @@ const mapStateToProps = ({ auth }) => ({
   auth
 });
 
-Profile.propTypes = {
-  classes: PropTypes.object.isRequired
+ProfilePage.propTypes = {
+  classes: PropTypes.object.isRequired,
+  auth: PropTypes.oneOfType([PropTypes.bool, PropTypes.object])
 };
 
 export default compose(
@@ -267,4 +295,4 @@ export default compose(
     mapStateToProps,
     { updateProfile }
   )
-)(withRouter(Profile));
+)(withRouter(ProfilePage));
