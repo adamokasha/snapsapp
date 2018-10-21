@@ -49,6 +49,9 @@ const styles = theme => ({
     background: "#4b70ab",
     marginBottom: `${theme.spacing.unit}px`
   },
+  icons: {
+    fill: "#fff"
+  },
   aTag: {
     color: "inherit",
     textDecoration: "none"
@@ -74,7 +77,7 @@ export const SocialAuth = props => {
                 classes.facebookButton
               )}
             >
-              <FacebookIcon />
+              <FacebookIcon classes={{ root: classes.icons }} />
             </Button>
             <Button
               href="/auth/google"
@@ -85,7 +88,7 @@ export const SocialAuth = props => {
                 classes.googleButton
               )}
             >
-              <GoogleIcon />
+              <GoogleIcon classes={{ root: classes.icons }} />
             </Button>
           </div>
         </Paper>

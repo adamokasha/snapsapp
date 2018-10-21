@@ -13,6 +13,7 @@ const userSchema = new Schema({
     website: String,
     facebook: String,
     twitter: String,
+    location: String,
     about: String
   },
   albums: [{ type: Schema.Types.ObjectId, ref: "Album" }],

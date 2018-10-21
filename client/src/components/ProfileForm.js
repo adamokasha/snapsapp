@@ -9,10 +9,11 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
-import axios from "axios";
 
+import FacebookIcon from "../icons/Facebook";
+import TwitterIcon from "../icons/Twitter";
+import GlobeIcon from "../icons/Globe";
 import { updateProfile } from "../actions/auth";
-import { fetchProfile, setProfile } from "../async/profiles";
 
 const styles = theme => ({
   loadingOpacity: {
@@ -45,6 +46,17 @@ const styles = theme => ({
     marginTop: `${theme.spacing.unit * 3}px`,
     marginBottom: `12px`
   },
+  socialIcons: {
+    alignSelf: "center",
+    width: "28px",
+    height: "28px"
+  },
+  fbIcon: {
+    fill: "#3b5998"
+  },
+  twitterIcon: {
+    fill: "#1da1f2"
+  },
   textField: {
     width: "65%",
     marginLeft: `${theme.spacing.unit}px`,
@@ -72,10 +84,9 @@ export class ProfileForm extends React.Component {
       website: this.props.profile ? this.props.profile.website : "",
       facebook: this.props.profile ? this.props.profile.facebook : "",
       twitter: this.props.profile ? this.props.profile.twitter : "",
+      location: this.props.profile ? this.props.profile.location : "",
       about: this.props.profile ? this.props.profile.about : ""
     };
-
-    this.signal = axios.CancelToken.source();
   }
 
   onSubmit = e => {
@@ -97,6 +108,9 @@ export class ProfileForm extends React.Component {
   };
   onTwitterChange = e => {
     this.setState({ twitter: e.target.value });
+  };
+  onLocationChange = e => {
+    this.setState({ location: e.target.value });
   };
   onAboutChange = e => {
     this.setState({ about: e.target.value });
@@ -161,9 +175,11 @@ export class ProfileForm extends React.Component {
 
         {(facebook || this.props.editEnabled) && (
           <div className={classes.fieldGroup}>
-            <Typography className={classes.socialText} variant="body2">
-              Facebook:{" "}
-            </Typography>
+            <FacebookIcon
+              classes={{
+                root: classNames(classes.socialIcons, classes.fbIcon)
+              }}
+            />
             <TextField
               margin="normal"
               className={classes.textField}
@@ -183,9 +199,11 @@ export class ProfileForm extends React.Component {
 
         {(twitter || this.props.editEnabled) && (
           <div className={classes.fieldGroup}>
-            <Typography className={classes.socialText} variant="body2">
-              Twitter:{" "}
-            </Typography>
+            <TwitterIcon
+              classes={{
+                root: classNames(classes.socialIcons, classes.twitterIcon)
+              }}
+            />
             <TextField
               margin="normal"
               className={classes.textField}
@@ -199,6 +217,20 @@ export class ProfileForm extends React.Component {
               value={this.state.twitter}
               onChange={this.onTwitterChange}
               placeholder="twitter.com/mytwitter"
+            />
+          </div>
+        )}
+
+        {(this.props.profile.location || this.props.editEnabled) && (
+          <div className={classes.fieldGroup}>
+            <GlobeIcon classes={{ root: classes.socialIcons }} />
+            <TextField
+              margin="normal"
+              inputProps={{ style: { color: "#000" }, maxLength: 30 }}
+              disabled={this.props.editEnabled ? false : true}
+              className={classes.textField}
+              value={this.state.location}
+              onChange={this.onLocationChange}
             />
           </div>
         )}

@@ -4,8 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 const styles = theme => ({
   root: {
     height: "32px",
-    width: "32px",
-    fill: "#fff"
+    width: "32px"
   }
 });
 
