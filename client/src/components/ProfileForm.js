@@ -27,11 +27,15 @@ const styles = theme => ({
     }
   },
   form: {
-    display: "flex",
-    flexDirection: "column",
     display: "none",
     [theme.breakpoints.up("sm")]: {
-      display: "block"
+      display: "flex",
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "center"
+    },
+    [theme.breakpoints.up("md")]: {
+      justifyContent: "start"
     }
   },
   fieldGroup: {
@@ -58,7 +62,7 @@ const styles = theme => ({
     fill: "#1da1f2"
   },
   textField: {
-    width: "65%",
+    width: "70%",
     marginLeft: `${theme.spacing.unit}px`,
     marginRight: `${theme.spacing.unit * 3}px`
   },
@@ -137,119 +141,125 @@ export class ProfileForm extends React.Component {
             : classes.form
         }
       >
-        <Divider className={classes.hidingDivider} />
+        <div>
+          {(name || this.props.editEnabled || this.props.ownProfile) && (
+            <div className={classes.fieldGroup}>
+              <Typography variant="body2">Name:</Typography>
+              <TextField
+                margin="normal"
+                inputProps={{ maxLength: 28 }}
+                disabled={this.props.editEnabled ? false : true}
+                className={classes.textField}
+                value={this.state.name}
+                onChange={this.onNameChange}
+                placeholder="Your name"
+              />
+            </div>
+          )}
 
-        {(name || this.props.editEnabled) && (
-          <div className={classes.fieldGroup}>
-            <Typography variant="body2">Name:</Typography>
-            <TextField
-              margin="normal"
-              inputProps={{ style: { color: "#000" }, maxLength: 30 }}
-              disabled={this.props.editEnabled ? false : true}
-              className={classes.textField}
-              value={this.state.name}
-              onChange={this.onNameChange}
-            />
-          </div>
-        )}
+          {(website || this.props.editEnabled || this.props.ownProfile) && (
+            <div className={classes.fieldGroup}>
+              <Typography variant="body2">Website: </Typography>
+              <TextField
+                className={classes.textField}
+                margin="normal"
+                inputProps={
+                  !this.props.editEnabled && website
+                    ? { style: { cursor: "pointer", color: "#3b5999" } }
+                    : { maxLength: 60 }
+                }
+                disabled={this.props.editEnabled ? false : true}
+                onClick={this.props.editEnabled ? null : this.onLinkClick}
+                value={this.state.website}
+                onChange={this.onWebsiteChange}
+                placeholder="www.mysite.com"
+              />
+            </div>
+          )}
 
-        {(website || this.props.editEnabled) && (
-          <div className={classes.fieldGroup}>
-            <Typography variant="body2">Website: </Typography>
-            <TextField
-              className={classes.textField}
-              margin="normal"
-              inputProps={
-                !this.props.editEnabled && website
-                  ? { style: { cursor: "pointer", color: "#3b5999" } }
-                  : { maxLength: 60 }
-              }
-              disabled={this.props.editEnabled ? false : true}
-              onClick={this.props.editEnabled ? null : this.onLinkClick}
-              value={this.state.website}
-              onChange={this.onWebsiteChange}
-              placeholder="www.mysite.com"
-            />
-          </div>
-        )}
+          {(this.props.profile.location ||
+            this.props.editEnabled ||
+            this.props.ownProfile) && (
+            <div className={classes.fieldGroup}>
+              <GlobeIcon classes={{ root: classes.socialIcons }} />
+              <TextField
+                margin="normal"
+                inputProps={{ style: { color: "#000" }, maxLength: 28 }}
+                disabled={this.props.editEnabled ? false : true}
+                className={classes.textField}
+                value={this.state.location}
+                onChange={this.onLocationChange}
+              />
+            </div>
+          )}
+        </div>
 
-        {(facebook || this.props.editEnabled) && (
-          <div className={classes.fieldGroup}>
-            <FacebookIcon
-              classes={{
-                root: classNames(classes.socialIcons, classes.fbIcon)
-              }}
-            />
-            <TextField
-              margin="normal"
-              className={classes.textField}
-              inputProps={
-                !this.props.editEnabled && facebook
-                  ? { style: { cursor: "pointer", color: "#3b5999" } }
-                  : { maxLength: 60 }
-              }
-              disabled={this.props.editEnabled ? false : true}
-              onClick={this.props.editEnabled ? null : this.onLinkClick}
-              value={this.state.facebook}
-              onChange={this.onFacebookChange}
-              placeholder="facebook.com/my.fb.90"
-            />
-          </div>
-        )}
+        <div>
+          {(facebook || this.props.editEnabled || this.props.ownProfile) && (
+            <div className={classes.fieldGroup}>
+              <FacebookIcon
+                classes={{
+                  root: classNames(classes.socialIcons, classes.fbIcon)
+                }}
+              />
+              <TextField
+                margin="normal"
+                className={classes.textField}
+                inputProps={
+                  !this.props.editEnabled && facebook
+                    ? { style: { cursor: "pointer", color: "#3b5999" } }
+                    : { maxLength: 60 }
+                }
+                disabled={this.props.editEnabled ? false : true}
+                onClick={this.props.editEnabled ? null : this.onLinkClick}
+                value={this.state.facebook}
+                onChange={this.onFacebookChange}
+                placeholder="facebook.com/my.fb.90"
+              />
+            </div>
+          )}
 
-        {(twitter || this.props.editEnabled) && (
-          <div className={classes.fieldGroup}>
-            <TwitterIcon
-              classes={{
-                root: classNames(classes.socialIcons, classes.twitterIcon)
-              }}
-            />
-            <TextField
-              margin="normal"
-              className={classes.textField}
-              inputProps={
-                !this.props.editEnabled && twitter
-                  ? { style: { cursor: "pointer", color: "#3b5999" } }
-                  : { maxLength: 60 }
-              }
-              disabled={this.props.editEnabled ? false : true}
-              onClick={this.props.editEnabled ? null : this.onLinkClick}
-              value={this.state.twitter}
-              onChange={this.onTwitterChange}
-              placeholder="twitter.com/mytwitter"
-            />
-          </div>
-        )}
+          {(twitter || this.props.editEnabled || this.props.ownProfile) && (
+            <div className={classes.fieldGroup}>
+              <TwitterIcon
+                classes={{
+                  root: classNames(classes.socialIcons, classes.twitterIcon)
+                }}
+              />
+              <TextField
+                margin="normal"
+                className={classes.textField}
+                inputProps={
+                  !this.props.editEnabled && twitter
+                    ? { style: { cursor: "pointer", color: "#3b5999" } }
+                    : { maxLength: 60 }
+                }
+                disabled={this.props.editEnabled ? false : true}
+                onClick={this.props.editEnabled ? null : this.onLinkClick}
+                value={this.state.twitter}
+                onChange={this.onTwitterChange}
+                placeholder="twitter.com/mytwitter"
+              />
+            </div>
+          )}
 
-        {(this.props.profile.location || this.props.editEnabled) && (
-          <div className={classes.fieldGroup}>
-            <GlobeIcon classes={{ root: classes.socialIcons }} />
-            <TextField
-              margin="normal"
-              inputProps={{ style: { color: "#000" }, maxLength: 30 }}
-              disabled={this.props.editEnabled ? false : true}
-              className={classes.textField}
-              value={this.state.location}
-              onChange={this.onLocationChange}
-            />
-          </div>
-        )}
-
-        {(about || this.props.editEnabled) && (
-          <div className={classes.fieldGroup}>
-            <Typography variant="body2">About Me: </Typography>
-            <TextField
-              margin="normal"
-              multiline
-              rows={3}
-              inputProps={{ style: { color: "#000" }, maxLength: 140 }}
-              className={classes.textField}
-              disabled={this.props.editEnabled ? false : true}
-              value={this.state.about}
-              onChange={this.onAboutChange}
-            />
-          </div>
-        )}
+          {(about || this.props.editEnabled || this.props.ownProfile) && (
+            <div className={classes.fieldGroup}>
+              <Typography variant="body2">About: </Typography>
+              <TextField
+                margin="normal"
+                multiline
+                rows={3}
+                inputProps={{ maxLength: 140 }}
+                className={classes.textField}
+                disabled={this.props.editEnabled ? false : true}
+                value={this.state.about}
+                onChange={this.onAboutChange}
+                placeholder="Something about yourself"
+              />
+            </div>
+          )}
+        </div>
 
         {this.props.ownProfile && (
           <Button

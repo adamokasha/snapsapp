@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 import compose from "recompose/compose";
 import classNames from "classnames";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import Divider from "@material-ui/core/Divider";
 import axios from "axios";
 
 import NavBar from "../components/NavBar";
@@ -18,6 +19,7 @@ import CustomSnackbar from "../components/CustomSnackbar";
 
 import { updateProfile } from "../actions/auth";
 import { fetchProfile, setProfile } from "../async/profiles";
+import { Typography } from "@material-ui/core";
 
 const styles = theme => ({
   root: {
@@ -83,6 +85,9 @@ const styles = theme => ({
     [theme.breakpoints.up("sm")]: {
       display: "block"
     }
+  },
+  noProfileText: {
+    marginTop: `${theme.spacing.unit}px`
   }
 });
 
@@ -216,7 +221,9 @@ export class Profile extends React.Component {
                 userId={this.state.id}
               />
             </div>
-            {(this.state.profile || this.state.editEnabled) && (
+            <Divider className={classes.hidingDivider} />
+
+            {this.state.profile || this.state.editEnabled ? (
               <ProfileForm
                 onProfileSubmit={this.onProfileSubmit}
                 profile={this.state.profile}
@@ -226,6 +233,11 @@ export class Profile extends React.Component {
                 cancelEdit={this.cancelEdit}
                 enableEdit={this.enableEdit}
               />
+            ) : (
+              <Typography className={classes.noProfileText}>
+                {this.props.match.params.user} has not shared any of their
+                profile information yet!
+              </Typography>
             )}
           </Paper>
 
