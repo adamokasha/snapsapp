@@ -4,7 +4,6 @@ import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
 
 import ScrollView from "./ScrollView";
 
@@ -12,10 +11,10 @@ const styles = theme => ({
   root: {
     marginTop: 0,
     backgroundColor: theme.palette.background.paper,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginTop: `${theme.spacing.unit * 3}px`
-    }
+    width: "100%"
+  },
+  appBarRoot: {
+    marginBottom: `${theme.spacing.unit}px`
   }
 });
 
@@ -37,7 +36,11 @@ class FullWidthTabs extends React.Component {
 
     return (
       <div className={classes.root}>
-        <AppBar position="static" color="default">
+        <AppBar
+          classes={{ root: classes.appBarRoot }}
+          position="static"
+          color="default"
+        >
           <Tabs
             value={this.state.value}
             onChange={this.handleChange}

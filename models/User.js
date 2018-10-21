@@ -12,7 +12,6 @@ const userSchema = new Schema({
     name: String,
     website: String,
     facebook: String,
-    gplus: String,
     twitter: String,
     about: String
   },
