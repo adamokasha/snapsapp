@@ -1,9 +1,7 @@
 export default (state = [], action) => {
   switch (action.type) {
-    case "SET_POSTS":
+    case "SET_ALBUMS":
       return [...state, action.payload];
-    case "CLEAR_POSTS":
-      return [];
     default:
       return state;
   }

@@ -55,34 +55,34 @@ const styles = theme => ({
 });
 
 class NavBar extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      anchorEl: null,
-      mBoxUnreadCount: null
-    };
-  }
+  state = {
+    anchorEl: null
+  };
 
   async componentDidMount() {
     try {
-      const res = await axios.get("/api/message/count");
-      this.props.updateMboxNotif(res.data.size);
-      this.setState({ mBoxUnreadCount: res.data.size }, () => {});
+      if (this.props.auth) {
+        const { data } = await axios.get("/api/message/count");
+        if (data.size === 0) {
+          return;
+        }
+        this.props.updateMboxNotif(data.size);
+        // this.setState({ mBoxUnreadCount: res.data.size }, () => {});
+      }
     } catch (e) {
       console.log(e);
     }
   }
 
-  async componentDidUpdate(prevProps) {
-    if (this.props.auth !== prevProps.auth) {
-      try {
-        this.setState({ mBoxUnreadCount: this.props.auth.mboxNotif }, () => {});
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }
+  // async componentDidUpdate(prevProps) {
+  //   if (this.props.auth !== prevProps.auth) {
+  //     try {
+  //       this.setState({ mBoxUnreadCount: this.props.auth.mboxNotif }, () => {});
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   }
+  // }
 
   handleMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
@@ -90,6 +90,15 @@ class NavBar extends React.Component {
 
   handleClose = () => {
     this.setState({ anchorEl: null });
+  };
+
+  onProfileSwitch = (context, profileTabPos) => {
+    this.props.onProfileSwitch(
+      context,
+      this.props.auth.displayName,
+      profileTabPos
+    );
+    this.handleClose();
   };
 
   selectPostFormView = () => {
@@ -169,28 +178,27 @@ class NavBar extends React.Component {
         >
           {auth.registered && [
             <MenuItem
-              key={1}
-              to={{
-                pathname: "/myalbums",
-                state: { user: auth.displayName }
-              }}
-              component={Link}
-              onClick={this.handleClose}
+              key={2}
+              onClick={() => this.onProfileSwitch("userFaves", 0)}
             >
-              Albums
+              Faves
             </MenuItem>,
             <MenuItem
-              key={2}
-              to={`/profile/${auth.displayName}`}
-              component={Link}
-              onClick={this.handleClose}
+              key={3}
+              onClick={() => this.onProfileSwitch("userPosts", 1)}
             >
-              Profile
+              Posts
+            </MenuItem>,
+            <MenuItem
+              key={1}
+              onClick={() => this.onProfileSwitch("userAlbums", 2)}
+            >
+              Albums
             </MenuItem>
           ]}
           {!auth.registered && [
             <MenuItem
-              key={3}
+              key={5}
               to={`/`}
               component={Link}
               onClick={this.handleClose}
@@ -198,7 +206,7 @@ class NavBar extends React.Component {
               Home
             </MenuItem>,
             <MenuItem
-              key={4}
+              key={6}
               to={`/register_user/`}
               component={Link}
               onClick={this.handleClose}
@@ -234,6 +242,7 @@ class NavBar extends React.Component {
 
   render() {
     const { classes } = this.props;
+    console.log("NAVBAR RENDERED");
 
     return (
       <div className={classes.root}>

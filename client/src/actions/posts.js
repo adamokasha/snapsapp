@@ -6,3 +6,5 @@ export const setPostContext = context => ({
 });
 
 export const setPosts = posts => ({ type: "SET_POSTS", payload: posts });
+
+export const clearPosts = () => ({ type: "CLEAR_POSTS" });

@@ -1,8 +1,8 @@
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React from "react";
+import { Route, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 
-import NavBar from '../components/NavBar';
+import NavBar from "../components/NavBar";
 
 export const PublicRoute = ({ isAuth, component: Component, ...rest }) => (
   <Route
@@ -12,7 +12,6 @@ export const PublicRoute = ({ isAuth, component: Component, ...rest }) => (
         <Redirect to="/" />
       ) : (
         <div>
-          <NavBar />
           <Component {...props} />
         </div>
       )

@@ -1,36 +1,36 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-import compose from 'recompose/compose';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import SearchIcon from '@material-ui/icons/Search';
-import IconButton from '@material-ui/core/IconButton';
-import ImageSearchIcon from '@material-ui/icons/ImageSearch';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Grow from '@material-ui/core/Grow';
-import Paper from '@material-ui/core/Paper';
-import Popper from '@material-ui/core/Popper';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuList from '@material-ui/core/MenuList';
-import GroupIcon from '@material-ui/icons/Group';
+import React from "react";
+import { connect } from "react-redux";
+import { withStyles } from "@material-ui/core/styles";
+import compose from "recompose/compose";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import SearchIcon from "@material-ui/icons/Search";
+import IconButton from "@material-ui/core/IconButton";
+import ImageSearchIcon from "@material-ui/icons/ImageSearch";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Grow from "@material-ui/core/Grow";
+import Paper from "@material-ui/core/Paper";
+import Popper from "@material-ui/core/Popper";
+import MenuItem from "@material-ui/core/MenuItem";
+import MenuList from "@material-ui/core/MenuList";
+import GroupIcon from "@material-ui/icons/Group";
 
 const styles = theme => ({
   root: {
     backgroundColor: `${theme.palette.background.paper}`,
-    display: 'flex',
-    justifyContent: 'center'
+    display: "flex",
+    justifyContent: "center"
   },
   input: {
     margin: `${theme.spacing.unit * 2}px 0`
   },
   popper: {
-    zIndex: '1000',
-    left: '-67px !important'
+    zIndex: "1000",
+    left: "-67px !important"
   },
   paper: {
-    width: '262px',
-    background: '#fafafa'
+    width: "262px",
+    background: "#fafafa"
   },
   searchIcons: {
     paddingRight: `${theme.spacing.unit}px`
@@ -42,7 +42,7 @@ export class Search extends React.Component {
     super(props);
 
     this.state = {
-      searchTerms: '',
+      searchTerms: "",
       popperOpen: false
     };
   }
@@ -67,23 +67,25 @@ export class Search extends React.Component {
 
   scrubSearchTerms(searchTerms) {
     return searchTerms
-      .replace(/[^\w\s]/gi, '')
+      .replace(/[^\w\s]/gi, "")
       .trim()
-      .replace(/\s\s+/g, ' ')
+      .replace(/\s\s+/g, " ")
       .toLowerCase()
-      .split(' ');
+      .split(" ");
   }
 
   onSearchPosts = async e => {
     const searchTermsArr = this.scrubSearchTerms(this.state.searchTerms);
-    this.setState({ popperOpen: false, searchTerms: '' }, () => {});
-    this.props.setSearch('searchPosts', searchTermsArr);
+    this.setState({ popperOpen: false, searchTerms: "" }, () => {});
+    // this.props.setSearch('searchPosts', searchTermsArr);
+    this.props.onSwitchContext("searchPosts", searchTermsArr);
   };
 
   onSearchPeople = e => {
     const searchTermsArr = this.scrubSearchTerms(this.state.searchTerms);
-    this.setState({ popperOpen: false, searchTerms: '' }, () => {});
-    this.props.setSearch('searchUsers', searchTermsArr);
+    this.setState({ popperOpen: false, searchTerms: "" }, () => {});
+    // this.props.setSearch('searchUsers', searchTermsArr);
+    this.props.onSwitchContext("searchUsers", searchTermsArr);
   };
 
   render() {
@@ -96,7 +98,7 @@ export class Search extends React.Component {
           }}
           className={classes.input}
           placeholder="#tags, posts, user..."
-          aria-owns={this.state.popperOpen ? 'menu-list-grow' : null}
+          aria-owns={this.state.popperOpen ? "menu-list-grow" : null}
           aria-haspopup="true"
           startAdornment={
             <InputAdornment position="start">
@@ -125,7 +127,7 @@ export class Search extends React.Component {
             <Grow
               {...TransitionProps}
               id="menu-list-grow"
-              style={{ transformOrigin: 'center top' }}
+              style={{ transformOrigin: "center top" }}
             >
               <Paper className={classes.paper}>
                 <ClickAwayListener onClickAway={this.popperClose}>
@@ -151,7 +153,5 @@ export class Search extends React.Component {
 
 export default compose(
   withStyles(styles),
-  connect(
-    null
-  )
+  connect(null)
 )(Search);

@@ -1,6 +1,8 @@
 import React from "react";
-import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
+import compose from "recompose/compose";
+import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -18,10 +20,13 @@ const styles = theme => ({
   }
 });
 
-class FullWidthTabs extends React.Component {
-  state = {
-    value: 1
-  };
+class ProfileTabs extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: this.props.profileTabPos
+    };
+  }
 
   handleChange = (event, value) => {
     this.setState({ value });
@@ -54,22 +59,43 @@ class FullWidthTabs extends React.Component {
           </Tabs>
         </AppBar>
         {this.state.value === 0 ? (
-          <ScrollView context="userFaves" user={this.props.user} />
+          <ScrollView
+            gridContext="posts"
+            pages={this.props.posts}
+            user={this.props.user}
+          />
         ) : null}
         {this.state.value === 1 ? (
-          <ScrollView context="userPosts" user={this.props.user} />
+          <ScrollView
+            gridContext="posts"
+            pages={this.props.posts}
+            user={this.props.user}
+          />
         ) : null}
         {this.state.value === 2 ? (
-          <ScrollView context="userAlbums" user={this.props.user} />
+          <ScrollView
+            gridContext="albums"
+            pages={this.props.albums}
+            user={this.props.user}
+          />
         ) : null}
       </div>
     );
   }
 }
 
-FullWidthTabs.propTypes = {
+const mapStatetoProps = ({ albums, posts }) => ({
+  albums,
+  posts
+});
+
+ProfileTabs.propTypes = {
   classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired
+  theme: PropTypes.object.isRequired,
+  profileTabPos: PropTypes.number
 };
 
-export default withStyles(styles)(FullWidthTabs);
+export default compose(
+  withStyles(styles),
+  connect(mapStatetoProps)
+)(ProfileTabs);

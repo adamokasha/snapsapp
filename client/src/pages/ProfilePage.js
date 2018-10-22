@@ -111,35 +111,36 @@ export class ProfilePage extends React.Component {
       ownProfile: false,
       isLoading: false,
       snackbarOpen: false,
-      snackbarMessage: null
+      snackbarMessage: null,
+      profileTabPos: this.props.profileTabPos ? this.props.profileTabPos : 1
     };
 
     this.signal = axios.CancelToken.source();
   }
 
-  async componentDidMount() {
-    try {
-      const { data } = await fetchProfile(
-        this.signal.token,
-        this.props.match.params.user
-      );
-      const { profilePhoto, joined, displayName, profile, _id } = data;
-      this.setState(
-        { id: _id, profilePhoto, displayName, joined, profile },
-        () => {
-          return this.checkIfProfileOwner();
-        }
-      );
-    } catch (e) {
-      if (axios.isCancel(e)) {
-        return console.log(e.message);
-      }
-      this.setState(
-        { snackbarOpen: true, snackbarMessage: "Could not find profile." },
-        () => {}
-      );
-    }
-  }
+  // async componentDidMount() {
+  //   try {
+  //     const { data } = await fetchProfile(
+  //       this.signal.token,
+  //       this.props.match.params.user
+  //     );
+  //     const { profilePhoto, joined, displayName, profile, _id } = data;
+  //     this.setState(
+  //       { id: _id, profilePhoto, displayName, joined, profile },
+  //       () => {
+  //         return this.checkIfProfileOwner();
+  //       }
+  //     );
+  //   } catch (e) {
+  //     if (axios.isCancel(e)) {
+  //       return console.log(e.message);
+  //     }
+  //     this.setState(
+  //       { snackbarOpen: true, snackbarMessage: "Could not find profile." },
+  //       () => {}
+  //     );
+  //   }
+  // }
 
   componentWillUnmount() {
     this.signal.cancel("Async call cancelled.");
@@ -215,7 +216,6 @@ export class ProfilePage extends React.Component {
 
     return (
       <React.Fragment>
-        <NavBar />
         <div className={classes.root}>
           <Paper
             square={true}
@@ -236,24 +236,24 @@ export class ProfilePage extends React.Component {
               }
             >
               <ProfileHeader
-                ownProfile={this.state.ownProfile}
-                profilePhoto={this.state.profilePhoto}
-                displayName={this.state.displayName}
-                joined={this.state.joined}
+                ownProfile={this.props.auth.ownProfile}
+                profilePhoto={this.props.auth.profilePhoto}
+                displayName={this.props.auth.displayName}
+                joined={this.props.auth.joined}
               />
               <ProfileNetwork
                 ownProfile={this.state.ownProfile}
-                userId={this.state.id}
+                userId={this.props.auth._id}
               />
 
               {this.renderEditButtons()}
             </div>
             <Divider className={classes.hidingDivider} />
 
-            {this.state.profile || this.state.editEnabled ? (
+            {this.props.auth.profile || this.state.editEnabled ? (
               <ProfileForm
                 onProfileSubmit={this.onProfileSubmit}
-                profile={this.state.profile}
+                profile={this.props.auth.profile}
                 ownProfile={this.state.ownProfile}
                 editEnabled={this.state.editEnabled}
                 isLoading={this.state.isLoading}
@@ -268,7 +268,10 @@ export class ProfilePage extends React.Component {
             )}
           </Paper>
 
-          <ProfileTabs user={this.props.match.params.user} />
+          <ProfileTabs
+            profileTabPos={this.props.profileTabPos}
+            user={this.props.match.params.user}
+          />
         </div>
         <CustomSnackbar
           variant="error"
@@ -286,7 +289,8 @@ const mapStateToProps = ({ auth }) => ({
 
 ProfilePage.propTypes = {
   classes: PropTypes.object.isRequired,
-  auth: PropTypes.oneOfType([PropTypes.bool, PropTypes.object])
+  auth: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+  profileTabPos: PropTypes.number
 };
 
 export default compose(

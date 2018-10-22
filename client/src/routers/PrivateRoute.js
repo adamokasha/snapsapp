@@ -9,7 +9,6 @@ const routeUser = (auth, Component, props) => {
     if (auth.registered) {
       return (
         <div>
-          <NavBar />
           <Component {...props} />
         </div>
       );
