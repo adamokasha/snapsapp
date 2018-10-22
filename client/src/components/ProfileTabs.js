@@ -6,8 +6,11 @@ import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import axios from "axios";
 
 import ScrollView from "./ScrollView";
+import { clearPosts } from "../actions/posts";
+import { fetchForProfilePage } from "../async/scrollview";
 
 const styles = theme => ({
   root: {
@@ -24,12 +27,30 @@ class ProfileTabs extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: this.props.profileTabPos
+      value: this.props.profileTabPos,
+      isFetching: false
     };
+
+    this.signal = axios.CancelToken.source();
   }
 
   handleChange = (event, value) => {
-    this.setState({ value });
+    this.props.clearPosts();
+    this.setState({ value, isFetching: true }, async () => {
+      const mappedValToContext = {
+        0: "userFaves",
+        1: "userPosts",
+        2: "userAlbums"
+      };
+      await fetchForProfilePage(
+        this.signal.token,
+        mappedValToContext[value],
+        0,
+        this.props.user
+      );
+
+      this.setState({ isFetching: false }, () => {});
+    });
   };
 
   handleChangeIndex = index => {
@@ -38,6 +59,7 @@ class ProfileTabs extends React.Component {
 
   render() {
     const { classes } = this.props;
+    console.log("PROFILETABS RENDERED", this.props);
 
     return (
       <div className={classes.root}>
@@ -58,27 +80,34 @@ class ProfileTabs extends React.Component {
             <Tab label="Albums" />
           </Tabs>
         </AppBar>
-        {this.state.value === 0 ? (
-          <ScrollView
-            gridContext="posts"
-            pages={this.props.posts}
-            user={this.props.user}
-          />
-        ) : null}
-        {this.state.value === 1 ? (
-          <ScrollView
-            gridContext="posts"
-            pages={this.props.posts}
-            user={this.props.user}
-          />
-        ) : null}
-        {this.state.value === 2 ? (
-          <ScrollView
-            gridContext="albums"
-            pages={this.props.albums}
-            user={this.props.user}
-          />
-        ) : null}
+
+        {this.state.value === 0 &&
+          this.props.posts && (
+            <ScrollView
+              gridContext="posts"
+              pages={this.props.posts}
+              user={this.props.user}
+              isFetching={this.state.isFetching}
+            />
+          )}
+        {this.state.value === 1 &&
+          this.props.posts && (
+            <ScrollView
+              gridContext="posts"
+              pages={this.props.posts}
+              user={this.props.user}
+              isFetching={this.state.isFetching}
+            />
+          )}
+        {this.state.value === 2 &&
+          this.props.albums && (
+            <ScrollView
+              gridContext="albums"
+              pages={this.props.albums}
+              user={this.props.user}
+              isFetching={this.state.isFetching}
+            />
+          )}
       </div>
     );
   }
@@ -97,5 +126,8 @@ ProfileTabs.propTypes = {
 
 export default compose(
   withStyles(styles),
-  connect(mapStatetoProps)
+  connect(
+    mapStatetoProps,
+    { clearPosts }
+  )
 )(ProfileTabs);

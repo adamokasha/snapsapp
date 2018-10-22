@@ -213,6 +213,7 @@ export class ProfilePage extends React.Component {
 
   render() {
     const { classes } = this.props;
+    console.log("PROFILEPAGE RENDERED", this.props);
 
     return (
       <React.Fragment>
@@ -270,7 +271,7 @@ export class ProfilePage extends React.Component {
 
           <ProfileTabs
             profileTabPos={this.props.profileTabPos}
-            user={this.props.match.params.user}
+            user={this.props.auth.displayName}
           />
         </div>
         <CustomSnackbar

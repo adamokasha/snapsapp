@@ -50,7 +50,8 @@ export class AppRouter extends React.Component {
           pages: [postData],
           isFetching: false,
           initialMount: true,
-          view: "mainpage"
+          view: "mainpage",
+          profileTabPos: 1
         },
         () => {
           this.props.setPosts(postData);
