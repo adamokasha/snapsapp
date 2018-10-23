@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
@@ -9,8 +8,8 @@ import Tab from "@material-ui/core/Tab";
 import axios from "axios";
 
 import Grid from "./Grid";
-import { clearPosts } from "../actions/posts";
-import { fetchScrollViewData } from "../async/scrollview";
+import { onScroll } from "../utils/utils";
+import { fetchForProfilePage } from "../async/scrollview";
 
 const styles = theme => ({
   root: {
@@ -28,29 +27,78 @@ class ProfileTabs extends React.Component {
     super(props);
     this.state = {
       value: this.props.profileTabPos,
-      isFetching: false
+      isFetching: false,
+      pages: this.props.pages,
+      page: 1,
+      hasMore: true
     };
 
     this.signal = axios.CancelToken.source();
+    this.onScroll = onScroll.bind(this);
   }
 
-  handleChange = (event, value) => {
-    this.props.clearPosts();
-    this.setState({ value, isFetching: true }, async () => {
-      const mappedValToContext = {
-        0: "userFaves",
-        1: "userPosts",
-        2: "userAlbums"
-      };
-      await fetchScrollViewData(
-        this.signal.token,
-        mappedValToContext[value],
-        0,
-        this.props.user
-      );
+  componentDidMount() {
+    window.addEventListener("scroll", this.onScroll(this.fetchNextPage), false);
+  }
 
-      this.setState({ isFetching: false }, () => {});
+  fetchNextPage = () => {
+    if (this.state.isFetching || !this.state.hasMore) {
+      return;
+    }
+
+    this.setState({ isFetching: true }, async () => {
+      try {
+        const mappedValToContext = {
+          0: "userFaves",
+          1: "userPosts",
+          2: "userAlbums"
+        };
+        const { data } = await fetchForProfilePage(
+          this.signal.token,
+          mappedValToContext[`${this.state.value}`],
+          this.state.page,
+          this.props.user
+        );
+
+        if (!data.length) {
+          return this.setState({ hasMore: false, isFetching: false }, () => {});
+        }
+        this.setState(
+          {
+            pages: [...this.state.pages, data],
+            isFetching: false,
+            page: this.state.page + 1
+          },
+          () => {}
+        );
+      } catch (e) {
+        if (axios.isCancel()) {
+          return console.log(e.message);
+        }
+        console.log(e);
+      }
     });
+  };
+
+  handleChange = (event, value) => {
+    this.setState(
+      { value, isFetching: true, pages: [], page: 0, hasMore: true },
+      async () => {
+        const mappedValToContext = {
+          0: "userFaves",
+          1: "userPosts",
+          2: "userAlbums"
+        };
+        const { data } = await fetchForProfilePage(
+          this.signal.token,
+          mappedValToContext[value],
+          0,
+          this.props.user
+        );
+
+        this.setState({ isFetching: false, pages: [data] }, () => {});
+      }
+    );
   };
 
   handleChangeIndex = index => {
@@ -81,30 +129,33 @@ class ProfileTabs extends React.Component {
           </Tabs>
         </AppBar>
 
-        {this.state.value === 0 && (
-          <Grid
-            gridContext="posts"
-            gridData={this.props.pages}
-            user={this.props.user}
-            isFetching={this.state.isFetching}
-          />
-        )}
-        {this.state.value === 1 && (
-          <Grid
-            gridContext="posts"
-            gridData={this.props.pages}
-            user={this.props.user}
-            isFetching={this.state.isFetching}
-          />
-        )}
-        {this.state.value === 2 && (
-          <Grid
-            gridContext="albums"
-            gridData={this.props.pages}
-            user={this.props.user}
-            isFetching={this.state.isFetching}
-          />
-        )}
+        {this.state.value === 0 &&
+          this.state.pages && (
+            <Grid
+              gridContext="posts"
+              gridData={this.state.pages}
+              user={this.props.user}
+              isFetching={this.state.isFetching}
+            />
+          )}
+        {this.state.value === 1 &&
+          this.state.pages && (
+            <Grid
+              gridContext="posts"
+              gridData={this.state.pages}
+              user={this.props.user}
+              isFetching={this.state.isFetching}
+            />
+          )}
+        {this.state.value === 2 &&
+          this.state.pages && (
+            <Grid
+              gridContext="albums"
+              gridData={this.state.pages}
+              user={this.props.user}
+              isFetching={this.state.isFetching}
+            />
+          )}
       </div>
     );
   }

@@ -38,7 +38,8 @@ module.exports = app => {
         .sort({ createdAt: -1 })
         .limit(15)
         .skip(15 * page)
-        .populate("_owner", "displayName");
+        .populate("_owner", "displayName")
+        .exec();
       res.status(200).send(albums);
     } catch (e) {
       console.log(e);

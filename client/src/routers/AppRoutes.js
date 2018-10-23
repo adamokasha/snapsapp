@@ -188,6 +188,7 @@ export class AppRoutes extends React.Component {
                     <ProfileTabs
                       profileTabPos={this.state.profileTabPos}
                       pages={this.state.pages}
+                      user={this.state.profile.displayName}
                     />
                   </ProfilePage>
                 )}
