@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
+import { Redirect } from "react-router-dom";
 import compose from "recompose/compose";
 import classNames from "classnames";
 import PropTypes from "prop-types";
@@ -94,13 +95,13 @@ class NavBar extends React.Component {
   };
 
   onProfileSwitch = (context, profileTabPos) => {
-    this.props.onProfileSwitch(
+    this.props.onSetProfilePage(
       context,
       this.props.auth.displayName,
-      profileTabPos
+      profileTabPos,
+      true
     );
     this.handleClose();
-    this.props.history.push("/myprofile/");
   };
 
   onHomeClick = () => {

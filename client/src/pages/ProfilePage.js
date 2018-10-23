@@ -106,9 +106,9 @@ export class ProfilePage extends React.Component {
 
     this.state = {
       id: "",
-      profile: null,
+      profile: this.props.profile ? this.props.profile : null,
       editEnabled: false,
-      ownProfile: false,
+      ownProfile: this.props.ownProfile ? this.props.ownProfile : false,
       isLoading: false,
       snackbarOpen: false,
       snackbarMessage: null,
@@ -142,18 +142,18 @@ export class ProfilePage extends React.Component {
   //   }
   // }
 
-  componentWillUnmount() {
-    this.signal.cancel("Async call cancelled.");
-  }
+  // componentWillUnmount() {
+  //   this.signal.cancel("Async call cancelled.");
+  // }
 
-  checkIfProfileOwner = () => {
-    if (
-      this.props.auth &&
-      this.props.auth.displayName === this.props.match.params.user
-    ) {
-      this.setState({ ownProfile: true }, () => {});
-    }
-  };
+  // checkIfProfileOwner = () => {
+  //   if (
+  //     this.props.auth &&
+  //     this.props.auth.displayName === this.props.match.params.user
+  //   ) {
+  //     this.setState({ ownProfile: true }, () => {});
+  //   }
+  // };
 
   enableEdit = () => {
     this.setState({ editEnabled: true });
@@ -195,7 +195,7 @@ export class ProfilePage extends React.Component {
   renderEditButtons = () => {
     const { classes } = this.props;
     return (
-      this.state.ownProfile && (
+      this.props.ownProfile && (
         <div className={classes.editButtons}>
           {this.state.editEnabled ? (
             <IconButton onClick={this.cancelEdit}>
@@ -237,10 +237,10 @@ export class ProfilePage extends React.Component {
               }
             >
               <ProfileHeader
-                ownProfile={this.props.auth.ownProfile}
-                profilePhoto={this.props.auth.profilePhoto}
-                displayName={this.props.auth.displayName}
-                joined={this.props.auth.joined}
+                ownProfile={this.state.ownProfile}
+                profilePhoto={this.state.profile.profilePhoto}
+                displayName={this.state.profile.displayName}
+                joined={this.state.profile.joined}
               />
               <ProfileNetwork
                 ownProfile={this.state.ownProfile}
@@ -254,7 +254,7 @@ export class ProfilePage extends React.Component {
             {this.props.auth.profile || this.state.editEnabled ? (
               <ProfileForm
                 onProfileSubmit={this.onProfileSubmit}
-                profile={this.props.auth.profile}
+                profile={this.state.profile.profile}
                 ownProfile={this.state.ownProfile}
                 editEnabled={this.state.editEnabled}
                 isLoading={this.state.isLoading}
@@ -269,10 +269,12 @@ export class ProfilePage extends React.Component {
             )}
           </Paper>
 
-          <ProfileTabs
+          {this.props.children}
+          {/* <ProfileTabs
             profileTabPos={this.props.profileTabPos}
             user={this.props.auth.displayName}
-          />
+            pages={this.state.pages}
+          /> */}
         </div>
         <CustomSnackbar
           variant="error"

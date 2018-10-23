@@ -76,6 +76,7 @@ export const fetchForProfilePage = async (
       store.dispatch(setAlbums(res.data));
       break;
   }
+  return res;
 };
 
 export const fetchFollows = async (cancelToken, context, page, userId) => {

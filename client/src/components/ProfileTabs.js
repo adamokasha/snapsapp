@@ -8,7 +8,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import axios from "axios";
 
-import ScrollView from "./ScrollView";
+import Grid from "./Grid";
 import { clearPosts } from "../actions/posts";
 import { fetchScrollViewData } from "../async/scrollview";
 
@@ -81,42 +81,34 @@ class ProfileTabs extends React.Component {
           </Tabs>
         </AppBar>
 
-        {this.state.value === 0 &&
-          this.props.posts && (
-            <ScrollView
-              gridContext="posts"
-              pages={this.props.posts}
-              user={this.props.user}
-              isFetching={this.state.isFetching}
-            />
-          )}
-        {this.state.value === 1 &&
-          this.props.posts && (
-            <ScrollView
-              gridContext="posts"
-              pages={this.props.posts}
-              user={this.props.user}
-              isFetching={this.state.isFetching}
-            />
-          )}
-        {this.state.value === 2 &&
-          this.props.albums && (
-            <ScrollView
-              gridContext="albums"
-              pages={this.props.albums}
-              user={this.props.user}
-              isFetching={this.state.isFetching}
-            />
-          )}
+        {this.state.value === 0 && (
+          <Grid
+            gridContext="posts"
+            gridData={this.props.pages}
+            user={this.props.user}
+            isFetching={this.state.isFetching}
+          />
+        )}
+        {this.state.value === 1 && (
+          <Grid
+            gridContext="posts"
+            gridData={this.props.pages}
+            user={this.props.user}
+            isFetching={this.state.isFetching}
+          />
+        )}
+        {this.state.value === 2 && (
+          <Grid
+            gridContext="albums"
+            gridData={this.props.pages}
+            user={this.props.user}
+            isFetching={this.state.isFetching}
+          />
+        )}
       </div>
     );
   }
 }
-
-const mapStatetoProps = ({ albums, posts }) => ({
-  albums,
-  posts
-});
 
 ProfileTabs.propTypes = {
   classes: PropTypes.object.isRequired,
@@ -125,9 +117,9 @@ ProfileTabs.propTypes = {
 };
 
 export default compose(
-  withStyles(styles),
-  connect(
-    mapStatetoProps,
-    { clearPosts }
-  )
+  withStyles(styles)
+  // connect(
+  //   mapStatetoProps,
+  //   { clearPosts }
+  // )
 )(ProfileTabs);

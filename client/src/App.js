@@ -1,15 +1,18 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import React from "react";
+import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
+import CssBaseline from "@material-ui/core/CssBaseline";
 
-import AppRouter from './routers/AppRouter';
-import store from './store/configureStore';
+import AppRoutes from "./routers/AppRoutes";
+import store from "./store/configureStore";
 
 export const App = () => (
   <Provider store={store}>
-    <CssBaseline>
-      <AppRouter />
-    </CssBaseline>
+    <BrowserRouter>
+      <CssBaseline>
+        <AppRoutes />
+      </CssBaseline>
+    </BrowserRouter>
   </Provider>
 );
 
