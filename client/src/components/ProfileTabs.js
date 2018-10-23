@@ -10,7 +10,7 @@ import axios from "axios";
 
 import ScrollView from "./ScrollView";
 import { clearPosts } from "../actions/posts";
-import { fetchForProfilePage } from "../async/scrollview";
+import { fetchScrollViewData } from "../async/scrollview";
 
 const styles = theme => ({
   root: {
@@ -42,7 +42,7 @@ class ProfileTabs extends React.Component {
         1: "userPosts",
         2: "userAlbums"
       };
-      await fetchForProfilePage(
+      await fetchScrollViewData(
         this.signal.token,
         mappedValToContext[value],
         0,

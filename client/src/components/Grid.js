@@ -3,6 +3,9 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
+import Button from "@material-ui/core/Button";
+import NavigationIcon from "@material-ui/icons/Navigation";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import Album from "./Album";
 import PostCard from "./PostCard";
@@ -37,11 +40,25 @@ const styles = theme => ({
   },
   subheader: {
     width: "100%"
+  },
+  circularProgress: {
+    margin: "16px auto",
+    display: "block"
+  },
+  toTopButton: {
+    margin: theme.spacing.unit,
+    position: "fixed",
+    bottom: "5%",
+    right: "5%",
+    zIndex: 5000
+  },
+  navIcon: {
+    marginRight: theme.spacing.unit
   }
 });
 
 function Grid(props) {
-  const { classes, posts, gridContext, gridData } = props;
+  const { classes, gridContext, gridData, isFetching, showNavToTop } = props;
 
   const renderGridTiles = data => {
     let tiles;
@@ -75,24 +92,46 @@ function Grid(props) {
     return tiles;
   };
 
+  const goTop = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div className={classes.root}>
-      <GridList className={classes.gridList} cols={3}>
-        {renderGridTiles(gridData).map((tile, i) => {
-          return (
-            <GridListTile
-              key={i}
-              cols={1}
-              classes={{
-                root: classes.gridTileRoot,
-                tile: classes.tile
-              }}
-            >
-              {tile}
-            </GridListTile>
-          );
-        })}
-      </GridList>
+      {showNavToTop && (
+        <Button
+          id="goTopButton"
+          variant="extendedFab"
+          aria-label="go-top"
+          className={classes.toTopButton}
+          onClick={goTop}
+        >
+          <NavigationIcon className={classes.navIcon} />
+          Go to Top
+        </Button>
+      )}
+      {gridData.map((page, i) => (
+        <GridList key={i} className={classes.gridList} cols={3}>
+          {renderGridTiles(page).map((tile, i) => {
+            return (
+              <GridListTile
+                key={i}
+                cols={1}
+                classes={{
+                  root: classes.gridTileRoot,
+                  tile: classes.tile
+                }}
+              >
+                {tile}
+              </GridListTile>
+            );
+          })}
+        </GridList>
+      ))}
+
+      {isFetching && (
+        <CircularProgress className={classes.circularProgress} size={50} />
+      )}
     </div>
   );
 }

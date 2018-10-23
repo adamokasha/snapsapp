@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
+import { withRouter } from "react-router";
 import compose from "recompose/compose";
 import classNames from "classnames";
 import PropTypes from "prop-types";
@@ -99,6 +100,12 @@ class NavBar extends React.Component {
       profileTabPos
     );
     this.handleClose();
+    this.props.history.push("/myprofile/");
+  };
+
+  onHomeClick = () => {
+    this.props.onFetchPopular();
+    this.props.history.push("/");
   };
 
   selectPostFormView = () => {
@@ -249,7 +256,10 @@ class NavBar extends React.Component {
         <AppBar position="static">
           <Toolbar>
             <div>
-              <Link to="/" className={classNames(classes.logo, classes.aTag)}>
+              <div
+                onClick={this.onHomeClick}
+                className={classNames(classes.logo, classes.aTag)}
+              >
                 <CameraIcon className={classes.logoIcon} />
 
                 <Typography
@@ -259,7 +269,7 @@ class NavBar extends React.Component {
                 >
                   SnapsApp
                 </Typography>
-              </Link>
+              </div>
             </div>
 
             {this.renderNavButtons()}
@@ -286,4 +296,4 @@ export default compose(
     mapStateToProps,
     { updateMboxNotif }
   )
-)(NavBar);
+)(withRouter(NavBar));

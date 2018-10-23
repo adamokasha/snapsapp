@@ -5,79 +5,44 @@ import axios from "axios";
 import Search from "../components/Search";
 import HeroUnit from "../components/HeroUnit";
 import ScrollView from "../components/ScrollView";
+import Grid from "../components/Grid";
 import NavBar from "../components/NavBar";
 import MainPageMenu from "../components/MainPageMenu";
 import { fetchForMainPage } from "../async/scrollview";
+import { onScroll } from "../utils/utils";
 
 export class MainPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      context: "popular",
-      gridContext: "posts",
+      context: this.props.context ? this.props.context : "popular",
+      gridContext: this.props.gridContext ? this.props.gridContext : "posts",
       searchTerms: null,
-      page: 1,
+      page: this.props.page ? this.props.page : 0,
       pages: this.props.pages ? this.props.pages : [],
       isFetching: false,
-      hasMorePages: true
+      hasMore: true,
+      showNavToTop: false
     };
 
+    this.onScroll = onScroll.bind(this);
     this.signal = axios.CancelToken.source();
   }
 
+  componentDidMount() {
+    window.addEventListener("scroll", this.onScroll(this.fetchNextPage), false);
+  }
+
   componentWillUnmount() {
+    // Remove onScroll event listener
+    window.removeEventListener("scroll", this.onScroll, false);
     // Cancel asyncs
     this.signal.cancel("Async call cancelled.");
   }
 
-  deriveGridContext = context => {
-    let gridContext;
-    if (["searchUsers"].includes(context)) {
-      gridContext = "profiles";
-    } else {
-      gridContext = "posts";
-    }
-    return gridContext;
-  };
-
-  onSwitchContext = (context, searchTerms = null) => {
-    this.setState(
-      {
-        context,
-        isFetching: true,
-        page: 0,
-        pages: [],
-        searchTerms: null
-      },
-      async () => {
-        try {
-          const { data } = await fetchForMainPage(
-            this.signal.token,
-            context,
-            0,
-            searchTerms
-          );
-
-          const gridContext = this.deriveGridContext(context);
-          this.setState({
-            isFetching: false,
-            page: 1,
-            pages: [...this.state.pages, data],
-            gridContext
-          });
-        } catch (e) {
-          if (axios.isCancel()) {
-            return console.log(e.message);
-          }
-          console.log(e);
-        }
-      }
-    );
-  };
-
-  onScrolledToBottom = () => {
-    if (this.state.isFetching || !this.state.hasMorePages) {
+  fetchNextPage = () => {
+    if (this.state.isFetching || !this.state.hasMore) {
       return;
     }
 
@@ -91,17 +56,17 @@ export class MainPage extends React.Component {
         );
 
         if (!data.length) {
-          return this.setState(
-            { hasMorePages: false, isFetching: false },
-            () => {}
-          );
+          return this.setState({ hasMore: false, isFetching: false }, () => {});
         }
 
-        this.setState({
-          isFetching: false,
-          page: this.state.page + 1,
-          pages: [...this.state.pages, data]
-        });
+        this.setState(
+          {
+            isFetching: false,
+            page: this.state.page + 1,
+            pages: [...this.state.pages, data]
+          },
+          () => {}
+        );
       } catch (e) {
         if (axios.isCancel()) {
           return console.log(e.message);
@@ -109,6 +74,41 @@ export class MainPage extends React.Component {
         console.log(e);
       }
     });
+  };
+
+  deriveGridContext = context => {
+    let gridContext;
+    if (["searchUsers"].includes(context)) {
+      gridContext = "profiles";
+    } else {
+      gridContext = "posts";
+    }
+    return gridContext;
+  };
+
+  onSwitchContext = (context, searchTerms = null) => {
+    try {
+      this.setState({ isFetching: true, pages: [] }, async () => {
+        const { data } = await fetchForMainPage(
+          this.signal.token,
+          context,
+          0,
+          searchTerms
+        );
+        const gridContext = this.deriveGridContext(context);
+        this.setState({
+          isFetching: false,
+          page: 1,
+          pages: [data],
+          gridContext
+        });
+      });
+    } catch (e) {
+      if (axios.isCancel()) {
+        return console.log(e.message);
+      }
+      console.log(e);
+    }
   };
 
   render() {
@@ -120,15 +120,12 @@ export class MainPage extends React.Component {
         {/* {isAuth ? null : <HeroUnit />} */}
         <Search onSwitchContext={this.onSwitchContext} />
         <MainPageMenu onSwitchContext={this.onSwitchContext} />
-        {this.state.pages.length > 0 && (
-          <ScrollView
-            pages={this.state.pages}
-            gridContext={this.state.gridContext}
-            searchTerms={this.state.searchTerms}
-            isFetching={this.state.isFetching}
-            onScrolledToBottom={this.onScrolledToBottom}
-          />
-        )}
+        <Grid
+          gridData={this.state.pages}
+          gridContext={this.state.gridContext}
+          isFetching={this.state.isFetching}
+          showNavToTop={this.state.showNavToTop}
+        />
       </div>
     );
   }

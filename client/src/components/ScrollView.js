@@ -15,7 +15,9 @@ import PostCard from "./PostCard";
 import ProfileHeader from "./ProfileHeader";
 import Grid from "./Grid";
 import { setPosts } from "../actions/posts";
-import * as async from "../async/scrollview";
+import { setAlbums } from "../actions/albums";
+
+// import { fetchScrollViewData } from "../async/scrollview";
 
 const styles = theme => ({
   root: {
@@ -68,15 +70,16 @@ export class ScrollView extends React.Component {
     super(props);
 
     this.state = {
-      // currentPage: 0,
-      // morePagesAvailable: true,
-      // isFetching: true,
-      // pages: [],
-      // gridContext: "posts",
-      showNavToTop: false
+      context: "popular",
+      pages: this.props.pages ? this.props.pages : [],
+      page: 1,
+      hasMore: this.props.data.hasMore,
+      isFetching: this.props.data.isFetching,
+      showNavToTop: false,
+      searchTerms: null
     };
 
-    // this.signal = axios.CancelToken.source();
+    this.signal = axios.CancelToken.source();
   }
 
   onScroll = () => {
@@ -113,7 +116,7 @@ export class ScrollView extends React.Component {
         this.setState({ showNavToTop: false });
       }
       if (currentInnerHeight + currentPageYOffset >= currentDocOffsetHeight) {
-        this.props.onScrolledToBottom();
+        this.onScrolledToBottom();
       }
     };
 
@@ -135,6 +138,52 @@ export class ScrollView extends React.Component {
     //   console.log(e);
     // }
   }
+
+  // onScrolledToBottom = () => {
+  //   if (this.state.isFetching || !this.state.hasMore) {
+  //     return;
+  //   }
+  //   console.log("BOTTOM!");
+
+  //   this.setState({ isFetching: true }, async () => {
+  //     try {
+  //       const { data } = await fetchScrollViewData(
+  //         this.signal.token,
+  //         this.state.context,
+  //         this.state.page,
+  //         this.state.searchTerms
+  //       );
+
+  //       console.log(
+  //         this.signal.token,
+  //         this.state.context,
+  //         this.state.page,
+  //         this.state.searchTerms
+  //       );
+  //       if (!data.length) {
+  //         return this.setState({ hasMore: false, isFetching: false }, () => {});
+  //       }
+
+  //       this.setState(
+  //         {
+  //           isFetching: false,
+  //           page: this.state.page + 1
+  //         },
+  //         () => {
+  //           if (this.state.context === "posts") {
+  //             return this.props.setPosts(data);
+  //           }
+  //           return this.props.setAlbums(data);
+  //         }
+  //       );
+  //     } catch (e) {
+  //       if (axios.isCancel()) {
+  //         return console.log(e.message);
+  //       }
+  //       console.log(e);
+  //     }
+  //   });
+  // };
 
   // componentDidUpdate(prevProps) {
   //   // Case: context switching
@@ -177,35 +226,35 @@ export class ScrollView extends React.Component {
     // this.signal.cancel("Async call cancelled.");
   }
 
-  // setGridContext = context => {
-  //   let gridContext;
-  //   const needsPostsGrid = [
-  //     "popular",
-  //     "new",
-  //     "following",
-  //     "userPosts",
-  //     "userFaves",
-  //     "searchPosts"
-  //   ];
-  //   const needsAlbumsGrid = ["userAlbums"];
-  //   const needsAlbumPostsGrid = ["albumPosts"];
-  //   const needsProfileGrid = ["userFollows", "userFollowers", "searchUsers"];
+  setGridContext = context => {
+    let gridContext;
+    const needsPostsGrid = [
+      "popular",
+      "new",
+      "following",
+      "userPosts",
+      "userFaves",
+      "searchPosts"
+    ];
+    const needsAlbumsGrid = ["userAlbums"];
+    const needsAlbumPostsGrid = ["albumPosts"];
+    const needsProfileGrid = ["userFollows", "userFollowers", "searchUsers"];
 
-  //   if (needsPostsGrid.includes(context)) {
-  //     gridContext = "posts";
-  //   }
-  //   if (needsAlbumsGrid.includes(context)) {
-  //     gridContext = "albums";
-  //   }
-  //   if (needsAlbumPostsGrid.includes(context)) {
-  //     gridContext = "albumPosts";
-  //   }
-  //   if (needsProfileGrid.includes(context)) {
-  //     gridContext = "profiles";
-  //   }
+    if (needsPostsGrid.includes(context)) {
+      gridContext = "posts";
+    }
+    if (needsAlbumsGrid.includes(context)) {
+      gridContext = "albums";
+    }
+    if (needsAlbumPostsGrid.includes(context)) {
+      gridContext = "albumPosts";
+    }
+    if (needsProfileGrid.includes(context)) {
+      gridContext = "profiles";
+    }
 
-  //   return gridContext;
-  // };
+    return gridContext;
+  };
 
   // loadData = () => {
   //   if (this.state.isFetching || !this.state.morePagesAvailable) {
@@ -273,8 +322,10 @@ export class ScrollView extends React.Component {
   };
 
   renderGridTiles = data => {
-    const { gridContext } = this.props;
+    const { context } = this.state;
     let tiles;
+    let gridContext = this.setGridContext(context);
+    console.log("GRIDCONTEXT", gridContext);
     switch (gridContext) {
       case "albums":
         tiles = data.map(album => <Album key={album._id} album={album} />);
@@ -305,9 +356,13 @@ export class ScrollView extends React.Component {
     return tiles;
   };
 
+  const;
+
   render() {
-    const { classes, pages, isFetching } = this.props;
+    const { classes } = this.props;
+    const { isFetching, context, pages } = this.props;
     console.log("ScrollView Rendered", this.props);
+    // console.log("pages:", pages);
     // debugger;
     return (
       <div className={classes.root}>
@@ -324,9 +379,9 @@ export class ScrollView extends React.Component {
           </Button>
         )}
 
-        {pages.length > 0 && (
+        {this.state.pages.length > 0 && (
           <div className={classes.root}>
-            {pages.map(page => (
+            {this.state.pages.map(page => (
               <GridList className={classes.gridList} cols={3}>
                 {this.renderGridTiles(page).map((tile, i) => {
                   return (
@@ -355,9 +410,12 @@ export class ScrollView extends React.Component {
   }
 }
 
-// const mapStateToProps = ({ posts }) => ({
+// const mapStateToProps = ({ data, albums, posts }) => ({
+//   data,
+//   albums,
 //   posts
 // });
+
 // user, userId, albumId
 ScrollView.propTypes = {
   gridContext: PropTypes.string.isRequired,

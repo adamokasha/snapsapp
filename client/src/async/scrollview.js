@@ -44,6 +44,9 @@ export const fetchForMainPage = async (
   return res;
 };
 
+// stop errors while refactoring, remove later
+export const fetchScrollViewData = () => {};
+
 // Interfaces with redux store
 // ProfilePage connects to store and uses relevant state slice
 export const fetchForProfilePage = async (

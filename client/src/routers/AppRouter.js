@@ -11,11 +11,10 @@ import RegisterOrLogin from "../pages/RegisterOrLogin";
 import RegisterUserPage from "../pages/RegisterUserPage";
 import AddPostPage from "../pages/AddPostPage";
 import PrivacyPolicy from "../components/PrivacyPolicy";
+
 import { setUser } from "../actions/auth";
-import { setPosts, clearPosts } from "../actions/posts";
 import { fetchUser } from "../async/auth";
 import { fetchPopular } from "../async/posts";
-import { fetchForProfilePage } from "../async/scrollview";
 
 import AlbumMaker from "../components/AlbumMaker";
 import MyAlbumsPage from "../pages/MyAlbumsPage";
@@ -29,9 +28,8 @@ export class AppRouter extends React.Component {
     super();
     this.state = {
       view: "routes",
-      pages: null,
-      profileTabPos: 1,
       isFetching: true,
+      pages: null,
       initialMount: false
     };
     this.signal = axios.CancelToken.source();
@@ -44,18 +42,17 @@ export class AppRouter extends React.Component {
         fetchPopular(this.signal.token, 0)
       ]);
       console.log(userData, postData);
-      await this.props.setUser(userData);
+      this.props.setUser(userData);
+
+      // this.props.setPosts(postData);
       this.setState(
         {
-          pages: [postData],
+          view: "mainpage",
           isFetching: false,
           initialMount: true,
-          view: "mainpage",
-          profileTabPos: 1
+          pages: [postData]
         },
-        () => {
-          this.props.setPosts(postData);
-        }
+        () => {}
       );
     } catch (e) {
       if (axios.isCancel()) {
@@ -65,20 +62,25 @@ export class AppRouter extends React.Component {
     }
   }
 
-  onProfileSwitch = (context, user, profileTabPos) => {
+  onFetchPopular = () => {
     try {
-      // Contexts: userPosts, userFaves, userAlbums
-      this.setState(
-        { isFetching: true, pages: [], view: "profile" },
-        async () => {
-          this.props.clearPosts();
-          await fetchForProfilePage(this.signal.token, context, 0, user);
-          this.setState(
-            { isFetching: false, profileTabPos, view: "profile" },
-            () => {}
-          );
-        }
-      );
+      this.setState({ isFetching: true }, async () => {
+        const { data: postData } = await fetchPopular(this.signal.token, 0);
+        this.props.setUI({
+          page: 1,
+          isFetching: false,
+          context: "posts",
+          hasMore: true
+        });
+        this.setState(
+          {
+            pages: [postData],
+            isFetching: false,
+            view: "mainpage"
+          },
+          () => {}
+        );
+      });
     } catch (e) {
       if (axios.isCancel()) {
         return console.log(e.message);
@@ -87,12 +89,37 @@ export class AppRouter extends React.Component {
     }
   };
 
+  // onProfileSwitch = (context, user, profileTabPos) => {
+  //   try {
+  //     // Contexts: userPosts, userFaves, userAlbums
+  //     this.setState(
+  //       { isFetching: true, pages: [], view: "profile" },
+  //       async () => {
+  //         this.props.clearPosts();
+  //         await fetchScrollViewData(this.signal.token, context, 0, user);
+  //         this.setState(
+  //           { isFetching: false, profileTabPos, view: "profile" },
+  //           () => {}
+  //         );
+  //       }
+  //     );
+  //   } catch (e) {
+  //     if (axios.isCancel()) {
+  //       return console.log(e.message);
+  //     }
+  //     console.log(e);
+  //   }
+  // };
+
   render() {
     return (
       <BrowserRouter>
         <div>
           {this.state.initialMount && (
-            <NavBar onProfileSwitch={this.onProfileSwitch} />
+            <NavBar
+              onFetchPopular={this.onFetchPopular}
+              onProfileSwitch={this.onProfileSwitch}
+            />
           )}
           <Switch>
             {!this.state.isFetching &&
@@ -101,23 +128,26 @@ export class AppRouter extends React.Component {
                   exact
                   path="/"
                   component={() => (
-                    <MainPage
-                      pages={this.state.pages}
-                      page={1}
-                      context="popular"
-                    />
+                    <MainPage page={1} pages={this.state.pages} />
                   )}
                 />
               )}
 
             {(!this.state.initialMount || this.state.isFetching) && (
-              <div>Loading...</div>
+              <React.Fragment>
+                <div>Loading...</div>
+              </React.Fragment>
             )}
 
-            {this.state.view === "profile" &&
-              !this.state.isFetching && (
-                <ProfilePage profileTabPos={this.state.profileTabPos} />
-              )}
+            <Route
+              path="/myprofile/"
+              component={() =>
+                this.state.view === "profile" &&
+                !this.state.isFetching && (
+                  <ProfilePage profileTabPos={this.state.profileTabPos} />
+                )
+              }
+            />
 
             <Route path="/profile/:user" component={ProfilePage} />
 
@@ -149,5 +179,5 @@ export class AppRouter extends React.Component {
 
 export default connect(
   null,
-  { setUser, setPosts, clearPosts }
+  { setUser }
 )(AppRouter);
