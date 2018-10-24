@@ -13,26 +13,30 @@ import Grid from "./Grid";
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
+    background: "#fafafa",
     width: "300px",
     position: "absolute",
     top: "10%",
     left: "50%",
     transform: "translateX(-50%)",
-    paddingBottom: `${theme.spacing.unit}px`,
     borderRadius: "3px"
   },
-  gridRoot: {
-    paddingTop: `${theme.spacing.unit * 2}px`,
-    background: "#fafafa",
+  layout: {
     height: "400px",
-    overflowY: "scroll",
     [theme.breakpoints.up("sm")]: {
       height: "500px"
     }
   },
-  circularProgress: {
-    margin: "0 auto"
+  gridContainer: {
+    height: "90%",
+    paddingTop: `${theme.spacing.unit}px`,
+    overflowY: "scroll"
+  },
+  buttonContainer: {
+    height: "10%"
+  },
+  loadMoreButton: {
+    height: "100%"
   }
 });
 
@@ -155,11 +159,6 @@ class ProfileNetworkTabs extends React.Component {
   };
 
   handleChange = (event, value) => {
-    console.log(
-      this.state.followersPage,
-      this.state.followingPage,
-      this.state.context
-    );
     let context;
     value === 0 ? (context = "userFollowers") : (context = "userFollows");
     if (context === "userFollowers" && this.state.followers) {
@@ -233,45 +232,47 @@ class ProfileNetworkTabs extends React.Component {
 
     return (
       <div className={classes.root}>
-        <AppBar position="static" color="default">
-          <Tabs
-            value={this.state.value}
-            onChange={this.handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            fullWidth
-          >
+        <AppBar position="static" color="primary">
+          <Tabs value={this.state.value} onChange={this.handleChange} fullWidth>
             <Tab label="Followers" />
             <Tab label="Following" />
           </Tabs>
         </AppBar>
-        <div className={classes.gridRoot}>
-          {this.state.value === 0 && (
-            <Grid
-              gridContext="profiles"
-              gridData={this.state.followers}
-              userId={this.props.userId}
-              isFetching={this.state.isFetching}
-            />
-          )}
-          {this.state.value === 1 && (
-            <Grid
-              gridContext="profiles"
-              gridData={this.state.following}
-              userId={this.props.userId}
-              isFetching={this.state.isFetching}
-            />
-          )}
-          <Button
-            onClick={this.fetchNextPage}
-            disabled={
-              this.state.isFetching ||
-              (this.state.value === 0 && !this.state.hasMoreFollowers) ||
-              (this.state.value === 1 && !this.state.hasMoreFollowing)
-            }
-          >
-            Load More
-          </Button>
+
+        <div className={classes.layout}>
+          <div className={classes.gridContainer}>
+            {this.state.value === 0 && (
+              <Grid
+                gridContext="profiles"
+                gridData={this.state.followers}
+                userId={this.props.userId}
+                isFetching={this.state.isFetching}
+              />
+            )}
+            {this.state.value === 1 && (
+              <Grid
+                gridContext="profiles"
+                gridData={this.state.following}
+                userId={this.props.userId}
+                isFetching={this.state.isFetching}
+              />
+            )}
+          </div>
+          <div className={classes.buttonContainer}>
+            <Button
+              className={classes.loadMoreButton}
+              onClick={this.fetchNextPage}
+              variant="contained"
+              fullWidth
+              disabled={
+                this.state.isFetching ||
+                (this.state.value === 0 && !this.state.hasMoreFollowers) ||
+                (this.state.value === 1 && !this.state.hasMoreFollowing)
+              }
+            >
+              Load More
+            </Button>
+          </div>
         </div>
       </div>
     );
