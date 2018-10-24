@@ -64,7 +64,6 @@ const styles = theme => ({
     position: "absolute",
     top: 0,
     right: 0,
-    transform: "translate(75%,-20%)",
     [theme.breakpoints.up("sm")]: {
       display: "inline-flex"
     }
@@ -163,7 +162,7 @@ export class ProfilePage extends React.Component {
     this.setState({
       ...this.state,
       editEnabled: false,
-      ...this.props.auth.profile
+      ...this.state.profile
     });
   };
 
@@ -192,10 +191,11 @@ export class ProfilePage extends React.Component {
     });
   };
 
-  renderEditButtons = () => {
+  renderEditButtons = ownProfile => {
     const { classes } = this.props;
+
     return (
-      this.props.ownProfile && (
+      ownProfile && (
         <div className={classes.editButtons}>
           {this.state.editEnabled ? (
             <IconButton onClick={this.cancelEdit}>
@@ -214,6 +214,8 @@ export class ProfilePage extends React.Component {
   render() {
     const { classes } = this.props;
     console.log("PROFILEPAGE RENDERED", this.props);
+    const ownProfile =
+      this.props.auth.displayName === this.props.profile.displayName;
 
     return (
       <React.Fragment>
@@ -229,33 +231,27 @@ export class ProfilePage extends React.Component {
                 color="secondary"
               />
             )}
-            <div
-              className={
-                this.state.ownProfile
-                  ? classNames(classes.profileHeading, classes.profileHeadingMR)
-                  : classes.profileHeading
-              }
-            >
+            <div className={classes.profileHeading}>
               <ProfileHeader
-                ownProfile={this.state.ownProfile}
+                ownProfile={ownProfile}
                 profilePhoto={this.state.profile.profilePhoto}
                 displayName={this.state.profile.displayName}
                 joined={this.state.profile.joined}
               />
               <ProfileNetwork
-                ownProfile={this.state.ownProfile}
-                userId={this.props.auth._id}
+                ownProfile={ownProfile}
+                userId={this.props.profile._id}
               />
-
-              {this.renderEditButtons()}
             </div>
             <Divider className={classes.hidingDivider} />
 
-            {this.props.auth.profile || this.state.editEnabled ? (
+            {this.renderEditButtons(ownProfile)}
+
+            {this.props.profile.profile || this.state.editEnabled ? (
               <ProfileForm
                 onProfileSubmit={this.onProfileSubmit}
                 profile={this.state.profile.profile}
-                ownProfile={this.state.ownProfile}
+                ownProfile={ownProfile}
                 editEnabled={this.state.editEnabled}
                 isLoading={this.state.isLoading}
                 cancelEdit={this.cancelEdit}
@@ -263,7 +259,7 @@ export class ProfilePage extends React.Component {
               />
             ) : (
               <Typography className={classes.noProfileText}>
-                {this.props.match.params.user} has not shared any of their
+                {this.props.profile.displayName} has not shared any of their
                 profile information yet!
               </Typography>
             )}

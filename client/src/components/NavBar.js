@@ -102,6 +102,7 @@ class NavBar extends React.Component {
       true
     );
     this.handleClose();
+    this.props.history.push(`/profile/${this.props.auth.displayName}`);
   };
 
   onHomeClick = () => {

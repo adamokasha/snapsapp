@@ -130,7 +130,7 @@ export class ProfileForm extends React.Component {
 
   render() {
     const { classes, profile } = this.props;
-    const { name, website, facebook, twitter, about } = profile;
+    const { name, website, facebook, twitter, about } = this.state;
 
     return (
       <form
@@ -147,7 +147,7 @@ export class ProfileForm extends React.Component {
               <Typography variant="body2">Name:</Typography>
               <TextField
                 margin="normal"
-                inputProps={{ maxLength: 28 }}
+                inputProps={{ style: { color: "#000" }, maxLength: 28 }}
                 disabled={this.props.editEnabled ? false : true}
                 className={classes.textField}
                 value={this.state.name}
@@ -177,7 +177,7 @@ export class ProfileForm extends React.Component {
             </div>
           )}
 
-          {(this.props.profile.location ||
+          {(this.state.location ||
             this.props.editEnabled ||
             this.props.ownProfile) && (
             <div className={classes.fieldGroup}>
@@ -250,7 +250,7 @@ export class ProfileForm extends React.Component {
                 margin="normal"
                 multiline
                 rows={3}
-                inputProps={{ maxLength: 140 }}
+                inputProps={{ style: { color: "#000" }, maxLength: 140 }}
                 className={classes.textField}
                 disabled={this.props.editEnabled ? false : true}
                 value={this.state.about}

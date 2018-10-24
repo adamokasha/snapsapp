@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 import { withRouter } from "react-router";
+import pathToRegexp from "path-to-regexp";
 import axios from "axios";
 
 import NavBar from "../components/NavBar";
@@ -20,13 +21,16 @@ import { fetchForProfilePage } from "../async/scrollview";
 
 import { setUser } from "../actions/auth";
 
-import AlbumMaker from "../components/AlbumMaker";
 import MyAlbumsPage from "../pages/MyAlbumsPage";
 import ProfileTabs from "../components/ProfileTabs";
 import SingleAlbumPage from "../pages/SingleAlbumPage";
 import FullPostPage from "../pages/FullPostPage";
 import ProfilePage from "../pages/ProfilePage";
 import MessageBoxPage from "../pages/MessageBoxPage";
+
+const profileKeys = [];
+const profilePath = pathToRegexp("/profile/:user", profileKeys);
+const homePath = pathToRegexp("/");
 
 export class AppRoutes extends React.Component {
   constructor() {
@@ -45,13 +49,19 @@ export class AppRoutes extends React.Component {
   }
 
   async componentDidMount() {
-    console.log("AppRoutes", this.props);
+    let splitPathname = this.props.location.pathname.split("/");
+    console.log(splitPathname);
+
+    if (profilePath.test(this.props.location.pathname)) {
+      let user = splitPathname[splitPathname.length - 1];
+      return this.onSetProfilePage("userPosts", user, 1);
+    }
+
     try {
       const [{ data: userData }, { data: popularPosts }] = await axios.all([
         fetchUser(),
         fetchPopular(this.signal.token, 0)
       ]);
-      console.log(userData, popularPosts);
       this.props.setUser(userData);
 
       // this.props.setPosts(popularPosts);
@@ -95,43 +105,36 @@ export class AppRoutes extends React.Component {
     }
   };
 
-  onSetProfilePage = (context, user, profileTabPos = 1, ownProfile) => {
-    console.log(context, user, profileTabPos, ownProfile);
+  onSetProfilePage = (context, user, profileTabPos = 1) => {
     try {
-      this.props.history.push(`/profile/${user}`);
       // Contexts: userPosts, userFaves, userAlbums
       this.setState({ isFetching: true, pages: [] }, async () => {
-        let profileData;
-        let postData;
-        // If navigating to own profile, pull profile data from redux store
-        if (ownProfile) {
-          profileData = this.props.auth;
-          const { data } = await fetchForProfilePage(
+        const [{ data: auth }, { data: pages }] = await axios.all([
+          fetchUser(),
+          fetchForProfilePage(this.signal.token, context, 0, user)
+        ]);
+
+        this.props.setUser(auth);
+        let profile;
+        // If own profile, set profile from redux store
+        if (auth && auth.displayName === user) {
+          profile = auth;
+        } else {
+          const { data: profileData } = await fetchProfile(
             this.signal.token,
-            context,
-            0,
             user
           );
-          postData = data;
-        } else {
-          // Else fetch all data from api
-          const [{ data: userProfile }, { data: userPosts }] = await axios.all([
-            fetchProfile(this.signal.token, user),
-            fetchForProfilePage(this.signal.token, context, 0, user)
-          ]);
-          profileData = userProfile;
-          postData = userPosts;
+          profile = profileData;
         }
-        console.log(profileData, postData);
 
         this.setState({
           view: "profilepage",
           isFetching: false,
-          profile: profileData,
-          pages: [postData],
-          ownProfile,
+          profile: profile,
+          pages: [pages],
           profileTabPos,
-          context
+          context,
+          hasInitMounted: true
         });
       });
     } catch (e) {
@@ -143,7 +146,6 @@ export class AppRoutes extends React.Component {
   };
 
   render() {
-    console.log(this.state);
     return (
       <React.Fragment>
         {this.state.hasInitMounted && (
@@ -178,7 +180,7 @@ export class AppRoutes extends React.Component {
           {!this.state.isFetching &&
             this.state.view === "profilepage" && (
               <Route
-                path="/profile/:user"
+                path={"/profile/:id"}
                 component={() => (
                   <ProfilePage
                     profile={this.state.profile}
