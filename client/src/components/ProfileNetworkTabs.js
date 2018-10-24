@@ -4,8 +4,12 @@ import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { fetchFollows } from "../async/scrollview";
+import { onScroll } from "../utils/utils";
+import axios from "axios";
 
-import ScrollView from "./ScrollView";
+import Grid from "./Grid";
 
 const styles = theme => ({
   root: {
@@ -18,7 +22,7 @@ const styles = theme => ({
     paddingBottom: `${theme.spacing.unit}px`,
     borderRadius: "3px"
   },
-  scrollViewRoot: {
+  gridRoot: {
     paddingTop: `${theme.spacing.unit * 2}px`,
     height: "400px",
     overflowY: "scroll",
@@ -26,15 +30,59 @@ const styles = theme => ({
       height: "500px"
     }
   },
-  circularLoader: {
+  circularProgress: {
     margin: "0 auto"
   }
 });
 
-class FullWidthTabs extends React.Component {
-  state = {
-    value: this.props.tabPosition
-  };
+class ProfileNetworkTabs extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      context: this.props.context,
+      followers: null,
+      following: null,
+      page: 0,
+      isFetching: true,
+      value: this.props.tabPosition
+    };
+
+    this.signal = axios.CancelToken.source();
+    this.onScroll = onScroll.bind(this);
+  }
+
+  async componentDidMount() {
+    window.addEventListener("scroll", this.onScroll(this.fetchNextPage), false);
+    try {
+      const { data: pages } = await fetchFollows(
+        this.signal.token,
+        this.state.context,
+        this.state.page,
+        this.props.userId
+      );
+      if (this.state.context === "userFollowers") {
+        return this.setState({
+          followers: [pages],
+          page: this.state.page + 1,
+          isFetching: false
+        });
+      }
+
+      return this.setState({
+        following: [pages],
+        page: this.state.page + 1,
+        isFetching: false
+      });
+    } catch (e) {
+      if (axios.isCancel()) {
+        return console.log(e.message);
+      }
+      console.log(e);
+    }
+  }
+
+  fetchNextPage = () => {};
 
   handleChange = (event, value) => {
     this.setState({ value });
@@ -61,24 +109,38 @@ class FullWidthTabs extends React.Component {
             <Tab label="Following" />
           </Tabs>
         </AppBar>
-        {this.state.value === 0 && (
-          <ScrollView
+        {!this.state.isFetching &&
+          this.state.value === 0 &&
+          this.state.followers && (
+            <Grid
+              classes={{
+                root: classes.gridRoot,
+                circularProgress: classes.circularProgress
+              }}
+              gridContext="profiles"
+              gridData={this.state.followers}
+              userId={this.props.userId}
+            />
+          )}
+        {!this.state.isFetching &&
+          this.state.value === 1 &&
+          this.state.following && (
+            <Grid
+              classes={{
+                root: classes.gridRoot,
+                circularProgress: classes.circularProgress
+              }}
+              gridContext="profiles"
+              gridData={this.state.following}
+              userId={this.props.userId}
+            />
+          )}
+        {this.state.isFetching && (
+          <Grid
             classes={{
-              root: classes.scrollViewRoot,
-              circularLoader: classes.circularLoader
+              root: classes.gridRoot
             }}
-            context="userFollowers"
-            userId={this.props.userId}
-          />
-        )}
-        {this.state.value === 1 && (
-          <ScrollView
-            classes={{
-              root: classes.scrollViewRoot,
-              circularLoader: classes.circularLoader
-            }}
-            context="userFollows"
-            userId={this.props.userId}
+            isFetching={true}
           />
         )}
       </div>
@@ -86,10 +148,10 @@ class FullWidthTabs extends React.Component {
   }
 }
 
-FullWidthTabs.propTypes = {
+ProfileNetworkTabs.propTypes = {
   classes: PropTypes.object.isRequired,
   userId: PropTypes.string.isRequired,
   tabPosition: PropTypes.number.isRequired
 };
 
-export default withStyles(styles, { withTheme: true })(FullWidthTabs);
+export default withStyles(styles, { withTheme: true })(ProfileNetworkTabs);

@@ -167,7 +167,11 @@ export class ProfileNetwork extends React.Component {
                 </Typography>
               }
               modalComponent={
-                <ProfileNetworkTabs tabPosition={0} userId={userId} />
+                <ProfileNetworkTabs
+                  context="userFollowers"
+                  tabPosition={0}
+                  userId={userId}
+                />
               }
             />
           </div>
@@ -185,7 +189,11 @@ export class ProfileNetwork extends React.Component {
                 </Typography>
               }
               modalComponent={
-                <ProfileNetworkTabs tabPosition={1} userId={userId} />
+                <ProfileNetworkTabs
+                  context="userFollows"
+                  tabPosition={1}
+                  userId={userId}
+                />
               }
             />
             <Typography className={classes.isFollowingText} variant="caption">

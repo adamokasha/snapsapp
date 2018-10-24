@@ -110,24 +110,25 @@ function Grid(props) {
           Go to Top
         </Button>
       )}
-      {gridData.map((page, i) => (
-        <GridList key={i} className={classes.gridList} cols={3}>
-          {renderGridTiles(page).map((tile, i) => {
-            return (
-              <GridListTile
-                key={i}
-                cols={1}
-                classes={{
-                  root: classes.gridTileRoot,
-                  tile: classes.tile
-                }}
-              >
-                {tile}
-              </GridListTile>
-            );
-          })}
-        </GridList>
-      ))}
+      {gridData &&
+        gridData.map((page, i) => (
+          <GridList key={i} className={classes.gridList} cols={3}>
+            {renderGridTiles(page).map((tile, i) => {
+              return (
+                <GridListTile
+                  key={i}
+                  cols={1}
+                  classes={{
+                    root: classes.gridTileRoot,
+                    tile: classes.tile
+                  }}
+                >
+                  {tile}
+                </GridListTile>
+              );
+            })}
+          </GridList>
+        ))}
 
       {isFetching && (
         <CircularProgress className={classes.circularProgress} size={50} />
