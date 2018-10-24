@@ -42,7 +42,9 @@ class ProfileNetworkTabs extends React.Component {
     this.state = {
       context: this.props.context,
       followers: null,
+      followersPage: 0,
       following: null,
+      followingPage: 0,
       page: 0,
       isFetching: true,
       value: this.props.tabPosition
@@ -64,14 +66,14 @@ class ProfileNetworkTabs extends React.Component {
       if (this.state.context === "userFollowers") {
         return this.setState({
           followers: [pages],
-          page: this.state.page + 1,
+          followersPage: this.state.page + 1,
           isFetching: false
         });
       }
 
       return this.setState({
         following: [pages],
-        page: this.state.page + 1,
+        followingPage: this.state.page + 1,
         isFetching: false
       });
     } catch (e) {
@@ -85,7 +87,36 @@ class ProfileNetworkTabs extends React.Component {
   fetchNextPage = () => {};
 
   handleChange = (event, value) => {
-    this.setState({ value });
+    let context;
+    value === 0 ? (context = "userFollowers") : (context = "userFollows");
+    if (context === "userFollowers" && this.state.followers) {
+      return this.setState({ value });
+    }
+    if (context === "userFollows" && this.state.following) {
+      return this.setState({ value });
+    }
+    this.setState({ isFetching: true, value }, async () => {
+      try {
+        const { data: pages } = await fetchFollows(
+          this.signal.token,
+          context,
+          this.state.page,
+          this.props.userId
+        );
+        if (context === "userFollowers") {
+          return this.setState(
+            { isFetching: false, followers: [pages] },
+            () => {}
+          );
+        }
+        return this.setState({ isFetching: false, following: [pages] });
+      } catch (e) {
+        if (axios.isCancel()) {
+          return console.log(e.message);
+        }
+        console.log(e);
+      }
+    });
   };
 
   handleChangeIndex = index => {
