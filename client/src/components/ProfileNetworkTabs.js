@@ -96,13 +96,13 @@ class ProfileNetworkTabs extends React.Component {
   fetchNextPage = () => {
     console.log("called next page");
     if (
-      this.state.context === "userFollowers" &&
+      this.state.value === 0 &&
       (this.state.isFetching || !this.state.hasMoreFollowers)
     ) {
       return;
     }
     if (
-      this.state.context === "userFollows" &&
+      this.state.value === 1 &&
       (this.state.isFetching || !this.state.hasMoreFollowing)
     ) {
       return;
@@ -113,14 +113,14 @@ class ProfileNetworkTabs extends React.Component {
         const { data: pages } = await fetchFollows(
           this.signal.token,
           this.state.context,
-          this.state.context === "userFollowers"
+          this.state.value === 0
             ? this.state.followersPage
             : this.state.followingPage,
           this.props.userId
         );
 
         if (!pages.length) {
-          if (this.state.context === "userFollowers") {
+          if (this.state.value === 0) {
             return this.setState(
               { isFetching: false, hasMoreFollowers: false },
               () => {}
@@ -132,7 +132,7 @@ class ProfileNetworkTabs extends React.Component {
           );
         }
 
-        if (this.state.context === "userFollowers") {
+        if (this.state.value === 0) {
           return this.setState(
             {
               isFetching: false,
@@ -168,7 +168,7 @@ class ProfileNetworkTabs extends React.Component {
     if (context === "userFollows" && this.state.following) {
       return this.setState({ value });
     }
-    this.setState({ isFetching: true, value }, async () => {
+    this.setState({ isFetching: true, value, context }, async () => {
       try {
         const { data: pages } = await fetchFollows(
           this.signal.token,
@@ -178,13 +178,35 @@ class ProfileNetworkTabs extends React.Component {
             : this.state.followingPage,
           this.props.userId
         );
-        if (context === "userFollowers") {
+
+        if (!pages.length) {
+          if (this.state.value === 0) {
+            return this.setState(
+              { isFetching: false, hasMoreFollowers: false },
+              () => {}
+            );
+          }
           return this.setState(
-            { isFetching: false, followers: [pages] },
+            { isFetching: false, hasMoreFollowing: false },
             () => {}
           );
         }
-        return this.setState({ isFetching: false, following: [pages] });
+
+        if (context === "userFollowers") {
+          return this.setState(
+            {
+              isFetching: false,
+              followers: [pages],
+              followersPage: this.state.followersPage + 1
+            },
+            () => {}
+          );
+        }
+        return this.setState({
+          isFetching: false,
+          following: [pages],
+          followingPage: this.state.followingPage + 1
+        });
       } catch (e) {
         if (axios.isCancel()) {
           return console.log(e.message);
@@ -244,8 +266,8 @@ class ProfileNetworkTabs extends React.Component {
             onClick={this.fetchNextPage}
             disabled={
               this.state.isFetching ||
-              !this.state.hasMoreFollowers ||
-              !this.state.hasMoreFollowing
+              (this.state.value === 0 && !this.state.hasMoreFollowers) ||
+              (this.state.value === 1 && !this.state.hasMoreFollowing)
             }
           >
             Load More
