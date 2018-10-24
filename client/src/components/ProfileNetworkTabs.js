@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import Button from "@material-ui/core/Button";
 import { fetchFollows } from "../async/scrollview";
 import { onScroll } from "../utils/utils";
 import axios from "axios";
@@ -24,6 +24,7 @@ const styles = theme => ({
   },
   gridRoot: {
     paddingTop: `${theme.spacing.unit * 2}px`,
+    background: "#fafafa",
     height: "400px",
     overflowY: "scroll",
     [theme.breakpoints.up("sm")]: {
@@ -43,37 +44,38 @@ class ProfileNetworkTabs extends React.Component {
       context: this.props.context,
       followers: null,
       followersPage: 0,
+      hasMoreFollowers: true,
       following: null,
       followingPage: 0,
-      page: 0,
+      hasMoreFollowing: true,
       isFetching: true,
       value: this.props.tabPosition
     };
 
     this.signal = axios.CancelToken.source();
-    this.onScroll = onScroll.bind(this);
+    // this.onScroll = onScroll.bind(this);
   }
 
   async componentDidMount() {
-    window.addEventListener("scroll", this.onScroll(this.fetchNextPage), false);
+    // window.addEventListener("scroll", this.onScroll(this.fetchNextPage), false);
     try {
       const { data: pages } = await fetchFollows(
         this.signal.token,
         this.state.context,
-        this.state.page,
+        0,
         this.props.userId
       );
       if (this.state.context === "userFollowers") {
         return this.setState({
           followers: [pages],
-          followersPage: this.state.page + 1,
+          followersPage: this.state.followersPage + 1,
           isFetching: false
         });
       }
 
       return this.setState({
         following: [pages],
-        followingPage: this.state.page + 1,
+        followingPage: this.state.followingPage + 1,
         isFetching: false
       });
     } catch (e) {
@@ -84,9 +86,80 @@ class ProfileNetworkTabs extends React.Component {
     }
   }
 
-  fetchNextPage = () => {};
+  componentWillUnmount() {
+    // Remove onScroll event listener
+    // window.removeEventListener("scroll", this.onScroll, false);
+    // Cancel asyncs
+    this.signal.cancel("Async call cancelled.");
+  }
+
+  fetchNextPage = () => {
+    console.log("called next page");
+    if (
+      this.state.context === "userFollowers" &&
+      (this.state.isFetching || !this.state.hasMoreFollowers)
+    ) {
+      return;
+    }
+    if (
+      this.state.context === "userFollows" &&
+      (this.state.isFetching || !this.state.hasMoreFollowing)
+    ) {
+      return;
+    }
+
+    this.setState({ isFetching: true }, async () => {
+      try {
+        const { data: pages } = await fetchFollows(
+          this.signal.token,
+          this.state.context,
+          this.state.context === "userFollowers"
+            ? this.state.followersPage
+            : this.state.followingPage,
+          this.props.userId
+        );
+
+        if (!pages.length) {
+          if (this.state.context === "userFollowers") {
+            return this.setState(
+              { isFetching: false, hasMoreFollowers: false },
+              () => {}
+            );
+          }
+          return this.setState(
+            { isFetching: false, hasMoreFollowing: false },
+            () => {}
+          );
+        }
+
+        if (this.state.context === "userFollowers") {
+          return this.setState(
+            {
+              isFetching: false,
+              followers: [...this.state.followers, pages],
+              followersPage: this.state.followersPage + 1
+            },
+            () => {}
+          );
+        }
+        this.setState(
+          {
+            isFetching: false,
+            following: [...this.state.following, pages],
+            followingPage: this.state.followingPage + 1
+          },
+          () => {}
+        );
+      } catch (e) {}
+    });
+  };
 
   handleChange = (event, value) => {
+    console.log(
+      this.state.followersPage,
+      this.state.followingPage,
+      this.state.context
+    );
     let context;
     value === 0 ? (context = "userFollowers") : (context = "userFollows");
     if (context === "userFollowers" && this.state.followers) {
@@ -100,7 +173,9 @@ class ProfileNetworkTabs extends React.Component {
         const { data: pages } = await fetchFollows(
           this.signal.token,
           context,
-          this.state.page,
+          context === "userFollowers"
+            ? this.state.followersPage
+            : this.state.followingPage,
           this.props.userId
         );
         if (context === "userFollowers") {
@@ -123,6 +198,14 @@ class ProfileNetworkTabs extends React.Component {
     this.setState({ value: index });
   };
 
+  handleScroll = e => {
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+    if (bottom) {
+      this.fetchNextPage();
+    }
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -140,40 +223,34 @@ class ProfileNetworkTabs extends React.Component {
             <Tab label="Following" />
           </Tabs>
         </AppBar>
-        {!this.state.isFetching &&
-          this.state.value === 0 &&
-          this.state.followers && (
+        <div className={classes.gridRoot}>
+          {this.state.value === 0 && (
             <Grid
-              classes={{
-                root: classes.gridRoot,
-                circularProgress: classes.circularProgress
-              }}
               gridContext="profiles"
               gridData={this.state.followers}
               userId={this.props.userId}
+              isFetching={this.state.isFetching}
             />
           )}
-        {!this.state.isFetching &&
-          this.state.value === 1 &&
-          this.state.following && (
+          {this.state.value === 1 && (
             <Grid
-              classes={{
-                root: classes.gridRoot,
-                circularProgress: classes.circularProgress
-              }}
               gridContext="profiles"
               gridData={this.state.following}
               userId={this.props.userId}
+              isFetching={this.state.isFetching}
             />
           )}
-        {this.state.isFetching && (
-          <Grid
-            classes={{
-              root: classes.gridRoot
-            }}
-            isFetching={true}
-          />
-        )}
+          <Button
+            onClick={this.fetchNextPage}
+            disabled={
+              this.state.isFetching ||
+              !this.state.hasMoreFollowers ||
+              !this.state.hasMoreFollowing
+            }
+          >
+            Load More
+          </Button>
+        </div>
       </div>
     );
   }

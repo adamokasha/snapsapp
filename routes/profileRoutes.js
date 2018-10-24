@@ -114,6 +114,9 @@ module.exports = app => {
         })
         .exec();
 
+      if (!followersDoc[0]) {
+        return res.status(200).send([]);
+      }
       const { followers } = followersDoc[0];
 
       res.status(200).send(followers);
@@ -134,6 +137,10 @@ module.exports = app => {
           select: "displayName profilePhoto joined"
         })
         .exec();
+
+      if (!followsDoc[0]) {
+        return res.status(200).send([]);
+      }
 
       const { follows } = followsDoc[0];
 
