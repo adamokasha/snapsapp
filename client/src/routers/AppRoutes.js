@@ -33,183 +33,152 @@ const profilePath = pathToRegexp("/profile/:user", profileKeys);
 const homePath = pathToRegexp("/");
 
 export class AppRoutes extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      view: "routes",
-      context: "popular",
-      isFetching: true,
-      hasInitMounted: false,
-      pages: null,
-      profile: null,
-      ownProfile: false,
-      profileTabPos: 1
-    };
-    this.signal = axios.CancelToken.source();
-  }
+  // constructor() {
+  //   super();
+  //   this.state = {
+  //     view: "routes",
+  //     context: "popular",
+  //     isFetching: true,
+  //     hasInitMounted: false,
+  //     pages: null,
+  //     profile: null,
+  //     ownProfile: false,
+  //     profileTabPos: 1
+  //   };
+  //   this.signal = axios.CancelToken.source();
+  // }
+
+  // async componentDidMount() {
+  //   let splitPathname = this.props.location.pathname.split("/");
+  //   console.log(splitPathname);
+
+  //   if (profilePath.test(this.props.location.pathname)) {
+  //     let user = splitPathname[splitPathname.length - 1];
+  //     return this.onSetProfilePage("userPosts", user, 1);
+  //   }
+
+  //   try {
+  //     const [{ data: userData }, { data: popularPosts }] = await axios.all([
+  //       fetchUser(),
+  //       fetchPopular(this.signal.token, 0)
+  //     ]);
+  //     this.props.setUser(userData);
+
+  //     // this.props.setPosts(popularPosts);
+  //     this.setState(
+  //       {
+  //         view: "mainpage",
+  //         isFetching: false,
+  //         hasInitMounted: true,
+  //         pages: [popularPosts]
+  //       },
+  //       () => {}
+  //     );
+  //   } catch (e) {
+  //     if (axios.isCancel()) {
+  //       return console.log(e.message);
+  //     }
+  //     console.log(e);
+  //   }
+  // }
+
+  // componentDidUpdate(prevProps) {
+  //   if (this.props.location.pathname !== prevProps.location.pathname) {
+  //     let splitPathname = this.props.location.pathname.split("/");
+
+  //     if (profilePath.test(this.props.location.pathname)) {
+  //       let user = splitPathname[splitPathname.length - 1];
+  //       return this.onSetProfilePage("userPosts", user, 1);
+  //     }
+  //   }
+  // }
+
+  // onFetchPopular = () => {
+  //   try {
+  //     this.setState({ isFetching: true }, async () => {
+  //       const { data: popularPosts } = await fetchPopular(this.signal.token, 0);
+  //       this.setState(
+  //         {
+  //           pages: [popularPosts],
+  //           isFetching: false,
+  //           view: "mainpage"
+  //         },
+  //         () => {}
+  //       );
+  //     });
+  //   } catch (e) {
+  //     if (axios.isCancel()) {
+  //       return console.log(e.message);
+  //     }
+  //     console.log(e);
+  //   }
+  // };
+
+  // onSetProfilePage = (context, user, profileTabPos = 1) => {
+  //   try {
+  //     // Contexts: userPosts, userFaves, userAlbums
+  //     this.setState({ isFetching: true, pages: [] }, async () => {
+  //       const [{ data: auth }, { data: pages }] = await axios.all([
+  //         fetchUser(),
+  //         fetchForProfilePage(this.signal.token, context, 0, user)
+  //       ]);
+
+  //       this.props.setUser(auth);
+  //       let profile;
+  //       // If own profile, set profile from redux store
+  //       if (auth && auth.displayName === user) {
+  //         profile = auth;
+  //       } else {
+  //         const { data: profileData } = await fetchProfile(
+  //           this.signal.token,
+  //           user
+  //         );
+  //         profile = profileData;
+  //       }
+
+  //       this.setState({
+  //         view: "profilepage",
+  //         isFetching: false,
+  //         profile: profile,
+  //         pages: [pages],
+  //         profileTabPos,
+  //         context,
+  //         hasInitMounted: true
+  //       });
+  //     });
+  //   } catch (e) {
+  //     if (axios.isCancel()) {
+  //       return console.log(e.message);
+  //     }
+  //     console.log(e);
+  //   }
+  // };
 
   async componentDidMount() {
-    let splitPathname = this.props.location.pathname.split("/");
-    console.log(splitPathname);
-
-    if (profilePath.test(this.props.location.pathname)) {
-      let user = splitPathname[splitPathname.length - 1];
-      return this.onSetProfilePage("userPosts", user, 1);
-    }
-
     try {
-      const [{ data: userData }, { data: popularPosts }] = await axios.all([
-        fetchUser(),
-        fetchPopular(this.signal.token, 0)
-      ]);
+      const { data: userData } = await fetchUser();
       this.props.setUser(userData);
-
-      // this.props.setPosts(popularPosts);
-      this.setState(
-        {
-          view: "mainpage",
-          isFetching: false,
-          hasInitMounted: true,
-          pages: [popularPosts]
-        },
-        () => {}
-      );
     } catch (e) {
-      if (axios.isCancel()) {
-        return console.log(e.message);
-      }
       console.log(e);
     }
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.location.pathname !== prevProps.location.pathname) {
-      let splitPathname = this.props.location.pathname.split("/");
-
-      if (profilePath.test(this.props.location.pathname)) {
-        let user = splitPathname[splitPathname.length - 1];
-        return this.onSetProfilePage("userPosts", user, 1);
-      }
-    }
-  }
-
-  onFetchPopular = () => {
-    try {
-      this.setState({ isFetching: true }, async () => {
-        const { data: popularPosts } = await fetchPopular(this.signal.token, 0);
-        this.setState(
-          {
-            pages: [popularPosts],
-            isFetching: false,
-            view: "mainpage"
-          },
-          () => {}
-        );
-      });
-    } catch (e) {
-      if (axios.isCancel()) {
-        return console.log(e.message);
-      }
-      console.log(e);
-    }
-  };
-
-  onSetProfilePage = (context, user, profileTabPos = 1) => {
-    try {
-      // Contexts: userPosts, userFaves, userAlbums
-      this.setState({ isFetching: true, pages: [] }, async () => {
-        const [{ data: auth }, { data: pages }] = await axios.all([
-          fetchUser(),
-          fetchForProfilePage(this.signal.token, context, 0, user)
-        ]);
-
-        this.props.setUser(auth);
-        let profile;
-        // If own profile, set profile from redux store
-        if (auth && auth.displayName === user) {
-          profile = auth;
-        } else {
-          const { data: profileData } = await fetchProfile(
-            this.signal.token,
-            user
-          );
-          profile = profileData;
-        }
-
-        this.setState({
-          view: "profilepage",
-          isFetching: false,
-          profile: profile,
-          pages: [pages],
-          profileTabPos,
-          context,
-          hasInitMounted: true
-        });
-      });
-    } catch (e) {
-      if (axios.isCancel()) {
-        return console.log(e.message);
-      }
-      console.log(e);
-    }
-  };
+  onFetchPopular = () => {};
+  onSetProfilePage = () => {};
 
   render() {
+    console.log("APP ROUTES RENDERED");
     return (
       <React.Fragment>
-        {this.state.hasInitMounted && (
-          <NavBar
-            onFetchPopular={this.onFetchPopular}
-            onSetProfilePage={this.onSetProfilePage}
-          />
-        )}
+        <NavBar
+          onFetchPopular={this.onFetchPopular}
+          onSetProfilePage={this.onSetProfilePage}
+        />
         <Switch>
-          {(!this.state.hasInitMounted || this.state.isFetching) && (
-            <React.Fragment>
-              <div>Loading...</div>
-            </React.Fragment>
-          )}
-
-          {this.state.hasInitMounted &&
-            this.state.isFetching && (
-              <React.Fragment>
-                <div>Loading...</div>
-              </React.Fragment>
-            )}
-
-          {!this.state.isFetching &&
-            this.state.view === "mainpage" && (
-              <Route
-                exact
-                path="/"
-                component={() => <MainPage page={1} pages={this.state.pages} />}
-              />
-            )}
-
-          {!this.state.isFetching &&
-            this.state.view === "profilepage" && (
-              <Route
-                path={"/profile/:id"}
-                component={() => (
-                  <ProfilePage
-                    profile={this.state.profile}
-                    ownProfile={this.state.ownProfile}
-                    pages={this.state.pages}
-                  >
-                    <ProfileTabs
-                      profileTabPos={this.state.profileTabPos}
-                      pages={this.state.pages}
-                      user={this.state.profile.displayName}
-                    />
-                  </ProfilePage>
-                )}
-              />
-            )}
-
-          {/* <Route path="/profile/:user" component={ProfilePage} /> */}
+          <Route exact path="/" component={MainPage} />
+          <Route path="/profile/:user" component={ProfilePage} />
           <Route path="/albums/:user/:albumid" component={SingleAlbumPage} />
           <Route path="/post/:id" component={FullPostPage} />
-
           <PublicRoute
             path="/register"
             component={() => <RegisterOrLogin registerOrLogin="register" />}
@@ -223,23 +192,19 @@ export class AppRoutes extends React.Component {
           <PublicRoute path="/privacy" component={PrivacyPolicy} />
           <PrivateRoute path="/upload" component={AddPostPage} />
           <PrivateRoute path="/mbox" component={MessageBoxPage} />
-
-          {/* <Route path="/albummaker" component={AlbumMaker} /> */}
-          {/* <PrivateRoute exact path="/myalbums" component={MyAlbumsPage} /> */}
-          {/* <Route path="/post/:id" component={FullPost} /> */}
         </Switch>
       </React.Fragment>
     );
   }
 }
 
-const mapStateToProps = ({ auth }) => ({
-  auth
-});
+// const mapStateToProps = ({ auth }) => ({
+//   auth
+// });
 
 export default withRouter(
   connect(
-    mapStateToProps,
+    null,
     { setUser }
   )(AppRoutes)
 );

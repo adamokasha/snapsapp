@@ -5,7 +5,6 @@ import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router";
 import PropTypes from "prop-types";
 import compose from "recompose/compose";
-import classNames from "classnames";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
@@ -13,7 +12,6 @@ import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import axios from "axios";
 
-import NavBar from "../components/NavBar";
 import ProfileHeader from "../components/ProfileHeader";
 import ProfileNetwork from "../components/ProfileNetwork";
 import ProfileForm from "../components/ProfileForm";
@@ -21,7 +19,10 @@ import ProfileTabs from "../components/ProfileTabs";
 import CustomSnackbar from "../components/CustomSnackbar";
 
 import { updateProfile } from "../actions/auth";
+
 import { fetchProfile, setProfile } from "../async/profiles";
+import { fetchUserPosts } from "../async/posts";
+
 import { Typography } from "@material-ui/core";
 
 const styles = theme => ({
@@ -104,10 +105,12 @@ export class ProfilePage extends React.Component {
     super(props);
 
     this.state = {
+      isFetching: true,
       id: "",
-      profile: this.props.profile ? this.props.profile : null,
+      profile: null,
+      pages: [],
       editEnabled: false,
-      ownProfile: this.props.ownProfile ? this.props.ownProfile : false,
+      ownProfile: false,
       isLoading: false,
       snackbarOpen: false,
       snackbarMessage: null,
@@ -117,42 +120,58 @@ export class ProfilePage extends React.Component {
     this.signal = axios.CancelToken.source();
   }
 
-  // async componentDidMount() {
-  //   try {
-  //     const { data } = await fetchProfile(
-  //       this.signal.token,
-  //       this.props.match.params.user
-  //     );
-  //     const { profilePhoto, joined, displayName, profile, _id } = data;
-  //     this.setState(
-  //       { id: _id, profilePhoto, displayName, joined, profile },
-  //       () => {
-  //         return this.checkIfProfileOwner();
-  //       }
-  //     );
-  //   } catch (e) {
-  //     if (axios.isCancel(e)) {
-  //       return console.log(e.message);
-  //     }
-  //     this.setState(
-  //       { snackbarOpen: true, snackbarMessage: "Could not find profile." },
-  //       () => {}
-  //     );
-  //   }
-  // }
+  async componentDidMount() {
+    try {
+      const [{ data: userData }, { data: userPosts }] = await axios.all([
+        fetchProfile(this.signal.token, this.props.match.params.user),
+        fetchUserPosts(this.signal.token, this.props.match.params.user, 0)
+      ]);
 
-  // componentWillUnmount() {
-  //   this.signal.cancel("Async call cancelled.");
-  // }
+      const { profilePhoto, joined, displayName, profile, _id } = userData;
 
-  // checkIfProfileOwner = () => {
-  //   if (
-  //     this.props.auth &&
-  //     this.props.auth.displayName === this.props.match.params.user
-  //   ) {
-  //     this.setState({ ownProfile: true }, () => {});
-  //   }
-  // };
+      let ownProfile;
+      if (
+        this.props.auth &&
+        this.props.auth.displayName === this.props.match.params.user
+      ) {
+        ownProfile = true;
+      } else {
+        ownProfile = false;
+      }
+
+      this.setState(
+        {
+          id: _id,
+          pages: [userPosts],
+          profilePhoto,
+          displayName,
+          joined,
+          profile,
+          ownProfile,
+          isFetching: false
+        },
+        () => {}
+      );
+    } catch (e) {
+      if (axios.isCancel(e)) {
+        return console.log(e.message);
+      }
+      this.setState(
+        {
+          snackbarOpen: true,
+          snackbarMessage: "Could not find profile.",
+          isFetching: false
+        },
+        () => {}
+      );
+    }
+  }
+
+  componentWillUnmount() {
+    this.signal.cancel("Async call cancelled.");
+  }
+
+  checkIfProfileOwner = () => {};
 
   enableEdit = () => {
     this.setState({ editEnabled: true });
@@ -172,7 +191,7 @@ export class ProfilePage extends React.Component {
         await setProfile(this.signal.token, profile);
 
         console.log(profile);
-        // this.props.updateProfile(profile);
+        this.props.updateProfile(profile);
         this.setState({
           editEnabled: false,
           isLoading: false,
@@ -214,64 +233,66 @@ export class ProfilePage extends React.Component {
   render() {
     const { classes } = this.props;
     console.log("PROFILEPAGE RENDERED", this.props);
-    const ownProfile =
-      this.props.auth.displayName === this.props.profile.displayName;
+    const { ownProfile } = this.state;
 
     return (
       <React.Fragment>
-        <div className={classes.root}>
-          <Paper
-            square={true}
-            elevation={1}
-            className={classes.profileInfoContainer}
-          >
-            {this.state.isLoading && (
-              <LinearProgress
-                className={classes.linearLoader}
-                color="secondary"
-              />
-            )}
-            <div className={classes.profileHeading}>
-              <ProfileHeader
-                ownProfile={ownProfile}
-                profilePhoto={this.state.profile.profilePhoto}
-                displayName={this.state.profile.displayName}
-                joined={this.state.profile.joined}
-              />
-              <ProfileNetwork
-                ownProfile={ownProfile}
-                userId={this.props.profile._id}
-              />
-            </div>
-            <Divider className={classes.hidingDivider} />
+        {!this.state.isFetching && (
+          <div className={classes.root}>
+            <Paper
+              square={true}
+              elevation={1}
+              className={classes.profileInfoContainer}
+            >
+              {this.state.isLoading && (
+                <LinearProgress
+                  className={classes.linearLoader}
+                  color="secondary"
+                />
+              )}
+              <div className={classes.profileHeading}>
+                <ProfileHeader
+                  ownProfile={ownProfile}
+                  profilePhoto={this.state.profilePhoto}
+                  displayName={this.state.displayName}
+                  joined={this.state.joined}
+                />
+                <ProfileNetwork
+                  ownProfile={ownProfile}
+                  userId={this.state.id}
+                />
+              </div>
+              <Divider className={classes.hidingDivider} />
 
-            {this.renderEditButtons(ownProfile)}
+              {this.renderEditButtons(ownProfile)}
 
-            {this.props.profile.profile || this.state.editEnabled ? (
-              <ProfileForm
-                onProfileSubmit={this.onProfileSubmit}
-                profile={this.state.profile.profile}
-                ownProfile={ownProfile}
-                editEnabled={this.state.editEnabled}
-                isLoading={this.state.isLoading}
-                cancelEdit={this.cancelEdit}
-                enableEdit={this.enableEdit}
-              />
-            ) : (
-              <Typography className={classes.noProfileText}>
-                {this.props.profile.displayName} has not shared any of their
-                profile information yet!
-              </Typography>
-            )}
-          </Paper>
+              {this.state.profile || this.state.editEnabled ? (
+                <ProfileForm
+                  onProfileSubmit={this.onProfileSubmit}
+                  profile={this.state.profile}
+                  ownProfile={ownProfile}
+                  editEnabled={this.state.editEnabled}
+                  isLoading={this.state.isLoading}
+                  cancelEdit={this.cancelEdit}
+                  enableEdit={this.enableEdit}
+                />
+              ) : (
+                <Typography className={classes.noProfileText}>
+                  {this.state.displayName} has not shared any of their profile
+                  information yet!
+                </Typography>
+              )}
+            </Paper>
 
-          {this.props.children}
-          {/* <ProfileTabs
-            profileTabPos={this.props.profileTabPos}
-            user={this.props.auth.displayName}
-            pages={this.state.pages}
-          /> */}
-        </div>
+            {/* {this.props.children} */}
+            <ProfileTabs
+              profileTabPos={this.state.profileTabPos}
+              user={this.state.displayName}
+              pages={this.state.pages}
+            />
+          </div>
+        )}
+        {this.state.isFetching && <div>Loading...</div>}
         <CustomSnackbar
           variant="error"
           message={this.state.snackbarMessage}

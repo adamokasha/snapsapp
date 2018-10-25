@@ -2,8 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
-import { withRouter } from "react-router";
-import { Redirect } from "react-router-dom";
 import compose from "recompose/compose";
 import classNames from "classnames";
 import PropTypes from "prop-types";
@@ -57,9 +55,14 @@ const styles = theme => ({
 });
 
 class NavBar extends React.Component {
-  state = {
-    anchorEl: null
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      anchorEl: null,
+      mBoxUnreadCount: null
+    };
+  }
 
   async componentDidMount() {
     try {
@@ -76,15 +79,15 @@ class NavBar extends React.Component {
     }
   }
 
-  // async componentDidUpdate(prevProps) {
-  //   if (this.props.auth !== prevProps.auth) {
-  //     try {
-  //       this.setState({ mBoxUnreadCount: this.props.auth.mboxNotif }, () => {});
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   }
-  // }
+  async componentDidUpdate(prevProps) {
+    if (this.props.auth !== prevProps.auth) {
+      try {
+        this.setState({ mBoxUnreadCount: this.props.auth.mboxNotif }, () => {});
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
 
   handleMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
@@ -92,22 +95,6 @@ class NavBar extends React.Component {
 
   handleClose = () => {
     this.setState({ anchorEl: null });
-  };
-
-  onProfileSwitch = (context, profileTabPos) => {
-    this.props.onSetProfilePage(
-      context,
-      this.props.auth.displayName,
-      profileTabPos,
-      true
-    );
-    this.handleClose();
-    this.props.history.push(`/profile/${this.props.auth.displayName}`);
-  };
-
-  onHomeClick = () => {
-    this.props.onFetchPopular();
-    this.props.history.push("/");
   };
 
   selectPostFormView = () => {
@@ -187,27 +174,28 @@ class NavBar extends React.Component {
         >
           {auth.registered && [
             <MenuItem
-              key={2}
-              onClick={() => this.onProfileSwitch("userFaves", 0)}
-            >
-              Faves
-            </MenuItem>,
-            <MenuItem
-              key={3}
-              onClick={() => this.onProfileSwitch("userPosts", 1)}
-            >
-              Posts
-            </MenuItem>,
-            <MenuItem
               key={1}
-              onClick={() => this.onProfileSwitch("userAlbums", 2)}
+              to={{
+                pathname: "/myalbums",
+                state: { user: auth.displayName }
+              }}
+              component={Link}
+              onClick={this.handleClose}
             >
               Albums
+            </MenuItem>,
+            <MenuItem
+              key={2}
+              to={`/profile/${auth.displayName}`}
+              component={Link}
+              onClick={this.handleClose}
+            >
+              Profile
             </MenuItem>
           ]}
           {!auth.registered && [
             <MenuItem
-              key={5}
+              key={3}
               to={`/`}
               component={Link}
               onClick={this.handleClose}
@@ -215,7 +203,7 @@ class NavBar extends React.Component {
               Home
             </MenuItem>,
             <MenuItem
-              key={6}
+              key={4}
               to={`/register_user/`}
               component={Link}
               onClick={this.handleClose}
@@ -251,17 +239,13 @@ class NavBar extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log("NAVBAR RENDERED");
 
     return (
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
             <div>
-              <div
-                onClick={this.onHomeClick}
-                className={classNames(classes.logo, classes.aTag)}
-              >
+              <Link to="/" className={classNames(classes.logo, classes.aTag)}>
                 <CameraIcon className={classes.logoIcon} />
 
                 <Typography
@@ -271,7 +255,7 @@ class NavBar extends React.Component {
                 >
                   SnapsApp
                 </Typography>
-              </div>
+              </Link>
             </div>
 
             {this.renderNavButtons()}
@@ -298,4 +282,4 @@ export default compose(
     mapStateToProps,
     { updateMboxNotif }
   )
-)(withRouter(NavBar));
+)(NavBar);

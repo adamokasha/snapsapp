@@ -1,5 +1,5 @@
 export const setUser = userData => ({
-  type: "FETCH_USER",
+  type: "SET_USER",
   payload: userData
 });
 

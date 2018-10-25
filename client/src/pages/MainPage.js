@@ -1,14 +1,13 @@
 import React from "react";
-import { connect } from "react-redux";
 import axios from "axios";
 
 import Search from "../components/Search";
 import HeroUnit from "../components/HeroUnit";
-import ScrollView from "../components/ScrollView";
 import Grid from "../components/Grid";
-import NavBar from "../components/NavBar";
 import MainPageMenu from "../components/MainPageMenu";
+
 import { fetchForMainPage } from "../async/scrollview";
+import { fetchPopular } from "../async/posts";
 import { onScroll } from "../utils/utils";
 
 export class MainPage extends React.Component {
@@ -16,11 +15,12 @@ export class MainPage extends React.Component {
     super(props);
 
     this.state = {
-      context: this.props.context ? this.props.context : "popular",
-      gridContext: this.props.gridContext ? this.props.gridContext : "posts",
+      context: "popular",
+      gridContext: "posts",
       searchTerms: null,
-      page: this.props.page ? this.props.page : 0,
-      pages: this.props.pages ? this.props.pages : [],
+      page: 0,
+      pages: [],
+      initialFetch: true,
       isFetching: false,
       hasMore: true,
       showNavToTop: false
@@ -30,8 +30,21 @@ export class MainPage extends React.Component {
     this.signal = axios.CancelToken.source();
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     window.addEventListener("scroll", this.onScroll(this.fetchNextPage), false);
+
+    try {
+      const { data: postData } = await fetchPopular(this.signal.token, 0);
+      this.setState(
+        { initialFetch: false, page: 1, pages: [postData] },
+        () => {}
+      );
+    } catch (e) {
+      if (axios.isCancel()) {
+        return console.log(e.message);
+      }
+      console.log(e);
+    }
   }
 
   componentWillUnmount() {
@@ -116,16 +129,19 @@ export class MainPage extends React.Component {
     // debugger;
     return (
       <div>
-        {/* <NavBar /> */}
-        {/* {isAuth ? null : <HeroUnit />} */}
-        <Search onSwitchContext={this.onSwitchContext} />
-        <MainPageMenu onSwitchContext={this.onSwitchContext} />
-        <Grid
-          gridData={this.state.pages}
-          gridContext={this.state.gridContext}
-          isFetching={this.state.isFetching}
-          showNavToTop={this.state.showNavToTop}
-        />
+        {this.state.initialFetch && <div>Loading...</div>}
+        {!this.state.initialFetch && (
+          <React.Fragment>
+            <Search onSwitchContext={this.onSwitchContext} />
+            <MainPageMenu onSwitchContext={this.onSwitchContext} />
+            <Grid
+              gridData={this.state.pages}
+              gridContext={this.state.gridContext}
+              isFetching={this.state.isFetching}
+              showNavToTop={this.state.showNavToTop}
+            />
+          </React.Fragment>
+        )}
       </div>
     );
   }

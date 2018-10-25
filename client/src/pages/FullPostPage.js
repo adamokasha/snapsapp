@@ -253,57 +253,54 @@ export class FullPostPage extends React.Component {
     } = this.state;
 
     return (
-      <React.Fragment>
-        <NavBar />
-        <div className={classes.root}>
+      <div className={classes.root}>
+        {this.state.post && (
+          <React.Fragment>
+            <FullPostImage imgUrl={post.imgUrl} />
+            <div className={classes.postInfo}>
+              <PostHeading
+                profilePhoto={post._owner.profilePhoto}
+                displayName={post._owner.displayName}
+                title={post.title}
+              />
+              <PostActions
+                canFave={auth ? true : false}
+                onFavePost={this.onFavePost}
+                isFaving={isFaving}
+                isFave={post.isFave}
+                faveCount={post.faveCount}
+              />
+            </div>
+          </React.Fragment>
+        )}
+        <div className={classes.commentsContainer}>
           {this.state.post && (
-            <React.Fragment>
-              <FullPostImage imgUrl={post.imgUrl} />
-              <div className={classes.postInfo}>
-                <PostHeading
-                  profilePhoto={post._owner.profilePhoto}
-                  displayName={post._owner.displayName}
-                  title={post.title}
-                />
-                <PostActions
-                  canFave={auth ? true : false}
-                  onFavePost={this.onFavePost}
-                  isFaving={isFaving}
-                  isFave={post.isFave}
-                  faveCount={post.faveCount}
-                />
-              </div>
-            </React.Fragment>
+            <PostDescription
+              createdAt={post.createdAt}
+              description={post.description}
+            />
           )}
-          <div className={classes.commentsContainer}>
-            {this.state.post && (
-              <PostDescription
-                createdAt={post.createdAt}
-                description={post.description}
-              />
-            )}
-            {this.state.post && <PostTags tags={this.state.post.tags} />}
+          {this.state.post && <PostTags tags={this.state.post.tags} />}
 
-            {this.state.comments && (
-              <CommentList
-                comments={comments}
-                commentsPage={commentsPage}
-                hasMoreComments={hasMoreComments}
-                fetchingComments={fetchingComments}
-                onLoadNext={this.onLoadNext}
-                onLoadPrevious={this.onLoadPrevious}
+          {this.state.comments && (
+            <CommentList
+              comments={comments}
+              commentsPage={commentsPage}
+              hasMoreComments={hasMoreComments}
+              fetchingComments={fetchingComments}
+              onLoadNext={this.onLoadNext}
+              onLoadPrevious={this.onLoadPrevious}
+            />
+          )}
+          {auth &&
+            !fetchingComments && (
+              <CommentForm
+                onAddComment={this.onAddComment}
+                addingComment={addingComment}
               />
             )}
-            {auth &&
-              !fetchingComments && (
-                <CommentForm
-                  onAddComment={this.onAddComment}
-                  addingComment={addingComment}
-                />
-              )}
-          </div>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }
