@@ -44,3 +44,21 @@ export const onScroll = function(cb) {
     requestTick();
   };
 };
+
+export const flattenPages = pages => {
+  const slides = [];
+  pages.forEach(page => page.forEach(post => slides.push(post)));
+  return slides;
+};
+
+export const checkIfFirstSlide = index => {
+  if (index === 0) {
+    return true;
+  }
+};
+
+export const checkIfLastSlide = (index, slidesLength) => {
+  if (index + 1 > slidesLength - 1) {
+    return true;
+  }
+};

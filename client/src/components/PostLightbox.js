@@ -70,61 +70,61 @@ class PostLightbox extends React.Component {
     super(props);
 
     this.state = {
-      slides: [],
+      slides: this.props.slideData,
       currentSlide: this.props.post,
-      currentIndex: null,
+      currentIndex: this.props.slideIndex,
       isLoading: true,
-      start: false,
-      end: false,
+      start: this.props.isFirstSlide,
+      end: this.props.isLastSlide,
       isFaving: false
     };
 
     this.signal = axios.CancelToken.source();
   }
 
-  componentDidMount() {
-    // Prevent goTopButton from getting in way of modal
-    const goTopButton = document.getElementById("goTopButton");
-    if (goTopButton) {
-      document.getElementById("goTopButton").style.display = "none";
-    }
+  // componentDidMount() {
+  //   // Prevent goTopButton from getting in way of modal
+  //   const goTopButton = document.getElementById("goTopButton");
+  //   if (goTopButton) {
+  //     document.getElementById("goTopButton").style.display = "none";
+  //   }
 
-    // If ScrollView, slides will be array of arrays (due to pagination)
-    const slides = [];
-    this.props.slides.forEach(posts =>
-      posts.forEach(post => slides.push(post))
-    );
-    const currentIndex = slides.indexOf(this.props.post);
-    this.setState({ slides, currentIndex }, () => {
-      this.checkIfLastSlide();
-      this.checkIfFirstSlide();
-    });
-  }
+  //   // If ScrollView, slides will be array of arrays (due to pagination)
+  //   const slides = [];
+  //   this.props.slides.forEach(posts =>
+  //     posts.forEach(post => slides.push(post))
+  //   );
+  //   const currentIndex = slides.indexOf(this.props.post);
+  //   this.setState({ slides, currentIndex }, () => {
+  //     this.checkIfLastSlide();
+  //     this.checkIfFirstSlide();
+  //   });
+  // }
 
-  componentWillUnmount() {
-    // Restore goTopButton
-    const goTopButton = document.getElementById("goTopButton");
-    if (goTopButton) {
-      document.getElementById("goTopButton").style.display = "inline-flex";
-    }
-  }
+  // componentWillUnmount() {
+  //   // Restore goTopButton
+  //   const goTopButton = document.getElementById("goTopButton");
+  //   if (goTopButton) {
+  //     document.getElementById("goTopButton").style.display = "inline-flex";
+  //   }
+  // }
 
   checkIfFirstSlide() {
     const { currentIndex } = this.state;
     if (currentIndex === 0) {
-      this.setState({ start: true }, () => {});
+      return this.setState({ start: true }, () => {});
     }
   }
 
-  checkIfLastSlide = () => {
-    const { currentIndex } = this.state;
-    // If current slide is last, return, don't increment
-    if (currentIndex + 1 > this.state.slides.length - 1) {
-      return this.setState({ isLoading: false, end: true }, () => {});
+  checkIfNextSlideLast = () => {
+    if (this.state.currentIndex + 1 === this.state.slides.length - 1) {
+      return true;
     }
+    return false;
   };
 
   onPrevSlide = () => {
+    this.checkIfFirstSlide();
     this.setState({ isLoading: true, end: false });
     const { currentIndex } = this.state;
     if (currentIndex - 1 < 0) {
@@ -139,18 +139,35 @@ class PostLightbox extends React.Component {
 
   onNextSlide = () => {
     const { currentIndex } = this.state;
-    this.setState({ isLoading: true, start: false });
+    this.setState({ isLoading: true, start: false }, () => {
+      const nextSlideIsLast = this.checkIfNextSlideLast();
+      const nextSlide = this.state.slides[currentIndex + 1];
+      if (nextSlideIsLast) {
+        return this.setState(
+          {
+            end: true,
+            currentSlide: nextSlide,
+            currentIndex: this.state.currentIndex + 1
+          },
+          () => {}
+        );
+      }
 
-    // Check if next slide last, dont include next icon
-    if (currentIndex + 1 === this.state.slides.length - 1) {
-      this.setState({ end: true });
-    }
-    this.checkIfLastSlide();
-    const nextSlide = this.state.slides[currentIndex + 1];
-    return this.setState(
-      { currentSlide: nextSlide, currentIndex: this.state.currentIndex + 1 },
-      () => {}
-    );
+      this.setState({
+        currentSlide: nextSlide,
+        currentIndex: this.state.currentIndex + 1
+      });
+    });
+
+    // // Check if next slide last, dont include next icon
+    // if (currentIndex + 1 === this.state.slides.length - 1) {
+    //   this.setState({ end: true });
+    // }
+    // // this.checkIfLastSlide();
+    // return this.setState(
+    //   { currentSlide: nextSlide, currentIndex: this.state.currentIndex + 1 },
+    //   () => {}
+    // );
   };
 
   onImgLoad = () => {

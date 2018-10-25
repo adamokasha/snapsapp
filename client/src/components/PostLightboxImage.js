@@ -13,7 +13,8 @@ const styles = theme => ({
     margin: "0",
     position: "relative",
     display: "inline-block",
-    overflow: "hidden"
+    overflow: "hidden",
+    backgroundColor: "#000"
   },
   navIcons: {
     position: "absolute",
@@ -24,10 +25,12 @@ const styles = theme => ({
     color: "rgba(0, 0, 0, 0.80)"
   },
   navLeft: {
-    left: "2%"
+    left: "2%",
+    color: "#fff"
   },
   navRight: {
-    right: "2%"
+    right: "2%",
+    color: "#fff"
   },
   disabledNav: {
     display: "none"

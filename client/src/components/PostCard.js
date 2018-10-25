@@ -19,6 +19,8 @@ import axios from "axios";
 import ModalView from "./ModalView";
 import PostLightbox from "./PostLightbox";
 
+import { flattenPages } from "../utils/utils";
+
 const styles = theme => ({
   card: {
     maxWidth: 400,
@@ -59,7 +61,8 @@ class PostCard extends React.Component {
     imgId: this.props.post._id,
     faved: this.props.post.isFave,
     faveColor: "default",
-    open: false
+    open: false,
+    slideData: this.props.slideData
   };
 
   handleOpen = () => {
@@ -114,6 +117,11 @@ class PostCard extends React.Component {
       );
     }
 
+    const flattenedPages = flattenPages(this.props.slideData);
+    const currentSlideIndex = flattenedPages.indexOf(this.props.post);
+    const isFirstSlide = currentSlideIndex === 0 ? true : false;
+    const isLastSlide = flattenedPages.length - 1 === currentSlideIndex;
+
     return (
       <ModalView
         togglerComponent={
@@ -123,7 +131,15 @@ class PostCard extends React.Component {
             title={title || "Untitled"}
           />
         }
-        modalComponent={<PostLightbox post={this.props.post} />}
+        modalComponent={
+          <PostLightbox
+            slideData={flattenedPages}
+            slideIndex={currentSlideIndex}
+            post={this.props.post}
+            isFirstSlide={isFirstSlide}
+            isLastSlide={isLastSlide}
+          />
+        }
       />
     );
   };

@@ -68,7 +68,12 @@ function Grid(props) {
         break;
       case "posts":
         tiles = data.map(post => (
-          <PostCard post={post} key={post._id} cardContext="post" />
+          <PostCard
+            slideData={gridData}
+            post={post}
+            key={post._id}
+            cardContext="post"
+          />
         ));
         break;
       case "albumPosts":
