@@ -82,7 +82,16 @@ export class AppRoutes extends React.Component {
     }
   }
 
-  onFetchUser = () => {};
+  componentDidUpdate(prevProps) {
+    if (this.props.location.pathname !== prevProps.location.pathname) {
+      let splitPathname = this.props.location.pathname.split("/");
+
+      if (profilePath.test(this.props.location.pathname)) {
+        let user = splitPathname[splitPathname.length - 1];
+        return this.onSetProfilePage("userPosts", user, 1);
+      }
+    }
+  }
 
   onFetchPopular = () => {
     try {
