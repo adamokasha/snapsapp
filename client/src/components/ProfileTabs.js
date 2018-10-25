@@ -41,6 +41,12 @@ class ProfileTabs extends React.Component {
     window.addEventListener("scroll", this.onScroll(this.fetchNextPage), false);
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.profileTabPos !== prevProps.profileTabPos) {
+      this.handleChange(null, this.props.profileTabPos);
+    }
+  }
+
   fetchNextPage = () => {
     if (this.state.isFetching || !this.state.hasMore) {
       return;

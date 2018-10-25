@@ -21,7 +21,9 @@ import CustomSnackbar from "../components/CustomSnackbar";
 import { updateProfile } from "../actions/auth";
 
 import { fetchProfile, setProfile } from "../async/profiles";
-import { fetchUserPosts } from "../async/posts";
+import { fetchUserPosts, fetchUserFaves } from "../async/posts";
+import { fetchUserAlbums } from "../async/albums";
+import { fetchForProfilePage } from "../async/scrollview";
 
 import { Typography } from "@material-ui/core";
 
@@ -112,9 +114,11 @@ export class ProfilePage extends React.Component {
       editEnabled: false,
       ownProfile: false,
       isLoading: false,
+      profileTabPos: this.props.location.state
+        ? this.props.location.state.profileTabPos
+        : 1,
       snackbarOpen: false,
-      snackbarMessage: null,
-      profileTabPos: this.props.profileTabPos ? this.props.profileTabPos : 1
+      snackbarMessage: null
     };
 
     this.signal = axios.CancelToken.source();
@@ -122,9 +126,20 @@ export class ProfilePage extends React.Component {
 
   async componentDidMount() {
     try {
+      const asyncContextMap = {
+        0: "userFaves",
+        1: "userPosts",
+        2: "userAlbums"
+      };
+      const context = asyncContextMap[this.state.profileTabPos];
       const [{ data: userData }, { data: userPosts }] = await axios.all([
         fetchProfile(this.signal.token, this.props.match.params.user),
-        fetchUserPosts(this.signal.token, this.props.match.params.user, 0)
+        fetchForProfilePage(
+          this.signal.token,
+          context,
+          0,
+          this.props.match.params.user
+        )
       ]);
 
       const { profilePhoto, joined, displayName, profile, _id } = userData;
@@ -164,6 +179,15 @@ export class ProfilePage extends React.Component {
         },
         () => {}
       );
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.location.state &&
+      this.props.location.state.profileTabPos !== this.state.profileTabPos
+    ) {
+      this.setState({ profileTabPos: this.props.location.state.profileTabPos });
     }
   }
 

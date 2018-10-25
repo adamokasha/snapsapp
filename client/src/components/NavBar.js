@@ -176,8 +176,30 @@ class NavBar extends React.Component {
             <MenuItem
               key={1}
               to={{
-                pathname: "/myalbums",
-                state: { user: auth.displayName }
+                pathname: `/profile/${auth.displayName}`,
+                state: { profileTabPos: 0 }
+              }}
+              component={Link}
+              onClick={this.handleClose}
+            >
+              Faves
+            </MenuItem>,
+            <MenuItem
+              key={2}
+              to={{
+                pathname: `/profile/${auth.displayName}`,
+                state: { profileTabPos: 1 }
+              }}
+              component={Link}
+              onClick={this.handleClose}
+            >
+              Posts
+            </MenuItem>,
+            <MenuItem
+              key={3}
+              to={{
+                pathname: `/profile/${auth.displayName}`,
+                state: { profileTabPos: 2 }
               }}
               component={Link}
               onClick={this.handleClose}
@@ -185,17 +207,20 @@ class NavBar extends React.Component {
               Albums
             </MenuItem>,
             <MenuItem
-              key={2}
-              to={`/profile/${auth.displayName}`}
+              key={4}
+              to={{
+                pathname: `/profile/${auth.displayName}`,
+                state: { profileTabPos: 1 }
+              }}
               component={Link}
               onClick={this.handleClose}
             >
-              Profile
+              My Profile
             </MenuItem>
           ]}
           {!auth.registered && [
             <MenuItem
-              key={3}
+              key={5}
               to={`/`}
               component={Link}
               onClick={this.handleClose}
@@ -203,7 +228,7 @@ class NavBar extends React.Component {
               Home
             </MenuItem>,
             <MenuItem
-              key={4}
+              key={6}
               to={`/register_user/`}
               component={Link}
               onClick={this.handleClose}
