@@ -29,7 +29,7 @@ class AlbumMaker extends React.Component {
       posts: [],
       selected: [],
       albumName: this.props.albumName || "",
-      isLoading: false,
+      isLoading: true,
       isSaving: false,
       snackbarOpen: false,
       snackbarVar: "success",
@@ -39,46 +39,45 @@ class AlbumMaker extends React.Component {
     this.signal = axios.CancelToken.source();
   }
 
-  componentDidMount() {
-    this.setState({ isLoading: true }, async () => {
-      try {
-        // fetch all posts
-        const { data } = await fetchAllUserPosts(this.signal.token);
-        this.setState({ posts: [...data] }, async () => {
-          // retrieve current album posts from db (editing an album)
-          if (this.props.albumId) {
-            const { data } = await fetchAlbumPosts(
-              this.signal.token,
-              this.props.albumId
-            );
-            const currentAlbumPostIds = data.map(imgData => imgData._id);
-            return this.setState(
-              {
-                selected: [...currentAlbumPostIds],
-                currentAlbumPosts: [...data],
-                isLoading: false
-              },
-              () => {}
-            );
-          }
-          this.setState({ isLoading: false });
-        });
-      } catch (e) {
-        if (axios.isCancel(e)) {
-          return console.log(e.message);
+  async componentDidMount() {
+    try {
+      // fetch all posts
+      const { data } = await fetchAllUserPosts(this.signal.token);
+      this.setState({ posts: [...data] }, async () => {
+        // retrieve current album posts from db (editing an album)
+        if (this.props.albumId) {
+          const { data } = await fetchAlbumPosts(
+            this.signal.token,
+            this.props.albumId
+          );
+          const currentAlbumPostIds = data.map(imgData => imgData._id);
+          return this.setState(
+            {
+              selected: [...currentAlbumPostIds],
+              currentAlbumPosts: [...data],
+              isLoading: false
+            },
+            () => {}
+          );
         }
-        this.setState(
-          {
-            isSaving: false,
-            snackbarVar: "error",
-            snackbarMessage: "Something went wrong! Try again."
-          },
-          () => {
-            this.onSnackbarSet();
-          }
-        );
+        this.setState({ isLoading: false });
+      });
+    } catch (e) {
+      if (axios.isCancel(e)) {
+        return console.log(e.message);
       }
-    });
+      this.setState(
+        {
+          isLoading: false,
+          isSaving: false,
+          snackbarVar: "error",
+          snackbarMessage: "Something went wrong! Try again."
+        },
+        () => {
+          this.onSnackbarSet();
+        }
+      );
+    }
   }
 
   componentWillUnmount() {
@@ -135,6 +134,7 @@ class AlbumMaker extends React.Component {
             },
             () => {
               this.onSnackbarSet();
+              this.props.onAlbumNameSet(this.state.albumName);
               this.props.handleClose();
             }
           );
@@ -216,27 +216,27 @@ class AlbumMaker extends React.Component {
             <CircularProgress color="secondary" />
           </div>
         )}
-        {this.state.value === 0 ? (
+        {this.state.value === 0 && (
           <AlbumMakerImageView
             selected={this.state.selected}
             onImageSelect={this.onImageSelect}
             imgData={this.state.posts}
           />
-        ) : null}
-        {this.state.value === 1 ? (
+        )}
+        {this.state.value === 1 && (
           <AlbumMakerImageView
             selected={this.state.selected}
             onImageSelect={this.onImageSelect}
             imgData={this.filterAlbumPhotos()}
           />
-        ) : null}
-        {this.state.value === 2 ? (
+        )}
+        {this.state.value === 2 && (
           <AlbumMakerImageView
             selected={this.state.selected}
             onImageSelect={this.onImageSelect}
             imgData={this.state.currentAlbumPosts}
           />
-        ) : null}
+        )}
 
         <form className={classes.formContainer} onSubmit={this.onSaveAlbum}>
           <TextField
@@ -284,6 +284,7 @@ class AlbumMaker extends React.Component {
 AlbumMaker.propTypes = {
   classes: PropTypes.object.isRequired,
   method: PropTypes.string.isRequired,
+  onAlbumNameSet: PropTypes.func.isRequired,
   withSnackbar: PropTypes.bool.isRequired
 };
 

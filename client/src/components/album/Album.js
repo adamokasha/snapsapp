@@ -10,6 +10,9 @@ import ModalView from "../modal/ModalView";
 import AlbumMaker from "./AlbumMaker";
 
 class Album extends React.Component {
+  state = {
+    albumName: this.props.album.name
+  };
   toggleEditIcon = e => {
     const actionIcon = e.currentTarget.querySelectorAll(
       'button[class*="MuiIconButton"]'
@@ -25,6 +28,10 @@ class Album extends React.Component {
       actionIcon.style.opacity = "0";
       return;
     }
+  };
+
+  onAlbumNameSet = albumName => {
+    this.setState({ albumName }, () => {});
   };
 
   render() {
@@ -47,11 +54,11 @@ class Album extends React.Component {
               album.coverImg
             }`}
             className={classes.image}
-            alt={album.name}
+            alt={this.state.albumName}
           />
         </Link>
         <Bar
-          title={album.name}
+          title={this.state.albumName}
           actionIcon={
             <ModalView
               togglerComponent={
@@ -68,6 +75,7 @@ class Album extends React.Component {
                   albumName={album.name}
                   withSnackbar={true}
                   method="patch"
+                  onAlbumNameSet={this.onAlbumNameSet}
                 />
               }
             />
