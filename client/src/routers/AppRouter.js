@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
-import NavBar from "../components/appbar/NavBar";
+import AppBar from "../components/appbar/AppBar";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
 import MainPage from "../pages/MainPage";
@@ -36,7 +36,7 @@ export class AppRouter extends React.Component {
     return (
       <BrowserRouter>
         <React.Fragment>
-          <NavBar
+          <AppBar
             onFetchPopular={this.onFetchPopular}
             onSetProfilePage={this.onSetProfilePage}
           />

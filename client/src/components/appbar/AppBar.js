@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import compose from "recompose/compose";
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import AppBar from "@material-ui/core/AppBar";
+import MuiAppBar from "@material-ui/core/AppBar";
 import Avatar from "@material-ui/core/Avatar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -19,7 +19,7 @@ import Button from "@material-ui/core/Button";
 import Badge from "@material-ui/core/Badge";
 import axios from "axios";
 
-import NavBarIconButton from "./NavBarIconButton";
+import DisabledIconWrapper from "../icons/DisabledIconWrapper";
 import ModalView from "../modal/ModalView";
 import AddPostForm from "../post/AddPostForm";
 import { updateMboxNotif } from "../../actions/auth";
@@ -54,7 +54,7 @@ const styles = theme => ({
   }
 });
 
-class NavBar extends React.Component {
+class AppBar extends React.Component {
   constructor(props) {
     super(props);
 
@@ -101,22 +101,22 @@ class NavBar extends React.Component {
     const { classes, auth } = this.props;
     if (window.screen.width < 600 || window.innerWidth < 600) {
       return (
-        <NavBarIconButton
+        <DisabledIconWrapper
           component={Link}
           to="/upload"
           isDisabled={!auth.registered}
         >
           <CloudUploadIcon />
-        </NavBarIconButton>
+        </DisabledIconWrapper>
       );
     }
 
     return (
       <ModalView
         togglerComponent={
-          <NavBarIconButton isDisabled={!auth.registered}>
+          <DisabledIconWrapper isDisabled={!auth.registered}>
             <CloudUploadIcon />
-          </NavBarIconButton>
+          </DisabledIconWrapper>
         }
         modalComponent={<AddPostForm view="modal" />}
       />
@@ -267,7 +267,7 @@ class NavBar extends React.Component {
 
     return (
       <div className={classes.root}>
-        <AppBar position="static">
+        <MuiAppBar position="static">
           <Toolbar>
             <div>
               <Link to="/" className={classNames(classes.logo, classes.aTag)}>
@@ -285,13 +285,13 @@ class NavBar extends React.Component {
 
             {this.renderNavButtons()}
           </Toolbar>
-        </AppBar>
+        </MuiAppBar>
       </div>
     );
   }
 }
 
-NavBar.propTypes = {
+AppBar.propTypes = {
   classes: PropTypes.object.isRequired,
   auth: PropTypes.object,
   updateMboxNotif: PropTypes.func
@@ -307,4 +307,4 @@ export default compose(
     mapStateToProps,
     { updateMboxNotif }
   )
-)(NavBar);
+)(AppBar);
