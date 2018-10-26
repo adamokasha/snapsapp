@@ -255,7 +255,7 @@ export class ProfileNetwork extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => ({
+const mapStateToProps = auth => ({
   auth
 });
 

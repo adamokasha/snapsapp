@@ -255,9 +255,8 @@ class PostLightbox extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  slides: state.posts.postData,
-  auth: state.auth
+const mapStateToProps = auth => ({
+  auth
 });
 
 PostLightbox.propTypes = {

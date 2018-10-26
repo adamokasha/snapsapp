@@ -17,7 +17,7 @@ export const PublicRoute = ({ isAuth, component: Component, ...rest }) => (
   />
 );
 
-const mapStateToProps = ({ auth }) => ({
+const mapStateToProps = auth => ({
   isAuth: auth
 });
 

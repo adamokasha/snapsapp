@@ -173,10 +173,4 @@ ProfileTabs.propTypes = {
   profileTabPos: PropTypes.number
 };
 
-export default compose(
-  withStyles(styles)
-  // connect(
-  //   mapStatetoProps,
-  //   { clearPosts }
-  // )
-)(ProfileTabs);
+export default compose(withStyles(styles))(ProfileTabs);

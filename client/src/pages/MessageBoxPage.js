@@ -440,7 +440,7 @@ export class MessageBox extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => ({
+const mapStateToProps = auth => ({
   auth,
   mBoxNotif: auth.mBoxNotif
 });

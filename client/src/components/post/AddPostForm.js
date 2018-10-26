@@ -484,7 +484,7 @@ AddPostForm.propTypes = {
   view: PropTypes.oneOf(["modal", "page"])
 };
 
-const mapStateToProps = ({ auth }) => ({
+const mapStateToProps = auth => ({
   auth
 });
 

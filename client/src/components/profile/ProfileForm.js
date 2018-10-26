@@ -279,7 +279,7 @@ export class ProfileForm extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => ({
+const mapStateToProps = auth => ({
   auth
 });
 

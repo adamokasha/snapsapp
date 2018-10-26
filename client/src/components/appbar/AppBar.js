@@ -297,7 +297,7 @@ AppBar.propTypes = {
   updateMboxNotif: PropTypes.func
 };
 
-const mapStateToProps = ({ auth }) => ({
+const mapStateToProps = auth => ({
   auth
 });
 

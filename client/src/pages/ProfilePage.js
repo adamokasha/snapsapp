@@ -324,7 +324,7 @@ export class ProfilePage extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => ({
+const mapStateToProps = auth => ({
   auth
 });
 

@@ -229,7 +229,7 @@ PostCard.propTypes = {
   cardContext: PropTypes.oneOf(["post", "album"])
 };
 
-const mapStateToProps = ({ auth }) => ({
+const mapStateToProps = auth => ({
   isAuth: auth
 });
 
