@@ -22,7 +22,8 @@ const styles = theme => ({
     transform: "translateY(-50%)",
     fontSize: "48px",
     cursor: "pointer",
-    color: "rgba(0, 0, 0, 0.80)"
+    color: "rgba(0, 0, 0, 0.80)",
+    zIndex: 1000
   },
   navLeft: {
     left: "2%",
