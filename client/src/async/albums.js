@@ -25,7 +25,6 @@ export const updateAlbum = async (
   );
 };
 
-// ScrollView
 export const fetchAlbumPostsPaginated = async (cancelToken, albumId, page) => {
   const res = await axios.get(`/api/albums/full/${albumId}/${page}`, {
     cancelToken

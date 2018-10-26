@@ -57,7 +57,6 @@ export const onUnfollow = async (cancelToken, userId) => {
   }
 };
 
-// ScrollView
 export const fetchUserFollows = async (cancelToken, userId, page) => {
   const res = await axios.get(`/api/profile/follows/${userId}/${page}`, {
     cancelToken

@@ -3,6 +3,50 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import CheckIcon from "@material-ui/icons/Check";
 
+export const AlbumMakerImageView = props => {
+  const onImageSelect = e => {
+    const imgId = e.target.attributes["imgid"].nodeValue;
+    props.onImageSelect(imgId);
+  };
+
+  const { classes, imgData, selected } = props;
+
+  return (
+    <div className={classes.imgView}>
+      {imgData.map(img => (
+        <div className={classes.imgContainer} key={img._id}>
+          <div
+            className={
+              selected.includes(img._id)
+                ? classes.checkIconContainer
+                : classes.hiddenIconContainer
+            }
+          >
+            <CheckIcon className={classes.checkIcon} />
+          </div>
+          <img
+            key={img._id}
+            imgid={img._id}
+            className={
+              selected.includes(img._id) ? classes.imgSelected : classes.img
+            }
+            alt="albumimage"
+            onClick={onImageSelect}
+            src={`https://d14ed1d2q7cc9f.cloudfront.net/75x75/smart/${
+              img.imgUrl
+            }`}
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+AlbumMakerImageView.propTypes = {
+  classes: PropTypes.object.isRequired,
+  imgData: PropTypes.array.isRequired
+};
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -57,48 +101,5 @@ const styles = theme => ({
     border: "2px solid #000"
   }
 });
-
-export const AlbumMakerImageView = props => {
-  const onImageSelect = e => {
-    const imgId = e.target.attributes["imgid"].nodeValue;
-    props.onImageSelect(imgId);
-  };
-
-  const { classes, imgData, selected } = props;
-
-  return (
-    <div className={classes.imgView}>
-      {imgData.map(img => (
-        <div className={classes.imgContainer} key={img._id}>
-          <div
-            className={
-              selected.includes(img._id)
-                ? classes.checkIconContainer
-                : classes.hiddenIconContainer
-            }
-          >
-            <CheckIcon className={classes.checkIcon} />
-          </div>
-          <img
-            key={img._id}
-            imgid={img._id}
-            className={
-              selected.includes(img._id) ? classes.imgSelected : classes.img
-            }
-            onClick={onImageSelect}
-            src={`https://d14ed1d2q7cc9f.cloudfront.net/75x75/smart/${
-              img.imgUrl
-            }`}
-          />
-        </div>
-      ))}
-    </div>
-  );
-};
-
-AlbumMakerImageView.propTypes = {
-  classes: PropTypes.object.isRequired,
-  imgData: PropTypes.array.isRequired
-};
 
 export default withStyles(styles)(AlbumMakerImageView);

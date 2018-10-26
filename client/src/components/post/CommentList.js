@@ -9,34 +9,6 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
 import Comment from "./Comment";
 
-const styles = theme => ({
-  root: {
-    display: "flex",
-    flexDirection: "column"
-  },
-  circularProgress: {
-    margin: `${theme.spacing.unit * 3}px auto`
-  },
-  paginationControls: {
-    marginBottom: `${theme.spacing.unit}px`
-  },
-  buttonRoot: {
-    minWidth: `48px`
-  },
-  leftButton: {
-    marginRight: `${theme.spacing.unit}px`
-  },
-  leftIcon: {
-    marginRight: "4px"
-  },
-  iconRoot: {
-    fontSize: "16px"
-  },
-  rightIcon: {
-    marginLeft: "4px"
-  }
-});
-
 export const CommentList = props => {
   const {
     classes,
@@ -100,5 +72,33 @@ CommentList.propTypes = {
   onLoadPrevious: PropTypes.func.isRequired,
   hasMoreComments: PropTypes.bool.isRequired
 };
+
+const styles = theme => ({
+  root: {
+    display: "flex",
+    flexDirection: "column"
+  },
+  circularProgress: {
+    margin: `${theme.spacing.unit * 3}px auto`
+  },
+  paginationControls: {
+    marginBottom: `${theme.spacing.unit}px`
+  },
+  buttonRoot: {
+    minWidth: `48px`
+  },
+  leftButton: {
+    marginRight: `${theme.spacing.unit}px`
+  },
+  leftIcon: {
+    marginRight: "4px"
+  },
+  iconRoot: {
+    fontSize: "16px"
+  },
+  rightIcon: {
+    marginLeft: "4px"
+  }
+});
 
 export default withStyles(styles)(CommentList);

@@ -37,7 +37,7 @@ styledIconButton.propTypes = {
 
 const StyledIconButtonWrapper = withStyles(styles)(styledIconButton);
 
-export const NavBarIconButton = props => {
+export const DisabledIconButton = props => {
   const { isDisabled, children, component: Component, ...rest } = props;
   return Component && !isDisabled ? (
     <Component {...rest}>
@@ -50,10 +50,10 @@ export const NavBarIconButton = props => {
   );
 };
 
-NavBarIconButton.propTypes = {
+DisabledIconButton.propTypes = {
   isDisabled: PropTypes.bool,
   children: PropTypes.element.isRequired,
   component: PropTypes.oneOfType([PropTypes.func, PropTypes.element])
 };
 
-export default withStyles(styles)(NavBarIconButton);
+export default withStyles(styles)(DisabledIconButton);

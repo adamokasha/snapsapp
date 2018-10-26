@@ -17,60 +17,6 @@ import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 import { registerUser } from "../async/auth";
 import { setUser, setRegistered } from "../actions/auth";
 
-const styles = theme => ({
-  root: {
-    ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
-    width: "50%",
-    margin: "0 auto",
-    minHeight: "250px"
-  },
-  layout: {
-    width: "auto",
-    display: "block", // Fix IE11 issue.
-    marginLeft: theme.spacing.unit * 3,
-    marginRight: theme.spacing.unit * 3,
-    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
-      width: 400,
-      marginLeft: "auto",
-      marginRight: "auto"
-    }
-  },
-  avatar: {
-    margin: theme.spacing.unit,
-    backgroundColor: theme.palette.secondary.main
-  },
-  paper: {
-    position: "relative",
-    marginTop: theme.spacing.unit * 8,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
-      .spacing.unit * 3}px`
-  },
-  linearProgress: {
-    width: "100%",
-    position: "absolute",
-    top: 0,
-    left: 0
-  },
-  subheading: {
-    marginTop: theme.spacing.unit
-  },
-  textField: {
-    marginTop: theme.spacing.unit,
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: "90%"
-  },
-  button: {
-    marginTop: "5%",
-    width: "100%"
-  }
-});
-
 class DisplayNameForm extends React.Component {
   constructor() {
     super();
@@ -191,6 +137,60 @@ class DisplayNameForm extends React.Component {
     );
   }
 }
+
+const styles = theme => ({
+  root: {
+    ...theme.mixins.gutters(),
+    paddingTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2,
+    width: "50%",
+    margin: "0 auto",
+    minHeight: "250px"
+  },
+  layout: {
+    width: "auto",
+    display: "block", // Fix IE11 issue.
+    marginLeft: theme.spacing.unit * 3,
+    marginRight: theme.spacing.unit * 3,
+    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+      width: 400,
+      marginLeft: "auto",
+      marginRight: "auto"
+    }
+  },
+  avatar: {
+    margin: theme.spacing.unit,
+    backgroundColor: theme.palette.secondary.main
+  },
+  paper: {
+    position: "relative",
+    marginTop: theme.spacing.unit * 8,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
+      .spacing.unit * 3}px`
+  },
+  linearProgress: {
+    width: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0
+  },
+  subheading: {
+    marginTop: theme.spacing.unit
+  },
+  textField: {
+    marginTop: theme.spacing.unit,
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: "90%"
+  },
+  button: {
+    marginTop: "5%",
+    width: "100%"
+  }
+});
 
 DisplayNameForm.propTypes = {
   classes: PropTypes.object.isRequired

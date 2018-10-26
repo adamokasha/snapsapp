@@ -23,128 +23,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 import CustomSnackbar from "../snackbar/CustomSnackbar";
 
-const styles = theme => ({
-  paper: {
-    width: "95%",
-    display: "block",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
-      .spacing.unit * 3}px`,
-    [theme.breakpoints.up("sm")]: {
-      width: "80%"
-    },
-    [theme.breakpoints.up("md")]: {
-      width: "65%"
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "45%"
-    }
-  },
-  paperModal: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)"
-  },
-  paperPage: {
-    margin: "0 auto"
-  },
-  linearLoader: {
-    position: "fixed",
-    top: "0",
-    width: "100%"
-  },
-  linearLoaderModal: {
-    position: "absolute",
-    top: "0",
-    width: "100%"
-  },
-  closeButton: {
-    position: "absolute",
-    right: "4%",
-    cursor: "pointer",
-    color: "rgba(0, 0, 0, 1)"
-  },
-  heading: {
-    marginBottom: `${theme.spacing.unit}px`
-  },
-  avatar: {
-    margin: `${theme.spacing.unit}px auto`,
-    backgroundColor: theme.palette.secondary.main
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    width: "100%"
-  },
-  blankImage: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100px",
-    border: "1px dashed rgba(0, 0, 0, .5)",
-    width: "50%",
-    margin: "0 auto",
-    borderRadius: "3%",
-    [theme.breakpoints.up("sm")]: {
-      width: "30%"
-    },
-    [theme.breakpoints.up("md")]: {
-      width: "20%"
-    }
-  },
-  blankIcon: {
-    fontSize: "48px",
-    color: "rgba(0, 0, 0, .5)"
-  },
-  previewImage: {
-    maxHeight: "100px",
-    maxWidth: "100%",
-    width: "auto",
-    height: "auto",
-    margin: "0 auto",
-    display: "block"
-  },
-  fileInputContainer: {
-    width: "85%",
-    [theme.breakpoints.up("sm")]: {
-      width: "50%"
-    },
-    [theme.breakpoints.up("md")]: {
-      width: "40%"
-    },
-    margin: "0 auto"
-  },
-  fileInput: {
-    display: "none"
-  },
-  textField: {
-    marginTop: theme.spacing.unit * 2,
-    marginRight: theme.spacing.unit * 2,
-    width: "100%"
-  },
-  tagContainer: {
-    display: "flex",
-    flexWrap: "wrap",
-    width: "100%",
-    padding: `${theme.spacing.unit}px`
-  },
-  chipTag: {
-    marginLeft: `${theme.spacing.unit}px`,
-    marginBottom: `${theme.spacing.unit}px`
-  },
-  button: {
-    width: "100%",
-    marginTop: "5%"
-  },
-  aTag: {
-    color: "inherit",
-    textDecoration: "none"
-  }
-});
-
 class AddPostForm extends React.Component {
   state = {
     post: {
@@ -483,6 +361,127 @@ AddPostForm.propTypes = {
   handleClose: PropTypes.func,
   view: PropTypes.oneOf(["modal", "page"])
 };
+
+const styles = theme => ({
+  paper: {
+    width: "95%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
+      .spacing.unit * 3}px`,
+    [theme.breakpoints.up("sm")]: {
+      width: "80%"
+    },
+    [theme.breakpoints.up("md")]: {
+      width: "65%"
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "45%"
+    }
+  },
+  paperModal: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)"
+  },
+  paperPage: {
+    margin: "0 auto"
+  },
+  linearLoader: {
+    position: "fixed",
+    top: "0",
+    width: "100%"
+  },
+  linearLoaderModal: {
+    position: "absolute",
+    top: "0",
+    width: "100%"
+  },
+  closeButton: {
+    position: "absolute",
+    right: "4%",
+    cursor: "pointer",
+    color: "rgba(0, 0, 0, 1)"
+  },
+  heading: {
+    marginBottom: `${theme.spacing.unit}px`
+  },
+  avatar: {
+    margin: `${theme.spacing.unit}px auto`,
+    backgroundColor: theme.palette.secondary.main
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100%"
+  },
+  blankImage: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100px",
+    border: "1px dashed rgba(0, 0, 0, .5)",
+    width: "50%",
+    margin: "0 auto",
+    borderRadius: "3%",
+    [theme.breakpoints.up("sm")]: {
+      width: "30%"
+    },
+    [theme.breakpoints.up("md")]: {
+      width: "20%"
+    }
+  },
+  blankIcon: {
+    fontSize: "48px",
+    color: "rgba(0, 0, 0, .5)"
+  },
+  previewImage: {
+    maxHeight: "100px",
+    maxWidth: "100%",
+    width: "auto",
+    height: "auto",
+    margin: "0 auto",
+    display: "block"
+  },
+  fileInputContainer: {
+    width: "85%",
+    [theme.breakpoints.up("sm")]: {
+      width: "50%"
+    },
+    [theme.breakpoints.up("md")]: {
+      width: "40%"
+    },
+    margin: "0 auto"
+  },
+  fileInput: {
+    display: "none"
+  },
+  textField: {
+    marginTop: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit * 2,
+    width: "100%"
+  },
+  tagContainer: {
+    display: "flex",
+    flexWrap: "wrap",
+    width: "100%",
+    padding: `${theme.spacing.unit}px`
+  },
+  chipTag: {
+    marginLeft: `${theme.spacing.unit}px`,
+    marginBottom: `${theme.spacing.unit}px`
+  },
+  button: {
+    width: "100%",
+    marginTop: "5%"
+  },
+  aTag: {
+    color: "inherit",
+    textDecoration: "none"
+  }
+});
 
 const mapStateToProps = auth => ({
   auth

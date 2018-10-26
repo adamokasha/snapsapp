@@ -1,7 +1,5 @@
 import React from "react";
-import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
-import compose from "recompose/compose";
 import Button from "@material-ui/core/Button";
 import Grow from "@material-ui/core/Grow";
 import Paper from "@material-ui/core/Paper";
@@ -14,25 +12,9 @@ import FiberNew from "@material-ui/icons/FiberNew";
 import PeopleOutlinedIcon from "@material-ui/icons/PeopleOutlined";
 import WhatshotOutlinedIcon from "@material-ui/icons/WhatshotOutlined";
 
-const styles = theme => ({
-  root: {
-    backgroundColor: "#fff"
-  },
-  button: {
-    marginLeft: "2%",
-    textTransform: "capitalize"
-  },
-  popper: {
-    zIndex: 1000
-  },
-  leftIcon: {
-    marginRight: `${theme.spacing.unit}px`
-  }
-});
-
 export class MainPageMenu extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
     this.state = {
       context: "popular",
@@ -129,4 +111,20 @@ export class MainPageMenu extends React.Component {
   }
 }
 
-export default compose(withStyles(styles))(MainPageMenu);
+const styles = theme => ({
+  root: {
+    backgroundColor: "#fff"
+  },
+  button: {
+    marginLeft: "2%",
+    textTransform: "capitalize"
+  },
+  popper: {
+    zIndex: 1000
+  },
+  leftIcon: {
+    marginRight: `${theme.spacing.unit}px`
+  }
+});
+
+export default withStyles(styles)(MainPageMenu);

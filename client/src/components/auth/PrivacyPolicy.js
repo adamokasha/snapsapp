@@ -1,29 +1,7 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import { withStyles } from '@material-ui/core/styles';
-
-const styles = theme => ({
-  layout: {
-    width: '90%',
-    margin: '0 auto',
-    [theme.breakpoints.up('md')]: {
-      width: '60%'
-    },
-    [theme.breakpoints.up('lg')]: {
-      width: '40%'
-    },
-    [theme.breakpoints.up('xl')]: {
-      width: '30%'
-    }
-  },
-  paper: {
-    maxHeight: '400px',
-    padding: `${theme.spacing.unit}px`,
-    overflow: 'hidden',
-    overflowY: 'auto'
-  }
-});
+import React from "react";
+import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
+import { withStyles } from "@material-ui/core/styles";
 
 export const ToS = props => {
   const { classes } = props;
@@ -54,7 +32,7 @@ export const ToS = props => {
             This page informs you of our policies regarding the collection, use,
             and disclosure of personal data when you use our Service and the
             choices you have associated with that data. Our Privacy Policy for
-            Kasho Img App is managed through{' '}
+            Kasho Img App is managed through{" "}
             <a href="https://www.freeprivacypolicy.com/free-privacy-policy-generator.php">
               Free Privacy Policy
             </a>
@@ -70,7 +48,9 @@ export const ToS = props => {
             https://kasho-img-app.herokuapp.com/
           </p>
 
-          <Typography variant="headline">Information Collection And Use</Typography>
+          <Typography variant="headline">
+            Information Collection And Use
+          </Typography>
 
           <p>
             We collect several different types of information for various
@@ -234,7 +214,9 @@ export const ToS = props => {
             consent, we take steps to remove that information from our servers.
           </p>
 
-          <Typography variant="headline">Changes To This Privacy Policy</Typography>
+          <Typography variant="headline">
+            Changes To This Privacy Policy
+          </Typography>
           <p>
             We may update our Privacy Policy from time to time. We will notify
             you of any changes by posting the new Privacy Policy on this page.
@@ -263,5 +245,27 @@ export const ToS = props => {
     </React.Fragment>
   );
 };
+
+const styles = theme => ({
+  layout: {
+    width: "90%",
+    margin: "0 auto",
+    [theme.breakpoints.up("md")]: {
+      width: "60%"
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "40%"
+    },
+    [theme.breakpoints.up("xl")]: {
+      width: "30%"
+    }
+  },
+  paper: {
+    maxHeight: "400px",
+    padding: `${theme.spacing.unit}px`,
+    overflow: "hidden",
+    overflowY: "auto"
+  }
+});
 
 export default withStyles(styles)(ToS);

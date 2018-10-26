@@ -13,38 +13,6 @@ import Avatar from "@material-ui/core/Avatar";
 import Divider from "@material-ui/core/Divider";
 import moment from "moment";
 
-const styles = theme => ({
-  root: {
-    width: "100%"
-  },
-  messageListRoot: {
-    width: "100%",
-    height: "250px",
-    overflowY: "scroll",
-    paddingTop: 0
-  },
-  menuContainer: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingLeft: `${theme.spacing.unit * 3}px`,
-    paddingRight: `${theme.spacing.unit * 3}px`
-  },
-  selectAllContainer: {
-    display: "flex",
-    alignItems: "center"
-  },
-  listItem: {
-    cursor: "pointer"
-  },
-  listItemTextContainer: {
-    width: "100%",
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: "center"
-  }
-});
-
 export const MessageList = props => {
   const {
     classes,
@@ -127,5 +95,37 @@ MessageList.propTypes = {
   setMessage: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired
 };
+
+const styles = theme => ({
+  root: {
+    width: "100%"
+  },
+  messageListRoot: {
+    width: "100%",
+    height: "250px",
+    overflowY: "scroll",
+    paddingTop: 0
+  },
+  menuContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingLeft: `${theme.spacing.unit * 3}px`,
+    paddingRight: `${theme.spacing.unit * 3}px`
+  },
+  selectAllContainer: {
+    display: "flex",
+    alignItems: "center"
+  },
+  listItem: {
+    cursor: "pointer"
+  },
+  listItemTextContainer: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center"
+  }
+});
 
 export default withStyles(styles)(MessageList);

@@ -11,30 +11,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import ArrowDropDownRoundedIcon from "@material-ui/icons/ArrowDropDownRounded";
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace";
 
-const styles = theme => ({
-  root: {
-    width: "40%",
-    margin: "0 auto",
-    display: "flex",
-    flexDirection: "column"
-  },
-  appBarRoot: {
-    boxShadow: "none"
-  },
-  toolbarRoot: {
-    minHeight: "48px"
-  },
-  menu: {
-    marginLeft: "auto"
-  },
-  dropDownButton: {
-    minWidth: "88px"
-  },
-  iconColor: {
-    color: "#fff"
-  }
-});
-
 class MessageBoxAppBar extends React.Component {
   state = {
     anchorEl: null
@@ -124,5 +100,29 @@ MessageBoxAppBar.propTypes = {
   listType: PropTypes.string.isRequired,
   goBack: PropTypes.func.isRequired
 };
+
+const styles = theme => ({
+  root: {
+    width: "40%",
+    margin: "0 auto",
+    display: "flex",
+    flexDirection: "column"
+  },
+  appBarRoot: {
+    boxShadow: "none"
+  },
+  toolbarRoot: {
+    minHeight: "48px"
+  },
+  menu: {
+    marginLeft: "auto"
+  },
+  dropDownButton: {
+    minWidth: "88px"
+  },
+  iconColor: {
+    color: "#fff"
+  }
+});
 
 export default withStyles(styles)(MessageBoxAppBar);

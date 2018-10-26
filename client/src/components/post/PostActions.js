@@ -8,30 +8,6 @@ import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
 import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
 import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
 
-const styles = theme => ({
-  root: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "baseline",
-    [theme.breakpoints.up("sm")]: {
-      flexDirection: "row"
-    }
-  },
-  iconColor: {
-    color: "rgba(0, 0, 0, 0.70)"
-  },
-  favedIcon: {
-    color: `${theme.palette.secondary.main}`
-  },
-  leftIcon: {
-    marginRight: `${theme.spacing.unit}px`
-  },
-  buttons: {
-    marginLeft: `${theme.spacing.unit}px`,
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`
-  }
-});
-
 export const PostActions = props => {
   const { classes, faveCount, canFave, onFavePost, isFave, isFaving } = props;
   return (
@@ -88,5 +64,29 @@ PostActions.propTypes = {
   onFavePost: PropTypes.func.isRequired,
   isFaving: PropTypes.bool.isRequired
 };
+
+const styles = theme => ({
+  root: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "baseline",
+    [theme.breakpoints.up("sm")]: {
+      flexDirection: "row"
+    }
+  },
+  iconColor: {
+    color: "rgba(0, 0, 0, 0.70)"
+  },
+  favedIcon: {
+    color: `${theme.palette.secondary.main}`
+  },
+  leftIcon: {
+    marginRight: `${theme.spacing.unit}px`
+  },
+  buttons: {
+    marginLeft: `${theme.spacing.unit}px`,
+    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`
+  }
+});
 
 export default withStyles(styles)(PostActions);

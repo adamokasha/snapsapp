@@ -9,24 +9,6 @@ import SettingsIcon from "../icons/Settings";
 import ModalView from "../modal/ModalView";
 import AlbumMaker from "./AlbumMaker";
 
-const styles = theme => ({
-  root: {
-    height: "200px",
-    width: "200px",
-    position: "relative"
-  },
-  icon: {
-    color: "rgba(255, 255, 255, 0.54)",
-    visibility: "hidden",
-    opacity: "0",
-    transition: "visibility 0s, opacity .3s ease"
-  },
-  settingsIcon: {
-    height: "24px",
-    width: "24px"
-  }
-});
-
 class Album extends React.Component {
   toggleEditIcon = e => {
     const actionIcon = e.currentTarget.querySelectorAll(
@@ -46,7 +28,7 @@ class Album extends React.Component {
   };
 
   render() {
-    const { classes, album, key } = this.props;
+    const { classes, album } = this.props;
 
     return (
       <div
@@ -100,5 +82,23 @@ Album.propTypes = {
   classes: PropTypes.object.isRequired,
   album: PropTypes.object.isRequired
 };
+
+const styles = theme => ({
+  root: {
+    height: "200px",
+    width: "200px",
+    position: "relative"
+  },
+  icon: {
+    color: "rgba(255, 255, 255, 0.54)",
+    visibility: "hidden",
+    opacity: "0",
+    transition: "visibility 0s, opacity .3s ease"
+  },
+  settingsIcon: {
+    height: "24px",
+    width: "24px"
+  }
+});
 
 export default withStyles(styles)(Album);

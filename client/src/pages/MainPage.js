@@ -11,8 +11,8 @@ import { fetchPopular } from "../async/posts";
 import { onScroll } from "../utils/utils";
 
 export class MainPage extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
     this.state = {
       context: "popular",
@@ -126,7 +126,6 @@ export class MainPage extends React.Component {
 
   render() {
     console.log("MAINPAGE RENDERED");
-    // debugger;
     return (
       <div>
         {this.state.initialFetch && <div>Loading...</div>}

@@ -9,6 +9,49 @@ import PropTypes from "prop-types";
 import GoogleIcon from "../icons/Google";
 import FacebookIcon from "../icons/Facebook";
 
+export const SocialAuth = props => {
+  const { classes, registerOrLogin } = props;
+  return (
+    <React.Fragment>
+      <main className={classes.layout}>
+        <Paper>
+          <Typography variant="caption" align="center">
+            {registerOrLogin === "register" ? "Register with:" : "Login with:"}
+          </Typography>
+          <div className={classes.buttonContainer}>
+            <Button
+              href="/auth/facebook"
+              variant="contained"
+              color="primary"
+              className={classNames(
+                classes.socialButtons,
+                classes.facebookButton
+              )}
+            >
+              <FacebookIcon classes={{ root: classes.icons }} />
+            </Button>
+            <Button
+              href="/auth/google"
+              variant="contained"
+              color="primary"
+              className={classNames(
+                classes.socialButtons,
+                classes.googleButton
+              )}
+            >
+              <GoogleIcon classes={{ root: classes.icons }} />
+            </Button>
+          </div>
+        </Paper>
+      </main>
+    </React.Fragment>
+  );
+};
+
+SocialAuth.propTypes = {
+  registerOrLogin: PropTypes.oneOf(["register", "login"])
+};
+
 const styles = theme => ({
   layout: {
     width: "90%",
@@ -57,48 +100,5 @@ const styles = theme => ({
     textDecoration: "none"
   }
 });
-
-export const SocialAuth = props => {
-  const { classes, registerOrLogin } = props;
-  return (
-    <React.Fragment>
-      <main className={classes.layout}>
-        <Paper>
-          <Typography variant="caption" align="center">
-            {registerOrLogin === "register" ? "Register with:" : "Login with:"}
-          </Typography>
-          <div className={classes.buttonContainer}>
-            <Button
-              href="/auth/facebook"
-              variant="contained"
-              color="primary"
-              className={classNames(
-                classes.socialButtons,
-                classes.facebookButton
-              )}
-            >
-              <FacebookIcon classes={{ root: classes.icons }} />
-            </Button>
-            <Button
-              href="/auth/google"
-              variant="contained"
-              color="primary"
-              className={classNames(
-                classes.socialButtons,
-                classes.googleButton
-              )}
-            >
-              <GoogleIcon classes={{ root: classes.icons }} />
-            </Button>
-          </div>
-        </Paper>
-      </main>
-    </React.Fragment>
-  );
-};
-
-SocialAuth.propTypes = {
-  registerOrLogin: PropTypes.oneOf(["register", "login"])
-};
 
 export default withStyles(styles)(SocialAuth);

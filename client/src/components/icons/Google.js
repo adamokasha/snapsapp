@@ -1,12 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-
-const styles = theme => ({
-  root: {
-    height: "32px",
-    width: "32px"
-  }
-});
+import PropTypes from "prop-types";
 
 // ionicon
 export const GoogleIcon = props => {
@@ -21,5 +15,16 @@ export const GoogleIcon = props => {
     </svg>
   );
 };
+
+GoogleIcon.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+const styles = theme => ({
+  root: {
+    height: "32px",
+    width: "32px"
+  }
+});
 
 export default withStyles(styles)(GoogleIcon);

@@ -15,28 +15,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
 import GroupIcon from "@material-ui/icons/Group";
 
-const styles = theme => ({
-  root: {
-    backgroundColor: `${theme.palette.background.paper}`,
-    display: "flex",
-    justifyContent: "center"
-  },
-  input: {
-    margin: `${theme.spacing.unit * 2}px 0`
-  },
-  popper: {
-    zIndex: "1000",
-    left: "-67px !important"
-  },
-  paper: {
-    width: "262px",
-    background: "#fafafa"
-  },
-  searchIcons: {
-    paddingRight: `${theme.spacing.unit}px`
-  }
-});
-
 export class Search extends React.Component {
   constructor(props) {
     super(props);
@@ -150,6 +128,28 @@ export class Search extends React.Component {
     );
   }
 }
+
+const styles = theme => ({
+  root: {
+    backgroundColor: `${theme.palette.background.paper}`,
+    display: "flex",
+    justifyContent: "center"
+  },
+  input: {
+    margin: `${theme.spacing.unit * 2}px 0`
+  },
+  popper: {
+    zIndex: "1000",
+    left: "-67px !important"
+  },
+  paper: {
+    width: "262px",
+    background: "#fafafa"
+  },
+  searchIcons: {
+    paddingRight: `${theme.spacing.unit}px`
+  }
+});
 
 export default compose(
   withStyles(styles),

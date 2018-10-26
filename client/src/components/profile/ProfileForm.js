@@ -14,70 +14,6 @@ import TwitterIcon from "../icons/Twitter";
 import GlobeIcon from "../icons/Globe";
 import { updateProfile } from "../../actions/auth";
 
-const styles = theme => ({
-  loadingOpacity: {
-    opacity: 0.4,
-    pointerEvents: "none"
-  },
-  hidingDivider: {
-    display: "none",
-    [theme.breakpoints.up("sm")]: {
-      display: "block"
-    }
-  },
-  form: {
-    display: "none",
-    [theme.breakpoints.up("sm")]: {
-      display: "flex",
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "center"
-    },
-    [theme.breakpoints.up("md")]: {
-      justifyContent: "start"
-    }
-  },
-  fieldGroup: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "baseline",
-    justifyContent: "flex-end",
-    width: "100%%"
-  },
-  socialText: {
-    // Stops shaking when edit toggled
-    marginTop: `${theme.spacing.unit * 3}px`,
-    marginBottom: `12px`
-  },
-  socialIcons: {
-    alignSelf: "center",
-    width: "28px",
-    height: "28px"
-  },
-  fbIcon: {
-    fill: "#3b5998"
-  },
-  twitterIcon: {
-    fill: "#1da1f2"
-  },
-  textField: {
-    width: "70%",
-    marginLeft: `${theme.spacing.unit}px`,
-    marginRight: `${theme.spacing.unit * 3}px`
-  },
-  disabledCursor: {
-    cursor: "pointer"
-  },
-  button: {
-    marginTop: `${theme.spacing.unit * 2}px`,
-    width: "100%",
-    margin: "0 auto"
-  },
-  hiddenSubmitButton: {
-    display: "none"
-  }
-});
-
 export class ProfileForm extends React.Component {
   constructor(props) {
     super(props);
@@ -128,7 +64,7 @@ export class ProfileForm extends React.Component {
   };
 
   render() {
-    const { classes, profile } = this.props;
+    const { classes } = this.props;
     const { name, website, facebook, twitter, about } = this.state;
 
     return (
@@ -279,13 +215,77 @@ export class ProfileForm extends React.Component {
   }
 }
 
-const mapStateToProps = auth => ({
-  auth
-});
-
 ProfileForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
+
+const styles = theme => ({
+  loadingOpacity: {
+    opacity: 0.4,
+    pointerEvents: "none"
+  },
+  hidingDivider: {
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "block"
+    }
+  },
+  form: {
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "flex",
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "center"
+    },
+    [theme.breakpoints.up("md")]: {
+      justifyContent: "start"
+    }
+  },
+  fieldGroup: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "baseline",
+    justifyContent: "flex-end",
+    width: "100%%"
+  },
+  socialText: {
+    // Stops shaking when edit toggled
+    marginTop: `${theme.spacing.unit * 3}px`,
+    marginBottom: `12px`
+  },
+  socialIcons: {
+    alignSelf: "center",
+    width: "28px",
+    height: "28px"
+  },
+  fbIcon: {
+    fill: "#3b5998"
+  },
+  twitterIcon: {
+    fill: "#1da1f2"
+  },
+  textField: {
+    width: "70%",
+    marginLeft: `${theme.spacing.unit}px`,
+    marginRight: `${theme.spacing.unit * 3}px`
+  },
+  disabledCursor: {
+    cursor: "pointer"
+  },
+  button: {
+    marginTop: `${theme.spacing.unit * 2}px`,
+    width: "100%",
+    margin: "0 auto"
+  },
+  hiddenSubmitButton: {
+    display: "none"
+  }
+});
+
+const mapStateToProps = auth => ({
+  auth
+});
 
 export default compose(
   withStyles(styles),

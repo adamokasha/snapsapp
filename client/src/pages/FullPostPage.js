@@ -20,43 +20,6 @@ import {
   favePost
 } from "../async/posts";
 
-const styles = theme => ({
-  root: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    background: "#f9f9f9"
-  },
-  postInfo: {
-    width: "95%",
-    display: "flex",
-    justifyContent: "space-between",
-    padding: `${theme.spacing.unit}px 0`,
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: `${theme.spacing.unit}px`
-    }
-  },
-  commentsContainer: {
-    width: "95%",
-    padding: `${theme.spacing.unit}px 0`,
-    margin: `0 auto`,
-    display: "flex",
-    flexDirection: "column",
-    [theme.breakpoints.up("sm")]: {
-      width: "50%",
-      marginLeft: `${theme.spacing.unit}px`
-    },
-    [theme.breakpoints.up("md")]: {
-      width: "40%",
-      marginLeft: `${theme.spacing.unit}px`
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "30%",
-      marginLeft: `${theme.spacing.unit}px`
-    }
-  }
-});
-
 export class FullPostPage extends React.Component {
   constructor(props) {
     super(props);
@@ -327,14 +290,51 @@ export class FullPostPage extends React.Component {
   }
 }
 
-const mapStateToProps = auth => ({
-  auth
-});
-
 FullPostPage.propTypes = {
   location: PropTypes.object,
   auth: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
 };
+
+const styles = theme => ({
+  root: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    background: "#f9f9f9"
+  },
+  postInfo: {
+    width: "95%",
+    display: "flex",
+    justifyContent: "space-between",
+    padding: `${theme.spacing.unit}px 0`,
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: `${theme.spacing.unit}px`
+    }
+  },
+  commentsContainer: {
+    width: "95%",
+    padding: `${theme.spacing.unit}px 0`,
+    margin: `0 auto`,
+    display: "flex",
+    flexDirection: "column",
+    [theme.breakpoints.up("sm")]: {
+      width: "50%",
+      marginLeft: `${theme.spacing.unit}px`
+    },
+    [theme.breakpoints.up("md")]: {
+      width: "40%",
+      marginLeft: `${theme.spacing.unit}px`
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "30%",
+      marginLeft: `${theme.spacing.unit}px`
+    }
+  }
+});
+
+const mapStateToProps = auth => ({
+  auth
+});
 
 export default compose(
   withStyles(styles),

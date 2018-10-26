@@ -21,41 +21,6 @@ import PostLightbox from "../post/PostLightbox";
 
 import { flattenPages } from "../../utils/utils";
 
-const styles = theme => ({
-  card: {
-    maxWidth: 400,
-    margin: `${theme.spacing.unit * 3}px auto`
-  },
-  media: {
-    height: 0,
-    paddingTop: "56.25%", // 16:9
-    cursor: "pointer"
-  },
-  actions: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between"
-  },
-  actionsLeft: {
-    display: "flex"
-  },
-  iconButtonRoot: {
-    width: "32px",
-    height: "32px"
-  },
-  modalRoot: {
-    top: "3%",
-    width: "100%",
-    height: "100%",
-    [theme.breakpoints.down("md")]: {
-      top: "18%"
-    }
-  },
-  albumHidden: {
-    display: "none"
-  }
-});
-
 class PostCard extends React.Component {
   state = {
     imgId: this.props.post._id,
@@ -228,6 +193,41 @@ PostCard.propTypes = {
   post: PropTypes.object.isRequired,
   cardContext: PropTypes.oneOf(["post", "album"])
 };
+
+const styles = theme => ({
+  card: {
+    maxWidth: 400,
+    margin: `${theme.spacing.unit * 3}px auto`
+  },
+  media: {
+    height: 0,
+    paddingTop: "56.25%", // 16:9
+    cursor: "pointer"
+  },
+  actions: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  actionsLeft: {
+    display: "flex"
+  },
+  iconButtonRoot: {
+    width: "32px",
+    height: "32px"
+  },
+  modalRoot: {
+    top: "3%",
+    width: "100%",
+    height: "100%",
+    [theme.breakpoints.down("md")]: {
+      top: "18%"
+    }
+  },
+  albumHidden: {
+    display: "none"
+  }
+});
 
 const mapStateToProps = auth => ({
   isAuth: auth

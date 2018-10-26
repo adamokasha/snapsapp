@@ -19,43 +19,6 @@ import MessageForm from "../mbox/MessageForm";
 
 import { fetchFollows, onFollow, onUnfollow } from "../../async/profiles";
 
-const styles = theme => ({
-  root: {
-    display: "flex",
-    flexDirection: "row",
-    padding: `${theme.spacing.unit}px`
-  },
-  info: {
-    display: "flex",
-    width: "80%",
-    justifyContent: "center",
-    alignItems: "baseline"
-  },
-  buttonControls: {
-    display: "flex",
-    flexDirection: "column",
-    margin: `0 ${theme.spacing.unit}px`
-  },
-  reversedButtons: {
-    flexDirection: "column-reverse"
-  },
-  buttonRoot: {
-    minWidth: "56px"
-  },
-  topIcon: {
-    marginBottom: `${theme.spacing.unit}px`
-  },
-  unFollowedIcon: {
-    color: "rgba(0,0,0,.7)"
-  },
-  following: {
-    marginLeft: `${theme.spacing.unit}px`
-  },
-  isFollowingText: {
-    color: "#00a152"
-  }
-});
-
 export class ProfileNetwork extends React.Component {
   constructor(props) {
     super(props);
@@ -255,14 +218,51 @@ export class ProfileNetwork extends React.Component {
   }
 }
 
-const mapStateToProps = auth => ({
-  auth
-});
-
 ProfileNetwork.propTypes = {
   userId: PropTypes.string.isRequired,
   ownProfile: PropTypes.bool.isRequired
 };
+
+const styles = theme => ({
+  root: {
+    display: "flex",
+    flexDirection: "row",
+    padding: `${theme.spacing.unit}px`
+  },
+  info: {
+    display: "flex",
+    width: "80%",
+    justifyContent: "center",
+    alignItems: "baseline"
+  },
+  buttonControls: {
+    display: "flex",
+    flexDirection: "column",
+    margin: `0 ${theme.spacing.unit}px`
+  },
+  reversedButtons: {
+    flexDirection: "column-reverse"
+  },
+  buttonRoot: {
+    minWidth: "56px"
+  },
+  topIcon: {
+    marginBottom: `${theme.spacing.unit}px`
+  },
+  unFollowedIcon: {
+    color: "rgba(0,0,0,.7)"
+  },
+  following: {
+    marginLeft: `${theme.spacing.unit}px`
+  },
+  isFollowingText: {
+    color: "#00a152"
+  }
+});
+
+const mapStateToProps = auth => ({
+  auth
+});
 
 export default compose(
   withStyles(styles),

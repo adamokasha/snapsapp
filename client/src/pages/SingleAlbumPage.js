@@ -8,8 +8,8 @@ import { fetchAlbumPostsPaginated } from "../async/albums";
 import { onScroll } from "../utils/utils";
 
 export class SingleAlbumPage extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
     this.state = {
       initialFetch: true,

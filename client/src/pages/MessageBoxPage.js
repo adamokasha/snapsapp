@@ -19,48 +19,6 @@ import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 import { updateMboxNotif } from "../actions/auth";
 import * as async from "../async/messages";
 
-const styles = theme => ({
-  root: {
-    width: "90%",
-    margin: `${theme.spacing.unit * 4}px auto`,
-    display: "flex",
-    flexDirection: "column",
-    position: "relative",
-    [theme.breakpoints.up("md")]: {
-      width: "50%"
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "40%"
-    },
-    [theme.breakpoints.up("xl")]: {
-      width: "35%"
-    }
-  },
-  appBarRoot: {
-    boxShadow: "none"
-  },
-  toolbarRoot: {
-    minHeight: "48px"
-  },
-  loadingOpacity: {
-    opacity: 0.4,
-    pointerEvents: "none"
-  },
-  linearProgress: {
-    position: "absolute",
-    top: -2,
-    width: "100%"
-  },
-  box: {
-    display: "flex",
-    height: "300px"
-  },
-  paginationControls: {
-    display: "flex",
-    justifyContent: "flex-end"
-  }
-});
-
 export class MessageBox extends React.Component {
   constructor() {
     super();
@@ -244,6 +202,9 @@ export class MessageBox extends React.Component {
           break;
         case "sent":
           res = await async.fetchSent(cancelToken, currentListPage);
+          break;
+        default:
+          return;
       }
 
       if (!res.data[`_${listView}`]) {
@@ -440,14 +401,56 @@ export class MessageBox extends React.Component {
   }
 }
 
+MessageBox.propTypes = {
+  auth: PropTypes.object.isRequired
+};
+
+const styles = theme => ({
+  root: {
+    width: "90%",
+    margin: `${theme.spacing.unit * 4}px auto`,
+    display: "flex",
+    flexDirection: "column",
+    position: "relative",
+    [theme.breakpoints.up("md")]: {
+      width: "50%"
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "40%"
+    },
+    [theme.breakpoints.up("xl")]: {
+      width: "35%"
+    }
+  },
+  appBarRoot: {
+    boxShadow: "none"
+  },
+  toolbarRoot: {
+    minHeight: "48px"
+  },
+  loadingOpacity: {
+    opacity: 0.4,
+    pointerEvents: "none"
+  },
+  linearProgress: {
+    position: "absolute",
+    top: -2,
+    width: "100%"
+  },
+  box: {
+    display: "flex",
+    height: "300px"
+  },
+  paginationControls: {
+    display: "flex",
+    justifyContent: "flex-end"
+  }
+});
+
 const mapStateToProps = auth => ({
   auth,
   mBoxNotif: auth.mBoxNotif
 });
-
-MessageBox.propTypes = {
-  auth: PropTypes.object.isRequired
-};
 
 export default compose(
   withStyles(styles),

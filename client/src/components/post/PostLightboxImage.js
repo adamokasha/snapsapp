@@ -6,6 +6,57 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
 
+export const PostLightboxImage = props => {
+  const {
+    classes,
+    imgUrl,
+    isLoading,
+    onPrevSlide,
+    onNextSlide,
+    onImgLoad,
+    start,
+    end
+  } = props;
+  return (
+    <div className={classes.root}>
+      <NavigateBeforeIcon
+        onClick={onPrevSlide}
+        className={
+          start
+            ? classes.disabledNav
+            : classNames(classes.navIcons, classes.navLeft)
+        }
+      />
+      <img
+        onLoad={onImgLoad}
+        className={isLoading ? classes.imgHidden : classes.img}
+        src={`https://s3.amazonaws.com/img-share-kasho/${imgUrl}`}
+        alt="testing"
+      />
+      {isLoading ? <CircularProgress className={classes.loader} /> : null}
+      <NavigateNextIcon
+        onClick={onNextSlide}
+        className={
+          end
+            ? classes.disabledNav
+            : classNames(classes.navIcons, classes.navRight)
+        }
+      />
+    </div>
+  );
+};
+
+PostLightboxImage.propTypes = {
+  classes: PropTypes.object.isRequired,
+  imgUrl: PropTypes.string.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  onImgLoad: PropTypes.func.isRequired,
+  onPrevSlide: PropTypes.func.isRequired,
+  onNextSlide: PropTypes.func.isRequired,
+  start: PropTypes.bool.isRequired,
+  end: PropTypes.bool.isRequired
+};
+
 const styles = theme => ({
   root: {
     width: "100%",
@@ -59,56 +110,5 @@ const styles = theme => ({
     opacity: 0
   }
 });
-
-export const PostLightboxImage = props => {
-  const {
-    classes,
-    imgUrl,
-    isLoading,
-    onPrevSlide,
-    onNextSlide,
-    onImgLoad,
-    start,
-    end
-  } = props;
-  return (
-    <div className={classes.root}>
-      <NavigateBeforeIcon
-        onClick={onPrevSlide}
-        className={
-          start
-            ? classes.disabledNav
-            : classNames(classes.navIcons, classes.navLeft)
-        }
-      />
-      <img
-        onLoad={onImgLoad}
-        className={isLoading ? classes.imgHidden : classes.img}
-        src={`https://s3.amazonaws.com/img-share-kasho/${imgUrl}`}
-        alt="testing"
-      />
-      {isLoading ? <CircularProgress className={classes.loader} /> : null}
-      <NavigateNextIcon
-        onClick={onNextSlide}
-        className={
-          end
-            ? classes.disabledNav
-            : classNames(classes.navIcons, classes.navRight)
-        }
-      />
-    </div>
-  );
-};
-
-PostLightboxImage.propTypes = {
-  classes: PropTypes.object.isRequired,
-  imgUrl: PropTypes.string.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  onImgLoad: PropTypes.func.isRequired,
-  onPrevSlide: PropTypes.func.isRequired,
-  onNextSlide: PropTypes.func.isRequired,
-  start: PropTypes.bool.isRequired,
-  end: PropTypes.bool.isRequired
-};
 
 export default withStyles(styles)(PostLightboxImage);

@@ -6,30 +6,6 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import moment from "moment";
 
-const styles = theme => ({
-  root: {
-    display: "flex",
-    alignItems: "center",
-    marginBottom: `${theme.spacing.unit}px`
-  },
-  avatarContainer: {
-    display: "flex",
-    marginRight: `${theme.spacing.unit * 2}px`
-  },
-  displayName: {
-    marginRight: "4px"
-  },
-  commentBox: {
-    display: "flex",
-    flexDirection: "column"
-  },
-  commentHeading: {
-    display: "flex",
-    alignItems: "baseline"
-  },
-  aTag: { textDecoration: "none" }
-});
-
 export const Comment = props => {
   const { classes } = props;
   const { _owner, body, createdAt } = props.comment;
@@ -38,7 +14,7 @@ export const Comment = props => {
       <div className={classes.avatarContainer}>
         <Link className={classes.aTag} to={`/profile/${_owner.displayName}`}>
           <Avatar>
-            <img src={_owner.profilePhoto} />
+            <img src={_owner.profilePhoto} alt="avatar" />
           </Avatar>
         </Link>
       </div>
@@ -66,5 +42,29 @@ export const Comment = props => {
 Comment.propTypes = {
   comment: PropTypes.object.isRequired
 };
+
+const styles = theme => ({
+  root: {
+    display: "flex",
+    alignItems: "center",
+    marginBottom: `${theme.spacing.unit}px`
+  },
+  avatarContainer: {
+    display: "flex",
+    marginRight: `${theme.spacing.unit * 2}px`
+  },
+  displayName: {
+    marginRight: "4px"
+  },
+  commentBox: {
+    display: "flex",
+    flexDirection: "column"
+  },
+  commentHeading: {
+    display: "flex",
+    alignItems: "baseline"
+  },
+  aTag: { textDecoration: "none" }
+});
 
 export default withStyles(styles)(Comment);

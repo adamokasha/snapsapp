@@ -13,34 +13,6 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import SendOutlinedIcon from "@material-ui/icons/SendOutlined";
 import moment from "moment";
 
-const styles = theme => ({
-  root: {
-    width: "100%",
-    height: "348px",
-    position: "relative",
-    display: "flex",
-    flexDirection: "column"
-  },
-  listRoot: {
-    height: "252px",
-    overflowY: "scroll"
-  },
-  form: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column"
-  },
-  leftIcon: {
-    marginRight: `${theme.spacing.unit}px`
-  },
-  dateText: {
-    textAlign: "right"
-  },
-  loadMoreButton: {
-    margin: "0 auto"
-  }
-});
-
 export class MessageReplies extends React.Component {
   constructor() {
     super();
@@ -167,5 +139,33 @@ MessageReplies.propTypes = {
   currentMessagePage: PropTypes.number.isRequired,
   hasMoreReplies: PropTypes.bool.isRequired
 };
+
+const styles = theme => ({
+  root: {
+    width: "100%",
+    height: "348px",
+    position: "relative",
+    display: "flex",
+    flexDirection: "column"
+  },
+  listRoot: {
+    height: "252px",
+    overflowY: "scroll"
+  },
+  form: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column"
+  },
+  leftIcon: {
+    marginRight: `${theme.spacing.unit}px`
+  },
+  dateText: {
+    textAlign: "right"
+  },
+  loadMoreButton: {
+    margin: "0 auto"
+  }
+});
 
 export default withStyles(styles)(MessageReplies);

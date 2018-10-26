@@ -6,7 +6,7 @@ import {
   fetchUserFaves,
   searchPosts
 } from "./posts";
-import { fetchAlbumPostsPaginated, fetchUserAlbums } from "./albums";
+import { fetchUserAlbums } from "./albums";
 import { fetchUserFollows, fetchUserFollowers, searchUsers } from "./profiles";
 
 export const fetchForMainPage = async (
@@ -33,27 +33,18 @@ export const fetchForMainPage = async (
       res = await searchUsers(cancelToken, searchTerms, page);
       break;
     default:
-      return (res = []);
+      return (res = null);
   }
 
   return res;
 };
 
-export const fetchForProfilePage = async (
-  cancelToken,
-  context,
-  page,
-  user,
-  albumId
-) => {
+export const fetchForProfilePage = async (cancelToken, context, page, user) => {
   let res;
 
   switch (context) {
     case "userPosts":
       res = await fetchUserPosts(cancelToken, user, page);
-      break;
-    case "albumPosts":
-      res = await fetchAlbumPostsPaginated(cancelToken, albumId, page);
       break;
     case "userFaves":
       res = await fetchUserFaves(cancelToken, user, page);
@@ -61,6 +52,8 @@ export const fetchForProfilePage = async (
     case "userAlbums":
       res = await fetchUserAlbums(cancelToken, user, page);
       break;
+    default:
+      return (res = null);
   }
   return res;
 };
@@ -75,6 +68,8 @@ export const fetchFollows = async (cancelToken, context, page, userId) => {
     case "userFollowers":
       res = await fetchUserFollowers(cancelToken, userId, page);
       break;
+    default:
+      return (res = null);
   }
   return res;
 };

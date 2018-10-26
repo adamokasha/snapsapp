@@ -32,7 +32,6 @@ export const favePost = async (cancelToken, postId) => {
   await axios.post(`/api/posts/fave/${postId}`, {}, { cancelToken });
 };
 
-// ScrollView
 export const fetchPopular = async (cancelToken, page) => {
   const res = await axios.get(`/api/posts/popular/${page}`, { cancelToken });
   return res;

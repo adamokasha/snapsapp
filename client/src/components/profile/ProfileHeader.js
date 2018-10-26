@@ -5,21 +5,6 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import moment from "moment";
 
-const styles = theme => ({
-  root: {
-    display: "flex",
-    alignItems: "center",
-    width: "100%"
-  },
-  avatarContainer: {
-    display: "flex",
-    marginBottom: `${theme.spacing.unit * 2}px`
-  },
-  userText: {
-    marginLeft: `${theme.spacing.unit}px`
-  }
-});
-
 export const ProfileHeader = props => {
   const { classes, profilePhoto, displayName, joined } = props;
 
@@ -46,5 +31,20 @@ ProfileHeader.propTypes = {
   displayName: PropTypes.string.isRequired,
   joined: PropTypes.oneOfType([PropTypes.number, PropTypes.bool])
 };
+
+const styles = theme => ({
+  root: {
+    display: "flex",
+    alignItems: "center",
+    width: "100%"
+  },
+  avatarContainer: {
+    display: "flex",
+    marginBottom: `${theme.spacing.unit * 2}px`
+  },
+  userText: {
+    marginLeft: `${theme.spacing.unit}px`
+  }
+});
 
 export default withStyles(styles)(ProfileHeader);

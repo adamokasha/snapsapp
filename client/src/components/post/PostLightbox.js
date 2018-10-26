@@ -12,58 +12,6 @@ import PostDescription from "./PostDescription";
 import PostTags from "./PostTags";
 import { favePost } from "../../async/posts";
 
-const styles = theme => ({
-  root: {
-    width: "90%",
-    height: "97%",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    background: "#fff",
-    margin: "0 auto",
-    overflowY: "auto",
-    borderRadius: "8px",
-    [theme.breakpoints.down("md")]: {
-      height: "60%"
-    }
-  },
-  content: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    height: "100%",
-    width: "100%",
-    margin: "0 auto",
-    overflow: "hidden"
-  },
-  postHeader: {
-    width: "95%",
-    display: "flex",
-    justifyContent: "space-between",
-    padding: `${theme.spacing.unit}px 0`,
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: `${theme.spacing.unit}px`
-    }
-  },
-  postFooter: {
-    display: "none",
-    [theme.breakpoints.up("md")]: {
-      display: "flex",
-      justifyContent: "space-around",
-      height: "20%",
-      padding: `${theme.spacing.unit * 2}px`
-    },
-    [theme.breakpoints.up("lg")]: {
-      display: "flex",
-      justifyContent: "space-around",
-      height: "10%",
-      padding: `${theme.spacing.unit * 2}px`
-    }
-  }
-});
-
 class PostLightbox extends React.Component {
   constructor(props) {
     super(props);
@@ -80,33 +28,6 @@ class PostLightbox extends React.Component {
 
     this.signal = axios.CancelToken.source();
   }
-
-  // componentDidMount() {
-  //   // Prevent goTopButton from getting in way of modal
-  //   const goTopButton = document.getElementById("goTopButton");
-  //   if (goTopButton) {
-  //     document.getElementById("goTopButton").style.display = "none";
-  //   }
-
-  //   // If ScrollView, slides will be array of arrays (due to pagination)
-  //   const slides = [];
-  //   this.props.slides.forEach(posts =>
-  //     posts.forEach(post => slides.push(post))
-  //   );
-  //   const currentIndex = slides.indexOf(this.props.post);
-  //   this.setState({ slides, currentIndex }, () => {
-  //     this.checkIfLastSlide();
-  //     this.checkIfFirstSlide();
-  //   });
-  // }
-
-  // componentWillUnmount() {
-  //   // Restore goTopButton
-  //   const goTopButton = document.getElementById("goTopButton");
-  //   if (goTopButton) {
-  //     document.getElementById("goTopButton").style.display = "inline-flex";
-  //   }
-  // }
 
   checkIfFirstSlide() {
     const { currentIndex } = this.state;
@@ -157,16 +78,6 @@ class PostLightbox extends React.Component {
         currentIndex: this.state.currentIndex + 1
       });
     });
-
-    // // Check if next slide last, dont include next icon
-    // if (currentIndex + 1 === this.state.slides.length - 1) {
-    //   this.setState({ end: true });
-    // }
-    // // this.checkIfLastSlide();
-    // return this.setState(
-    //   { currentSlide: nextSlide, currentIndex: this.state.currentIndex + 1 },
-    //   () => {}
-    // );
   };
 
   onImgLoad = () => {
@@ -200,7 +111,6 @@ class PostLightbox extends React.Component {
   render() {
     const { classes } = this.props;
     const {
-      _id,
       _owner,
       title,
       createdAt,
@@ -255,14 +165,66 @@ class PostLightbox extends React.Component {
   }
 }
 
-const mapStateToProps = auth => ({
-  auth
-});
-
 PostLightbox.propTypes = {
   classes: PropTypes.object.isRequired,
   post: PropTypes.object.isRequired
 };
+
+const styles = theme => ({
+  root: {
+    width: "90%",
+    height: "97%",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    background: "#fff",
+    margin: "0 auto",
+    overflowY: "auto",
+    borderRadius: "8px",
+    [theme.breakpoints.down("md")]: {
+      height: "60%"
+    }
+  },
+  content: {
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    height: "100%",
+    width: "100%",
+    margin: "0 auto",
+    overflow: "hidden"
+  },
+  postHeader: {
+    width: "95%",
+    display: "flex",
+    justifyContent: "space-between",
+    padding: `${theme.spacing.unit}px 0`,
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: `${theme.spacing.unit}px`
+    }
+  },
+  postFooter: {
+    display: "none",
+    [theme.breakpoints.up("md")]: {
+      display: "flex",
+      justifyContent: "space-around",
+      height: "20%",
+      padding: `${theme.spacing.unit * 2}px`
+    },
+    [theme.breakpoints.up("lg")]: {
+      display: "flex",
+      justifyContent: "space-around",
+      height: "10%",
+      padding: `${theme.spacing.unit * 2}px`
+    }
+  }
+});
+
+const mapStateToProps = auth => ({
+  auth
+});
 
 export default compose(
   withStyles(styles),

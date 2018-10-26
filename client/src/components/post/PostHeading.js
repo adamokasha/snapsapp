@@ -5,18 +5,6 @@ import { Link } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 
-const styles = theme => ({
-  avatarContainer: {
-    display: "flex",
-    flexDirection: "row"
-  },
-  avatar: {
-    width: "50px",
-    height: "50px",
-    marginRight: `${theme.spacing.unit * 2}px`
-  }
-});
-
 export const PostHeading = props => {
   const { profilePhoto, displayName, title, classes } = props;
 
@@ -44,5 +32,17 @@ PostHeading.propTypes = {
   displayName: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired
 };
+
+const styles = theme => ({
+  avatarContainer: {
+    display: "flex",
+    flexDirection: "row"
+  },
+  avatar: {
+    width: "50px",
+    height: "50px",
+    marginRight: `${theme.spacing.unit * 2}px`
+  }
+});
 
 export default withStyles(styles)(PostHeading);

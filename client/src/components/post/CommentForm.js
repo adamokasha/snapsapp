@@ -5,13 +5,6 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import Button from "@material-ui/core/Button";
 
-const styles = theme => ({
-  form: {
-    display: "flex",
-    flexDirection: "column"
-  }
-});
-
 export class CommentForm extends React.Component {
   state = {
     commentBody: ""
@@ -62,5 +55,12 @@ CommentForm.propTypes = {
   onAddComment: PropTypes.func.isRequired,
   addingComment: PropTypes.bool.isRequired
 };
+
+const styles = theme => ({
+  form: {
+    display: "flex",
+    flexDirection: "column"
+  }
+});
 
 export default withStyles(styles)(CommentForm);

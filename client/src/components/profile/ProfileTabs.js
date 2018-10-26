@@ -11,17 +11,6 @@ import Grid from "../grid/Grid";
 import { onScroll } from "../../utils/utils";
 import { fetchForProfilePage } from "../../async/combined";
 
-const styles = theme => ({
-  root: {
-    marginTop: 0,
-    backgroundColor: theme.palette.background.paper,
-    width: "100%"
-  },
-  appBarRoot: {
-    marginBottom: `${theme.spacing.unit}px`
-  }
-});
-
 class ProfileTabs extends React.Component {
   constructor(props) {
     super(props);
@@ -172,5 +161,16 @@ ProfileTabs.propTypes = {
   theme: PropTypes.object.isRequired,
   profileTabPos: PropTypes.number
 };
+
+const styles = theme => ({
+  root: {
+    marginTop: 0,
+    backgroundColor: theme.palette.background.paper,
+    width: "100%"
+  },
+  appBarRoot: {
+    marginBottom: `${theme.spacing.unit}px`
+  }
+});
 
 export default compose(withStyles(styles))(ProfileTabs);

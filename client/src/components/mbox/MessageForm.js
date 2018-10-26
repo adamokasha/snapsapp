@@ -11,47 +11,6 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import SendOutlinedIcon from "@material-ui/icons/SendOutlined";
 import axios from "axios";
 
-const styles = theme => ({
-  root: {
-    width: "90%",
-    padding: `${theme.spacing.unit * 2}px`,
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    [theme.breakpoints.up("sm")]: {
-      top: "20%",
-      transform: "translate(-50%, 0)",
-      width: "50%"
-    },
-    [theme.breakpoints.up("md")]: {
-      width: "40%"
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "30%"
-    },
-    [theme.breakpoints.up("xl")]: {
-      width: "25%"
-    }
-  },
-  heading: {
-    marginBottom: `${theme.spacing.unit}px`
-  },
-  avatar: {
-    margin: `${theme.spacing.unit}px auto`,
-    backgroundColor: theme.palette.secondary.main
-  },
-  form: {
-    minHeight: "220px",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between"
-  },
-  leftIcon: {
-    marginRight: `${theme.spacing.unit}px`
-  }
-});
-
 export class MessageForm extends React.Component {
   constructor() {
     super();
@@ -176,5 +135,46 @@ MessageForm.propTypes = {
   withSnackbar: PropTypes.bool.isRequired,
   onSnackbarSet: PropTypes.func.isRequired
 };
+
+const styles = theme => ({
+  root: {
+    width: "90%",
+    padding: `${theme.spacing.unit * 2}px`,
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    [theme.breakpoints.up("sm")]: {
+      top: "20%",
+      transform: "translate(-50%, 0)",
+      width: "50%"
+    },
+    [theme.breakpoints.up("md")]: {
+      width: "40%"
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "30%"
+    },
+    [theme.breakpoints.up("xl")]: {
+      width: "25%"
+    }
+  },
+  heading: {
+    marginBottom: `${theme.spacing.unit}px`
+  },
+  avatar: {
+    margin: `${theme.spacing.unit}px auto`,
+    backgroundColor: theme.palette.secondary.main
+  },
+  form: {
+    minHeight: "220px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between"
+  },
+  leftIcon: {
+    marginRight: `${theme.spacing.unit}px`
+  }
+});
 
 export default withStyles(styles)(MessageForm);

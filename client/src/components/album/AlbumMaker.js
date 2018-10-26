@@ -17,106 +17,6 @@ import CustomSnackbar from "../snackbar/CustomSnackbar";
 import { fetchAllUserPosts } from "../../async/posts";
 import { fetchAlbumPosts, createAlbum, updateAlbum } from "../../async/albums";
 
-const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-    width: "95%",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    paddingBottom: `${theme.spacing.unit}px`,
-    borderRadius: "3px",
-    [theme.breakpoints.up("sm")]: {
-      width: "80%"
-    },
-    [theme.breakpoints.up("md")]: {
-      width: "60%"
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "40%"
-    },
-    [theme.breakpoints.up("xl")]: {
-      width: "30%"
-    }
-  },
-  tabLabelContainer: {
-    [theme.breakpoints.down("sm")]: {
-      padding: "6px",
-      fontWeight: 600
-    }
-  },
-  tabLabel: {
-    [theme.breakpoints.down("sm")]: {
-      fontSize: ".7rem"
-    }
-  },
-  circularProgress: {
-    position: "absolute",
-    top: "40%",
-    left: "50%",
-    transform: "translate(-50%, -50%)"
-  },
-  linearProgress: {
-    width: "100%",
-    position: "absolute",
-    top: 0,
-    left: 0
-  },
-  imgContainer: {
-    position: "relative"
-  },
-  dummyImg: {
-    height: "200px",
-    width: "auto",
-    marginLeft: "8px"
-  },
-  checkIconContainer: {
-    position: "absolute",
-    top: "1%",
-    right: "1%",
-    backgroundColor: "#fff",
-    width: "28px",
-    height: "28px",
-    borderRadius: "5px",
-    opacity: "0.8"
-  },
-  hiddenIconContainer: {
-    display: "none"
-  },
-  checkIcon: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)"
-  },
-  imgSelected: {
-    height: "200px",
-    width: "auto",
-    marginLeft: "8px",
-    border: "2px solid #000"
-  },
-  formContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    [theme.breakpoints.down("sm")]: {
-      flexDirection: "column"
-    }
-  },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit
-  },
-  button: {
-    margin: theme.spacing.unit
-  },
-  leftIcon: {
-    marginRight: theme.spacing.unit
-  }
-});
-
 class AlbumMaker extends React.Component {
   constructor(props) {
     super(props);
@@ -386,5 +286,105 @@ AlbumMaker.propTypes = {
   method: PropTypes.string.isRequired,
   withSnackbar: PropTypes.bool.isRequired
 };
+
+const styles = theme => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper,
+    width: "95%",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    paddingBottom: `${theme.spacing.unit}px`,
+    borderRadius: "3px",
+    [theme.breakpoints.up("sm")]: {
+      width: "80%"
+    },
+    [theme.breakpoints.up("md")]: {
+      width: "60%"
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "40%"
+    },
+    [theme.breakpoints.up("xl")]: {
+      width: "30%"
+    }
+  },
+  tabLabelContainer: {
+    [theme.breakpoints.down("sm")]: {
+      padding: "6px",
+      fontWeight: 600
+    }
+  },
+  tabLabel: {
+    [theme.breakpoints.down("sm")]: {
+      fontSize: ".7rem"
+    }
+  },
+  circularProgress: {
+    position: "absolute",
+    top: "40%",
+    left: "50%",
+    transform: "translate(-50%, -50%)"
+  },
+  linearProgress: {
+    width: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0
+  },
+  imgContainer: {
+    position: "relative"
+  },
+  dummyImg: {
+    height: "200px",
+    width: "auto",
+    marginLeft: "8px"
+  },
+  checkIconContainer: {
+    position: "absolute",
+    top: "1%",
+    right: "1%",
+    backgroundColor: "#fff",
+    width: "28px",
+    height: "28px",
+    borderRadius: "5px",
+    opacity: "0.8"
+  },
+  hiddenIconContainer: {
+    display: "none"
+  },
+  checkIcon: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)"
+  },
+  imgSelected: {
+    height: "200px",
+    width: "auto",
+    marginLeft: "8px",
+    border: "2px solid #000"
+  },
+  formContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column"
+    }
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit
+  },
+  button: {
+    margin: theme.spacing.unit
+  },
+  leftIcon: {
+    marginRight: theme.spacing.unit
+  }
+});
 
 export default withStyles(styles)(AlbumMaker);

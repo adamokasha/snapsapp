@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
 export const PublicRoute = ({ isAuth, component: Component, ...rest }) => (
   <Route
@@ -16,6 +17,10 @@ export const PublicRoute = ({ isAuth, component: Component, ...rest }) => (
     }
   />
 );
+
+PublicRoute.propTypes = {
+  auth: PropTypes.oneOfType([PropTypes.bool, PropTypes.object])
+};
 
 const mapStateToProps = auth => ({
   isAuth: auth

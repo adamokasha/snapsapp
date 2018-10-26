@@ -1,13 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-
-const styles = theme => ({
-  root: {
-    height: "32px",
-    width: "32px",
-    fill: "#fff"
-  }
-});
+import PropTypes from "prop-types";
 
 // ionicon
 export const SettingsIcon = props => {
@@ -22,5 +15,17 @@ export const SettingsIcon = props => {
     </svg>
   );
 };
+
+SettingsIcon.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+const styles = theme => ({
+  root: {
+    height: "32px",
+    width: "32px",
+    fill: "#fff"
+  }
+});
 
 export default withStyles(styles)(SettingsIcon);

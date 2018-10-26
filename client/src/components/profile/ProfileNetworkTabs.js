@@ -10,35 +10,6 @@ import axios from "axios";
 
 import Grid from "../grid/Grid";
 
-const styles = theme => ({
-  root: {
-    background: "#fafafa",
-    width: "300px",
-    position: "absolute",
-    top: "10%",
-    left: "50%",
-    transform: "translateX(-50%)",
-    borderRadius: "3px"
-  },
-  layout: {
-    height: "400px",
-    [theme.breakpoints.up("sm")]: {
-      height: "500px"
-    }
-  },
-  gridContainer: {
-    height: "90%",
-    paddingTop: `${theme.spacing.unit}px`,
-    overflowY: "scroll"
-  },
-  buttonContainer: {
-    height: "10%"
-  },
-  loadMoreButton: {
-    height: "100%"
-  }
-});
-
 class ProfileNetworkTabs extends React.Component {
   constructor(props) {
     super(props);
@@ -90,9 +61,6 @@ class ProfileNetworkTabs extends React.Component {
   }
 
   componentWillUnmount() {
-    // Remove onScroll event listener
-    // window.removeEventListener("scroll", this.onScroll, false);
-    // Cancel asyncs
     this.signal.cancel("Async call cancelled.");
   }
 
@@ -283,5 +251,34 @@ ProfileNetworkTabs.propTypes = {
   userId: PropTypes.string.isRequired,
   tabPosition: PropTypes.number.isRequired
 };
+
+const styles = theme => ({
+  root: {
+    background: "#fafafa",
+    width: "300px",
+    position: "absolute",
+    top: "10%",
+    left: "50%",
+    transform: "translateX(-50%)",
+    borderRadius: "3px"
+  },
+  layout: {
+    height: "400px",
+    [theme.breakpoints.up("sm")]: {
+      height: "500px"
+    }
+  },
+  gridContainer: {
+    height: "90%",
+    paddingTop: `${theme.spacing.unit}px`,
+    overflowY: "scroll"
+  },
+  buttonContainer: {
+    height: "10%"
+  },
+  loadMoreButton: {
+    height: "100%"
+  }
+});
 
 export default withStyles(styles, { withTheme: true })(ProfileNetworkTabs);

@@ -1,29 +1,7 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import { withStyles } from '@material-ui/core/styles';
-
-const styles = theme => ({
-  layout: {
-    width: '90%',
-    margin: '0 auto',
-    [theme.breakpoints.up('md')]: {
-      width: '60%'
-    },
-    [theme.breakpoints.up('lg')]: {
-      width: '40%'
-    },
-    [theme.breakpoints.up('xl')]: {
-      width: '30%'
-    }
-  },
-  paper: {
-    maxHeight: '400px',
-    padding: `${theme.spacing.unit}px`,
-    overflow: 'hidden',
-    overflowY: 'auto'
-  }
-});
+import React from "react";
+import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
+import { withStyles } from "@material-ui/core/styles";
 
 export const ToS = props => {
   const { classes } = props;
@@ -168,5 +146,27 @@ export const ToS = props => {
     </React.Fragment>
   );
 };
+
+const styles = theme => ({
+  layout: {
+    width: "90%",
+    margin: "0 auto",
+    [theme.breakpoints.up("md")]: {
+      width: "60%"
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "40%"
+    },
+    [theme.breakpoints.up("xl")]: {
+      width: "30%"
+    }
+  },
+  paper: {
+    maxHeight: "400px",
+    padding: `${theme.spacing.unit}px`,
+    overflow: "hidden",
+    overflowY: "auto"
+  }
+});
 
 export default withStyles(styles)(ToS);

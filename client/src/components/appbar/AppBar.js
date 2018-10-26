@@ -19,40 +19,10 @@ import Button from "@material-ui/core/Button";
 import Badge from "@material-ui/core/Badge";
 import axios from "axios";
 
-import DisabledIconWrapper from "../icons/DisabledIconWrapper";
+import DisabledIconButtonWrapper from "../icons/DisabledIconButtonWrapper";
 import ModalView from "../modal/ModalView";
 import AddPostForm from "../post/AddPostForm";
 import { updateMboxNotif } from "../../actions/auth";
-
-const styles = theme => ({
-  root: {
-    flexGrow: 1
-  },
-  grow: {
-    flexGrow: 1
-  },
-  logo: {
-    display: "flex"
-  },
-  logoIcon: {
-    marginRight: `${theme.spacing.unit}px`
-  },
-  nav: {
-    display: "flex",
-    marginLeft: "auto"
-  },
-  iconButton: {
-    color: "#fff !important"
-  },
-  disabledNavButton: {
-    opacity: "0.54"
-  },
-  aTag: {
-    padding: 0,
-    color: "inherit",
-    textDecoration: "none"
-  }
-});
 
 class AppBar extends React.Component {
   constructor(props) {
@@ -98,25 +68,25 @@ class AppBar extends React.Component {
   };
 
   selectPostFormView = () => {
-    const { classes, auth } = this.props;
+    const { auth } = this.props;
     if (window.screen.width < 600 || window.innerWidth < 600) {
       return (
-        <DisabledIconWrapper
+        <DisabledIconButtonWrapper
           component={Link}
           to="/upload"
           isDisabled={!auth.registered}
         >
           <CloudUploadIcon />
-        </DisabledIconWrapper>
+        </DisabledIconButtonWrapper>
       );
     }
 
     return (
       <ModalView
         togglerComponent={
-          <DisabledIconWrapper isDisabled={!auth.registered}>
+          <DisabledIconButtonWrapper isDisabled={!auth.registered}>
             <CloudUploadIcon />
-          </DisabledIconWrapper>
+          </DisabledIconButtonWrapper>
         }
         modalComponent={<AddPostForm view="modal" />}
       />
@@ -299,6 +269,36 @@ AppBar.propTypes = {
 
 const mapStateToProps = auth => ({
   auth
+});
+
+const styles = theme => ({
+  root: {
+    flexGrow: 1
+  },
+  grow: {
+    flexGrow: 1
+  },
+  logo: {
+    display: "flex"
+  },
+  logoIcon: {
+    marginRight: `${theme.spacing.unit}px`
+  },
+  nav: {
+    display: "flex",
+    marginLeft: "auto"
+  },
+  iconButton: {
+    color: "#fff !important"
+  },
+  disabledNavButton: {
+    opacity: "0.54"
+  },
+  aTag: {
+    padding: 0,
+    color: "inherit",
+    textDecoration: "none"
+  }
 });
 
 export default compose(

@@ -11,52 +11,6 @@ import Album from "../album/Album";
 import PostCard from "../post/PostCard";
 import ProfileHeader from "../profile/ProfileHeader";
 
-const styles = theme => ({
-  root: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
-    backgroundColor: theme.palette.background.paper
-  },
-  gridList: {
-    width: "100%",
-    overflowY: "unset"
-  },
-  gridTileRoot: {
-    height: "auto !important",
-    width: "100% !important",
-    [theme.breakpoints.up("sm")]: {
-      width: "45% !important",
-      margin: "0 auto"
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "30% !important",
-      margin: "0 auto"
-    }
-  },
-  // Inner div that wraps children
-  tile: {
-    overflow: "initial"
-  },
-  subheader: {
-    width: "100%"
-  },
-  circularProgress: {
-    margin: "16px auto",
-    display: "block"
-  },
-  toTopButton: {
-    margin: theme.spacing.unit,
-    position: "fixed",
-    bottom: "5%",
-    right: "5%",
-    zIndex: 5000
-  },
-  navIcon: {
-    marginRight: theme.spacing.unit
-  }
-});
-
 function Grid(props) {
   const { classes, gridContext, gridData, isFetching, showNavToTop } = props;
 
@@ -144,7 +98,54 @@ function Grid(props) {
 
 Grid.propTypes = {
   classes: PropTypes.object.isRequired,
-  gridData: PropTypes.array.isRequired
+  gridData: PropTypes.array.isRequired,
+  gridContext: PropTypes.oneOf(["albums", "posts", "albumPosts", "profiles"])
 };
+
+const styles = theme => ({
+  root: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+    backgroundColor: theme.palette.background.paper
+  },
+  gridList: {
+    width: "100%",
+    overflowY: "unset"
+  },
+  gridTileRoot: {
+    height: "auto !important",
+    width: "100% !important",
+    [theme.breakpoints.up("sm")]: {
+      width: "45% !important",
+      margin: "0 auto"
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "30% !important",
+      margin: "0 auto"
+    }
+  },
+  // Inner div that wraps children
+  tile: {
+    overflow: "initial"
+  },
+  subheader: {
+    width: "100%"
+  },
+  circularProgress: {
+    margin: "16px auto",
+    display: "block"
+  },
+  toTopButton: {
+    margin: theme.spacing.unit,
+    position: "fixed",
+    bottom: "5%",
+    right: "5%",
+    zIndex: 5000
+  },
+  navIcon: {
+    marginRight: theme.spacing.unit
+  }
+});
 
 export default withStyles(styles)(Grid);

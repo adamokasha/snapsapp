@@ -24,81 +24,6 @@ import { updateProfile } from "../actions/auth";
 import { fetchProfile, setProfile } from "../async/profiles";
 import { fetchForProfilePage } from "../async/combined";
 
-const styles = theme => ({
-  root: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    [theme.breakpoints.down("sm")]: {
-      alignItems: "center"
-    },
-    [theme.breakpoints.up("md")]: {
-      flexDirection: "row"
-    }
-  },
-  profileInfoContainer: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    position: "relative",
-    padding: `${theme.spacing.unit * 2}px`,
-    [theme.breakpoints.up("md")]: {
-      height: "inherit",
-      minHeight: "100vh",
-      width: "55%"
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "35%"
-    }
-  },
-  profileHeading: {
-    display: "flex",
-    flexDirection: "row",
-    position: "relative"
-  },
-  profileHeadingMR: {
-    marginRight: `${theme.spacing.unit * 3}px`
-  },
-  editButtons: {
-    display: "none",
-    position: "absolute",
-    top: 0,
-    right: 0,
-    [theme.breakpoints.up("sm")]: {
-      display: "inline-flex"
-    }
-  },
-  hideEditButtons: {
-    display: "none"
-  },
-  linearLoader: {
-    width: "100%",
-    position: "absolute",
-    top: 0,
-    left: 0
-  },
-  loadingOpacity: {
-    opacity: 0.4,
-    pointerEvents: "none"
-  },
-  avatarContainer: {
-    display: "flex",
-    marginBottom: `${theme.spacing.unit * 2}px`
-  },
-  userText: {
-    marginLeft: `${theme.spacing.unit}px`
-  },
-  hidingDivider: {
-    display: "none",
-    [theme.breakpoints.up("sm")]: {
-      display: "block"
-    }
-  },
-  noProfileText: {
-    marginTop: `${theme.spacing.unit}px`
-  }
-});
-
 export class ProfilePage extends React.Component {
   constructor(props) {
     super(props);
@@ -324,15 +249,90 @@ export class ProfilePage extends React.Component {
   }
 }
 
-const mapStateToProps = auth => ({
-  auth
-});
-
 ProfilePage.propTypes = {
   classes: PropTypes.object.isRequired,
   auth: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
   profileTabPos: PropTypes.number
 };
+
+const styles = theme => ({
+  root: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    [theme.breakpoints.down("sm")]: {
+      alignItems: "center"
+    },
+    [theme.breakpoints.up("md")]: {
+      flexDirection: "row"
+    }
+  },
+  profileInfoContainer: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    position: "relative",
+    padding: `${theme.spacing.unit * 2}px`,
+    [theme.breakpoints.up("md")]: {
+      height: "inherit",
+      minHeight: "100vh",
+      width: "55%"
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "35%"
+    }
+  },
+  profileHeading: {
+    display: "flex",
+    flexDirection: "row",
+    position: "relative"
+  },
+  profileHeadingMR: {
+    marginRight: `${theme.spacing.unit * 3}px`
+  },
+  editButtons: {
+    display: "none",
+    position: "absolute",
+    top: 0,
+    right: 0,
+    [theme.breakpoints.up("sm")]: {
+      display: "inline-flex"
+    }
+  },
+  hideEditButtons: {
+    display: "none"
+  },
+  linearLoader: {
+    width: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0
+  },
+  loadingOpacity: {
+    opacity: 0.4,
+    pointerEvents: "none"
+  },
+  avatarContainer: {
+    display: "flex",
+    marginBottom: `${theme.spacing.unit * 2}px`
+  },
+  userText: {
+    marginLeft: `${theme.spacing.unit}px`
+  },
+  hidingDivider: {
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "block"
+    }
+  },
+  noProfileText: {
+    marginTop: `${theme.spacing.unit}px`
+  }
+});
+
+const mapStateToProps = auth => ({
+  auth
+});
 
 export default compose(
   withStyles(styles),

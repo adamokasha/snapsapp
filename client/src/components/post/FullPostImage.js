@@ -2,6 +2,23 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 
+export const FullPostImage = props => {
+  const { classes, imgUrl } = props;
+  return (
+    <div className={classes.imgContainer}>
+      <img
+        className={classes.img}
+        src={`https://s3.amazonaws.com/img-share-kasho/${imgUrl}`}
+      />
+    </div>
+  );
+};
+
+FullPostImage.propTypes = {
+  classes: PropTypes.object.isRequired,
+  imgUrl: PropTypes.string.isRequired
+};
+
 const styles = theme => ({
   imgContainer: {
     width: "100%",
@@ -25,22 +42,5 @@ const styles = theme => ({
     transform: "translate(-50%, -50%)"
   }
 });
-
-export const FullPostImage = props => {
-  const { classes, imgUrl } = props;
-  return (
-    <div className={classes.imgContainer}>
-      <img
-        className={classes.img}
-        src={`https://s3.amazonaws.com/img-share-kasho/${imgUrl}`}
-      />
-    </div>
-  );
-};
-
-FullPostImage.propTypes = {
-  classes: PropTypes.object.isRequired,
-  imgUrl: PropTypes.string.isRequired
-};
 
 export default withStyles(styles)(FullPostImage);
