@@ -6,7 +6,7 @@ import HeroUnit from "../components/mainpage/HeroUnit";
 import Grid from "../components/grid/Grid";
 import MainPageMenu from "../components/mainpage/MainPageMenu";
 
-import { fetchForMainPage } from "../async/scrollview";
+import { fetchForMainPage } from "../async/combined";
 import { fetchPopular } from "../async/posts";
 import { onScroll } from "../utils/utils";
 

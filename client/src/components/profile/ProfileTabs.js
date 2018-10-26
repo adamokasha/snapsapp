@@ -9,7 +9,7 @@ import axios from "axios";
 
 import Grid from "../grid/Grid";
 import { onScroll } from "../../utils/utils";
-import { fetchForProfilePage } from "../../async/scrollview";
+import { fetchForProfilePage } from "../../async/combined";
 
 const styles = theme => ({
   root: {

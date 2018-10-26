@@ -5,7 +5,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Button from "@material-ui/core/Button";
-import { fetchFollows } from "../../async/scrollview";
+import { fetchFollows } from "../../async/combined";
 import axios from "axios";
 
 import Grid from "../grid/Grid";

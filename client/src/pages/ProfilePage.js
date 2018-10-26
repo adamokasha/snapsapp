@@ -22,7 +22,7 @@ import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 import { updateProfile } from "../actions/auth";
 
 import { fetchProfile, setProfile } from "../async/profiles";
-import { fetchForProfilePage } from "../async/scrollview";
+import { fetchForProfilePage } from "../async/combined";
 
 const styles = theme => ({
   root: {

@@ -9,11 +9,6 @@ import {
 import { fetchAlbumPostsPaginated, fetchUserAlbums } from "./albums";
 import { fetchUserFollows, fetchUserFollowers, searchUsers } from "./profiles";
 
-import store from "../store/configureStore";
-import { setPosts } from "../actions/posts";
-import { setAlbums } from "../actions/albums";
-
-// Interfaces by passing down props to ScrollGrid
 export const fetchForMainPage = async (
   cancelToken,
   context,
@@ -44,11 +39,6 @@ export const fetchForMainPage = async (
   return res;
 };
 
-// stop errors while refactoring, remove later
-export const fetchScrollViewData = () => {};
-
-// Interfaces with redux store
-// ProfilePage connects to store and uses relevant state slice
 export const fetchForProfilePage = async (
   cancelToken,
   context,
@@ -61,19 +51,15 @@ export const fetchForProfilePage = async (
   switch (context) {
     case "userPosts":
       res = await fetchUserPosts(cancelToken, user, page);
-      store.dispatch(setPosts(res.data));
       break;
     case "albumPosts":
       res = await fetchAlbumPostsPaginated(cancelToken, albumId, page);
-      store.dispatch(setPosts(res.data));
       break;
     case "userFaves":
       res = await fetchUserFaves(cancelToken, user, page);
-      store.dispatch(setPosts(res.data));
       break;
     case "userAlbums":
       res = await fetchUserAlbums(cancelToken, user, page);
-      store.dispatch(setAlbums(res.data));
       break;
   }
   return res;
