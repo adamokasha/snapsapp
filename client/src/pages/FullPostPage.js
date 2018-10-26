@@ -6,7 +6,6 @@ import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
 
-import NavBar from "../components/NavBar";
 import FullPostImage from "../components/FullPostImage";
 import PostHeading from "../components/PostHeading";
 import PostActions from "../components/PostActions";
@@ -63,10 +62,11 @@ export class FullPostPage extends React.Component {
     super(props);
 
     this.state = {
+      initialFetch: true,
       post: this.props.location.state ? this.props.location.state.post : null,
       commentsPage: 0,
       comments: null,
-      fetchingComments: false,
+      fetchingComments: true,
       hasMoreComments: true,
       addingComment: false,
       isFaving: false
@@ -75,50 +75,68 @@ export class FullPostPage extends React.Component {
     this.signal = axios.CancelToken.source();
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     window.scrollTo(0, 0);
+    try {
+      if (!this.props.location.state) {
+        const { id } = this.props.match.params;
+        const [{ data: postData }, { data: commentData }] = await axios.all([
+          fetchSinglePost(this.signal.token, id),
+          fetchPostComments(this.signal.token, id, this.state.commentsPage)
+        ]);
 
-    this.setState({ fetchingComments: true }, async () => {
-      try {
-        if (!this.props.location.state) {
-          const { id } = this.props.match.params;
-          const { data: post } = await fetchSinglePost(this.signal.token, id);
-
+        if (!commentData.length) {
           return this.setState(
             {
-              post
+              initialFetch: false,
+              post: postData,
+              fetchingComments: false,
+              hasMoreComments: false
             },
-            async () => {
-              const { data: comments } = await fetchPostComments(
-                this.signal.token,
-                id,
-                this.state.commentsPage
-              );
-              this.setState({
-                comments: [...comments],
-                fetchingComments: false
-              });
-            }
+            () => {}
           );
         }
 
-        const { post } = this.props.location.state;
-        const { data: comments } = await fetchPostComments(
-          this.signal.token,
-          post._id,
-          this.state.commentsPage
+        return this.setState(
+          {
+            initialFetch: false,
+            post: postData,
+            comments: [...commentData],
+            fetchingComments: false
+          },
+          () => {}
         );
-        this.setState({
-          comments: [...comments],
-          fetchingComments: false
-        });
-      } catch (e) {
-        if (axios.isCancel(e)) {
-          return console.log(e.message);
-        }
-        this.setState({ fetchingComments: false });
       }
-    });
+
+      const { post } = this.props.location.state;
+      const { data: comments } = await fetchPostComments(
+        this.signal.token,
+        post._id,
+        this.state.commentsPage
+      );
+
+      if (!comments.length) {
+        return this.setState(
+          {
+            initialFetch: false,
+            fetchingComments: false,
+            hasMoreComments: false
+          },
+          () => {}
+        );
+      }
+
+      this.setState({
+        initialFetch: false,
+        comments: [...comments],
+        fetchingComments: false
+      });
+    } catch (e) {
+      if (axios.isCancel(e)) {
+        return console.log(e.message);
+      }
+      this.setState({ initialFetch: false, fetchingComments: false });
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -241,6 +259,7 @@ export class FullPostPage extends React.Component {
   };
 
   render() {
+    console.log("FULLPOSTPAGE RENDERED");
     const { classes, auth } = this.props;
     const {
       post,
@@ -254,6 +273,9 @@ export class FullPostPage extends React.Component {
 
     return (
       <div className={classes.root}>
+        {!this.state.post &&
+          (!this.props.location.state &&
+            this.state.initialFetch && <div>Loading...</div>)}
         {this.state.post && (
           <React.Fragment>
             <FullPostImage imgUrl={post.imgUrl} />
@@ -282,7 +304,7 @@ export class FullPostPage extends React.Component {
           )}
           {this.state.post && <PostTags tags={this.state.post.tags} />}
 
-          {this.state.comments && (
+          {(this.props.location.state || !this.state.initialFetch) && (
             <CommentList
               comments={comments}
               commentsPage={commentsPage}

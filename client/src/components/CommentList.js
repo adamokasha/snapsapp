@@ -56,7 +56,9 @@ export const CommentList = props => {
           size="small"
           className={classes.leftButton}
           onClick={onLoadPrevious}
-          disabled={!hasMoreComments || comments.length < 20}
+          disabled={
+            !hasMoreComments || !comments || (comments && comments.length < 20)
+          }
         >
           <ArrowBackIcon
             classes={{ root: classes.iconRoot }}

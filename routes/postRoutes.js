@@ -202,7 +202,10 @@ module.exports = app => {
   // Get single post
   app.get("/api/posts/single/:id", async (req, res) => {
     try {
-      const post = await Post.findOne({ _id: req.params.id }, "-comments");
+      const post = await Post.findOne(
+        { _id: req.params.id },
+        "-comments"
+      ).populate({ path: "_owner", select: "displayName profilePhoto" });
       if (req.user) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
