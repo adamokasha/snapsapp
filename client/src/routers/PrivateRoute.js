@@ -2,16 +2,10 @@ import React from "react";
 import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
-import NavBar from "../components/NavBar";
-
 const routeUser = (auth, Component, props) => {
   if (auth) {
     if (auth.registered) {
-      return (
-        <div>
-          <Component {...props} />
-        </div>
-      );
+      return <Component {...props} />;
     }
     return <Redirect to="/register_user" />;
   }

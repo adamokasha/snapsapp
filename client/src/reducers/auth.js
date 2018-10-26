@@ -1,7 +1,7 @@
 export default (state = null, action) => {
   switch (action.type) {
     case "SET_USER":
-      return action.payload ? { ...action.payload } : false;
+      return action.payload ? { ...action.payload, mBoxNotif: 0 } : false;
     case "SET_REGISTERED":
       return { ...state, registered: true };
     case "LOGOUT":

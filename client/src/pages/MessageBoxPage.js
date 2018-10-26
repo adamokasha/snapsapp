@@ -66,6 +66,7 @@ export class MessageBox extends React.Component {
     super();
 
     this.state = {
+      initialFetch: true,
       messages: [],
       selected: [],
       currentListPage: 0,
@@ -91,18 +92,11 @@ export class MessageBox extends React.Component {
     }
   }
 
-  async componentDidUpdate(prevProps, prevState) {
-    if (this.state.messages !== prevState.messages) {
-      try {
-        const { data } = await async.fetchMessageCount(this.signal.token);
-        this.props.updateMboxNotif(data.size);
-      } catch (e) {
-        if (axios.isCancel()) {
-          console.log(e.message);
-        }
-        console.log(e);
-      }
+  shouldComponentUpdate(nextProps) {
+    if (this.props.mBoxNotif !== nextProps.mBoxNotif) {
+      return false;
     }
+    return true;
   }
 
   componentWillUnmount() {
@@ -139,6 +133,12 @@ export class MessageBox extends React.Component {
           messageId,
           this.state.currentMessagePage
         );
+
+        // Update mBoxNotif
+        if (this.state.listType === "unread") {
+          this.props.updateMboxNotif(this.props.mBoxNotif - 1);
+        }
+
         this.setState({
           view: "message",
           isLoading: false,
@@ -249,6 +249,7 @@ export class MessageBox extends React.Component {
       if (!res.data[`_${listView}`]) {
         return this.setState(
           {
+            initialFetch: false,
             view: "list",
             listType: listView,
             hasMoreLists: false,
@@ -261,19 +262,17 @@ export class MessageBox extends React.Component {
 
       const messages = res.data[`_${listView}`];
 
-      return this.setState(
-        {
-          messages: []
-        },
-        () => {
-          this.setState({
-            view: "list",
-            listType: listView,
-            messages: [...messages],
-            isLoading: false
-          });
-        }
-      );
+      if (messages.length !== this.props.mBoxNotif) {
+        this.props.updateMboxNotif(messages.length);
+      }
+
+      return this.setState({
+        initialFetch: false,
+        view: "list",
+        listType: listView,
+        messages: [...messages],
+        isLoading: false
+      });
     } catch (e) {
       if (axios.isCancel()) {
         return console.log(e.message);
@@ -356,75 +355,79 @@ export class MessageBox extends React.Component {
   };
 
   render() {
+    console.log("MESSAGEBOXPAGE RENDERED", this.state);
     const { classes } = this.props;
     return (
       <React.Fragment>
-        <Paper className={classes.root}>
-          {this.state.isLoading && (
-            <LinearProgress
-              color="secondary"
-              className={classes.linearProgress}
-            />
-          )}
-          <div className={classes.header}>
-            <MessageBoxAppBar
-              switchListType={this.switchListType}
-              view={this.state.view}
-              listType={this.state.listType}
-              goBack={this.goBack}
-            />
-          </div>
-          <div
-            className={
-              this.state.isLoading
-                ? classNames(classes.loadingOpacity, classes.box)
-                : classes.box
-            }
-          >
-            {this.state.view === "list" ? (
-              <MessageList
-                setList={this.setList}
-                refreshList={this.switchListType}
+        {this.state.initialFetch && <div>Loading...</div>}
+        {!this.state.initialFetch && (
+          <Paper className={classes.root}>
+            {this.state.isLoading && (
+              <LinearProgress
+                color="secondary"
+                className={classes.linearProgress}
+              />
+            )}
+            <div className={classes.header}>
+              <MessageBoxAppBar
+                switchListType={this.switchListType}
+                view={this.state.view}
                 listType={this.state.listType}
-                messages={this.state.messages}
-                setMessage={this.setMessage}
-                selected={this.state.selected}
-                onSelectOne={this.onSelectOne}
-                onSelectAll={this.onSelectAll}
-                onDelete={this.onDelete}
+                goBack={this.goBack}
               />
-            ) : null}
-            {this.state.view === "message" ? (
-              <MessageReplies
-                message={this.state.currentMessage}
-                onSubmitMessageReply={this.onSubmitMessageReply}
-                isSending={this.state.isSending}
-                setPrevMessageReplies={this.setPrevMessageReplies}
-                currentMessagePage={this.state.currentMessagePage}
-                hasMoreReplies={this.state.hasMoreReplies}
-              />
-            ) : null}
-          </div>
-          <Divider />
-          {this.state.view === "list" && (
-            <div className={classes.paginationControls}>
-              <IconButton
-                onClick={this.onListBack}
-                disabled={
-                  this.state.messages.length < 5 || !this.state.hasMoreLists
-                }
-              >
-                <ArrowLeftIcon />
-              </IconButton>
-              <IconButton
-                onClick={this.onListForward}
-                disabled={this.state.currentListPage > 0 ? false : true}
-              >
-                <ArrowRightIcon />
-              </IconButton>
             </div>
-          )}
-        </Paper>
+            <div
+              className={
+                this.state.isLoading
+                  ? classNames(classes.loadingOpacity, classes.box)
+                  : classes.box
+              }
+            >
+              {this.state.view === "list" && (
+                <MessageList
+                  setList={this.setList}
+                  refreshList={this.switchListType}
+                  listType={this.state.listType}
+                  messages={this.state.messages}
+                  setMessage={this.setMessage}
+                  selected={this.state.selected}
+                  onSelectOne={this.onSelectOne}
+                  onSelectAll={this.onSelectAll}
+                  onDelete={this.onDelete}
+                />
+              )}
+              {this.state.view === "message" && (
+                <MessageReplies
+                  message={this.state.currentMessage}
+                  onSubmitMessageReply={this.onSubmitMessageReply}
+                  isSending={this.state.isSending}
+                  setPrevMessageReplies={this.setPrevMessageReplies}
+                  currentMessagePage={this.state.currentMessagePage}
+                  hasMoreReplies={this.state.hasMoreReplies}
+                />
+              )}
+            </div>
+            <Divider />
+            {this.state.view === "list" && (
+              <div className={classes.paginationControls}>
+                <IconButton
+                  onClick={this.onListBack}
+                  disabled={
+                    this.state.messages.length < 5 || !this.state.hasMoreLists
+                  }
+                >
+                  <ArrowLeftIcon />
+                </IconButton>
+                <IconButton
+                  onClick={this.onListForward}
+                  disabled={this.state.currentListPage > 0 ? false : true}
+                >
+                  <ArrowRightIcon />
+                </IconButton>
+              </div>
+            )}
+          </Paper>
+        )}
         <CustomSnackbar
           variant="error"
           message="Something went wrong! Try again..."
@@ -438,7 +441,8 @@ export class MessageBox extends React.Component {
 }
 
 const mapStateToProps = ({ auth }) => ({
-  auth
+  auth,
+  mBoxNotif: auth.mBoxNotif
 });
 
 MessageBox.propTypes = {
