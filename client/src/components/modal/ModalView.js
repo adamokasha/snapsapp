@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 
-import CustomSnackbar from "./CustomSnackbar";
+import CustomSnackbar from "../snackbar/CustomSnackbar";
 
 const styles = theme => ({});
 

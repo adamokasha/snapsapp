@@ -20,9 +20,9 @@ import Badge from "@material-ui/core/Badge";
 import axios from "axios";
 
 import NavBarIconButton from "./NavBarIconButton";
-import ModalView from "./ModalView";
-import AddPostForm from "./AddPostForm";
-import { updateMboxNotif } from "../actions/auth";
+import ModalView from "../modal/ModalView";
+import AddPostForm from "../post/AddPostForm";
+import { updateMboxNotif } from "../../actions/auth";
 
 const styles = theme => ({
   root: {

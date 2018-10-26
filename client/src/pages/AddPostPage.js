@@ -1,7 +1,7 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import AddPostForm from "../components/AddPostForm";
+import AddPostForm from "../components/post/AddPostForm";
 
 const styles = theme => ({
   root: {

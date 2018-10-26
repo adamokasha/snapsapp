@@ -6,7 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Bar from "@material-ui/core/GridListTileBar";
 
 import SettingsIcon from "../icons/Settings";
-import ModalView from "./ModalView";
+import ModalView from "../modal/ModalView";
 import AlbumMaker from "./AlbumMaker";
 
 const styles = theme => ({

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withRouter } from "react-router";
 import axios from "axios";
 
-import Grid from "../components/Grid";
+import Grid from "../components/grid/Grid";
 import { fetchAlbumPostsPaginated } from "../async/albums";
 import { onScroll } from "../utils/utils";
 

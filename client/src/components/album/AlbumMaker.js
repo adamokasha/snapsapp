@@ -13,9 +13,9 @@ import CloseIcon from "@material-ui/icons/Close";
 import axios from "axios";
 
 import AlbumMakerImageView from "./AlbumMakerImageView";
-import CustomSnackbar from "./CustomSnackbar";
-import { fetchAllUserPosts } from "../async/posts";
-import { fetchAlbumPosts, createAlbum, updateAlbum } from "../async/albums";
+import CustomSnackbar from "../snackbar/CustomSnackbar";
+import { fetchAllUserPosts } from "../../async/posts";
+import { fetchAlbumPosts, createAlbum, updateAlbum } from "../../async/albums";
 
 const styles = theme => ({
   root: {

@@ -12,10 +12,10 @@ import IconButton from "@material-ui/core/IconButton";
 import Divider from "@material-ui/core/Divider";
 import axios from "axios";
 
-import MessageList from "../components/MessageList";
-import MessageReplies from "../components/MessageReplies";
-import MessageBoxAppBar from "../components/MessageBoxAppBar";
-import CustomSnackbar from "../components/CustomSnackbar";
+import MessageList from "../components/mbox/MessageList";
+import MessageReplies from "../components/mbox/MessageReplies";
+import MessageBoxAppBar from "../components/mbox/MessageBoxAppBar";
+import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 import { updateMboxNotif } from "../actions/auth";
 import * as async from "../async/messages";
 

@@ -6,13 +6,13 @@ import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
 
-import FullPostImage from "../components/FullPostImage";
-import PostHeading from "../components/PostHeading";
-import PostActions from "../components/PostActions";
-import PostDescription from "../components/PostDescription";
-import PostTags from "../components/PostTags";
-import CommentList from "../components/CommentList";
-import CommentForm from "../components/CommentForm";
+import FullPostImage from "../components/post/FullPostImage";
+import PostHeading from "../components/post/PostHeading";
+import PostActions from "../components/post/PostActions";
+import PostDescription from "../components/post/PostDescription";
+import PostTags from "../components/post/PostTags";
+import CommentList from "../components/post/CommentList";
+import CommentForm from "../components/post/CommentForm";
 import {
   fetchSinglePost,
   fetchPostComments,

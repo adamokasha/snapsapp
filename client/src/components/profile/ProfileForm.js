@@ -7,13 +7,12 @@ import compose from "recompose/compose";
 import classNames from "classnames";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 
 import FacebookIcon from "../icons/Facebook";
 import TwitterIcon from "../icons/Twitter";
 import GlobeIcon from "../icons/Globe";
-import { updateProfile } from "../actions/auth";
+import { updateProfile } from "../../actions/auth";
 
 const styles = theme => ({
   loadingOpacity: {

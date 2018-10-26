@@ -1,10 +1,10 @@
 import React from "react";
 import axios from "axios";
 
-import Search from "../components/Search";
-import HeroUnit from "../components/HeroUnit";
-import Grid from "../components/Grid";
-import MainPageMenu from "../components/MainPageMenu";
+import Search from "../components/mainpage/Search";
+import HeroUnit from "../components/mainpage/HeroUnit";
+import Grid from "../components/grid/Grid";
+import MainPageMenu from "../components/mainpage/MainPageMenu";
 
 import { fetchForMainPage } from "../async/scrollview";
 import { fetchPopular } from "../async/posts";

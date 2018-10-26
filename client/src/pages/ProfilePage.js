@@ -5,6 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router";
 import PropTypes from "prop-types";
 import compose from "recompose/compose";
+import Typography from "@material-ui/core/Typography";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
@@ -12,20 +13,16 @@ import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import axios from "axios";
 
-import ProfileHeader from "../components/ProfileHeader";
-import ProfileNetwork from "../components/ProfileNetwork";
-import ProfileForm from "../components/ProfileForm";
-import ProfileTabs from "../components/ProfileTabs";
-import CustomSnackbar from "../components/CustomSnackbar";
+import ProfileHeader from "../components/profile/ProfileHeader";
+import ProfileNetwork from "../components/profile/ProfileNetwork";
+import ProfileForm from "../components/profile/ProfileForm";
+import ProfileTabs from "../components/profile/ProfileTabs";
+import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 
 import { updateProfile } from "../actions/auth";
 
 import { fetchProfile, setProfile } from "../async/profiles";
-import { fetchUserPosts, fetchUserFaves } from "../async/posts";
-import { fetchUserAlbums } from "../async/albums";
 import { fetchForProfilePage } from "../async/scrollview";
-
-import { Typography } from "@material-ui/core";
 
 const styles = theme => ({
   root: {

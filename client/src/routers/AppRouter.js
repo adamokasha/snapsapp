@@ -2,22 +2,21 @@ import React from "react";
 import { connect } from "react-redux";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
-import NavBar from "../components/NavBar";
+import NavBar from "../components/appbar/NavBar";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
 import MainPage from "../pages/MainPage";
 import RegisterOrLogin from "../pages/RegisterOrLogin";
 import RegisterUserPage from "../pages/RegisterUserPage";
 import AddPostPage from "../pages/AddPostPage";
-import PrivacyPolicy from "../components/PrivacyPolicy";
-
-import { fetchUser } from "../async/auth";
-import { setUser } from "../actions/auth";
-
+import PrivacyPolicy from "../components/auth/PrivacyPolicy";
 import SingleAlbumPage from "../pages/SingleAlbumPage";
 import FullPostPage from "../pages/FullPostPage";
 import ProfilePage from "../pages/ProfilePage";
 import MessageBoxPage from "../pages/MessageBoxPage";
+
+import { fetchUser } from "../async/auth";
+import { setUser } from "../actions/auth";
 
 export class AppRouter extends React.Component {
   async componentDidMount() {

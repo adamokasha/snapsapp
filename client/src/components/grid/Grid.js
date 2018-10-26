@@ -7,9 +7,9 @@ import Button from "@material-ui/core/Button";
 import NavigationIcon from "@material-ui/icons/Navigation";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-import Album from "./Album";
-import PostCard from "./PostCard";
-import ProfileHeader from "./ProfileHeader";
+import Album from "../album/Album";
+import PostCard from "../post/PostCard";
+import ProfileHeader from "../profile/ProfileHeader";
 
 const styles = theme => ({
   root: {

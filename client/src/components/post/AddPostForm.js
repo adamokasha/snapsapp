@@ -21,7 +21,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import filesize from "filesize";
 import withStyles from "@material-ui/core/styles/withStyles";
 
-import CustomSnackbar from "./CustomSnackbar";
+import CustomSnackbar from "../snackbar/CustomSnackbar";
 
 const styles = theme => ({
   paper: {

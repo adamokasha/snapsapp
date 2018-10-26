@@ -1,12 +1,12 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import {Link} from 'react-router-dom';
-import PropTypes from 'prop-types';
+import React from "react";
+import Typography from "@material-ui/core/Typography";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
-import SocialAuth from '../components/SocialAuth';
-import ToS from '../components/ToS'; 
+import SocialAuth from "../components/auth/SocialAuth";
+import ToS from "../components/auth/ToS";
 
-export const RegisterOrLogin = (props) => {
+export const RegisterOrLogin = props => {
   const { registerOrLogin } = props;
   return (
     <div>
@@ -16,27 +16,25 @@ export const RegisterOrLogin = (props) => {
         color="textPrimary"
         gutterBottom
       >
-        {registerOrLogin === 'register' ? 'Sign Up' : 'Login' }
+        {registerOrLogin === "register" ? "Sign Up" : "Login"}
       </Typography>
-      <SocialAuth
-        registerOrLogin={registerOrLogin}
-      />
+      <SocialAuth registerOrLogin={registerOrLogin} />
       <ToS />
-      <Typography 
+      <Typography
         to="/privacy"
         component={Link}
         variant="body2"
         align="center"
-        style={{marginTop: '8px'}}
+        style={{ marginTop: "8px" }}
       >
-      Privacy Policy
+        Privacy Policy
       </Typography>
     </div>
   );
 };
 
 RegisterOrLogin.propTypes = {
-  registerOrLogin: PropTypes.oneOf(['register', 'login'])
-}
+  registerOrLogin: PropTypes.oneOf(["register", "login"])
+};
 
 export default RegisterOrLogin;

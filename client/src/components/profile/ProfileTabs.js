@@ -7,9 +7,9 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import axios from "axios";
 
-import Grid from "./Grid";
-import { onScroll } from "../utils/utils";
-import { fetchForProfilePage } from "../async/scrollview";
+import Grid from "../grid/Grid";
+import { onScroll } from "../../utils/utils";
+import { fetchForProfilePage } from "../../async/scrollview";
 
 const styles = theme => ({
   root: {

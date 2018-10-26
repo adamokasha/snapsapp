@@ -16,10 +16,10 @@ import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
 import Divider from "@material-ui/core/Divider";
 import axios from "axios";
 
-import ModalView from "./ModalView";
-import PostLightbox from "./PostLightbox";
+import ModalView from "../modal/ModalView";
+import PostLightbox from "../post/PostLightbox";
 
-import { flattenPages } from "../utils/utils";
+import { flattenPages } from "../../utils/utils";
 
 const styles = theme => ({
   card: {

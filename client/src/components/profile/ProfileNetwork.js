@@ -13,11 +13,11 @@ import UndoIcon from "@material-ui/icons/Undo";
 import DoneOutlinedIcon from "@material-ui/icons/DoneOutlined";
 import axios from "axios";
 
-import ModalView from "./ModalView";
+import ModalView from "../modal/ModalView";
 import ProfileNetworkTabs from "./ProfileNetworkTabs";
-import MessageForm from "./MessageForm";
+import MessageForm from "../mbox/MessageForm";
 
-import { fetchFollows, onFollow, onUnfollow } from "../async/profiles";
+import { fetchFollows, onFollow, onUnfollow } from "../../async/profiles";
 
 const styles = theme => ({
   root: {

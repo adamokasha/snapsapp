@@ -13,8 +13,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
-import NavBar from "../components/NavBar";
-import CustomSnackbar from "../components/CustomSnackbar";
+import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 import { registerUser } from "../async/auth";
 import { setUser, setRegistered } from "../actions/auth";
 
@@ -121,7 +120,6 @@ class DisplayNameForm extends React.Component {
 
     return (
       <React.Fragment>
-        <NavBar />
         <main className={classes.layout}>
           <Paper className={classes.paper} elevation={1}>
             {this.state.isSubmitting && (

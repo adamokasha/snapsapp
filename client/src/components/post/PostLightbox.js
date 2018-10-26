@@ -3,15 +3,14 @@ import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
 import axios from "axios";
 
-import PostHeading from "../components/PostHeading";
-import PostActions from "../components/PostActions";
+import PostHeading from "./PostHeading";
+import PostActions from "./PostActions";
 import PostLighboxImage from "./PostLightboxImage";
-import PostDescription from "../components/PostDescription";
-import PostTags from "../components/PostTags";
-import { favePost } from "../async/posts";
+import PostDescription from "./PostDescription";
+import PostTags from "./PostTags";
+import { favePost } from "../../async/posts";
 
 const styles = theme => ({
   root: {
