@@ -14,7 +14,7 @@ import DoneOutlinedIcon from "@material-ui/icons/DoneOutlined";
 import axios from "axios";
 
 import ModalView from "../modal/ModalView";
-import ProfileNetworkTabs from "./ProfileNetworkTabs";
+import ProfileNetworkMenu from "./ProfileNetworkMenu";
 import ProfileMessageForm from "./ProfileMessageForm";
 import CustomSnackbar from "../snackbar/CustomSnackbar";
 
@@ -84,7 +84,10 @@ export class ProfileNetwork extends React.Component {
   onFollow = async () => {
     try {
       await onFollow(this.signal.token, this.props.userId);
-      this.setState({ clientFollows: true }, () => {});
+      this.setState(
+        { clientFollows: true, followersCount: this.state.followersCount + 1 },
+        () => {}
+      );
     } catch (e) {
       if (axios.isCancel(e)) {
         return console.log(e.message);
@@ -96,7 +99,10 @@ export class ProfileNetwork extends React.Component {
   onUnfollow = async () => {
     try {
       await onUnfollow(this.signal.token, this.props.userId);
-      this.setState({ clientFollows: false }, () => {});
+      this.setState(
+        { clientFollows: false, followersCount: this.state.followersCount - 1 },
+        () => {}
+      );
     } catch (e) {
       if (axios.isCancel(e)) {
         return console.log(e.message);
@@ -107,10 +113,6 @@ export class ProfileNetwork extends React.Component {
 
   onSubmitMessage = async (title, body) => {
     try {
-      // await axios.post(`/api/message/new/${this.props.userId}`, {
-      //   title: title,
-      //   body: body
-      // });
       await sendMessage(this.signal.token, this.props.userId, title, body);
       this.setState(
         {
@@ -155,7 +157,7 @@ export class ProfileNetwork extends React.Component {
                 </Typography>
               }
               modalComponent={
-                <ProfileNetworkTabs
+                <ProfileNetworkMenu
                   context="userFollowers"
                   tabPosition={0}
                   userId={userId}
@@ -177,7 +179,7 @@ export class ProfileNetwork extends React.Component {
                 </Typography>
               }
               modalComponent={
-                <ProfileNetworkTabs
+                <ProfileNetworkMenu
                   context="userFollows"
                   tabPosition={1}
                   userId={userId}

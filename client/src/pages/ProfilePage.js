@@ -16,7 +16,7 @@ import axios from "axios";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileNetwork from "../components/profile/ProfileNetwork";
 import ProfileForm from "../components/profile/ProfileForm";
-import ProfileTabs from "../components/profile/ProfileTabs";
+import ProfileActivity from "../components/profile/ProfileActivity";
 import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 
 import { updateProfile } from "../actions/auth";
@@ -231,7 +231,7 @@ export class ProfilePage extends React.Component {
             </Paper>
 
             {/* {this.props.children} */}
-            <ProfileTabs
+            <ProfileActivity
               profileTabPos={this.state.profileTabPos}
               user={this.state.displayName}
               pages={this.state.pages}
