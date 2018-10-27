@@ -53,33 +53,33 @@ module.exports = app => {
         throw new Error("Display name already in use! Try another.");
       }
 
-      await User.findByIdAndUpdate(
+      const user = await User.findByIdAndUpdate(
         { _id: req.user.id },
         {
           displayName: req.body.displayName,
           displayName_lower: req.body.displayName,
           registered: true,
           joined: Date.now()
-        }
+        },
+        { new: true }
       );
 
-      // Create and save new faves, follows, followers, messageBox doc for every newly reg'd user
-      await new Faves({
-        _owner: req.user.id
-      }).save();
-      await new Follows({
-        _owner: req.user.id
-      }).save();
-      await new Followers({
-        _owner: req.user.id
-      }).save();
-      await new MessageBox({
-        _owner: req.user.id
-      }).save();
+      await Promise.all([
+        new Faves({
+          _owner: req.user.id
+        }).save(),
+        new Follows({
+          _owner: req.user.id
+        }).save(),
+        new Followers({
+          _owner: req.user.id
+        }).save(),
+        new MessageBox({
+          _owner: req.user.id
+        }).save()
+      ]);
 
-      res
-        .status(200)
-        .send({ success: "You have been registered successfully!" });
+      res.status(200).send(user);
     } catch (e) {
       res.status(400).send({ error: e.message });
     }

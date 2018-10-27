@@ -37,7 +37,8 @@ class DisplayNameForm extends React.Component {
     e.preventDefault();
     try {
       this.setState({ isSubmitting: true }, () => {});
-      await registerUser(this.state.displayName);
+      const { data: userData } = await registerUser(this.state.displayName);
+      this.props.setUser(userData);
       this.props.setRegistered();
       this.props.history.push("/");
     } catch (e) {
