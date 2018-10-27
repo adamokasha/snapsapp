@@ -1,5 +1,17 @@
 import axios from "axios";
 
+export const sendMessage = async (cancelToken, userId, title, body) => {
+  const res = await axios.post(
+    `/api/message/new/${userId}`,
+    {
+      title: title,
+      body: body
+    },
+    { cancelToken }
+  );
+  return res;
+};
+
 export const fetchMessageCount = async cancelToken => {
   const res = await axios.get("/api/message/count", { cancelToken });
   return res;

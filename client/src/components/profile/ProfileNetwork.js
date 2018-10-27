@@ -15,19 +15,23 @@ import axios from "axios";
 
 import ModalView from "../modal/ModalView";
 import ProfileNetworkTabs from "./ProfileNetworkTabs";
-import MessageForm from "../mbox/MessageForm";
+import ProfileMessageForm from "./ProfileMessageForm";
+import CustomSnackbar from "../snackbar/CustomSnackbar";
 
 import { fetchFollows, onFollow, onUnfollow } from "../../async/profiles";
+import { sendMessage } from "../../async/messages";
 
 export class ProfileNetwork extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
     this.state = {
-      anchorEl: null,
       followersCount: "",
       followsCount: "",
-      clientFollows: null
+      clientFollows: null,
+      snackbarVar: null,
+      snackbarMessage: null,
+      snackbarOpen: false
     };
 
     this.signal = axios.CancelToken.source();
@@ -80,14 +84,11 @@ export class ProfileNetwork extends React.Component {
   onFollow = async () => {
     try {
       await onFollow(this.signal.token, this.props.userId);
-      this.setState({ clientFollows: true }, () => {
-        this.handleClose();
-      });
+      this.setState({ clientFollows: true }, () => {});
     } catch (e) {
       if (axios.isCancel(e)) {
         return console.log(e.message);
       }
-      this.handleClose();
       console.log(e);
     }
   };
@@ -95,24 +96,48 @@ export class ProfileNetwork extends React.Component {
   onUnfollow = async () => {
     try {
       await onUnfollow(this.signal.token, this.props.userId);
-      this.setState({ clientFollows: false }, () => {
-        this.handleClose();
-      });
+      this.setState({ clientFollows: false }, () => {});
     } catch (e) {
       if (axios.isCancel(e)) {
         return console.log(e.message);
       }
-      this.handleClose();
       console.log(e);
     }
   };
 
-  handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
+  onSubmitMessage = async (title, body) => {
+    try {
+      // await axios.post(`/api/message/new/${this.props.userId}`, {
+      //   title: title,
+      //   body: body
+      // });
+      await sendMessage(this.signal.token, this.props.userId, title, body);
+      this.setState(
+        {
+          snackbarOpen: true,
+          snackbarVar: "success",
+          snackbarMessage: "Your message was sent successfully!"
+        },
+        () => {}
+      );
+    } catch (e) {
+      this.setState(
+        {
+          snackbarOpen: true,
+          snackbarVar: "error",
+          snackbarMessage: "Something went wrong! Try again!"
+        },
+        () => {}
+      );
+    }
   };
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
+  onSnackbarOpen = () => {
+    this.setState({ snackbarOpen: true }, () => {});
+  };
+
+  onSnackbarClose = () => {
+    this.setState({ snackbarOpen: false }, () => {});
   };
 
   render() {
@@ -208,11 +233,21 @@ export class ProfileNetwork extends React.Component {
                   </Button>
                 }
                 modalComponent={
-                  <MessageForm withSnackbar={true} userId={userId} />
+                  <ProfileMessageForm
+                    onSubmitMessage={this.onSubmitMessage}
+                    userId={userId}
+                  />
                 }
               />
             </div>
           )}
+        <CustomSnackbar
+          snackbarOpen={this.state.snackbarOpen}
+          variant={this.state.snackbarVar}
+          message={this.state.snackbarMessage}
+          onSnackbarOpen={this.onSnackbarOpen}
+          onSnackbarClose={this.onSnackbarClose}
+        />
       </div>
     );
   }

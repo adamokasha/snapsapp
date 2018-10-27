@@ -1,6 +1,6 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import Avatar from "@material-ui/core/Avatar";
 import MailOutlinedIcon from "@material-ui/icons/MailOutlined";
@@ -9,20 +9,13 @@ import OutlinedInput from "@material-ui/core/OutlinedInput";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SendOutlinedIcon from "@material-ui/icons/SendOutlined";
-import axios from "axios";
 
-export class MessageForm extends React.Component {
-  constructor() {
-    super();
-
-    this.state = {
-      title: "",
-      body: "",
-      snackbarVar: null,
-      snackbarMessage: null,
-      isSending: false
-    };
-  }
+export class ProfileMessageForm extends React.Component {
+  state = {
+    title: "",
+    body: "",
+    isSending: false
+  };
 
   onTitleChange = e => {
     this.setState({ title: e.target.value }, () => {});
@@ -34,43 +27,26 @@ export class MessageForm extends React.Component {
 
   onSubmit = e => {
     e.preventDefault();
+    const submitMessage = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          await this.props.onSubmitMessage(this.state.title, this.state.body);
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      });
 
     this.setState({ isSending: true }, async () => {
       try {
-        await axios.post(`/api/message/new/${this.props.userId}`, {
-          title: this.state.title,
-          body: this.state.body
-        });
-        this.setState(
-          {
-            isSending: false,
-            snackbarVar: "success",
-            snackbarMessage: "Your message was sent successfully!"
-          },
-          () => {
-            this.props.handleClose();
-            this.props.onSnackbarSet(
-              this.state.snackbarVar,
-              this.state.snackbarMessage
-            );
-          }
-        );
+        await submitMessage();
+        this.props.handleClose();
+        this.setState({ isSending: false });
       } catch (e) {
-        this.setState({
-          snackbarVar: "error",
-          snackbarMessage: "Something went wrong! Try again!"
-        });
-        this.props.onSnackbarSet(
-          this.state.snackbarVar,
-          this.state.snackbarMessage
-        );
+        console.log(e);
+        this.setState({ isSending: false });
       }
     });
-  };
-
-  onSnackbarSet = () => {
-    const { snackbarVar, snackbarMessage } = this.state;
-    this.props.onSnackbarSet(snackbarVar, snackbarMessage);
   };
 
   render() {
@@ -130,10 +106,9 @@ export class MessageForm extends React.Component {
   }
 }
 
-MessageForm.propTypes = {
+ProfileMessageForm.propTypes = {
   userId: PropTypes.string.isRequired,
-  withSnackbar: PropTypes.bool.isRequired,
-  onSnackbarSet: PropTypes.func.isRequired
+  onSubmitMessage: PropTypes.func.isRequired
 };
 
 const styles = theme => ({
@@ -177,4 +152,4 @@ const styles = theme => ({
   }
 });
 
-export default withStyles(styles)(MessageForm);
+export default withStyles(styles)(ProfileMessageForm);
