@@ -1,9 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
+import { withStyles } from "@material-ui/core/styles";
 import compose from "recompose/compose";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -18,8 +18,6 @@ import axios from "axios";
 
 import ModalView from "../modal/ModalView";
 import PostLightbox from "../post/PostLightbox";
-
-import { flattenPages } from "../../utils/utils";
 
 class PostCard extends React.Component {
   state = {
@@ -82,10 +80,10 @@ class PostCard extends React.Component {
       );
     }
 
-    const flattenedPages = flattenPages(this.props.slideData);
-    const currentSlideIndex = flattenedPages.indexOf(this.props.post);
+    const { slideData } = this.props;
+    const currentSlideIndex = slideData.indexOf(this.props.post);
     const isFirstSlide = currentSlideIndex === 0 ? true : false;
-    const isLastSlide = flattenedPages.length - 1 === currentSlideIndex;
+    const isLastSlide = slideData.length - 1 === currentSlideIndex;
 
     return (
       <ModalView
@@ -98,7 +96,7 @@ class PostCard extends React.Component {
         }
         modalComponent={
           <PostLightbox
-            slideData={flattenedPages}
+            slideData={slideData}
             slideIndex={currentSlideIndex}
             post={this.props.post}
             isFirstSlide={isFirstSlide}

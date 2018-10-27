@@ -41,14 +41,14 @@ class ProfileNetworkMenu extends React.Component {
       );
       if (this.state.context === "userFollowers") {
         return this.setState({
-          followers: [pages],
+          followers: [...pages],
           followersPage: this.state.followersPage + 1,
           isFetching: false
         });
       }
 
       return this.setState({
-        following: [pages],
+        following: [...pages],
         followingPage: this.state.followingPage + 1,
         isFetching: false
       });
@@ -107,7 +107,7 @@ class ProfileNetworkMenu extends React.Component {
           return this.setState(
             {
               isFetching: false,
-              followers: [...this.state.followers, pages],
+              followers: [...this.state.followers, ...pages],
               followersPage: this.state.followersPage + 1
             },
             () => {}
@@ -116,7 +116,7 @@ class ProfileNetworkMenu extends React.Component {
         this.setState(
           {
             isFetching: false,
-            following: [...this.state.following, pages],
+            following: [...this.state.following, ...pages],
             followingPage: this.state.followingPage + 1
           },
           () => {}
@@ -162,7 +162,7 @@ class ProfileNetworkMenu extends React.Component {
           return this.setState(
             {
               isFetching: false,
-              followers: [pages],
+              followers: [...pages],
               followersPage: this.state.followersPage + 1
             },
             () => {}
@@ -170,7 +170,7 @@ class ProfileNetworkMenu extends React.Component {
         }
         return this.setState({
           isFetching: false,
-          following: [pages],
+          following: [...pages],
           followingPage: this.state.followingPage + 1
         });
       } catch (e) {

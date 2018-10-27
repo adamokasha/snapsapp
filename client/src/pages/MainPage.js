@@ -36,7 +36,7 @@ export class MainPage extends React.Component {
     try {
       const { data: postData } = await fetchPopular(this.signal.token, 0);
       this.setState(
-        { initialFetch: false, page: 1, pages: [postData] },
+        { initialFetch: false, page: 1, pages: [...postData] },
         () => {}
       );
     } catch (e) {
@@ -76,7 +76,7 @@ export class MainPage extends React.Component {
           {
             isFetching: false,
             page: this.state.page + 1,
-            pages: [...this.state.pages, data]
+            pages: [...this.state.pages, ...data]
           },
           () => {}
         );
@@ -112,7 +112,7 @@ export class MainPage extends React.Component {
         this.setState({
           isFetching: false,
           page: 1,
-          pages: [data],
+          pages: [...data],
           gridContext
         });
       });

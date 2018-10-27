@@ -34,7 +34,7 @@ export class SingleAlbumPage extends React.Component {
       );
       this.setState({
         initialFetch: false,
-        pages: [albumPosts],
+        pages: [...albumPosts],
         page: this.state.page + 1
       });
     } catch (e) {
@@ -65,7 +65,7 @@ export class SingleAlbumPage extends React.Component {
         this.setState(
           {
             isFetching: false,
-            pages: [...this.state.pages, albumPosts],
+            pages: [...this.state.pages, ...albumPosts],
             page: this.state.page + 1
           },
           () => {}

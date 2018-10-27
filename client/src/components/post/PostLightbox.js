@@ -29,12 +29,18 @@ class PostLightbox extends React.Component {
     this.signal = axios.CancelToken.source();
   }
 
-  checkIfFirstSlide() {
-    const { currentIndex } = this.state;
+  checkIfFirstSlide(currentIndex) {
     if (currentIndex === 0) {
       return this.setState({ start: true }, () => {});
     }
   }
+
+  checkIfPrevSlideIsFirst = currentIndex => {
+    if (currentIndex - 1 === 0) {
+      return true;
+    }
+    return false;
+  };
 
   checkIfNextSlideLast = () => {
     if (this.state.currentIndex + 1 === this.state.slides.length - 1) {
@@ -44,23 +50,28 @@ class PostLightbox extends React.Component {
   };
 
   onPrevSlide = () => {
-    this.checkIfFirstSlide();
-    this.setState({ isLoading: true, end: false });
     const { currentIndex } = this.state;
-    if (currentIndex - 1 < 0) {
-      return;
-    }
-    const prevSlide = this.state.slides[currentIndex - 1];
-    return this.setState(
-      { currentSlide: prevSlide, currentIndex: this.state.currentIndex - 1 },
-      () => {}
-    );
+    this.setState({ isLoading: true, end: false }, () => {
+      const prevSlideIsFirst = this.checkIfPrevSlideIsFirst(currentIndex);
+      const prevSlide = this.state.slides[currentIndex - 1];
+      if (prevSlideIsFirst) {
+        return this.setState({
+          start: true,
+          currentSlide: prevSlide,
+          currentIndex: this.state.currentIndex - 1
+        });
+      }
+      return this.setState(
+        { currentSlide: prevSlide, currentIndex: this.state.currentIndex - 1 },
+        () => {}
+      );
+    });
   };
 
   onNextSlide = () => {
     const { currentIndex } = this.state;
     this.setState({ isLoading: true, start: false }, () => {
-      const nextSlideIsLast = this.checkIfNextSlideLast();
+      const nextSlideIsLast = this.checkIfNextSlideLast(currentIndex);
       const nextSlide = this.state.slides[currentIndex + 1];
       if (nextSlideIsLast) {
         return this.setState(

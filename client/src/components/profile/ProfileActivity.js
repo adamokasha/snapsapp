@@ -60,7 +60,7 @@ class ProfileActivity extends React.Component {
         }
         this.setState(
           {
-            pages: [...this.state.pages, data],
+            pages: [...this.state.pages, ...data],
             isFetching: false,
             page: this.state.page + 1
           },
@@ -91,7 +91,7 @@ class ProfileActivity extends React.Component {
           this.props.user
         );
 
-        this.setState({ isFetching: false, pages: [data] }, () => {});
+        this.setState({ isFetching: false, pages: [...data] }, () => {});
       }
     );
   };

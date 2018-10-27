@@ -79,7 +79,7 @@ export class ProfilePage extends React.Component {
       this.setState(
         {
           id: _id,
-          pages: [userPosts],
+          pages: [...userPosts],
           profilePhoto,
           displayName,
           joined,

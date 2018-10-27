@@ -18,31 +18,63 @@ function Grid(props) {
     let tiles;
     switch (gridContext) {
       case "albums":
-        tiles = data.map(album => <Album key={album._id} album={album} />);
+        tiles = data.map(album => (
+          <GridListTile
+            key={album._id}
+            cols={1}
+            classes={{
+              root: classes.gridTileRoot,
+              tile: classes.tile
+            }}
+          >
+            <Album album={album} />
+          </GridListTile>
+        ));
         break;
       case "posts":
         tiles = data.map(post => (
-          <PostCard
-            slideData={gridData}
-            post={post}
+          <GridListTile
             key={post._id}
-            cardContext="post"
-          />
+            cols={1}
+            classes={{
+              root: classes.gridTileRoot,
+              tile: classes.tile
+            }}
+          >
+            <PostCard slideData={gridData} post={post} cardContext="post" />
+          </GridListTile>
         ));
         break;
       case "albumPosts":
         tiles = data.map(post => (
-          <PostCard post={post} key={post._id} cardContext="album" />
+          <GridListTile
+            key={post._id}
+            cols={1}
+            classes={{
+              root: classes.gridTileRoot,
+              tile: classes.tile
+            }}
+          >
+            <PostCard post={post} cardContext="album" />
+          </GridListTile>
         ));
         break;
       case "profiles":
         tiles = data.map(profile => (
-          <ProfileHeader
+          <GridListTile
             key={profile._id}
-            profilePhoto={profile.profilePhoto}
-            displayName={profile.displayName}
-            joined={profile.joined}
-          />
+            cols={1}
+            classes={{
+              root: classes.gridTileRoot,
+              tile: classes.tile
+            }}
+          >
+            <ProfileHeader
+              profilePhoto={profile.profilePhoto}
+              displayName={profile.displayName}
+              joined={profile.joined}
+            />
+          </GridListTile>
         ));
         break;
       default:
@@ -69,25 +101,11 @@ function Grid(props) {
           Go to Top
         </Button>
       )}
-      {gridData &&
-        gridData.map((page, i) => (
-          <GridList key={i} className={classes.gridList} cols={3}>
-            {renderGridTiles(page).map((tile, i) => {
-              return (
-                <GridListTile
-                  key={i}
-                  cols={1}
-                  classes={{
-                    root: classes.gridTileRoot,
-                    tile: classes.tile
-                  }}
-                >
-                  {tile}
-                </GridListTile>
-              );
-            })}
-          </GridList>
-        ))}
+      {gridData && (
+        <GridList className={classes.gridList} cols={3}>
+          {renderGridTiles(gridData)}
+        </GridList>
+      )}
 
       {isFetching && (
         <CircularProgress className={classes.circularProgress} size={50} />
