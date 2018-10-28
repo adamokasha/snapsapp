@@ -34,7 +34,8 @@ const styles = theme => ({
 });
 
 NavToTopButton.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  scrollToTop: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(NavToTopButton);

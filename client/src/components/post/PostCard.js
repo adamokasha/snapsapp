@@ -174,9 +174,11 @@ class PostCard extends React.Component {
 
 PostCard.propTypes = {
   classes: PropTypes.object.isRequired,
+  slideData: PropTypes.array.isRequired,
   post: PropTypes.object.isRequired,
   cardContext: PropTypes.oneOf(["post", "album"]),
-  onFavePost: PropTypes.func.isRequired
+  onFavePost: PropTypes.func.isRequired,
+  toggleShowNavToTopButton: PropTypes.func.isRequired
 };
 
 const styles = theme => ({
