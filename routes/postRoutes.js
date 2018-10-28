@@ -149,8 +149,7 @@ module.exports = app => {
     try {
       const { page, user } = req.params;
 
-      const userId = await User.find({ displayName: user }, "_id");
-      const faves = await Faves.find({ _owner: userId })
+      const faves = await Faves.find({ _displayName: user })
         .populate({
           path: "_faves",
           select: "_id"

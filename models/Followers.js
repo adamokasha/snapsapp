@@ -1,9 +1,10 @@
-const mongoose = require('mongoose');
-const { Schema } = require('mongoose');
+const mongoose = require("mongoose");
+const { Schema } = require("mongoose");
 
 const FollowersSchema = new Schema({
-  _owner: {type: Schema.Types.ObjectId, ref: 'User'},
-  followers: [{type: Schema.Types.ObjectId, ref: 'User'}]
-})
+  _displayName: String,
+  _owner: { type: Schema.Types.ObjectId, ref: "User" },
+  followers: [{ type: Schema.Types.ObjectId, ref: "User" }]
+});
 
-mongoose.model('Followers', FollowersSchema)
+mongoose.model("Followers", FollowersSchema);

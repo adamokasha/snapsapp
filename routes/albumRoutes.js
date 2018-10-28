@@ -33,8 +33,10 @@ module.exports = app => {
   app.get("/api/albums/all/:user/:page", async (req, res) => {
     try {
       const { user, page } = req.params;
-      const userId = await User.find({ displayName: user }, "_id");
-      const albums = await Album.find({ _owner: userId }, "_id name coverImg")
+      const albums = await Album.find(
+        { _displayName: user },
+        "_id name coverImg"
+      )
         .sort({ createdAt: -1 })
         .limit(15)
         .skip(15 * page)

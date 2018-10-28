@@ -66,15 +66,19 @@ module.exports = app => {
 
       await Promise.all([
         new Faves({
+          _displayName: user.displayName,
           _owner: req.user.id
         }).save(),
         new Follows({
+          _displayName: user.displayName,
           _owner: req.user.id
         }).save(),
         new Followers({
+          _displayName: user.displayName,
           _owner: req.user.id
         }).save(),
         new MessageBox({
+          _displayName: user.displayName,
           _owner: req.user.id
         }).save()
       ]);

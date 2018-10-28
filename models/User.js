@@ -16,8 +16,6 @@ const userSchema = new Schema({
     location: String,
     about: String
   },
-  albums: [{ type: Schema.Types.ObjectId, ref: "Album" }],
-  faves: [{ type: Schema.Types.ObjectId, ref: "Faves" }],
   registered: { type: Boolean, default: false }
 });
 
