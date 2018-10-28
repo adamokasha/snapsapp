@@ -8,17 +8,23 @@ import compose from "recompose/compose";
 import Typography from "@material-ui/core/Typography";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Divider from "@material-ui/core/Divider";
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
+import MailOutlinedIcon from "@material-ui/icons/MailOutlined";
 import axios from "axios";
 
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileNetwork from "../components/profile/ProfileNetwork";
+import ProfileNetworkMenu from "../components/profile/ProfileNetworkMenu";
+import ProfileMessageForm from "../components/profile/ProfileMessageForm";
 import ProfileForm from "../components/profile/ProfileForm";
 import ProfileActivity from "../components/profile/ProfileActivity";
+import ModalView from "../components/modal/ModalView";
 import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 
+import { sendMessage } from "../async/messages";
 import { updateProfile } from "../actions/auth";
 
 import {
@@ -45,8 +51,9 @@ export class ProfilePage extends React.Component {
       profileTabPos: this.props.location.state
         ? this.props.location.state.profileTabPos
         : 1,
-      snackbarOpen: false,
-      snackbarMessage: null
+      snackbarVar: null,
+      snackbarMessage: null,
+      snackbarOpen: false
     };
 
     this.signal = axios.CancelToken.source();
@@ -213,6 +220,37 @@ export class ProfilePage extends React.Component {
     });
   };
 
+  onSubmitMessage = async (title, body) => {
+    try {
+      await sendMessage(this.signal.token, this.state.id, title, body);
+      this.setState(
+        {
+          snackbarOpen: true,
+          snackbarVar: "success",
+          snackbarMessage: "Your message was sent successfully!"
+        },
+        () => {}
+      );
+    } catch (e) {
+      this.setState(
+        {
+          snackbarOpen: true,
+          snackbarVar: "error",
+          snackbarMessage: "Something went wrong! Try again!"
+        },
+        () => {}
+      );
+    }
+  };
+
+  onSnackbarOpen = () => {
+    this.setState({ snackbarOpen: true }, () => {});
+  };
+
+  onSnackbarClose = () => {
+    this.setState({ snackbarOpen: false }, () => {});
+  };
+
   renderEditButtons = ownProfile => {
     const { classes } = this.props;
 
@@ -265,10 +303,65 @@ export class ProfilePage extends React.Component {
                     onFollow={this.onFollow}
                     onUnfollow={this.onUnfollow}
                     ownProfile={ownProfile}
-                    userId={this.state.id}
                     clientFollows={this.state.network.clientFollows}
-                    followersCount={this.state.network.followersCount}
-                    followsCount={this.state.network.followsCount}
+                    followers={
+                      <ModalView
+                        togglerComponent={
+                          <Typography align="center" variant="body2">
+                            {this.state.network.followersCount}
+                            <br />
+                            Followers
+                          </Typography>
+                        }
+                        modalComponent={
+                          <ProfileNetworkMenu
+                            context="userFollowers"
+                            tabPosition={0}
+                            userId={this.state.id}
+                          />
+                        }
+                      />
+                    }
+                    following={
+                      <ModalView
+                        togglerComponent={
+                          <Typography
+                            align="center"
+                            variant="body2"
+                            className={classes.following}
+                          >
+                            {this.state.network.followsCount}
+                            <br />
+                            Following
+                          </Typography>
+                        }
+                        modalComponent={
+                          <ProfileNetworkMenu
+                            context="userFollows"
+                            tabPosition={1}
+                            userId={this.state.id}
+                          />
+                        }
+                      />
+                    }
+                    messageForm={
+                      <ModalView
+                        togglerComponent={
+                          <Button
+                            classes={{ root: classes.buttonRoot }}
+                            size="small"
+                          >
+                            <MailOutlinedIcon />
+                          </Button>
+                        }
+                        modalComponent={
+                          <ProfileMessageForm
+                            onSubmitMessage={this.onSubmitMessage}
+                            userId={this.state.id}
+                          />
+                        }
+                      />
+                    }
                   />
                 )}
               </div>
@@ -303,9 +396,11 @@ export class ProfilePage extends React.Component {
         )}
         {this.state.isFetching && <div>Loading...</div>}
         <CustomSnackbar
-          variant="error"
-          message={this.state.snackbarMessage}
           snackbarOpen={this.state.snackbarOpen}
+          variant={this.state.snackbarVar}
+          message={this.state.snackbarMessage}
+          onSnackbarOpen={this.onSnackbarOpen}
+          onSnackbarClose={this.onSnackbarClose}
         />
       </React.Fragment>
     );
@@ -390,6 +485,12 @@ const styles = theme => ({
   },
   noProfileText: {
     marginTop: `${theme.spacing.unit}px`
+  },
+  following: {
+    marginLeft: `${theme.spacing.unit}px`
+  },
+  buttonRoot: {
+    minWidth: "56px"
   }
 });
 
