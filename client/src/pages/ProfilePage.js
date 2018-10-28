@@ -21,7 +21,13 @@ import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 
 import { updateProfile } from "../actions/auth";
 
-import { fetchProfile, setProfile } from "../async/profiles";
+import {
+  fetchProfile,
+  setProfile,
+  fetchFollows,
+  onFollow,
+  onUnfollow
+} from "../async/profiles";
 import { fetchForProfilePage } from "../async/combined";
 
 export class ProfilePage extends React.Component {
@@ -34,7 +40,7 @@ export class ProfilePage extends React.Component {
       profile: null,
       pages: [],
       editEnabled: false,
-      ownProfile: false,
+      network: {},
       isLoading: false,
       profileTabPos: this.props.location.state
         ? this.props.location.state.profileTabPos
@@ -54,17 +60,20 @@ export class ProfilePage extends React.Component {
         2: "userAlbums"
       };
       const context = asyncContextMap[this.state.profileTabPos];
-      const [{ data: userData }, { data: userPosts }] = await axios.all([
+      const [
+        { data: userData },
+        { data: userPosts },
+        { data: userNetwork }
+      ] = await axios.all([
         fetchProfile(this.signal.token, this.props.match.params.user),
         fetchForProfilePage(
           this.signal.token,
           context,
           0,
           this.props.match.params.user
-        )
+        ),
+        fetchFollows(this.signal.token, this.props.match.params.user)
       ]);
-
-      const { profilePhoto, joined, displayName, profile, _id } = userData;
 
       let ownProfile;
       if (
@@ -76,6 +85,9 @@ export class ProfilePage extends React.Component {
         ownProfile = false;
       }
 
+      const { profilePhoto, joined, displayName, profile, _id } = userData;
+      const { followsCount, followersCount, clientFollows } = userNetwork;
+
       this.setState(
         {
           id: _id,
@@ -85,6 +97,11 @@ export class ProfilePage extends React.Component {
           joined,
           profile,
           ownProfile,
+          network: {
+            clientFollows,
+            followersCount,
+            followsCount
+          },
           isFetching: false
         },
         () => {}
@@ -104,7 +121,49 @@ export class ProfilePage extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  onFollow = async () => {
+    try {
+      await onFollow(this.signal.token, this.state.id);
+      this.setState(
+        {
+          network: {
+            ...this.state.network,
+            clientFollows: true,
+            followersCount: this.state.network.followersCount + 1
+          }
+        },
+        () => {}
+      );
+    } catch (e) {
+      if (axios.isCancel(e)) {
+        return console.log(e.message);
+      }
+      console.log(e);
+    }
+  };
+
+  onUnfollow = async () => {
+    try {
+      await onUnfollow(this.signal.token, this.state.id);
+      this.setState(
+        {
+          network: {
+            ...this.state.network,
+            clientFollows: false,
+            followersCount: this.state.network.followersCount - 1
+          }
+        },
+        () => {}
+      );
+    } catch (e) {
+      if (axios.isCancel(e)) {
+        return console.log(e.message);
+      }
+      console.log(e);
+    }
+  };
+
+  componentDidUpdate() {
     if (
       this.props.location.state &&
       this.props.location.state.profileTabPos !== this.state.profileTabPos
@@ -116,8 +175,6 @@ export class ProfilePage extends React.Component {
   componentWillUnmount() {
     this.signal.cancel("Async call cancelled.");
   }
-
-  checkIfProfileOwner = () => {};
 
   enableEdit = () => {
     this.setState({ editEnabled: true });
@@ -203,10 +260,17 @@ export class ProfilePage extends React.Component {
                   displayName={this.state.displayName}
                   joined={this.state.joined}
                 />
-                <ProfileNetwork
-                  ownProfile={ownProfile}
-                  userId={this.state.id}
-                />
+                {this.state.network && (
+                  <ProfileNetwork
+                    onFollow={this.onFollow}
+                    onUnfollow={this.onUnfollow}
+                    ownProfile={ownProfile}
+                    userId={this.state.id}
+                    clientFollows={this.state.network.clientFollows}
+                    followersCount={this.state.network.followersCount}
+                    followsCount={this.state.network.followsCount}
+                  />
+                )}
               </div>
               <Divider className={classes.hidingDivider} />
 
@@ -230,7 +294,6 @@ export class ProfilePage extends React.Component {
               )}
             </Paper>
 
-            {/* {this.props.children} */}
             <ProfileActivity
               profileTabPos={this.state.profileTabPos}
               user={this.state.displayName}

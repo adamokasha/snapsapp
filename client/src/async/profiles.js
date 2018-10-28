@@ -27,13 +27,12 @@ export const setProfile = async (cancelToken, profile) => {
 };
 
 // Fetch a user's following/followers for ProfileNetwork
-export const fetchFollows = async (cancelToken, userId) => {
+export const fetchFollows = async (cancelToken, user) => {
   try {
-    const { data } = await axios.get(`/api/profile/count/${userId}`, {
+    const res = await axios.get(`/api/profile/count/${user}`, {
       cancelToken
     });
-
-    return data[0];
+    return res;
   } catch (e) {
     throw e;
   }

@@ -26,9 +26,9 @@ export class ProfileNetwork extends React.Component {
     super();
 
     this.state = {
-      followersCount: "",
-      followsCount: "",
-      clientFollows: null,
+      // followersCount: "",
+      // followsCount: "",
+      // clientFollows: null,
       snackbarVar: null,
       snackbarMessage: null,
       snackbarOpen: false
@@ -37,79 +37,79 @@ export class ProfileNetwork extends React.Component {
     this.signal = axios.CancelToken.source();
   }
 
-  async componentDidMount() {
-    try {
-      // User navigated to a profile that doesn't exist
-      if (!this.props.userId) {
-        throw new Error();
-      }
-      const data = await fetchFollows(this.signal.token, this.props.userId);
-      const { followsCount, followersCount, clientFollows } = data;
-      this.setState({ followersCount, followsCount, clientFollows }, () => {});
-    } catch (e) {
-      if (axios.isCancel(e)) {
-        return console.log(e.message);
-      }
-      console.log(e);
-    }
-  }
+  // async componentDidMount() {
+  //   try {
+  //     // User navigated to a profile that doesn't exist
+  //     if (!this.props.userId) {
+  //       throw new Error();
+  //     }
+  //     const data = await fetchFollows(this.signal.token, this.props.userId);
+  //     const { followsCount, followersCount, clientFollows } = data;
+  //     this.setState({ followersCount, followsCount, clientFollows }, () => {});
+  //   } catch (e) {
+  //     if (axios.isCancel(e)) {
+  //       return console.log(e.message);
+  //     }
+  //     console.log(e);
+  //   }
+  // }
 
-  async componentDidUpdate(prevProps) {
-    if (prevProps.userId !== this.props.userId) {
-      console.log("called!");
-      try {
-        // User navigated to a profile that doesn't exist
-        if (!this.props.userId) {
-          throw new Error();
-        }
-        const data = await fetchFollows(this.signal.token, this.props.userId);
-        const { followsCount, followersCount, clientFollows } = data;
-        this.setState(
-          { followersCount, followsCount, clientFollows },
-          () => {}
-        );
-      } catch (e) {
-        if (axios.isCancel(e)) {
-          return console.log(e.message);
-        }
-        console.log(e);
-      }
-    }
-  }
+  // async componentDidUpdate(prevProps) {
+  //   if (prevProps.userId !== this.props.userId) {
+  //     console.log("called!");
+  //     try {
+  //       // User navigated to a profile that doesn't exist
+  //       if (!this.props.userId) {
+  //         throw new Error();
+  //       }
+  //       const data = await fetchFollows(this.signal.token, this.props.userId);
+  //       const { followsCount, followersCount, clientFollows } = data;
+  //       this.setState(
+  //         { followersCount, followsCount, clientFollows },
+  //         () => {}
+  //       );
+  //     } catch (e) {
+  //       if (axios.isCancel(e)) {
+  //         return console.log(e.message);
+  //       }
+  //       console.log(e);
+  //     }
+  //   }
+  // }
 
-  componentWillUnmount() {
-    this.signal.cancel("Async call cancelled.");
-  }
+  // componentWillUnmount() {
+  //   this.signal.cancel("Async call cancelled.");
+  // }
 
-  onFollow = async () => {
-    try {
-      await onFollow(this.signal.token, this.props.userId);
-      this.setState(
-        { clientFollows: true, followersCount: this.state.followersCount + 1 },
-        () => {}
-      );
-    } catch (e) {
-      if (axios.isCancel(e)) {
-        return console.log(e.message);
-      }
-      console.log(e);
-    }
-  };
+  // onFollow = async () => {
+  //   try {
+  //     await onFollow(this.signal.token, this.props.userId);
+  //     this.setState(
+  //       { clientFollows: true, followersCount: this.state.followersCount + 1 },
+  //       () => {}
+  //     );
+  //   } catch (e) {
+  //     if (axios.isCancel(e)) {
+  //       return console.log(e.message);
+  //     }
+  //     console.log(e);
+  //   }
+  // };
 
-  onUnfollow = async () => {
-    try {
-      await onUnfollow(this.signal.token, this.props.userId);
-      this.setState(
-        { clientFollows: false, followersCount: this.state.followersCount - 1 },
-        () => {}
-      );
-    } catch (e) {
-      if (axios.isCancel(e)) {
-        return console.log(e.message);
-      }
-      console.log(e);
-    }
-  };
+  // onUnfollow = async () => {
+  //   try {
+  //     await onUnfollow(this.signal.token, this.props.userId);
+  //     this.setState(
+  //       { clientFollows: false, followersCount: this.state.followersCount - 1 },
+  //       () => {}
+  //     );
+  //   } catch (e) {
+  //     if (axios.isCancel(e)) {
+  //       return console.log(e.message);
+  //     }
+  //     console.log(e);
+  //   }
+  // };
 
   onSubmitMessage = async (title, body) => {
     try {
@@ -151,7 +151,7 @@ export class ProfileNetwork extends React.Component {
             <ModalView
               togglerComponent={
                 <Typography align="center" variant="body2">
-                  {this.state.followersCount}
+                  {this.props.followersCount}
                   <br />
                   Followers
                 </Typography>
@@ -173,7 +173,7 @@ export class ProfileNetwork extends React.Component {
                   variant="body2"
                   className={classes.following}
                 >
-                  {this.state.followsCount}
+                  {this.props.followsCount}
                   <br />
                   Following
                 </Typography>
@@ -187,7 +187,7 @@ export class ProfileNetwork extends React.Component {
               }
             />
             <Typography className={classes.isFollowingText} variant="caption">
-              {this.state.clientFollows && (
+              {this.props.clientFollows && (
                 <React.Fragment>
                   <DoneOutlinedIcon fontSize="inherit" /> Following{" "}
                 </React.Fragment>
@@ -199,18 +199,18 @@ export class ProfileNetwork extends React.Component {
           !ownProfile && (
             <div
               className={
-                this.state.clientFollows
+                this.props.clientFollows
                   ? classNames(classes.buttonControls, classes.reversedButtons)
                   : classes.buttonControls
               }
             >
               <div>
-                {this.state.clientFollows ? (
+                {this.props.clientFollows ? (
                   <Tooltip title="Unfollow" placement="bottom">
                     <Button
                       classes={{ root: classes.buttonRoot }}
                       size="small"
-                      onClick={this.onUnfollow}
+                      onClick={this.props.onUnfollow}
                       className={classes.topIcon}
                     >
                       <UndoIcon className={classes.unFollowedIcon} />
@@ -222,7 +222,7 @@ export class ProfileNetwork extends React.Component {
                     size="small"
                     variant="contained"
                     color="primary"
-                    onClick={this.onFollow}
+                    onClick={this.props.onFollow}
                   >
                     <PersonAddOutlined />
                   </Button>
