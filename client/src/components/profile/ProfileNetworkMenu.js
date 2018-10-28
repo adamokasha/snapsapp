@@ -4,11 +4,14 @@ import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import GridList from "@material-ui/core/GridList";
+import GridListTile from "@material-ui/core/GridListTile";
 import Button from "@material-ui/core/Button";
-import { fetchFollows } from "../../async/combined";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from "axios";
 
-import Grid from "../grid/Grid";
+import ProfileHeader from "./ProfileHeader";
+import { fetchFollows } from "../../async/combined";
 
 class ProfileNetworkMenu extends React.Component {
   constructor(props) {
@@ -27,11 +30,9 @@ class ProfileNetworkMenu extends React.Component {
     };
 
     this.signal = axios.CancelToken.source();
-    // this.onScroll = onScroll.bind(this);
   }
 
   async componentDidMount() {
-    // window.addEventListener("scroll", this.onScroll(this.fetchNextPage), false);
     try {
       const { data: pages } = await fetchFollows(
         this.signal.token,
@@ -208,20 +209,52 @@ class ProfileNetworkMenu extends React.Component {
 
         <div className={classes.layout}>
           <div className={classes.gridContainer}>
-            {this.state.value === 0 && (
-              <Grid
-                gridContext="profiles"
-                gridData={this.state.followers}
-                userId={this.props.userId}
-                isFetching={this.state.isFetching}
-              />
-            )}
-            {this.state.value === 1 && (
-              <Grid
-                gridContext="profiles"
-                gridData={this.state.following}
-                userId={this.props.userId}
-                isFetching={this.state.isFetching}
+            {this.state.value === 0 &&
+              this.state.followers && (
+                <GridList className={classes.gridList} cols={3}>
+                  {this.state.followers.map((follower, i) => (
+                    <GridListTile
+                      key={i}
+                      cols={1}
+                      classes={{
+                        root: classes.gridTileRoot,
+                        tile: classes.tile
+                      }}
+                    >
+                      <ProfileHeader
+                        profilePhoto={follower.profilePhoto}
+                        displayName={follower.displayName}
+                        joined={follower.joined}
+                      />
+                    </GridListTile>
+                  ))}
+                </GridList>
+              )}
+            {this.state.value === 1 &&
+              this.state.following && (
+                <GridList className={classes.gridList} cols={3}>
+                  {this.state.following.map((following, i) => (
+                    <GridListTile
+                      key={i}
+                      cols={1}
+                      classes={{
+                        root: classes.gridTileRoot,
+                        tile: classes.tile
+                      }}
+                    >
+                      <ProfileHeader
+                        profilePhoto={following.profilePhoto}
+                        displayName={following.displayName}
+                        joined={following.joined}
+                      />
+                    </GridListTile>
+                  ))}
+                </GridList>
+              )}
+            {this.state.isFetching && (
+              <CircularProgress
+                className={classes.circularProgress}
+                size={50}
               />
             )}
           </div>
@@ -272,6 +305,33 @@ const styles = theme => ({
     height: "90%",
     paddingTop: `${theme.spacing.unit}px`,
     overflowY: "scroll"
+  },
+  gridList: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+    width: "100%",
+    overflowY: "unset"
+  },
+  gridTileRoot: {
+    height: "auto !important",
+    width: "100% !important",
+    [theme.breakpoints.up("sm")]: {
+      width: "45% !important",
+      margin: "0 auto"
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "30% !important",
+      margin: "0 auto"
+    }
+  },
+  // Inner div that wraps children
+  tile: {
+    overflow: "initial"
+  },
+  circularProgress: {
+    margin: "16px auto",
+    display: "block"
   },
   buttonContainer: {
     height: "10%"

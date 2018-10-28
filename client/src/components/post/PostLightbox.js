@@ -109,7 +109,7 @@ class PostLightbox extends React.Component {
       new Promise((resolve, reject) => {
         this.setState({ isFaving: true }, async () => {
           try {
-            await this.props.onFavePost(this.props.post._id);
+            await this.props.onFavePost(this.state.currentSlide._id);
             this.setState({ isFaving: false }, () => resolve());
           } catch (e) {
             reject();
