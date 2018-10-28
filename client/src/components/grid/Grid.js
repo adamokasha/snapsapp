@@ -41,7 +41,12 @@ function Grid(props) {
               tile: classes.tile
             }}
           >
-            <PostCard slideData={gridData} post={post} cardContext="post" />
+            <PostCard
+              onFavePost={props.onFavePost}
+              slideData={gridData}
+              post={post}
+              cardContext="post"
+            />
           </GridListTile>
         ));
         break;
@@ -101,11 +106,9 @@ function Grid(props) {
           Go to Top
         </Button>
       )}
-      {gridData && (
-        <GridList className={classes.gridList} cols={3}>
-          {renderGridTiles(gridData)}
-        </GridList>
-      )}
+      <GridList className={classes.gridList} cols={3}>
+        {props.children}
+      </GridList>
 
       {isFetching && (
         <CircularProgress className={classes.circularProgress} size={50} />
@@ -146,9 +149,6 @@ const styles = theme => ({
   // Inner div that wraps children
   tile: {
     overflow: "initial"
-  },
-  subheader: {
-    width: "100%"
   },
   circularProgress: {
     margin: "16px auto",

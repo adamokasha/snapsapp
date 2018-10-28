@@ -14,44 +14,28 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
 import Divider from "@material-ui/core/Divider";
-import axios from "axios";
 
 import ModalView from "../modal/ModalView";
 import PostLightbox from "../post/PostLightbox";
 
 class PostCard extends React.Component {
   state = {
-    imgId: this.props.post._id,
-    faved: this.props.post.isFave,
-    faveColor: "default",
-    open: false,
-    slideData: this.props.slideData
+    isFaving: false
   };
 
-  handleOpen = () => {
-    let goTopButton = document.getElementById("goTopButton");
-    if (goTopButton) {
-      goTopButton.style.display = "none";
-    }
-    this.setState({ open: true });
-  };
-
-  handleClose = () => {
-    this.setState({ open: false });
-    let goTopButton = document.getElementById("goTopButton");
-    if (goTopButton) {
-      goTopButton.style.display = "inline-flex";
-    }
-  };
-
-  onFave = async () => {
-    try {
-      this.setState({ faved: !this.state.faved });
-      await axios.post(`/api/posts/fave/${this.state.imgId}`);
-      return;
-    } catch (e) {
-      console.log(e);
-    }
+  onFavePost = () => {
+    const favePost = () =>
+      new Promise((resolve, reject) => {
+        this.setState({ isFaving: true }, async () => {
+          try {
+            await this.props.onFavePost(this.props.post._id);
+            this.setState({ isFaving: false }, () => resolve());
+          } catch (e) {
+            reject();
+          }
+        });
+      });
+    favePost();
   };
 
   // Will select view based on width: Modal(m+) or redirect to full page view(s-)
@@ -80,15 +64,15 @@ class PostCard extends React.Component {
       );
     }
 
-    const { slideData } = this.props;
-    const currentSlideIndex = slideData.indexOf(this.props.post);
+    const currentSlideIndex = this.props.slideData.indexOf(this.props.post);
     const isFirstSlide = currentSlideIndex === 0 ? true : false;
-    const isLastSlide = slideData.length - 1 === currentSlideIndex;
+    const isLastSlide = this.props.slideData.length - 1 === currentSlideIndex;
 
     return (
       <ModalView
         togglerComponent={
           <CardMedia
+            onClick={() => this.props.toggleShowNavToTopButton(false)}
             className={classes.media}
             image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${imgUrl}`}
             title={title || "Untitled"}
@@ -96,7 +80,8 @@ class PostCard extends React.Component {
         }
         modalComponent={
           <PostLightbox
-            slideData={slideData}
+            onFavePost={this.props.onFavePost}
+            slideData={this.props.slideData}
             slideIndex={currentSlideIndex}
             post={this.props.post}
             isFirstSlide={isFirstSlide}
@@ -159,11 +144,12 @@ class PostCard extends React.Component {
                 <React.Fragment>
                   <IconButton
                     aria-label="Add to favorites"
-                    onClick={this.onFave}
-                    color={this.state.faved ? "secondary" : "default"}
+                    onClick={this.onFavePost}
+                    color={this.props.post.isFave ? "secondary" : "default"}
                     classes={{
                       root: classes.iconButtonRoot
                     }}
+                    disabled={this.state.isFaving}
                   >
                     <FavoriteTwoToneIcon />
                   </IconButton>
@@ -189,7 +175,8 @@ class PostCard extends React.Component {
 PostCard.propTypes = {
   classes: PropTypes.object.isRequired,
   post: PropTypes.object.isRequired,
-  cardContext: PropTypes.oneOf(["post", "album"])
+  cardContext: PropTypes.oneOf(["post", "album"]),
+  onFavePost: PropTypes.func.isRequired
 };
 
 const styles = theme => ({

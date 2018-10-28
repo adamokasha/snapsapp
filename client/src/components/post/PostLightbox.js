@@ -29,6 +29,15 @@ class PostLightbox extends React.Component {
     this.signal = axios.CancelToken.source();
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.slideData !== prevProps.slideData) {
+      this.setState({
+        slides: this.props.slideData,
+        currentSlide: this.props.slideData[this.state.currentIndex]
+      });
+    }
+  }
+
   checkIfFirstSlide(currentIndex) {
     if (currentIndex === 0) {
       return this.setState({ start: true }, () => {});
@@ -96,27 +105,18 @@ class PostLightbox extends React.Component {
   };
 
   onFavePost = () => {
-    this.setState({ isFaving: true }, async () => {
-      try {
-        await favePost(this.signal.token, this.state.currentSlide._id);
-        this.setState({
-          currentSlide: {
-            ...this.state.currentSlide,
-            isFave: !this.state.currentSlide.isFave,
-            faveCount: this.state.currentSlide.faveCount
-              ? this.state.currentSlide.faveCount - 1
-              : this.state.currentSlide.faveCount + 1
-          },
-          isFaving: false
+    const favePost = () =>
+      new Promise((resolve, reject) => {
+        this.setState({ isFaving: true }, async () => {
+          try {
+            await this.props.onFavePost(this.props.post._id);
+            this.setState({ isFaving: false }, () => resolve());
+          } catch (e) {
+            reject();
+          }
         });
-      } catch (e) {
-        if (axios.isCancel(e)) {
-          return console.log(e.message);
-        }
-        console.log(e);
-        this.setState({ isFaving: false }, () => {});
-      }
-    });
+      });
+    favePost();
   };
 
   render() {
@@ -178,7 +178,11 @@ class PostLightbox extends React.Component {
 
 PostLightbox.propTypes = {
   classes: PropTypes.object.isRequired,
-  post: PropTypes.object.isRequired
+  post: PropTypes.object.isRequired,
+  isFirstSlide: PropTypes.bool.isRequired,
+  isLastSlide: PropTypes.bool.isRequired,
+  slideData: PropTypes.array.isRequired,
+  slideIndex: PropTypes.number.isRequired
 };
 
 const styles = theme => ({
