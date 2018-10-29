@@ -31,7 +31,7 @@ export const MessageList = props => {
         <div className={classes.selectAllContainer}>
           <Checkbox
             onClick={() => onSelectAll()}
-            checked={messages.length > 1 && messages.length === selected.length}
+            checked={messages.length > 0 && messages.length === selected.length}
             disabled={messages.length ? false : true}
           />
           <Typography variant="body2">Select All</Typography>

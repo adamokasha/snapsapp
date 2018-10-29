@@ -43,44 +43,116 @@ export class MessageBox extends React.Component {
   }
 
   async componentDidMount() {
-    try {
-      this.setList(this.state.listType, this.state.currentListPage);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  shouldComponentUpdate(nextProps) {
-    if (this.props.mBoxNotif !== nextProps.mBoxNotif) {
-      return false;
-    }
-    return true;
+    this.setList(this.state.listType);
   }
 
   componentWillUnmount() {
     this.signal.cancel("Async call cancelled.");
   }
 
+  setList = async listView => {
+    try {
+      let res;
+      const { token: cancelToken } = this.signal;
+      const { currentListPage } = this.state;
+      switch (listView) {
+        case "unread":
+          res = await async.fetchUnread(cancelToken, currentListPage);
+          break;
+        case "all":
+          res = await async.fetchAll(cancelToken, currentListPage);
+          break;
+        case "sent":
+          res = await async.fetchSent(cancelToken, currentListPage);
+          break;
+        default:
+          return;
+      }
+
+      !res.data[`_${listView}`]
+        ? this.setState(
+            {
+              initialFetch: false,
+              view: "list",
+              listType: listView,
+              hasMoreLists: false,
+              isLoading: false,
+              messages: []
+            },
+            () => {}
+          )
+        : (() => {
+            const messages = res.data[`_${listView}`];
+
+            listView === "unread" && messages.length !== this.props.mBoxNotif
+              ? this.props.updateMboxNotif(messages.length)
+              : null;
+
+            this.setState({
+              initialFetch: false,
+              view: "list",
+              listType: listView,
+              messages: [...messages],
+              isLoading: false
+            });
+          })();
+    } catch (e) {
+      axios.isCancel()
+        ? console.log(e.message)
+        : this.setState({ isLoading: false, snackbarOpen: true });
+    }
+  };
+
+  onListForward = async () => {
+    this.state.currentListPage === 0
+      ? null
+      : this.setState(
+          {
+            currentListPage: this.state.currentListPage - 1,
+            isLoading: true,
+            hasMoreLists: true,
+            selected: []
+          },
+          () => {
+            this.setList(this.state.listType);
+          }
+        );
+  };
+
+  onListBack = () => {
+    this.setState(
+      {
+        currentListPage: this.state.currentListPage + 1,
+        isLoading: true,
+        selected: []
+      },
+      () => {
+        this.setList(this.state.listType);
+      }
+    );
+  };
+
   onSelectOne = messageId => {
     const { selected } = this.state;
-    // Add
-    if (!selected.includes(messageId)) {
-      return this.setState({ selected: [...this.state.selected, messageId] });
-    }
-    //Remove
-    const filtered = selected.filter(id => id !== messageId);
-    this.setState({ selected: [...filtered] });
+    !selected.includes(messageId)
+      ? // Add
+        this.setState({ selected: [...this.state.selected, messageId] })
+      : //Remove
+        (() => {
+          const filtered = selected.filter(id => id !== messageId);
+          this.setState({ selected: [...filtered] });
+        })();
   };
 
   onSelectAll = () => {
     const { selected, messages } = this.state;
     // Remove all
-    if (selected.length === messages.length) {
-      return this.setState({ selected: [] });
-    }
-
-    const allMessageIds = messages.map(message => message._id);
-    this.setState({ selected: [...allMessageIds] });
+    selected.length === messages.length
+      ? this.setState({ selected: [] })
+      : (() => {
+          const allMessageIds = messages.map(message => message._id);
+          this.setState({ selected: [...allMessageIds] });
+        })();
   };
 
   setMessage = messageId => {
@@ -105,10 +177,9 @@ export class MessageBox extends React.Component {
         });
       });
     } catch (e) {
-      if (axios.isCancel()) {
-        return console.log(e.message);
-      }
-      this.setState({ isLoading: false, snackbarOpen: true });
+      axios.isCancel()
+        ? console.log(e.message)
+        : this.setState({ isLoading: false, snackbarOpen: true });
     }
   };
 
@@ -138,11 +209,9 @@ export class MessageBox extends React.Component {
         isSending: false
       });
     } catch (e) {
-      if (axios.isCancel()) {
-        return console.log(e.message);
-      }
-      console.log(e);
-      this.setState({ isSending: false, snackbarOpen: true });
+      axios.isCancel()
+        ? console.log(e.message)
+        : this.setState({ isSending: false, snackbarOpen: true });
     }
   };
 
@@ -154,27 +223,29 @@ export class MessageBox extends React.Component {
           this.state.currentMessage._id,
           this.state.currentMessagePage
         );
-        if (!data) {
-          return this.setState({ hasMoreReplies: false, isLoading: false });
-        }
-        this.setState(
-          {
-            view: "message",
-            isLoading: false,
-            currentMessage: {
-              ...this.state.currentMessage,
-              replies: [...data.replies, ...this.state.currentMessage.replies]
-            },
-            currentMessagePage: this.state.currentMessagePage + 1
-          },
-          () => {}
-        );
+
+        !data
+          ? this.setState({ hasMoreReplies: false, isLoading: false })
+          : this.setState(
+              {
+                view: "message",
+                isLoading: false,
+                currentMessage: {
+                  ...this.state.currentMessage,
+                  replies: [
+                    ...data.replies,
+                    ...this.state.currentMessage.replies
+                  ]
+                },
+                currentMessagePage: this.state.currentMessagePage + 1
+              },
+              () => {}
+            );
       });
     } catch (e) {
-      if (axios.isCancel()) {
-        return console.log(e.message);
-      }
-      this.setState({ isLoading: false, snackbarOpen: true });
+      axios.isCancel()
+        ? console.log(e.message)
+        : this.setState({ isLoading: false, snackbarOpen: true });
     }
   };
 
@@ -186,60 +257,6 @@ export class MessageBox extends React.Component {
         this.setList(listType);
       }
     );
-  };
-
-  setList = async listView => {
-    try {
-      let res;
-      const { token: cancelToken } = this.signal;
-      const { currentListPage } = this.state;
-      switch (listView) {
-        case "unread":
-          res = await async.fetchUnread(cancelToken, currentListPage);
-          break;
-        case "all":
-          res = await async.fetchAll(cancelToken, currentListPage);
-          break;
-        case "sent":
-          res = await async.fetchSent(cancelToken, currentListPage);
-          break;
-        default:
-          return;
-      }
-
-      if (!res.data[`_${listView}`]) {
-        return this.setState(
-          {
-            initialFetch: false,
-            view: "list",
-            listType: listView,
-            hasMoreLists: false,
-            isLoading: false,
-            messages: []
-          },
-          () => {}
-        );
-      }
-
-      const messages = res.data[`_${listView}`];
-
-      if (messages.length !== this.props.mBoxNotif) {
-        this.props.updateMboxNotif(messages.length);
-      }
-
-      return this.setState({
-        initialFetch: false,
-        view: "list",
-        listType: listView,
-        messages: [...messages],
-        isLoading: false
-      });
-    } catch (e) {
-      if (axios.isCancel()) {
-        return console.log(e.message);
-      }
-      this.setState({ isLoading: false, snackbarOpen: true });
-    }
   };
 
   goBack = async listType => {
@@ -268,43 +285,11 @@ export class MessageBox extends React.Component {
           () => {}
         );
       } catch (e) {
-        if (axios.isCancel()) {
-          return console.log(e.message);
-        }
-        console.log(e);
-        this.setState({ isLoading: false, snackbarOpen: true });
+        axios.isCancel()
+          ? console.log(e.message)
+          : this.setState({ isLoading: false, snackbarOpen: true });
       }
     });
-  };
-
-  onListForward = async () => {
-    if (this.state.currentListPage === 0) {
-      return;
-    }
-    this.setState(
-      {
-        currentListPage: this.state.currentListPage - 1,
-        isLoading: true,
-        hasMoreLists: true,
-        selected: []
-      },
-      () => {
-        this.setList(this.state.listType);
-      }
-    );
-  };
-
-  onListBack = () => {
-    this.setState(
-      {
-        currentListPage: this.state.currentListPage + 1,
-        isLoading: true,
-        selected: []
-      },
-      () => {
-        this.setList(this.state.listType);
-      }
-    );
   };
 
   onSnackbarOpen = () => {
