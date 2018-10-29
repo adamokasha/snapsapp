@@ -13,9 +13,11 @@ import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
+import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
 import Divider from "@material-ui/core/Divider";
 
 import ModalView from "../modal/ModalView";
+import ShareButton from "../buttons/ShareButton";
 import PostLightbox from "../post/PostLightbox";
 
 class PostCard extends React.Component {
@@ -153,15 +155,17 @@ class PostCard extends React.Component {
                   >
                     <FavoriteTwoToneIcon />
                   </IconButton>
-                  <IconButton
-                    aria-label="Share"
-                    color="default"
-                    classes={{
-                      root: classes.iconButtonRoot
-                    }}
-                  >
-                    <ion-icon name="share-alt" />
-                  </IconButton>
+                  <ShareButton
+                    button={
+                      <IconButton
+                        aria-label="Share"
+                        color="default"
+                        classes={{
+                          root: classes.iconButtonRoot
+                        }}
+                      />
+                    }
+                  />
                 </React.Fragment>
               ) : null}
             </div>
@@ -197,6 +201,9 @@ const styles = theme => ({
     justifyContent: "space-between"
   },
   actionsLeft: {
+    display: "flex"
+  },
+  actionsRight: {
     display: "flex"
   },
   iconButtonRoot: {
