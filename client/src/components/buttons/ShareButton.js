@@ -38,7 +38,7 @@ export class ShareButton extends React.Component {
     this.setState({ popperOpen: true });
   };
 
-  popperClose = e => {
+  closePopper = e => {
     this.setState({ popperOpen: false, linkCopied: "Copy Link" });
   };
 
@@ -68,15 +68,11 @@ export class ShareButton extends React.Component {
           open={this.state.popperOpen}
           transition
           disablePortal
-          placement="bottom-start"
+          placement="right-end"
         >
           {({ TransitionProps }) => (
-            <Grow
-              {...TransitionProps}
-              id="menu-list-grow"
-              style={{ transformOrigin: "center top" }}
-            >
-              <ClickAwayListener onClickAway={this.popperClose}>
+            <Grow {...TransitionProps} id="menu-list-grow">
+              <ClickAwayListener onClickAway={this.closePopper}>
                 <List>
                   <Paper>
                     <MenuItem
@@ -84,15 +80,42 @@ export class ShareButton extends React.Component {
                       onClick={this.handleClose}
                     >
                       <FacebookShareButton
-                        children={<IconButton children={<FacebookIcon />} />}
+                        children={
+                          <IconButton
+                            onClick={this.closePopper}
+                            children={
+                              <FacebookIcon
+                                classes={{ root: classes.facebookIconRoot }}
+                              />
+                            }
+                          />
+                        }
                         url={url}
                       />
                       <TwitterShareButton
-                        children={<IconButton children={<TwitterIcon />} />}
+                        children={
+                          <IconButton
+                            onClick={this.closePopper}
+                            children={
+                              <TwitterIcon
+                                classes={{ root: classes.twitterIconRoot }}
+                              />
+                            }
+                          />
+                        }
                         url={url}
                       />
                       <RedditShareButton
-                        children={<IconButton children={<RedditIcon />} />}
+                        children={
+                          <IconButton
+                            onClick={this.closePopper}
+                            children={
+                              <RedditIcon
+                                classes={{ root: classes.redditIconRoot }}
+                              />
+                            }
+                          />
+                        }
                         url={url}
                       />
                     </MenuItem>
@@ -102,16 +125,35 @@ export class ShareButton extends React.Component {
                     >
                       <PinterestShareButton
                         media={imgUrl}
-                        children={<IconButton children={<PinterestIcon />} />}
+                        children={
+                          <IconButton
+                            onClick={this.closePopper}
+                            children={
+                              <PinterestIcon
+                                classes={{ root: classes.pinterestIconRoot }}
+                              />
+                            }
+                          />
+                        }
                         url={url}
                       />
                       <WhatsappShareButton
-                        children={<IconButton children={<WhatsappIcon />} />}
+                        children={
+                          <IconButton
+                            onClick={this.closePopper}
+                            children={
+                              <WhatsappIcon
+                                classes={{ root: classes.whatsappIconRoot }}
+                              />
+                            }
+                          />
+                        }
                         url={url}
                       />
                       <EmailShareButton
                         children={
                           <IconButton
+                            onClick={this.closePopper}
                             children={
                               <MailOutlineIcon
                                 classes={{ root: classes.mailIconRoot }}
@@ -125,6 +167,7 @@ export class ShareButton extends React.Component {
 
                     {document.queryCommandSupported("copy") && (
                       <MenuItem
+                        onClick={this.closePopper}
                         color="primary"
                         variant="flat"
                         component={Button}
@@ -156,12 +199,27 @@ export class ShareButton extends React.Component {
 const styles = theme => ({
   popper: {
     zIndex: "1000",
-    transform: "translateX(-50%)"
+    transform: "translate(-75%, -75%)"
   },
   menuListItemRoot: {
     "&:hover": {
       backgroundColor: "inherit"
     }
+  },
+  facebookIconRoot: {
+    fill: "#3b5998"
+  },
+  twitterIconRoot: {
+    fill: "#1da1f2"
+  },
+  redditIconRoot: {
+    fill: "#ff4500"
+  },
+  pinterestIconRoot: {
+    fill: "#bd081c"
+  },
+  whatsappIconRoot: {
+    fill: "#25d366"
   },
   mailIconRoot: {
     fontSize: "32px",
