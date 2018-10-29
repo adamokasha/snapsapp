@@ -97,9 +97,11 @@ class PostCard extends React.Component {
   render() {
     const { classes, cardContext } = this.props;
     const {
+      _id,
       _owner,
       title,
       description,
+      imgUrl,
       faveCount,
       createdAt
     } = this.props.post;
@@ -156,6 +158,8 @@ class PostCard extends React.Component {
                     <FavoriteTwoToneIcon />
                   </IconButton>
                   <ShareButton
+                    postId={_id}
+                    imgUrl={imgUrl}
                     button={
                       <IconButton
                         aria-label="Share"
@@ -163,7 +167,9 @@ class PostCard extends React.Component {
                         classes={{
                           root: classes.iconButtonRoot
                         }}
-                      />
+                      >
+                        <ShareTwoToneIcon />
+                      </IconButton>
                     }
                   />
                 </React.Fragment>
