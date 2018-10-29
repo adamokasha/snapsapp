@@ -230,7 +230,9 @@ const styles = theme => ({
 });
 
 ShareButton.propTypes = {
-  button: PropTypes.element.isRequired
+  button: PropTypes.element.isRequired,
+  postId: PropTypes.string.isRequired,
+  imgUrl: PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(ShareButton);

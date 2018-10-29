@@ -51,6 +51,8 @@ export const PostActions = props => {
         15
       </Button>
       <PostShare
+        postId={props.postId}
+        imgUrl={props.imgUrl}
         classes={{ popper: classes.popper }}
         button={
           <Button size="small" className={classes.buttons}>
@@ -63,6 +65,8 @@ export const PostActions = props => {
 };
 
 PostActions.propTypes = {
+  postId: PropTypes.string.isRequired,
+  imgUrl: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
   faveCount: PropTypes.number.isRequired,
   isFave: PropTypes.bool.isRequired,

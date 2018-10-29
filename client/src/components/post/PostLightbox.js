@@ -122,6 +122,7 @@ class PostLightbox extends React.Component {
   render() {
     const { classes } = this.props;
     const {
+      _id,
       _owner,
       title,
       createdAt,
@@ -144,6 +145,8 @@ class PostLightbox extends React.Component {
                   title={title}
                 />
                 <PostActions
+                  postId={_id}
+                  imgUrl={imgUrl}
                   faveCount={faveCount}
                   isFave={isFave}
                   canFave={this.props.auth}

@@ -144,36 +144,34 @@ class PostCard extends React.Component {
               <Typography variant="caption">15 Comments</Typography>
             </div>
             <div className={classes.actionsRight}>
-              {this.props.isAuth ? (
-                <React.Fragment>
-                  <IconButton
-                    aria-label="Add to favorites"
-                    onClick={this.onFavePost}
-                    color={this.props.post.isFave ? "secondary" : "default"}
-                    classes={{
-                      root: classes.iconButtonRoot
-                    }}
-                    disabled={this.state.isFaving}
-                  >
-                    <FavoriteTwoToneIcon />
-                  </IconButton>
-                  <PostShare
-                    postId={_id}
-                    imgUrl={imgUrl}
-                    button={
-                      <IconButton
-                        aria-label="Share"
-                        color="default"
-                        classes={{
-                          root: classes.iconButtonRoot
-                        }}
-                      >
-                        <ShareTwoToneIcon />
-                      </IconButton>
-                    }
-                  />
-                </React.Fragment>
-              ) : null}
+              <React.Fragment>
+                <IconButton
+                  aria-label="Add to favorites"
+                  onClick={this.onFavePost}
+                  color={this.props.post.isFave ? "secondary" : "default"}
+                  classes={{
+                    root: classes.iconButtonRoot
+                  }}
+                  disabled={this.state.isFaving || !this.props.auth}
+                >
+                  <FavoriteTwoToneIcon />
+                </IconButton>
+                <PostShare
+                  postId={_id}
+                  imgUrl={imgUrl}
+                  button={
+                    <IconButton
+                      aria-label="Share"
+                      color="default"
+                      classes={{
+                        root: classes.iconButtonRoot
+                      }}
+                    >
+                      <ShareTwoToneIcon />
+                    </IconButton>
+                  }
+                />
+              </React.Fragment>
             </div>
           </CardActions>
         </Card>
@@ -230,7 +228,7 @@ const styles = theme => ({
 });
 
 const mapStateToProps = auth => ({
-  isAuth: auth
+  auth
 });
 
 export default compose(
