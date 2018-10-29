@@ -2,11 +2,14 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import Popper from "@material-ui/core/Popper";
+import List from "@material-ui/core/List";
+import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Grow from "@material-ui/core/Grow";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
+import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -26,7 +29,8 @@ export class ShareButton extends React.Component {
   constructor() {
     super();
     this.state = {
-      popperOpen: false
+      popperOpen: false,
+      linkCopied: "Copy Link"
     };
   }
 
@@ -35,7 +39,13 @@ export class ShareButton extends React.Component {
   };
 
   popperClose = e => {
-    this.setState({ popperOpen: false });
+    this.setState({ popperOpen: false, linkCopied: "Copy Link" });
+  };
+
+  copyLink = () => {
+    this.hiddenTextArea.select();
+    document.execCommand("copy");
+    this.setState({ linkCopied: "Link Copied!" });
   };
 
   render() {
@@ -66,43 +76,75 @@ export class ShareButton extends React.Component {
               id="menu-list-grow"
               style={{ transformOrigin: "center top" }}
             >
-              <Paper>
-                <ClickAwayListener onClickAway={this.popperClose}>
-                  <MenuItem
-                    classes={{ root: classes.menuListItemRoot }}
-                    onClick={this.handleClose}
-                  >
-                    <FacebookShareButton
-                      children={<IconButton children={<FacebookIcon />} />}
-                      url={url}
-                    />
-                    <TwitterShareButton
-                      children={<IconButton children={<TwitterIcon />} />}
-                      url={url}
-                    />
-                    <RedditShareButton
-                      children={<IconButton children={<RedditIcon />} />}
-                      url={url}
-                    />
-                  </MenuItem>
-                  <MenuItem
-                    classes={{ root: classes.menuListItemRoot }}
-                    onClick={this.handleClose}
-                  >
-                    <PinterestShareButton
-                      media={imgUrl}
-                      children={<IconButton children={<PinterestIcon />} />}
-                      url={url}
-                    />
-                    <WhatsappShareButton
-                      children={<IconButton children={<WhatsappIcon />} />}
-                      url={url}
-                    />
-                  </MenuItem>
+              <ClickAwayListener onClickAway={this.popperClose}>
+                <List>
+                  <Paper>
+                    <MenuItem
+                      classes={{ root: classes.menuListItemRoot }}
+                      onClick={this.handleClose}
+                    >
+                      <FacebookShareButton
+                        children={<IconButton children={<FacebookIcon />} />}
+                        url={url}
+                      />
+                      <TwitterShareButton
+                        children={<IconButton children={<TwitterIcon />} />}
+                        url={url}
+                      />
+                      <RedditShareButton
+                        children={<IconButton children={<RedditIcon />} />}
+                        url={url}
+                      />
+                    </MenuItem>
+                    <MenuItem
+                      classes={{ root: classes.menuListItemRoot }}
+                      onClick={this.handleClose}
+                    >
+                      <PinterestShareButton
+                        media={imgUrl}
+                        children={<IconButton children={<PinterestIcon />} />}
+                        url={url}
+                      />
+                      <WhatsappShareButton
+                        children={<IconButton children={<WhatsappIcon />} />}
+                        url={url}
+                      />
+                      <EmailShareButton
+                        children={
+                          <IconButton
+                            children={
+                              <MailOutlineIcon
+                                classes={{ root: classes.mailIconRoot }}
+                              />
+                            }
+                          />
+                        }
+                        url={url}
+                      />
+                    </MenuItem>
 
-                  <MenuItem onClick={this.handleClose}>Copy Link</MenuItem>
-                </ClickAwayListener>
-              </Paper>
+                    {document.queryCommandSupported("copy") && (
+                      <MenuItem
+                        color="primary"
+                        variant="flat"
+                        component={Button}
+                        onClick={this.copyLink}
+                        fullWidth
+                      >
+                        <textarea
+                          className={classes.hiddenTextArea}
+                          ref={textarea => {
+                            this.hiddenTextArea = textarea;
+                          }}
+                          value={url}
+                          readOnly
+                        />
+                        {this.state.linkCopied}
+                      </MenuItem>
+                    )}
+                  </Paper>
+                </List>
+              </ClickAwayListener>
             </Grow>
           )}
         </Popper>
@@ -120,6 +162,15 @@ const styles = theme => ({
     "&:hover": {
       backgroundColor: "inherit"
     }
+  },
+  mailIconRoot: {
+    fontSize: "32px",
+    color: "#000"
+  },
+  hiddenTextArea: {
+    opacity: 0,
+    width: 0,
+    height: 0
   }
 });
 
