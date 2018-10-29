@@ -8,6 +8,8 @@ import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
 import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
 import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
 
+import PostShare from "./PostShare";
+
 export const PostActions = props => {
   const { classes, faveCount, canFave, onFavePost, isFave, isFaving } = props;
   return (
@@ -48,10 +50,14 @@ export const PostActions = props => {
         <CommentOutlinedIcon className={classes.leftIcon} color="inherit" />
         15
       </Button>
-
-      <Button size="small" className={classes.buttons}>
-        <ShareTwoToneIcon />
-      </Button>
+      <PostShare
+        classes={{ popper: classes.popper }}
+        button={
+          <Button size="small" className={classes.buttons}>
+            <ShareTwoToneIcon />
+          </Button>
+        }
+      />
     </div>
   );
 };
@@ -69,7 +75,7 @@ const styles = theme => ({
   root: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "baseline",
+    alignItems: "center",
     [theme.breakpoints.up("sm")]: {
       flexDirection: "row"
     }
@@ -86,6 +92,9 @@ const styles = theme => ({
   buttons: {
     marginLeft: `${theme.spacing.unit}px`,
     padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`
+  },
+  popper: {
+    transform: "translate(-65%, -30%)"
   }
 });
 

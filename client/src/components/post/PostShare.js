@@ -26,13 +26,10 @@ import PinterestIcon from "../icons/Pinterest";
 import WhatsappIcon from "../icons/Whatsapp";
 
 export class ShareButton extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      popperOpen: false,
-      linkCopied: "Copy Link"
-    };
-  }
+  state = {
+    popperOpen: false,
+    linkCopied: "Copy Link"
+  };
 
   openPopper = e => {
     this.setState({ popperOpen: true });
