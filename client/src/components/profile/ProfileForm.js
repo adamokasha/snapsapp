@@ -71,7 +71,7 @@ export class ProfileForm extends React.Component {
       <form
         onSubmit={this.onSubmit}
         className={
-          this.props.isLoading
+          this.props.isUpdatingProfile
             ? classNames(classes.form, classes.loadingOpacity)
             : classes.form
         }

@@ -44,10 +44,11 @@ export class ProfilePage extends React.Component {
       isFetching: true,
       id: "",
       profile: null,
-      pages: [],
       editEnabled: false,
+      isUpdatingProfile: false,
       network: {},
-      isLoading: false,
+      isUpdatingNetwork: false,
+      pages: [],
       profileTabPos: this.props.location.state
         ? this.props.location.state.profileTabPos
         : 1,
@@ -59,7 +60,30 @@ export class ProfilePage extends React.Component {
     this.signal = axios.CancelToken.source();
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.fetchProfile();
+  }
+
+  componentDidUpdate(prevProps) {
+    this.props.match.params.user !== prevProps.match.params.user
+      ? this.setState({ isFetching: true }, () => {
+          this.fetchProfile();
+        })
+      : null;
+
+    this.props.location.state &&
+    this.props.location.state.profileTabPos !== this.state.profileTabPos
+      ? this.setState({
+          profileTabPos: this.props.location.state.profileTabPos
+        })
+      : null;
+  }
+
+  componentWillUnmount() {
+    this.signal.cancel("Async call cancelled.");
+  }
+
+  fetchProfile = async () => {
     try {
       const asyncContextMap = {
         0: "userFaves",
@@ -83,14 +107,11 @@ export class ProfilePage extends React.Component {
       ]);
 
       let ownProfile;
-      if (
-        this.props.auth &&
-        this.props.auth.displayName === this.props.match.params.user
-      ) {
-        ownProfile = true;
-      } else {
-        ownProfile = false;
-      }
+
+      this.props.auth &&
+      this.props.auth.displayName === this.props.match.params.user
+        ? (ownProfile = true)
+        : (ownProfile = false);
 
       const { profilePhoto, joined, displayName, profile, _id } = userData;
       const { followsCount, followersCount, clientFollows } = userNetwork;
@@ -114,74 +135,18 @@ export class ProfilePage extends React.Component {
         () => {}
       );
     } catch (e) {
-      if (axios.isCancel(e)) {
-        return console.log(e.message);
-      }
-      this.setState(
-        {
-          snackbarOpen: true,
-          snackbarMessage: "Could not find profile.",
-          isFetching: false
-        },
-        () => {}
-      );
-    }
-  }
-
-  onFollow = async () => {
-    try {
-      await onFollow(this.signal.token, this.state.id);
-      this.setState(
-        {
-          network: {
-            ...this.state.network,
-            clientFollows: true,
-            followersCount: this.state.network.followersCount + 1
-          }
-        },
-        () => {}
-      );
-    } catch (e) {
-      if (axios.isCancel(e)) {
-        return console.log(e.message);
-      }
-      console.log(e);
+      axios.isCancel(e)
+        ? console.log(e.message)
+        : this.setState(
+            {
+              snackbarOpen: true,
+              snackbarMessage: "Could not find profile.",
+              isFetching: false
+            },
+            () => {}
+          );
     }
   };
-
-  onUnfollow = async () => {
-    try {
-      await onUnfollow(this.signal.token, this.state.id);
-      this.setState(
-        {
-          network: {
-            ...this.state.network,
-            clientFollows: false,
-            followersCount: this.state.network.followersCount - 1
-          }
-        },
-        () => {}
-      );
-    } catch (e) {
-      if (axios.isCancel(e)) {
-        return console.log(e.message);
-      }
-      console.log(e);
-    }
-  };
-
-  componentDidUpdate() {
-    if (
-      this.props.location.state &&
-      this.props.location.state.profileTabPos !== this.state.profileTabPos
-    ) {
-      this.setState({ profileTabPos: this.props.location.state.profileTabPos });
-    }
-  }
-
-  componentWillUnmount() {
-    this.signal.cancel("Async call cancelled.");
-  }
 
   enableEdit = () => {
     this.setState({ editEnabled: true });
@@ -196,7 +161,7 @@ export class ProfilePage extends React.Component {
   };
 
   onProfileSubmit = profile => {
-    this.setState({ isLoading: true }, async () => {
+    this.setState({ isUpdatingProfile: true }, async () => {
       try {
         await setProfile(this.signal.token, profile);
 
@@ -204,18 +169,72 @@ export class ProfilePage extends React.Component {
         this.props.updateProfile(profile);
         this.setState({
           editEnabled: false,
-          isLoading: false,
+          isUpdatingProfile: false,
           profile: { ...this.state.profile, ...profile }
         });
       } catch (e) {
-        if (axios.isCancel(e)) {
-          return console.log(e.message);
-        }
-        this.setState({
-          isLoading: false,
-          snackbarOpen: true,
-          snackbarMessage: "Could not update profile! Try again."
-        });
+        axios.isCancel(e)
+          ? console.log(e.message)
+          : this.setState({
+              isUpdatingProfile: false,
+              snackbarOpen: true,
+              snackbarMessage: "Could not update profile! Try again."
+            });
+      }
+    });
+  };
+
+  onFollow = () => {
+    this.setState({ isUpdatingNetwork: true }, async () => {
+      try {
+        await onFollow(this.signal.token, this.state.id);
+        this.setState(
+          {
+            isUpdatingNetwork: false,
+            network: {
+              ...this.state.network,
+              clientFollows: true,
+              followersCount: this.state.network.followersCount + 1
+            }
+          },
+          () => {}
+        );
+      } catch (e) {
+        axios.isCancel(e)
+          ? console.log(e.message)
+          : this.setState({
+              isUpdatingNetwork: false,
+              snackbarOpen: true,
+              snackbarMessage: "Could not update profile! Try again."
+            });
+      }
+    });
+  };
+
+  onUnfollow = () => {
+    this.setState({ isUpdatingNetwork: true }, async () => {
+      try {
+        await onUnfollow(this.signal.token, this.state.id);
+        this.setState(
+          {
+            isUpdatingNetwork: false,
+            network: {
+              ...this.state.network,
+              clientFollows: false,
+              followersCount: this.state.network.followersCount - 1
+            }
+          },
+          () => {}
+        );
+      } catch (e) {
+        axios.isCancel(e)
+          ? console.log(e.message)
+          : this.setState({
+              isUpdatingNetwork: false,
+              snackbarOpen: true,
+              snackbarVar: "error",
+              snackbarMessage: "Could not update profile! Try again."
+            });
       }
     });
   };
@@ -232,14 +251,16 @@ export class ProfilePage extends React.Component {
         () => {}
       );
     } catch (e) {
-      this.setState(
-        {
-          snackbarOpen: true,
-          snackbarVar: "error",
-          snackbarMessage: "Something went wrong! Try again!"
-        },
-        () => {}
-      );
+      axios.isCancel(e)
+        ? console.log(e)
+        : this.setState(
+            {
+              snackbarOpen: true,
+              snackbarVar: "error",
+              snackbarMessage: "Something went wrong! Try again!"
+            },
+            () => {}
+          );
     }
   };
 
@@ -285,7 +306,7 @@ export class ProfilePage extends React.Component {
               elevation={1}
               className={classes.profileInfoContainer}
             >
-              {this.state.isLoading && (
+              {this.state.isUpdatingProfile && (
                 <LinearProgress
                   className={classes.linearLoader}
                   color="secondary"
@@ -302,6 +323,7 @@ export class ProfilePage extends React.Component {
                   <ProfileNetwork
                     onFollow={this.onFollow}
                     onUnfollow={this.onUnfollow}
+                    isUpdatingNetwork={this.state.isUpdatingNetwork}
                     ownProfile={ownProfile}
                     clientFollows={this.state.network.clientFollows}
                     followers={
@@ -375,7 +397,7 @@ export class ProfilePage extends React.Component {
                   profile={this.state.profile}
                   ownProfile={ownProfile}
                   editEnabled={this.state.editEnabled}
-                  isLoading={this.state.isLoading}
+                  isUpdatingProfile={this.state.isUpdatingProfile}
                   cancelEdit={this.cancelEdit}
                   enableEdit={this.enableEdit}
                 />

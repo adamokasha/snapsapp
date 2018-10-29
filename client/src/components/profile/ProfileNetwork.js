@@ -46,6 +46,7 @@ export const ProfileNetwork = props => {
                     size="small"
                     onClick={props.onUnfollow}
                     className={classes.topIcon}
+                    disabled={props.isUpdatingNetwork}
                   >
                     <UndoIcon className={classes.unFollowedIcon} />
                   </Button>
@@ -57,6 +58,7 @@ export const ProfileNetwork = props => {
                   variant="contained"
                   color="primary"
                   onClick={props.onFollow}
+                  disabled={props.isUpdatingNetwork}
                 >
                   <PersonAddOutlined />
                 </Button>
@@ -72,6 +74,7 @@ export const ProfileNetwork = props => {
 ProfileNetwork.propTypes = {
   onFollow: PropTypes.func.isRequired,
   onUnfollow: PropTypes.func.isRequired,
+  isUpdatingNetwork: PropTypes.bool.isRequired,
   ownProfile: PropTypes.bool.isRequired,
   clientFollows: PropTypes.bool.isRequired,
   followers: PropTypes.element.isRequired,
