@@ -251,6 +251,7 @@ export class FullPostPage extends React.Component {
               <PostActions
                 postId={post._id}
                 imgUrl={post.imgUrl}
+                commentCount={post.commentCount}
                 canFave={auth ? true : false}
                 onFavePost={this.onFavePost}
                 isFaving={isFaving}

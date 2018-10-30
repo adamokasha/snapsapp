@@ -103,7 +103,8 @@ class PostCard extends React.Component {
       description,
       imgUrl,
       faveCount,
-      createdAt
+      createdAt,
+      commentCount
     } = this.props.post;
 
     return (
@@ -139,9 +140,16 @@ class PostCard extends React.Component {
           <Divider />
           <CardActions className={classes.actions} disableActionSpacing>
             <div className={classes.actionsLeft}>
-              <Typography variant="caption">{faveCount} Faves</Typography>
+              <Typography variant="caption">
+                {(faveCount === 1 && `${faveCount} Fave`) ||
+                  ((faveCount === 0 || faveCount > 1) && `${faveCount} Faves`)}
+              </Typography>
               &nbsp;
-              <Typography variant="caption">15 Comments</Typography>
+              <Typography variant="caption">
+                {(commentCount === 1 && `${commentCount} Comment`) ||
+                  ((commentCount === 0 || commentCount > 1) &&
+                    `${commentCount} Comments`)}{" "}
+              </Typography>
             </div>
             <div className={classes.actionsRight}>
               <React.Fragment>

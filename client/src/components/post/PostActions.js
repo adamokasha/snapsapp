@@ -11,7 +11,15 @@ import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
 import PostShare from "./PostShare";
 
 export const PostActions = props => {
-  const { classes, faveCount, canFave, onFavePost, isFave, isFaving } = props;
+  const {
+    classes,
+    faveCount,
+    canFave,
+    onFavePost,
+    isFave,
+    isFaving,
+    commentCount
+  } = props;
   return (
     <div className={classes.root}>
       {canFave && (
@@ -48,7 +56,7 @@ export const PostActions = props => {
 
       <Button size="small" className={classes.buttons}>
         <CommentOutlinedIcon className={classes.leftIcon} color="inherit" />
-        15
+        {commentCount}
       </Button>
       <PostShare
         postId={props.postId}
@@ -67,6 +75,7 @@ export const PostActions = props => {
 PostActions.propTypes = {
   postId: PropTypes.string.isRequired,
   imgUrl: PropTypes.string.isRequired,
+  commentCount: PropTypes.number.isRequired,
   classes: PropTypes.object.isRequired,
   faveCount: PropTypes.number.isRequired,
   isFave: PropTypes.bool.isRequired,

@@ -128,6 +128,7 @@ class PostLightbox extends React.Component {
       createdAt,
       imgUrl,
       description,
+      commentCount,
       tags,
       faveCount,
       isFave
@@ -145,6 +146,7 @@ class PostLightbox extends React.Component {
                   title={title}
                 />
                 <PostActions
+                  commentCount={commentCount}
                   postId={_id}
                   imgUrl={imgUrl}
                   faveCount={faveCount}
