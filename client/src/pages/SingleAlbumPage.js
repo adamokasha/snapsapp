@@ -7,6 +7,7 @@ import GridListTile from "@material-ui/core/GridListTile";
 import axios from "axios";
 
 import PostCard from "../components/post/PostCard";
+import { favePost } from "../async/posts";
 import { fetchAlbumPostsPaginated } from "../async/albums";
 import { onScroll } from "../utils/utils";
 
@@ -82,6 +83,30 @@ export class SingleAlbumPage extends React.Component {
     });
   };
 
+  onFavePost = async postId => {
+    try {
+      await favePost(this.signal.token, postId);
+      const updatedPages = this.state.pages.map(post => {
+        if (post._id === postId) {
+          console.log("TRUE");
+          return {
+            ...post,
+            isFave: !post.isFave,
+            faveCount: post.isFave ? post.faveCount - 1 : post.isFave + 1
+          };
+        }
+        return post;
+      });
+      console.log(updatedPages);
+      this.setState({ pages: updatedPages }, () => {});
+    } catch (e) {
+      if (axios.isCancel()) {
+        return console.log(e.message);
+      }
+      console.log(e);
+    }
+  };
+
   componentWillUnmount() {
     window.removeEventListener("scroll", this.onScroll, false);
     this.signal.cancel("Async call cancelled.");
@@ -103,7 +128,11 @@ export class SingleAlbumPage extends React.Component {
                     tile: classes.tile
                   }}
                 >
-                  <PostCard cardContext="album" post={post} />
+                  <PostCard
+                    onFavePost={this.onFavePost}
+                    cardContext="album"
+                    post={post}
+                  />
                 </GridListTile>
               ))}
             </GridList>

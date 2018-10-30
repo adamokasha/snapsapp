@@ -15,6 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
 import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
 import Divider from "@material-ui/core/Divider";
+import moment from "moment";
 
 import ModalView from "../modal/ModalView";
 import PostShare from "./PostShare";
@@ -130,7 +131,9 @@ class PostCard extends React.Component {
             {cardContext === "album" ? (
               <div>
                 <Typography variant="body2">{title}</Typography>
-                <Typography variant="caption">Posted {createdAt}</Typography>
+                <Typography variant="caption">
+                  Posted {moment(createdAt).format("MMM Do YY")}
+                </Typography>
               </div>
             ) : null}
             <Typography>

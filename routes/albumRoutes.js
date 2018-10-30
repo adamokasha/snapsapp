@@ -4,6 +4,7 @@ const requireAuth = require("../middlewares/requireAuth");
 
 const Album = mongoose.model("Album");
 const Post = mongoose.model("Post");
+const Faves = mongoose.model("Faves");
 const User = mongoose.model("User");
 
 module.exports = app => {
@@ -85,6 +86,23 @@ module.exports = app => {
         .limit(12)
         .skip(12 * page)
         .populate("_owner", "displayName profilePhoto");
+
+      if (req.user) {
+        const favesDoc = await Faves.findOne(
+          { _owner: req.user.id },
+          "_faves",
+          { lean: true }
+        );
+        const { _faves } = favesDoc;
+
+        posts.forEach(post => {
+          if (_faves.toString().includes(post._id)) {
+            return (post.isFave = true);
+          }
+        });
+
+        return res.send(posts);
+      }
 
       res.status(200).send(posts);
     } catch (e) {
