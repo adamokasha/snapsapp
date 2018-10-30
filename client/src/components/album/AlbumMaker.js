@@ -283,8 +283,8 @@ class AlbumMaker extends React.Component {
 
 AlbumMaker.propTypes = {
   classes: PropTypes.object.isRequired,
-  method: PropTypes.string.isRequired,
-  onAlbumNameSet: PropTypes.func.isRequired,
+  method: PropTypes.string,
+  onAlbumNameSet: PropTypes.func,
   withSnackbar: PropTypes.bool.isRequired
 };
 

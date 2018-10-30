@@ -190,7 +190,7 @@ class PostCard extends React.Component {
 
 PostCard.propTypes = {
   classes: PropTypes.object.isRequired,
-  slideData: PropTypes.array.isRequired,
+  slideData: PropTypes.array,
   post: PropTypes.object.isRequired,
   cardContext: PropTypes.oneOf(["post", "album"]),
   onFavePost: PropTypes.func.isRequired,

@@ -9,9 +9,13 @@ import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import PostCard from "../post/PostCard";
 import Album from "../album/Album";
+import Button from "@material-ui/core/Button";
+import AddPhotoAlternateOutlinedIcon from "@material-ui/icons/AddPhotoAlternateOutlined";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from "axios";
 
+import ModalView from "../modal/ModalView";
+import AlbumMaker from "../album/AlbumMaker";
 import NavToTopButton from "../buttons/NavToTopButton";
 
 import { onScroll } from "../../utils/utils";
@@ -230,20 +234,36 @@ class ProfileActivity extends React.Component {
           )}
         {this.state.value === 2 &&
           this.state.pages && (
-            <GridList className={classes.gridList} cols={3}>
-              {this.state.pages.map(album => (
-                <GridListTile
-                  key={album._id}
-                  cols={1}
-                  classes={{
-                    root: classes.gridTileRoot,
-                    tile: classes.tile
-                  }}
-                >
-                  <Album album={album} />
-                </GridListTile>
-              ))}
-            </GridList>
+            <React.Fragment>
+              <GridList className={classes.gridList} cols={3}>
+                {this.state.pages.map(album => (
+                  <GridListTile
+                    key={album._id}
+                    cols={1}
+                    classes={{
+                      root: classes.gridTileRoot,
+                      tile: classes.tile
+                    }}
+                  >
+                    <Album album={album} />
+                  </GridListTile>
+                ))}
+              </GridList>
+              {
+                <ModalView
+                  togglerComponent={
+                    <Button
+                      className={classes.fabAddAlbum}
+                      variant="fab"
+                      color="secondary"
+                    >
+                      <AddPhotoAlternateOutlinedIcon />
+                    </Button>
+                  }
+                  modalComponent={<AlbumMaker withSnackbar={true} />}
+                />
+              }
+            </React.Fragment>
           )}
         {this.state.isFetching && (
           <CircularProgress className={classes.circularProgress} size={50} />
@@ -259,7 +279,8 @@ class ProfileActivity extends React.Component {
 ProfileActivity.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  profileTabPos: PropTypes.number
+  profileTabPos: PropTypes.number,
+  ownProfile: PropTypes.bool.isRequired
 };
 
 const styles = theme => ({
@@ -293,6 +314,11 @@ const styles = theme => ({
   // Inner div that wraps children
   tile: {
     overflow: "initial"
+  },
+  fabAddAlbum: {
+    position: "fixed",
+    bottom: "5%",
+    right: "2%"
   },
   circularProgress: {
     margin: "16px auto",
