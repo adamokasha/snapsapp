@@ -259,11 +259,6 @@ module.exports = app => {
         { $sort: { createdAt: 1 } }
       ]);
 
-      // await Post.populate(postComments, {
-      //   path: '_owner',
-      //   select: 'profilePhoto displayName'
-      // });
-
       res.status(200).send(postComments);
     } catch (e) {
       console.log(e);
@@ -281,7 +276,7 @@ module.exports = app => {
       };
       await Post.findOneAndUpdate(
         { _id: req.params.postId },
-        { $push: { comments: comment } },
+        { $push: { comments: comment }, $inc: { commentCount: 1 } },
         { new: true }
       );
       res.status(200).send({ success: "Comment added" });
