@@ -7,7 +7,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 import axios from "axios";
 
-import MainPageLoader from '../components/loading/MainPageLoader'
+import MainPageLoader from '../components/loaders/MainPageLoader'
 import Search from "../components/mainpage/Search";
 import MainPageMenu from "../components/mainpage/MainPageMenu";
 import HeroUnit from "../components/mainpage/HeroUnit";

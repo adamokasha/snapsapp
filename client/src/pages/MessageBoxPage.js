@@ -7,6 +7,7 @@ import classNames from "classnames";
 import Paper from "@material-ui/core/Paper";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import IconButton from "@material-ui/core/IconButton";
 import Divider from "@material-ui/core/Divider";
@@ -19,7 +20,7 @@ import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 import { updateMboxNotif } from "../actions/auth";
 import * as async from "../async/messages";
 
-export class MessageBox extends React.Component {
+export class MessageBoxPage extends React.Component {
   constructor() {
     super();
 
@@ -71,31 +72,31 @@ export class MessageBox extends React.Component {
 
       !res.data[`_${listView}`]
         ? this.setState(
-            {
-              initialFetch: false,
-              view: "list",
-              listType: listView,
-              hasMoreLists: false,
-              isLoading: false,
-              messages: []
-            },
-            () => {}
-          )
+          {
+            initialFetch: false,
+            view: "list",
+            listType: listView,
+            hasMoreLists: false,
+            isLoading: false,
+            messages: []
+          },
+          () => { }
+        )
         : (() => {
-            const messages = res.data[`_${listView}`];
+          const messages = res.data[`_${listView}`];
 
-            listView === "unread" && messages.length !== this.props.mBoxNotif
-              ? this.props.updateMboxNotif(messages.length)
-              : null;
+          listView === "unread" && messages.length !== this.props.mBoxNotif
+            ? this.props.updateMboxNotif(messages.length)
+            : null;
 
-            this.setState({
-              initialFetch: false,
-              view: "list",
-              listType: listView,
-              messages: [...messages],
-              isLoading: false
-            });
-          })();
+          this.setState({
+            initialFetch: false,
+            view: "list",
+            listType: listView,
+            messages: [...messages],
+            isLoading: false
+          });
+        })();
     } catch (e) {
       axios.isCancel()
         ? console.log(e.message)
@@ -107,16 +108,16 @@ export class MessageBox extends React.Component {
     this.state.currentListPage === 0
       ? null
       : this.setState(
-          {
-            currentListPage: this.state.currentListPage - 1,
-            isLoading: true,
-            hasMoreLists: true,
-            selected: []
-          },
-          () => {
-            this.setList(this.state.listType);
-          }
-        );
+        {
+          currentListPage: this.state.currentListPage - 1,
+          isLoading: true,
+          hasMoreLists: true,
+          selected: []
+        },
+        () => {
+          this.setList(this.state.listType);
+        }
+      );
   };
 
   onListBack = () => {
@@ -136,12 +137,12 @@ export class MessageBox extends React.Component {
     const { selected } = this.state;
     !selected.includes(messageId)
       ? // Add
-        this.setState({ selected: [...this.state.selected, messageId] })
+      this.setState({ selected: [...this.state.selected, messageId] })
       : //Remove
-        (() => {
-          const filtered = selected.filter(id => id !== messageId);
-          this.setState({ selected: [...filtered] });
-        })();
+      (() => {
+        const filtered = selected.filter(id => id !== messageId);
+        this.setState({ selected: [...filtered] });
+      })();
   };
 
   onSelectAll = () => {
@@ -150,9 +151,9 @@ export class MessageBox extends React.Component {
     selected.length === messages.length
       ? this.setState({ selected: [] })
       : (() => {
-          const allMessageIds = messages.map(message => message._id);
-          this.setState({ selected: [...allMessageIds] });
-        })();
+        const allMessageIds = messages.map(message => message._id);
+        this.setState({ selected: [...allMessageIds] });
+      })();
   };
 
   setMessage = messageId => {
@@ -227,20 +228,20 @@ export class MessageBox extends React.Component {
         !data
           ? this.setState({ hasMoreReplies: false, isLoading: false })
           : this.setState(
-              {
-                view: "message",
-                isLoading: false,
-                currentMessage: {
-                  ...this.state.currentMessage,
-                  replies: [
-                    ...data.replies,
-                    ...this.state.currentMessage.replies
-                  ]
-                },
-                currentMessagePage: this.state.currentMessagePage + 1
+            {
+              view: "message",
+              isLoading: false,
+              currentMessage: {
+                ...this.state.currentMessage,
+                replies: [
+                  ...data.replies,
+                  ...this.state.currentMessage.replies
+                ]
               },
-              () => {}
-            );
+              currentMessagePage: this.state.currentMessagePage + 1
+            },
+            () => { }
+          );
       });
     } catch (e) {
       axios.isCancel()
@@ -249,7 +250,7 @@ export class MessageBox extends React.Component {
     }
   };
 
-  // Passed as prop to MessageBoxAppBar to reset state b/w listType switching
+  // Passed as prop to MessageBoxPageAppBar to reset state b/w listType switching
   switchListType = listType => {
     this.setState(
       { currentListPage: 0, hasMoreLists: true, isLoading: true, selected: [] },
@@ -282,7 +283,7 @@ export class MessageBox extends React.Component {
         );
         this.setState(
           { messages: updatedMessages, selected: [], isLoading: false },
-          () => {}
+          () => { }
         );
       } catch (e) {
         axios.isCancel()
@@ -293,11 +294,11 @@ export class MessageBox extends React.Component {
   };
 
   onSnackbarOpen = () => {
-    this.setState({ snackbarOpen: true }, () => {});
+    this.setState({ snackbarOpen: true }, () => { });
   };
 
   onSnackbarClose = () => {
-    this.setState({ snackbarOpen: false }, () => {});
+    this.setState({ snackbarOpen: false }, () => { });
   };
 
   render() {
@@ -305,7 +306,7 @@ export class MessageBox extends React.Component {
     const { classes } = this.props;
     return (
       <React.Fragment>
-        {this.state.initialFetch && <div>Loading...</div>}
+        {this.state.initialFetch && <div className={classes.circularProgressContainer}><CircularProgress color="primary" size={50} /></div>}
         {!this.state.initialFetch && (
           <Paper className={classes.root}>
             {this.state.isLoading && (
@@ -386,7 +387,7 @@ export class MessageBox extends React.Component {
   }
 }
 
-MessageBox.propTypes = {
+MessageBoxPage.propTypes = {
   auth: PropTypes.object.isRequired
 };
 
@@ -406,6 +407,12 @@ const styles = theme => ({
     [theme.breakpoints.up("xl")]: {
       width: "35%"
     }
+  },
+  circularProgressContainer: {
+    height: '80vh',
+    display: 'flex',
+    justifyContent: "center",
+    marginTop: `${theme.spacing.unit * 4}px`
   },
   appBarRoot: {
     boxShadow: "none"
@@ -443,4 +450,4 @@ export default compose(
     mapStateToProps,
     { updateMboxNotif }
   )
-)(MessageBox);
+)(MessageBoxPage);

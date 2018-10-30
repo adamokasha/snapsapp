@@ -6,6 +6,7 @@ import { withRouter } from "react-router";
 import PropTypes from "prop-types";
 import compose from "recompose/compose";
 import Typography from "@material-ui/core/Typography";
+import CircularProgress from "@material-ui/core/CircularProgress"
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
@@ -67,15 +68,15 @@ export class ProfilePage extends React.Component {
   componentDidUpdate(prevProps) {
     this.props.match.params.user !== prevProps.match.params.user
       ? this.setState({ isFetching: true }, () => {
-          this.fetchProfile();
-        })
+        this.fetchProfile();
+      })
       : null;
 
     this.props.location.state &&
-    this.props.location.state.profileTabPos !== this.state.profileTabPos
+      this.props.location.state.profileTabPos !== this.state.profileTabPos
       ? this.setState({
-          profileTabPos: this.props.location.state.profileTabPos
-        })
+        profileTabPos: this.props.location.state.profileTabPos
+      })
       : null;
   }
 
@@ -109,7 +110,7 @@ export class ProfilePage extends React.Component {
       let ownProfile;
 
       this.props.auth &&
-      this.props.auth.displayName === this.props.match.params.user
+        this.props.auth.displayName === this.props.match.params.user
         ? (ownProfile = true)
         : (ownProfile = false);
 
@@ -132,19 +133,19 @@ export class ProfilePage extends React.Component {
           },
           isFetching: false
         },
-        () => {}
+        () => { }
       );
     } catch (e) {
       axios.isCancel(e)
         ? console.log(e.message)
         : this.setState(
-            {
-              snackbarOpen: true,
-              snackbarMessage: "Could not find profile.",
-              isFetching: false
-            },
-            () => {}
-          );
+          {
+            snackbarOpen: true,
+            snackbarMessage: "Could not find profile.",
+            isFetching: false
+          },
+          () => { }
+        );
     }
   };
 
@@ -176,10 +177,10 @@ export class ProfilePage extends React.Component {
         axios.isCancel(e)
           ? console.log(e.message)
           : this.setState({
-              isUpdatingProfile: false,
-              snackbarOpen: true,
-              snackbarMessage: "Could not update profile! Try again."
-            });
+            isUpdatingProfile: false,
+            snackbarOpen: true,
+            snackbarMessage: "Could not update profile! Try again."
+          });
       }
     });
   };
@@ -197,16 +198,16 @@ export class ProfilePage extends React.Component {
               followersCount: this.state.network.followersCount + 1
             }
           },
-          () => {}
+          () => { }
         );
       } catch (e) {
         axios.isCancel(e)
           ? console.log(e.message)
           : this.setState({
-              isUpdatingNetwork: false,
-              snackbarOpen: true,
-              snackbarMessage: "Could not update profile! Try again."
-            });
+            isUpdatingNetwork: false,
+            snackbarOpen: true,
+            snackbarMessage: "Could not update profile! Try again."
+          });
       }
     });
   };
@@ -224,17 +225,17 @@ export class ProfilePage extends React.Component {
               followersCount: this.state.network.followersCount - 1
             }
           },
-          () => {}
+          () => { }
         );
       } catch (e) {
         axios.isCancel(e)
           ? console.log(e.message)
           : this.setState({
-              isUpdatingNetwork: false,
-              snackbarOpen: true,
-              snackbarVar: "error",
-              snackbarMessage: "Could not update profile! Try again."
-            });
+            isUpdatingNetwork: false,
+            snackbarOpen: true,
+            snackbarVar: "error",
+            snackbarMessage: "Could not update profile! Try again."
+          });
       }
     });
   };
@@ -248,28 +249,28 @@ export class ProfilePage extends React.Component {
           snackbarVar: "success",
           snackbarMessage: "Your message was sent successfully!"
         },
-        () => {}
+        () => { }
       );
     } catch (e) {
       axios.isCancel(e)
         ? console.log(e)
         : this.setState(
-            {
-              snackbarOpen: true,
-              snackbarVar: "error",
-              snackbarMessage: "Something went wrong! Try again!"
-            },
-            () => {}
-          );
+          {
+            snackbarOpen: true,
+            snackbarVar: "error",
+            snackbarMessage: "Something went wrong! Try again!"
+          },
+          () => { }
+        );
     }
   };
 
   onSnackbarOpen = () => {
-    this.setState({ snackbarOpen: true }, () => {});
+    this.setState({ snackbarOpen: true }, () => { });
   };
 
   onSnackbarClose = () => {
-    this.setState({ snackbarOpen: false }, () => {});
+    this.setState({ snackbarOpen: false }, () => { });
   };
 
   renderEditButtons = ownProfile => {
@@ -283,10 +284,10 @@ export class ProfilePage extends React.Component {
               <CancelTwoToneIcon />
             </IconButton>
           ) : (
-            <IconButton onClick={this.enableEdit}>
-              <EditTwoToneIcon />
-            </IconButton>
-          )}
+              <IconButton onClick={this.enableEdit}>
+                <EditTwoToneIcon />
+              </IconButton>
+            )}
         </div>
       )
     );
@@ -299,6 +300,7 @@ export class ProfilePage extends React.Component {
 
     return (
       <React.Fragment>
+        {this.state.isFetching && <div className={classes.circularProgressContainer}><CircularProgress color="primary" size={50} /></div>}
         {!this.state.isFetching && (
           <div className={classes.root}>
             <Paper
@@ -402,11 +404,11 @@ export class ProfilePage extends React.Component {
                   enableEdit={this.enableEdit}
                 />
               ) : (
-                <Typography className={classes.noProfileText}>
-                  {this.state.displayName} has not shared any of their profile
-                  information yet!
+                  <Typography className={classes.noProfileText}>
+                    {this.state.displayName} has not shared any of their profile
+                    information yet!
                 </Typography>
-              )}
+                )}
             </Paper>
 
             <ProfileActivity
@@ -416,7 +418,6 @@ export class ProfilePage extends React.Component {
             />
           </div>
         )}
-        {this.state.isFetching && <div>Loading...</div>}
         <CustomSnackbar
           snackbarOpen={this.state.snackbarOpen}
           variant={this.state.snackbarVar}
@@ -446,6 +447,12 @@ const styles = theme => ({
     [theme.breakpoints.up("md")]: {
       flexDirection: "row"
     }
+  },
+  circularProgressContainer: {
+    height: '80vh',
+    display: 'flex',
+    justifyContent: "center",
+    marginTop: `${theme.spacing.unit * 4}px`
   },
   profileInfoContainer: {
     width: "100%",

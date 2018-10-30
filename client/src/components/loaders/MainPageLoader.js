@@ -1,6 +1,5 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles'
-import classNames from 'classnames';
 import PropTypes from 'prop-types'
 import Grid from '@material-ui/core/Grid';
 
@@ -16,17 +15,17 @@ export const MainPageLoader = (props) => {
       <Grid item xs={12} sm={6} md={6} lg={4}>
         <PostCardLoader className={classes.gridItem} />
       </Grid>
-      <Grid item  sm={6}  md={6} lg={4}>
-        <PostCardLoader className={classNames(classes.gridItem)} />
+      <Grid item sm={6} md={6} lg={4}>
+        <PostCardLoader />
       </Grid>
-      <Grid item sm={6} md={6}  md={6} lg={4}>
-        <PostCardLoader className={classNames(classes.gridItem)} />
+      <Grid item sm={6} md={6} md={6} lg={4}>
+        <PostCardLoader />
       </Grid>
       <Grid item sm={6} md={6} lg={4}>
-        <PostCardLoader className={classNames(classes.gridItem)} />
+        <PostCardLoader />
       </Grid>
       <Grid item sm={6} md={6} lg={4}>
-        <PostCardLoader className={classNames(classes.gridItem)} />
+        <PostCardLoader />
       </Grid>
     </Grid>
   )
@@ -36,17 +35,6 @@ const styles = theme => ({
   root: {
     width: '80%',
     margin: '0 auto'
-  },
-
-  hideSmall: {
-    [theme.breakpoints.down('sm')]: {
-      display: 'none'
-    }
-  },
-  hideMedium: {
-    [theme.breakpoints.down('md')]: {
-      display: 'none'
-    }
   }
 })
 
