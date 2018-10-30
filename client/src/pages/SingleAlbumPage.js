@@ -4,9 +4,13 @@ import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router";
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from "axios";
 
+import MainPageLoader from "../components/loaders/MainPageLoader";
 import PostCard from "../components/post/PostCard";
+import NavToTopButton from "../components/buttons/NavToTopButton";
+
 import { favePost } from "../async/posts";
 import { fetchAlbumPostsPaginated } from "../async/albums";
 import { onScroll } from "../utils/utils";
@@ -20,11 +24,13 @@ export class SingleAlbumPage extends React.Component {
       isFetching: false,
       page: 0,
       pages: null,
-      hasMore: true
+      hasMore: true,
+      showNavToTop: false
     };
 
     this.signal = axios.CancelToken.source();
     this.onScroll = onScroll.bind(this);
+    this.topRef = React.createRef();
   }
 
   async componentDidMount() {
@@ -47,6 +53,11 @@ export class SingleAlbumPage extends React.Component {
       }
       console.log(e);
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.onScroll, false);
+    this.signal.cancel("Async call cancelled.");
   }
 
   fetchNextPage = () => {
@@ -107,15 +118,19 @@ export class SingleAlbumPage extends React.Component {
     }
   };
 
-  componentWillUnmount() {
-    window.removeEventListener("scroll", this.onScroll, false);
-    this.signal.cancel("Async call cancelled.");
-  }
+  scrollToTop = () => {
+    this.topRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest"
+    });
+  };
 
   render() {
     const { classes } = this.props;
     return (
-      <React.Fragment>
+      <div ref={this.topRef}>
+        {this.state.initialFetch && <MainPageLoader />}
         {!this.state.initialFetch &&
           this.state.pages && (
             <GridList className={classes.gridList} cols={3}>
@@ -137,8 +152,15 @@ export class SingleAlbumPage extends React.Component {
               ))}
             </GridList>
           )}
-        {this.state.initialFetch && <div>Loading</div>}
-      </React.Fragment>
+        {this.state.showNavToTop && (
+          <NavToTopButton scrollToTop={this.scrollToTop} />
+        )}
+        {this.state.isFetching && (
+          <div className={classes.circularProgressContainer}>
+            <CircularProgress color="primary" size={50} />
+          </div>
+        )}
+      </div>
     );
   }
 }
@@ -170,6 +192,11 @@ const styles = theme => ({
   // Inner div that wraps children
   tile: {
     overflow: "initial"
+  },
+  circularProgressContainer: {
+    display: "flex",
+    justifyContent: "center",
+    marginTop: `${theme.spacing.unit * 4}px`
   }
 });
 
