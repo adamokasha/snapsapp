@@ -7,6 +7,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 import axios from "axios";
 
+import MainPageLoader from '../components/loading/MainPageLoader'
 import Search from "../components/mainpage/Search";
 import MainPageMenu from "../components/mainpage/MainPageMenu";
 import HeroUnit from "../components/mainpage/HeroUnit";
@@ -224,7 +225,7 @@ export class MainPage extends React.Component {
     const { classes } = this.props;
     return (
       <div ref={this.topRef}>
-        {this.state.initialFetch && <div>Loading...</div>}
+        {this.state.initialFetch && <MainPageLoader/>}
         {!this.state.initialFetch && (
           <React.Fragment>
             <Search onSwitchContext={this.onSwitchContext} />
