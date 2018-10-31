@@ -59,6 +59,7 @@ export const PostActions = props => {
         {commentCount}
       </Button>
       <PostShare
+        context="post"
         postId={props.postId}
         imgUrl={props.imgUrl}
         classes={{ popper: classes.popper }}

@@ -246,7 +246,7 @@ class AlbumMaker extends React.Component {
             type="text"
             name="name"
             margin="normal"
-            variant="filled"
+            variant="outlined"
             onChange={this.onAlbumNameChange}
             value={this.state.albumName}
           />
@@ -283,9 +283,10 @@ class AlbumMaker extends React.Component {
 
 AlbumMaker.propTypes = {
   classes: PropTypes.object.isRequired,
+  albumId: PropTypes.string.isRequired,
+  albumName: PropTypes.string,
   method: PropTypes.string,
-  onAlbumNameSet: PropTypes.func,
-  withSnackbar: PropTypes.bool.isRequired
+  onAlbumNameSet: PropTypes.func
 };
 
 const styles = theme => ({

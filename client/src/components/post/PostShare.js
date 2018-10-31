@@ -46,7 +46,13 @@ export class ShareButton extends React.Component {
   };
 
   render() {
-    const url = `https://snapsapp.herokuapp.com/post/${this.props.postId}`;
+    const url =
+      (this.props.context === "post" &&
+        `https://snapsapp.herokuapp.com/post/${this.props.postId}`) ||
+      (this.props.context === "album" &&
+        `https://snapsapp.herokuapp.com/albums/${this.props.user}/${
+          this.props.albumId
+        }`);
     const imgUrl = `https://s3.amazonaws.com/img-share-kasho/${
       this.props.imgUrl
     }`;
@@ -199,8 +205,8 @@ const styles = theme => ({
     transform: "translate(-75%, -75%)"
   },
   menuListItemRoot: {
-    height: '32px',
-    width: 'auto',
+    height: "32px",
+    width: "auto",
     "&:hover": {
       backgroundColor: "inherit"
     }

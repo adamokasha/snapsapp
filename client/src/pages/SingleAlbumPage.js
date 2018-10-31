@@ -14,6 +14,9 @@ import moment from "moment";
 
 import MainPageLoader from "../components/loaders/MainPageLoader";
 import PostCard from "../components/post/PostCard";
+import ModalView from "../components/modal/ModalView";
+import AlbumMaker from "../components/album/AlbumMaker";
+import PostShare from "../components/post/PostShare";
 import NavToTopButton from "../components/buttons/NavToTopButton";
 
 import { favePost } from "../async/posts";
@@ -27,6 +30,7 @@ export class SingleAlbumPage extends React.Component {
     this.state = {
       initialFetch: true,
       isFetching: false,
+      albumId: null,
       albumName: null,
       albumOwner: null,
       createdAt: null,
@@ -52,6 +56,7 @@ export class SingleAlbumPage extends React.Component {
       );
       this.setState({
         initialFetch: false,
+        albumId: album._id,
         albumName: album.name,
         albumOwner: album._displayName,
         createdAt: album.createdAt,
@@ -153,13 +158,27 @@ export class SingleAlbumPage extends React.Component {
                 Created on: {moment(this.state.createdAt).format("MMM Do YYYY")}
               </Typography>
             </div>
-            <div>
-              <IconButton>
-                <ShareTwoToneIcon />
-              </IconButton>
-              <IconButton>
-                <SettingsIcon />
-              </IconButton>
+            <div className={classes.actions}>
+              <PostShare
+                context="album"
+                imgUrl={this.state.pages[0]}
+                user={this.state.albumOwner}
+                albumId={this.state.albumId}
+                button={
+                  <IconButton>
+                    <ShareTwoToneIcon />
+                  </IconButton>
+                }
+              />
+              <ModalView
+                togglerComponent={
+                  <IconButton>
+                    <SettingsIcon />
+                  </IconButton>
+                }
+                modalComponent={<AlbumMaker albumId={this.state.albumId} />}
+                withSnackbar={true}
+              />
             </div>
           </div>
         )}
@@ -211,6 +230,9 @@ const styles = theme => ({
   info: {
     display: "flex",
     flexDirection: "column"
+  },
+  actions: {
+    display: "flex"
   },
   gridList: {
     display: "flex",

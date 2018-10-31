@@ -165,13 +165,11 @@ class PostCard extends React.Component {
                   <FavoriteTwoToneIcon />
                 </IconButton>
                 <PostShare
+                  context="post"
                   postId={_id}
                   imgUrl={imgUrl}
                   button={
-                    <IconButton
-                      aria-label="Share"
-                      color="default"
-                    >
+                    <IconButton aria-label="Share" color="default">
                       <ShareTwoToneIcon />
                     </IconButton>
                   }
