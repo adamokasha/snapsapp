@@ -57,7 +57,11 @@ class ProfileActivity extends React.Component {
   }
 
   fetchNextPage = () => {
-    if (this.state.isFetching || !this.state.hasMore) {
+    if (
+      this.state.initialFetch ||
+      this.state.isFetching ||
+      !this.state.hasMore
+    ) {
       return;
     }
 
