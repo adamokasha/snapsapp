@@ -172,7 +172,7 @@ export class ShareButton extends React.Component {
                       <MenuItem
                         onClick={this.closePopper}
                         color="primary"
-                        variant="flat"
+                        variant="text"
                         component={Button}
                         onClick={this.copyLink}
                         fullWidth
@@ -239,7 +239,8 @@ const styles = theme => ({
 
 ShareButton.propTypes = {
   button: PropTypes.element.isRequired,
-  postId: PropTypes.string.isRequired,
+  postId: PropTypes.string,
+  albumId: PropTypes.string,
   imgUrl: PropTypes.string.isRequired
 };
 

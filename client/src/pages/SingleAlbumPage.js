@@ -18,6 +18,7 @@ import ModalView from "../components/modal/ModalView";
 import AlbumMaker from "../components/album/AlbumMaker";
 import PostShare from "../components/post/PostShare";
 import NavToTopButton from "../components/buttons/NavToTopButton";
+import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 
 import { favePost } from "../async/posts";
 import { fetchAlbumPostsPaginated } from "../async/albums";
@@ -37,7 +38,10 @@ export class SingleAlbumPage extends React.Component {
       page: 0,
       pages: null,
       hasMore: true,
-      showNavToTop: false
+      showNavToTop: false,
+      snackbarVar: null,
+      snackbarMessage: null,
+      snackbarOpen: false
     };
 
     this.signal = axios.CancelToken.source();
@@ -76,8 +80,50 @@ export class SingleAlbumPage extends React.Component {
     this.signal.cancel("Async call cancelled.");
   }
 
+  onAlbumUpdate = () => {
+    this.setState(
+      {
+        initialFetch: true,
+        isFetching: false,
+        page: 0,
+        pages: null,
+        albumName: null,
+        hasMore: true,
+        showNavToTop: false,
+        snackbarVar: "success",
+        snackbarMessage: "Album updated successfully.",
+        snackbarOpen: true
+      },
+      async () => {
+        try {
+          const { albumid } = this.props.match.params;
+          const { data: album } = await fetchAlbumPostsPaginated(
+            this.signal.token,
+            albumid,
+            0
+          );
+          this.setState({
+            initialFetch: false,
+            albumName: album.name,
+            pages: [...album.posts],
+            page: this.state.page + 1
+          });
+        } catch (e) {
+          if (axios.isCancel()) {
+            return console.log(e);
+          }
+          console.log(e);
+        }
+      }
+    );
+  };
+
   fetchNextPage = () => {
-    if (this.state.isFetching || !this.state.hasMore) {
+    if (
+      this.state.initialFetch ||
+      this.state.isFetching ||
+      !this.state.hasMore
+    ) {
       return;
     }
 
@@ -142,6 +188,18 @@ export class SingleAlbumPage extends React.Component {
     });
   };
 
+  toggleShowNavToTopButton = bool => {
+    this.setState({ showNavToTop: bool });
+  };
+
+  onSnackbarOpen = () => {
+    this.setState({ snackbarOpen: true }, () => {});
+  };
+
+  onSnackbarClose = () => {
+    this.setState({ snackbarOpen: false }, () => {});
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -161,7 +219,7 @@ export class SingleAlbumPage extends React.Component {
             <div className={classes.actions}>
               <PostShare
                 context="album"
-                imgUrl={this.state.pages[0]}
+                imgUrl={this.state.pages[0].imgUrl}
                 user={this.state.albumOwner}
                 albumId={this.state.albumId}
                 button={
@@ -176,7 +234,14 @@ export class SingleAlbumPage extends React.Component {
                     <SettingsIcon />
                   </IconButton>
                 }
-                modalComponent={<AlbumMaker albumId={this.state.albumId} />}
+                modalComponent={
+                  <AlbumMaker
+                    albumId={this.state.albumId}
+                    albumName={this.state.albumName}
+                    onAlbumUpdate={this.onAlbumUpdate}
+                    method="patch"
+                  />
+                }
                 withSnackbar={true}
               />
             </div>
@@ -198,7 +263,9 @@ export class SingleAlbumPage extends React.Component {
                   <PostCard
                     onFavePost={this.onFavePost}
                     cardContext="album"
+                    slideData={this.state.pages}
                     post={post}
+                    toggleShowNavToTopButton={this.toggleShowNavToTopButton}
                   />
                 </GridListTile>
               ))}
@@ -212,6 +279,13 @@ export class SingleAlbumPage extends React.Component {
             <CircularProgress color="primary" size={50} />
           </div>
         )}
+        <CustomSnackbar
+          snackbarOpen={this.state.snackbarOpen}
+          variant={this.state.snackbarVar}
+          message={this.state.snackbarMessage}
+          onSnackbarOpen={this.onSnackbarOpen}
+          onSnackbarClose={this.onSnackbarClose}
+        />
       </div>
     );
   }

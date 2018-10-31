@@ -23,14 +23,17 @@ class ModalView extends React.Component {
     this.setState({ open: false });
   };
 
-  onSnackbarSet = (variant, message) => {
-    this.setState({ snackbarVar: variant, snackbarMessage: message }, () => {
-      this.onSnackbarOpen();
-    });
-  };
+  // onSnackbarSet = (variant, message) => {
+  //   this.setState({ snackbarVar: variant, snackbarMessage: message }, () => {
+  //     this.onSnackbarOpen();
+  //   });
+  // };
 
-  onSnackbarOpen = () => {
-    this.setState({ snackbarOpen: true }, () => {});
+  onSnackbarOpen = (variant, message) => {
+    this.setState(
+      { snackbarOpen: true, snackbarVar: variant, snackbarMessage: message },
+      () => {}
+    );
   };
 
   onSnackbarClose = () => {
@@ -44,7 +47,7 @@ class ModalView extends React.Component {
     const ModalComponent = modalComponent.props.withSnackbar
       ? React.cloneElement(modalComponent, {
           handleClose: this.handleClose,
-          onSnackbarSet: this.onSnackbarSet
+          onSnackbarOpen: this.onSnackbarOpen
         })
       : React.cloneElement(modalComponent, {
           handleClose: this.handleClose

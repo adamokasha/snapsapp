@@ -133,9 +133,15 @@ class AlbumMaker extends React.Component {
               snackbarMessage: "Album updated successfully!"
             },
             () => {
-              this.onSnackbarSet();
-              this.props.onAlbumNameSet(this.state.albumName);
-              this.props.handleClose();
+              this.props.onSnackbarOpen &&
+                this.props.onSnackbarOpen(
+                  "success",
+                  "Album updated successfully!"
+                );
+              this.props.onAlbumNameSet &&
+                this.props.onAlbumNameSet(this.state.albumName);
+              this.props.onAlbumUpdate && this.props.onAlbumUpdate();
+              // this.props.handleClose();
             }
           );
         }
@@ -169,10 +175,11 @@ class AlbumMaker extends React.Component {
     });
   };
 
-  onSnackbarSet = () => {
-    const { snackbarVar, snackbarMessage } = this.state;
-    this.props.onSnackbarSet(snackbarVar, snackbarMessage);
-  };
+  // onSnackbarSet = () => {
+  //   const { snackbarVar, snackbarMessage } = this.state;
+  //   // Passed by ModalView
+  //   this.props.onSnackbarSet(snackbarVar, snackbarMessage);
+  // };
 
   render() {
     const { classes } = this.props;
@@ -286,7 +293,9 @@ AlbumMaker.propTypes = {
   albumId: PropTypes.string.isRequired,
   albumName: PropTypes.string,
   method: PropTypes.string,
-  onAlbumNameSet: PropTypes.func
+  onAlbumNameChange: PropTypes.func,
+  onAlbumUpdate: PropTypes.func,
+  onSnackbarOpen: PropTypes.func
 };
 
 const styles = theme => ({

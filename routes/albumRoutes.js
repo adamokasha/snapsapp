@@ -81,21 +81,20 @@ module.exports = app => {
     try {
       const { id, page } = req.params;
 
-      let album;
-      if (page === "0") {
-        album = await Album.findById(
-          id,
-          "_displayName name createdAt posts _owner"
-        )
-          .populate({ path: "posts", options: { limit: 12, skip: 12 * page } })
-          .exec();
-      } else {
-        album = await Album.findById(id, "posts")
-          .populate({ path: "posts", options: { limit: 12, skip: 12 * page } })
-          .exec();
-      }
+      const album = await Album.findById(id)
+        .where("posts")
+        .slice(page * 12, page * 12 + 12)
+        .populate({
+          path: "posts",
+          populate: {
+            path: "_owner",
+            model: "User",
+            select: "displayName profilePhoto"
+          }
+        })
+        .exec();
 
-      if (req.user) {
+      if (req.user && album.posts.length) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
           "_faves",
