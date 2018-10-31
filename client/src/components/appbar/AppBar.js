@@ -286,7 +286,8 @@ const styles = theme => ({
   },
   nav: {
     display: "flex",
-    marginLeft: "auto"
+    marginLeft: "auto",
+    alignItems: 'center'
   },
   iconButton: {
     color: "#fff !important"

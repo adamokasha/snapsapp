@@ -199,6 +199,8 @@ const styles = theme => ({
     transform: "translate(-75%, -75%)"
   },
   menuListItemRoot: {
+    height: '32px',
+    width: 'auto',
     "&:hover": {
       backgroundColor: "inherit"
     }

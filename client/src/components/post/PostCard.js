@@ -160,9 +160,6 @@ class PostCard extends React.Component {
                   aria-label="Add to favorites"
                   onClick={this.onFavePost}
                   color={this.props.post.isFave ? "secondary" : "default"}
-                  classes={{
-                    root: classes.iconButtonRoot
-                  }}
                   disabled={this.state.isFaving || !this.props.auth}
                 >
                   <FavoriteTwoToneIcon />
@@ -174,9 +171,6 @@ class PostCard extends React.Component {
                     <IconButton
                       aria-label="Share"
                       color="default"
-                      classes={{
-                        root: classes.iconButtonRoot
-                      }}
                     >
                       <ShareTwoToneIcon />
                     </IconButton>
@@ -220,10 +214,6 @@ const styles = theme => ({
   },
   actionsRight: {
     display: "flex"
-  },
-  iconButtonRoot: {
-    width: "32px",
-    height: "32px"
   },
   modalRoot: {
     top: "3%",
