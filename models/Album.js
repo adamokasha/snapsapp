@@ -7,7 +7,7 @@ const AlbumSchema = new Schema({
   createdAt: Number,
   coverImg: String,
   _owner: { type: Schema.Types.ObjectId, ref: "User" },
-  posts: [{ type: Schema.Types.ObjectId, ref: "Posts" }]
+  posts: [{ type: Schema.Types.ObjectId, ref: "Post" }]
 });
 
 mongoose.model("Album", AlbumSchema);

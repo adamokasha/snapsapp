@@ -2,10 +2,15 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
+import SettingsIcon from "@material-ui/icons/Settings";
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from "axios";
+import moment from "moment";
 
 import MainPageLoader from "../components/loaders/MainPageLoader";
 import PostCard from "../components/post/PostCard";
@@ -22,6 +27,9 @@ export class SingleAlbumPage extends React.Component {
     this.state = {
       initialFetch: true,
       isFetching: false,
+      albumName: null,
+      albumOwner: null,
+      createdAt: null,
       page: 0,
       pages: null,
       hasMore: true,
@@ -37,14 +45,17 @@ export class SingleAlbumPage extends React.Component {
     window.addEventListener("scroll", this.onScroll(this.fetchNextPage), false);
     try {
       const { albumid } = this.props.match.params;
-      const { data: albumPosts } = await fetchAlbumPostsPaginated(
+      const { data: album } = await fetchAlbumPostsPaginated(
         this.signal.token,
         albumid,
         0
       );
       this.setState({
         initialFetch: false,
-        pages: [...albumPosts],
+        albumName: album.name,
+        albumOwner: album._displayName,
+        createdAt: album.createdAt,
+        pages: [...album.posts],
         page: this.state.page + 1
       });
     } catch (e) {
@@ -68,19 +79,19 @@ export class SingleAlbumPage extends React.Component {
     this.setState({ isFetching: true }, async () => {
       try {
         const { albumid } = this.props.match.params;
-        const { data: albumPosts } = await fetchAlbumPostsPaginated(
+        const { data: album } = await fetchAlbumPostsPaginated(
           this.signal.token,
           albumid,
           this.state.page
         );
 
-        if (!albumPosts.length) {
+        if (!album.posts.length) {
           return this.setState({ isFetching: false, hasMore: false }, () => {});
         }
         this.setState(
           {
             isFetching: false,
-            pages: [...this.state.pages, ...albumPosts],
+            pages: [...this.state.pages, ...album.posts],
             page: this.state.page + 1
           },
           () => {}
@@ -130,6 +141,28 @@ export class SingleAlbumPage extends React.Component {
     const { classes } = this.props;
     return (
       <div ref={this.topRef}>
+        {!this.state.initialFetch && (
+          <div className={classes.infoContainer}>
+            <div className={classes.info}>
+              <Typography>
+                Title:{" "}
+                {this.state.albumName ? this.state.albumName : "Untitled"}
+              </Typography>
+              <Typography>Created by: {this.state.albumOwner}</Typography>
+              <Typography>
+                Created on: {moment(this.state.createdAt).format("MMM Do YYYY")}
+              </Typography>
+            </div>
+            <div>
+              <IconButton>
+                <ShareTwoToneIcon />
+              </IconButton>
+              <IconButton>
+                <SettingsIcon />
+              </IconButton>
+            </div>
+          </div>
+        )}
         {this.state.initialFetch && <MainPageLoader />}
         {!this.state.initialFetch &&
           this.state.pages && (
@@ -170,6 +203,15 @@ SingleAlbumPage.propTypes = {
 };
 
 const styles = theme => ({
+  infoContainer: {
+    margin: `${theme.spacing.unit * 2}px`,
+    display: "flex",
+    justifyContent: "space-between"
+  },
+  info: {
+    display: "flex",
+    flexDirection: "column"
+  },
   gridList: {
     display: "flex",
     flexWrap: "wrap",

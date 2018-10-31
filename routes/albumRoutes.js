@@ -80,12 +80,20 @@ module.exports = app => {
   app.get("/api/albums/full/:id/:page", async (req, res) => {
     try {
       const { id, page } = req.params;
-      const album = await Album.findById(id, "posts");
 
-      const posts = await Post.find({ _id: { $in: album.posts } })
-        .limit(12)
-        .skip(12 * page)
-        .populate("_owner", "displayName profilePhoto");
+      let album;
+      if (page === "0") {
+        album = await Album.findById(
+          id,
+          "_displayName name createdAt posts _owner"
+        )
+          .populate({ path: "posts", options: { limit: 12, skip: 12 * page } })
+          .exec();
+      } else {
+        album = await Album.findById(id, "posts")
+          .populate({ path: "posts", options: { limit: 12, skip: 12 * page } })
+          .exec();
+      }
 
       if (req.user) {
         const favesDoc = await Faves.findOne(
@@ -95,16 +103,16 @@ module.exports = app => {
         );
         const { _faves } = favesDoc;
 
-        posts.forEach(post => {
+        album.posts.forEach(post => {
           if (_faves.toString().includes(post._id)) {
             return (post.isFave = true);
           }
         });
 
-        return res.send(posts);
+        return res.send(album);
       }
 
-      res.status(200).send(posts);
+      res.status(200).send(album);
     } catch (e) {
       console.log(e);
     }
