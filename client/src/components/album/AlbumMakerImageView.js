@@ -41,7 +41,13 @@ export const AlbumMakerImageView = props => {
           </div>
         ))}
       </div>
-      <Button onClick={props.onFetchNextPage}>Load More</Button>
+      <Button
+        color="primary"
+        onClick={props.onFetchNextPage}
+        disabled={props.disabledLoadMoreBtn || !props.hasMore}
+      >
+        Load More
+      </Button>
     </div>
   );
 };
@@ -49,7 +55,9 @@ export const AlbumMakerImageView = props => {
 AlbumMakerImageView.propTypes = {
   classes: PropTypes.object.isRequired,
   imgData: PropTypes.array.isRequired,
-  onFetchNextPage: PropTypes.func.isRequired
+  onFetchNextPage: PropTypes.func.isRequired,
+  disabledLoadMoreBtn: PropTypes.bool.isRequired,
+  hasMore: PropTypes.bool.isRequired
 };
 
 const styles = theme => ({
@@ -69,7 +77,10 @@ const styles = theme => ({
     flexWrap: "wrap",
     justifyContent: "center",
     alignContent: "start",
-    overflowY: "scroll"
+    overflowY: "scroll",
+    [theme.breakpoints.down("sm")]: {
+      height: "300px"
+    }
   },
   imgContainer: {
     position: "relative",

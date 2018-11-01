@@ -13,6 +13,12 @@ module.exports = app => {
     try {
       const { albumName, albumPosts } = req.body;
 
+      if (albumPosts.length > 100) {
+        return res
+          .status(400)
+          .send({ error: "Exceeded the limit of images per album." });
+      }
+
       // Default cover image: last image in array
       const coverImgId = albumPosts[albumPosts.length - 1];
       const coverImgDoc = await Post.findById({ _id: coverImgId }, "imgUrl");
@@ -121,6 +127,11 @@ module.exports = app => {
   app.patch("/api/albums/update/:id", requireAuth, async (req, res) => {
     try {
       const { albumName, albumPosts } = req.body;
+      if (albumPosts.length > 100) {
+        return res
+          .status(400)
+          .send({ error: "Exceeded the limit of images per album." });
+      }
       const album = await Album.findById({ _id: req.params.id });
 
       if (album._owner.toHexString() !== req.user.id) {

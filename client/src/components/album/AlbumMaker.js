@@ -92,7 +92,6 @@ class AlbumMaker extends React.Component {
   }
 
   onFetchNextPage = () => {
-    console.log("called onfetchnextpage");
     this.setState({ isFetching: true }, async () => {
       try {
         const { data: postsData } = await fetchAllUserPosts(
@@ -138,7 +137,15 @@ class AlbumMaker extends React.Component {
   };
 
   onImageSelect = imgId => {
-    // Already in selected, so filter out;
+    // Exceeded 100 img limit
+    if (
+      !this.state.selected.includes(imgId) &&
+      this.state.selected.length >= 100
+    ) {
+      return;
+    }
+
+    // Already in selected, filter out;
     if (this.state.selected.includes(imgId)) {
       const filtered = this.state.selected.filter(img => img !== imgId);
       return this.setState({ selected: filtered });
@@ -258,6 +265,8 @@ class AlbumMaker extends React.Component {
             onImageSelect={this.onImageSelect}
             imgData={this.state.pages}
             onFetchNextPage={this.onFetchNextPage}
+            disabledLoadMoreBtn={this.state.isFetching}
+            hasMore={this.state.hasMore}
           />
         )}
         {this.state.value === 1 && (
@@ -266,6 +275,8 @@ class AlbumMaker extends React.Component {
             onImageSelect={this.onImageSelect}
             imgData={this.filterAlbumPhotos()}
             onFetchNextPage={this.onFetchNextPage}
+            disabledLoadMoreBtn={this.state.isFetching}
+            hasMore={this.state.hasMore}
           />
         )}
         {this.state.value === 2 && (
@@ -273,6 +284,7 @@ class AlbumMaker extends React.Component {
             selected={this.state.selected}
             onImageSelect={this.onImageSelect}
             imgData={this.state.currentAlbumPosts}
+            disabledLoadMoreBtn={true}
           />
         )}
 
@@ -288,24 +300,26 @@ class AlbumMaker extends React.Component {
             onChange={this.onAlbumNameChange}
             value={this.state.albumName}
           />
-          <Button
-            variant="contained"
-            type="submit"
-            className={classes.button}
-            disabled={this.state.isSaving}
-          >
-            <SaveIcon className={classes.leftIcon} />
-            Save
-          </Button>
-          <Button
-            variant="contained"
-            className={classes.button}
-            onClick={() => this.props.handleClose()}
-            disabled={this.state.isSaving}
-          >
-            <CloseIcon className={classes.leftIcon} />
-            Close
-          </Button>
+          <div className={classes.actionButtons}>
+            <Button
+              variant="contained"
+              type="submit"
+              className={classes.button}
+              disabled={this.state.isSaving}
+            >
+              <SaveIcon className={classes.leftIcon} />
+              Save
+            </Button>
+            <Button
+              variant="contained"
+              className={classes.button}
+              onClick={() => this.props.handleClose()}
+              disabled={this.state.isSaving}
+            >
+              <CloseIcon className={classes.leftIcon} />
+              Close
+            </Button>
+          </div>
         </form>
         <CustomSnackbar
           variant={this.state.snackbarVar}
@@ -413,6 +427,7 @@ const styles = theme => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     [theme.breakpoints.down("sm")]: {
       flexDirection: "column"
     }
@@ -421,11 +436,17 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit
   },
+  actionButtons: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  },
   button: {
-    margin: theme.spacing.unit
+    margin: `${theme.spacing.unit}px`,
+    padding: `${theme.spacing.unit * 2}px`
   },
   leftIcon: {
-    marginRight: theme.spacing.unit
+    marginRight: `${theme.spacing.unit}px`
   }
 });
 
