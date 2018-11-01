@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import CheckIcon from "@material-ui/icons/Check";
+import Button from "@material-ui/core/Button";
 
 export const AlbumMakerImageView = props => {
   const onImageSelect = e => {
@@ -12,49 +13,56 @@ export const AlbumMakerImageView = props => {
   const { classes, imgData, selected } = props;
 
   return (
-    <div className={classes.imgView}>
-      {imgData.map(img => (
-        <div className={classes.imgContainer} key={img._id}>
-          <div
-            className={
-              selected.includes(img._id)
-                ? classes.checkIconContainer
-                : classes.hiddenIconContainer
-            }
-          >
-            <CheckIcon className={classes.checkIcon} />
+    <div className={classes.root}>
+      <div className={classes.imgView}>
+        {imgData.map(img => (
+          <div className={classes.imgContainer} key={img._id}>
+            <div
+              className={
+                selected.includes(img._id)
+                  ? classes.checkIconContainer
+                  : classes.hiddenIconContainer
+              }
+            >
+              <CheckIcon className={classes.checkIcon} />
+            </div>
+            <img
+              key={img._id}
+              imgid={img._id}
+              className={
+                selected.includes(img._id) ? classes.imgSelected : classes.img
+              }
+              alt="albumimage"
+              onClick={onImageSelect}
+              src={`https://d14ed1d2q7cc9f.cloudfront.net/75x75/smart/${
+                img.imgUrl
+              }`}
+            />
           </div>
-          <img
-            key={img._id}
-            imgid={img._id}
-            className={
-              selected.includes(img._id) ? classes.imgSelected : classes.img
-            }
-            alt="albumimage"
-            onClick={onImageSelect}
-            src={`https://d14ed1d2q7cc9f.cloudfront.net/75x75/smart/${
-              img.imgUrl
-            }`}
-          />
-        </div>
-      ))}
+        ))}
+      </div>
+      <Button onClick={props.onFetchNextPage}>Load More</Button>
     </div>
   );
 };
 
 AlbumMakerImageView.propTypes = {
   classes: PropTypes.object.isRequired,
-  imgData: PropTypes.array.isRequired
+  imgData: PropTypes.array.isRequired,
+  onFetchNextPage: PropTypes.func.isRequired
 };
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: theme.palette.background.paper
   },
   imgView: {
-    maxWidth: "100%",
-    height: "60vh",
+    width: "100%",
+    height: "500px",
     padding: `${theme.spacing.unit * 2}px`,
     display: "flex",
     flexDirection: "row",

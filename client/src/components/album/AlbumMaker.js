@@ -26,14 +26,14 @@ class AlbumMaker extends React.Component {
     this.state = {
       value: 1,
       currentAlbumPosts: [],
-      posts: [],
+      pages: [],
+      page: 0,
+      hasMore: true,
       selected: [],
       albumName: this.props.albumName || "",
       isLoading: true,
-      isSaving: false,
-      snackbarOpen: false,
-      snackbarVar: "success",
-      snackbarMessage: "success"
+      isFetching: false,
+      isSaving: false
     };
 
     this.signal = axios.CancelToken.source();
@@ -41,44 +41,80 @@ class AlbumMaker extends React.Component {
 
   async componentDidMount() {
     try {
-      // fetch all posts
-      const { data } = await fetchAllUserPosts(this.signal.token);
-      this.setState({ posts: [...data] }, async () => {
-        // retrieve current album posts from db (editing an album)
-        if (this.props.albumId) {
-          const { data } = await fetchAlbumPosts(
-            this.signal.token,
-            this.props.albumId
-          );
-          const currentAlbumPostIds = data.map(imgData => imgData._id);
-          return this.setState(
-            {
-              selected: [...currentAlbumPostIds],
-              currentAlbumPosts: [...data],
-              isLoading: false
-            },
-            () => {}
-          );
-        }
-        this.setState({ isLoading: false });
-      });
+      let allPostsData,
+        albumPostsData = [],
+        currentAlbumPostIds = [];
+
+      if (this.props.albumId) {
+        [{ data: allPostsData }, { data: albumPostsData }] = await axios.all([
+          fetchAllUserPosts(this.signal.token, this.state.page),
+          fetchAlbumPosts(this.signal.token, this.props.albumId)
+        ]);
+
+        currentAlbumPostIds = albumPostsData.map(imgData => imgData._id);
+      } else {
+        const { data: postsData } = await fetchAllUserPosts(
+          this.signal.token,
+          this.state.page
+        );
+        allPostsData = postsData;
+      }
+
+      this.setState(
+        {
+          pages: [...allPostsData],
+          page: this.state.page + 1,
+          selected: [...currentAlbumPostIds],
+          currentAlbumPosts: [...albumPostsData],
+          isLoading: false
+        },
+        () => {}
+      );
     } catch (e) {
       if (axios.isCancel(e)) {
         return console.log(e.message);
       }
+      console.log(e);
       this.setState(
         {
           isLoading: false,
-          isSaving: false,
-          snackbarVar: "error",
-          snackbarMessage: "Something went wrong! Try again."
+          isSaving: false
         },
         () => {
-          this.onSnackbarSet();
+          this.props.onSnackbarOpen &&
+            this.props.onSnackbarOpen(
+              "error",
+              "Something went wrong! Try again."
+            );
         }
       );
     }
   }
+
+  onFetchNextPage = () => {
+    console.log("called onfetchnextpage");
+    this.setState({ isFetching: true }, async () => {
+      try {
+        const { data: postsData } = await fetchAllUserPosts(
+          this.signal.token,
+          this.state.page
+        );
+
+        if (!postsData.length) {
+          return this.setState({
+            hasMore: false,
+            isFetching: false
+          });
+        }
+
+        this.setState({
+          isFetching: false,
+          pages: [...this.state.pages, ...postsData],
+          page: this.state.page + 1
+        });
+      } catch (e) {}
+    });
+  };
 
   componentWillUnmount() {
     this.signal.cancel("Async call cancelled.");
@@ -89,7 +125,7 @@ class AlbumMaker extends React.Component {
       const currentAlbumPhotoIds = this.state.currentAlbumPosts.map(
         img => img._id
       );
-      return this.state.posts.filter(
+      return this.state.pages.filter(
         img => !currentAlbumPhotoIds.includes(img._id)
       );
     }
@@ -128,9 +164,7 @@ class AlbumMaker extends React.Component {
           );
           return this.setState(
             {
-              isSaving: false,
-              snackbarVar: "success",
-              snackbarMessage: "Album updated successfully!"
+              isSaving: false
             },
             () => {
               this.props.onSnackbarOpen &&
@@ -148,12 +182,11 @@ class AlbumMaker extends React.Component {
         await createAlbum(this.signal.token, selected, albumName);
         this.setState(
           {
-            isSaving: false,
-            snackbarVar: "success",
-            snackbarMessage: "Album created successfully!"
+            isSaving: false
           },
           () => {
-            this.onSnackbarSet();
+            this.props.onSnackbarOpen &&
+              this.props.onSnackbarOpen("success", "Album added successfully!");
             this.props.handleClose();
           }
         );
@@ -163,23 +196,19 @@ class AlbumMaker extends React.Component {
         }
         this.setState(
           {
-            isSaving: false,
-            snackbarVar: "error",
-            snackbarMessage: "Something went wrong! Try again."
+            isSaving: false
           },
           () => {
-            this.onSnackbarSet();
+            this.props.onSnackbarOpen &&
+              this.props.onSnackbarOpen(
+                "error",
+                "Something went wrong! Try again."
+              );
           }
         );
       }
     });
   };
-
-  // onSnackbarSet = () => {
-  //   const { snackbarVar, snackbarMessage } = this.state;
-  //   // Passed by ModalView
-  //   this.props.onSnackbarSet(snackbarVar, snackbarMessage);
-  // };
 
   render() {
     const { classes } = this.props;
@@ -227,7 +256,8 @@ class AlbumMaker extends React.Component {
           <AlbumMakerImageView
             selected={this.state.selected}
             onImageSelect={this.onImageSelect}
-            imgData={this.state.posts}
+            imgData={this.state.pages}
+            onFetchNextPage={this.onFetchNextPage}
           />
         )}
         {this.state.value === 1 && (
@@ -235,6 +265,7 @@ class AlbumMaker extends React.Component {
             selected={this.state.selected}
             onImageSelect={this.onImageSelect}
             imgData={this.filterAlbumPhotos()}
+            onFetchNextPage={this.onFetchNextPage}
           />
         )}
         {this.state.value === 2 && (
@@ -290,7 +321,7 @@ class AlbumMaker extends React.Component {
 
 AlbumMaker.propTypes = {
   classes: PropTypes.object.isRequired,
-  albumId: PropTypes.string.isRequired,
+  albumId: PropTypes.string,
   albumName: PropTypes.string,
   method: PropTypes.string,
   onAlbumNameChange: PropTypes.func,

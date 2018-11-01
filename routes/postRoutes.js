@@ -188,10 +188,18 @@ module.exports = app => {
   });
 
   // Get all user posts (protected)
-  app.get("/api/posts/myposts/all", requireAuth, async (req, res) => {
+  app.get("/api/posts/myposts/all/:page", requireAuth, async (req, res) => {
     try {
       const userId = req.user.id;
-      const posts = await Post.find({ _owner: userId }, "imgUrl");
+      const { page } = req.params;
+
+      const posts = await Post.find({ _owner: userId })
+        .sort({ createdAt: -1 })
+        .skip(6 * page)
+        .limit(6)
+        .select("imgUrl")
+        .exec();
+
       res.status(200).send(posts);
     } catch (e) {
       console.log(e);

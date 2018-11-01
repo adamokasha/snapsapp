@@ -1,7 +1,9 @@
 import axios from "axios";
 
-export const fetchAllUserPosts = async cancelToken => {
-  const res = await axios.get("/api/posts/myposts/all", { cancelToken });
+export const fetchAllUserPosts = async (cancelToken, page) => {
+  const res = await axios.get(`/api/posts/myposts/all/${page}`, {
+    cancelToken
+  });
   return res;
 };
 
