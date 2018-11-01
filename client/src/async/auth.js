@@ -2,7 +2,6 @@ import axios from "axios";
 
 export const fetchUser = async () => {
   const res = await axios.get("/api/current_user");
-  console.log(res);
   return res;
 };
 

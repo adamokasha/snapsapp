@@ -168,7 +168,6 @@ export class ProfilePage extends React.Component {
       try {
         await setProfile(this.signal.token, profile);
 
-        console.log(profile);
         this.props.updateProfile(profile);
         this.setState({
           editEnabled: false,

@@ -33,10 +33,7 @@ export class AppRouter extends React.Component {
     return (
       <BrowserRouter>
         <React.Fragment>
-          <AppBar
-            onFetchPopular={this.onFetchPopular}
-            onSetProfilePage={this.onSetProfilePage}
-          />
+          <AppBar />
           <Switch>
             <Route exact path="/" component={MainPage} />
             <Route path="/profile/:user" component={ProfilePage} />
@@ -52,7 +49,7 @@ export class AppRouter extends React.Component {
               component={() => <RegisterOrLogin registerOrLogin="login" />}
               registerOrLogin="login"
             />
-            <PublicRoute path="/privacy" component={PrivacyPolicy} />
+            <Route path="/privacy" component={PrivacyPolicy} />
             <PrivateRoute path="/upload" component={AddPostPage} />
             <PrivateRoute path="/mbox" component={MessageBoxPage} />
           </Switch>

@@ -2,40 +2,27 @@ import axios from "axios";
 
 // Fetch a user profile in Profile
 export const fetchProfile = async (cancelToken, user) => {
-  try {
-    const res = await axios.get(`/api/profile/get/${user}`, { cancelToken });
-    console.log(res);
-    return res;
-  } catch (e) {
-    throw e;
-  }
+  const res = await axios.get(`/api/profile/get/${user}`, { cancelToken });
+  return res;
 };
 
 // Update profile in Profile
 export const setProfile = async (cancelToken, profile) => {
-  try {
-    await axios.post(
-      "/api/profile/update",
-      {
-        profile: { ...profile }
-      },
-      { cancelToken }
-    );
-  } catch (e) {
-    throw e;
-  }
+  await axios.post(
+    "/api/profile/update",
+    {
+      profile: { ...profile }
+    },
+    { cancelToken }
+  );
 };
 
 // Fetch a user's following/followers for ProfileNetwork
 export const fetchFollows = async (cancelToken, user) => {
-  try {
-    const res = await axios.get(`/api/profile/count/${user}`, {
-      cancelToken
-    });
-    return res;
-  } catch (e) {
-    throw e;
-  }
+  const res = await axios.get(`/api/profile/count/${user}`, {
+    cancelToken
+  });
+  return res;
 };
 
 // Follow a user
@@ -49,11 +36,7 @@ export const onFollow = async (cancelToken, userId) => {
 
 // Unfollow a user
 export const onUnfollow = async (cancelToken, userId) => {
-  try {
-    await axios.delete(`/api/profile/follows/unf/${userId}`, { cancelToken });
-  } catch (e) {
-    throw e;
-  }
+  await axios.delete(`/api/profile/follows/unf/${userId}`, { cancelToken });
 };
 
 export const fetchUserFollows = async (cancelToken, userId, page) => {
