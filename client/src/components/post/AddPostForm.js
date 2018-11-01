@@ -284,7 +284,7 @@ class AddPostForm extends React.Component {
               {this.state.post.tags &&
                 this.state.post.tags.map(tag => {
                   if (tag === "") {
-                    return;
+                    return null;
                   }
                   return <Chip className={classes.chipTag} label={tag} />;
                 })}

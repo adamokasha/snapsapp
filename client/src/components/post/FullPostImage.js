@@ -9,6 +9,7 @@ export const FullPostImage = props => {
       <img
         className={classes.img}
         src={`https://s3.amazonaws.com/img-share-kasho/${imgUrl}`}
+        alt={props.title}
       />
     </div>
   );
@@ -16,7 +17,8 @@ export const FullPostImage = props => {
 
 FullPostImage.propTypes = {
   classes: PropTypes.object.isRequired,
-  imgUrl: PropTypes.string.isRequired
+  imgUrl: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired
 };
 
 const styles = theme => ({

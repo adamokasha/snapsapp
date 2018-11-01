@@ -1,4 +1,6 @@
 import React from "react";
+import { connect } from "react-redux";
+import compose from "recompose/compose";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -235,6 +237,7 @@ export class MainPage extends React.Component {
     const { classes } = this.props;
     return (
       <div ref={this.topRef}>
+        {!this.state.initialFetch && !this.props.auth && <HeroUnit />}
         {this.state.initialFetch && <MainPageLoader />}
         {!this.state.initialFetch && (
           <React.Fragment>
@@ -315,4 +318,11 @@ const styles = theme => ({
   }
 });
 
-export default withStyles(styles)(MainPage);
+const mapStateToProps = auth => ({
+  auth
+});
+
+export default compose(
+  withStyles(styles),
+  connect(mapStateToProps)
+)(MainPage);

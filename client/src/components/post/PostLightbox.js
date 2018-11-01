@@ -10,7 +10,6 @@ import PostActions from "./PostActions";
 import PostLighboxImage from "./PostLightboxImage";
 import PostDescription from "./PostDescription";
 import PostTags from "./PostTags";
-import { favePost } from "../../async/posts";
 
 class PostLightbox extends React.Component {
   constructor(props) {

@@ -28,9 +28,6 @@ export class AppRouter extends React.Component {
     }
   }
 
-  onFetchPopular = () => {};
-  onSetProfilePage = () => {};
-
   render() {
     console.log("APP ROUTES RENDERED");
     return (

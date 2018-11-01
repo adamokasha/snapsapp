@@ -170,7 +170,6 @@ export class ShareButton extends React.Component {
 
                     {document.queryCommandSupported("copy") && (
                       <MenuItem
-                        onClick={this.closePopper}
                         color="primary"
                         variant="text"
                         component={Button}

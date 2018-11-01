@@ -43,7 +43,7 @@ class PostCard extends React.Component {
 
   // Will select view based on width: Modal(m+) or redirect to full page view(s-)
   selectView = () => {
-    const { classes, title, cardContext } = this.props;
+    const { classes, title } = this.props;
     const { imgUrl, _id } = this.props.post;
     // Don't open modal on small screens
     if (window.screen.width < 600 || window.innerWidth < 600) {

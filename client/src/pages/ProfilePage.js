@@ -66,18 +66,20 @@ export class ProfilePage extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    this.props.match.params.user !== prevProps.match.params.user
-      ? this.setState({ isFetching: true }, () => {
-          this.fetchProfile();
-        })
-      : null;
+    if (this.props.match.params.user !== prevProps.match.params.user) {
+      this.setState({ isFetching: true }, () => {
+        this.fetchProfile();
+      });
+    }
 
-    this.props.location.state &&
-    this.props.location.state.profileTabPos !== this.state.profileTabPos
-      ? this.setState({
-          profileTabPos: this.props.location.state.profileTabPos
-        })
-      : null;
+    if (
+      this.props.location.state &&
+      this.props.location.state.profileTabPos !== this.state.profileTabPos
+    ) {
+      this.setState({
+        profileTabPos: this.props.location.state.profileTabPos
+      });
+    }
   }
 
   componentWillUnmount() {

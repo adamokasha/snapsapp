@@ -241,7 +241,7 @@ export class FullPostPage extends React.Component {
             this.state.initialFetch && <div>Loading...</div>)}
         {this.state.post && (
           <React.Fragment>
-            <FullPostImage imgUrl={post.imgUrl} />
+            <FullPostImage imgUrl={post.imgUrl} title={post.title} />
             <div className={classes.postInfo}>
               <PostHeading
                 profilePhoto={post._owner.profilePhoto}
