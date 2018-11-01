@@ -11,7 +11,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import InboxIcon from "@material-ui/icons/Inbox";
-import CameraIcon from "@material-ui/icons/Camera";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
@@ -241,8 +240,6 @@ class AppBar extends React.Component {
           <Toolbar>
             <div>
               <Link to="/" className={classNames(classes.logo, classes.aTag)}>
-                <CameraIcon className={classes.logoIcon} />
-
                 <Typography
                   variant="title"
                   color="inherit"
@@ -281,13 +278,10 @@ const styles = theme => ({
   logo: {
     display: "flex"
   },
-  logoIcon: {
-    marginRight: `${theme.spacing.unit}px`
-  },
   nav: {
     display: "flex",
     marginLeft: "auto",
-    alignItems: 'center'
+    alignItems: "center"
   },
   iconButton: {
     color: "#fff !important"

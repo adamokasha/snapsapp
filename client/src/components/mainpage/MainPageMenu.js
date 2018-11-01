@@ -1,12 +1,13 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 import Grow from "@material-ui/core/Grow";
 import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
-import ArrowDropDownCircleOutlinedIcon from "@material-ui/icons/ArrowDropDownCircleOutlined";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import FiberNew from "@material-ui/icons/FiberNew";
 import PeopleOutlinedIcon from "@material-ui/icons/PeopleOutlined";
@@ -56,20 +57,19 @@ export class MainPageMenu extends React.Component {
       <div className={classes.root}>
         <div>
           <ClickAwayListener onClickAway={this.popperClose}>
-            <Button
+            <IconButton
               buttonRef={node => {
                 this.anchorEl = node;
               }}
               aria-owns={this.state.popperOpen ? "menu-list-grow" : null}
               aria-haspopup="true"
-              variant="outlined"
+              variant="contained"
               size="small"
               className={classes.button}
               onClick={this.togglePopper}
             >
-              <ArrowDropDownCircleOutlinedIcon className={classes.leftIcon} />
-              {this.state.context}
-            </Button>
+              <MoreVertIcon />
+            </IconButton>
           </ClickAwayListener>
 
           <Popper
@@ -112,18 +112,16 @@ export class MainPageMenu extends React.Component {
 }
 
 const styles = theme => ({
-  root: {
-    backgroundColor: "#fff"
-  },
+  root: {},
   button: {
     marginLeft: "2%",
     textTransform: "capitalize"
   },
-  popper: {
-    zIndex: 1000
-  },
   leftIcon: {
     marginRight: `${theme.spacing.unit}px`
+  },
+  popper: {
+    zIndex: 2000
   }
 });
 

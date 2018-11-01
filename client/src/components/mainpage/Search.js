@@ -131,19 +131,20 @@ export class Search extends React.Component {
 
 const styles = theme => ({
   root: {
-    backgroundColor: `${theme.palette.background.paper}`,
-    display: "flex",
-    justifyContent: "center"
+    width: "300px",
+    zIndex: "1000"
+    // backgroundColor: `${theme.palette.background.paper}`,
+    // display: "flex",
+    // justifyContent: "center"
   },
   input: {
     margin: `${theme.spacing.unit * 2}px 0`
   },
   popper: {
-    zIndex: "1000",
     left: "-67px !important"
   },
   paper: {
-    width: "262px",
+    width: "100%",
     background: "#fafafa"
   },
   searchIcons: {

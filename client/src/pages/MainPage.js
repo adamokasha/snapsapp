@@ -125,6 +125,7 @@ export class MainPage extends React.Component {
         );
         const gridContext = this.deriveGridContext(context);
         this.setState({
+          context,
           isFetching: false,
           page: 1,
           pages: [...data],
@@ -232,8 +233,14 @@ export class MainPage extends React.Component {
         {this.state.initialFetch && <MainPageLoader />}
         {!this.state.initialFetch && (
           <React.Fragment>
-            <Search onSwitchContext={this.onSwitchContext} />
-            <MainPageMenu onSwitchContext={this.onSwitchContext} />
+            <div className={classes.menuContainer}>
+              <MainPageMenu onSwitchContext={this.onSwitchContext} />
+              <Search
+                className={classes.search}
+                classes={{ root: classes.searchRoot }}
+                onSwitchContext={this.onSwitchContext}
+              />
+            </div>
             <GridList className={classes.gridList} cols={3}>
               {this.renderGridTiles(this.state.pages)}
             </GridList>
@@ -255,6 +262,21 @@ MainPage.propTypes = {
 };
 
 const styles = theme => ({
+  menuContainer: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    // add with of icon button as padding to center search
+    paddingRight: "48px",
+    zIndex: 1000
+  },
+  searchRoot: {
+    [theme.breakpoints.down("sm")]: {
+      justifyContent: "start",
+      width: "250px"
+    }
+  },
   gridList: {
     display: "flex",
     flexWrap: "wrap",
