@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -221,11 +222,16 @@ class ProfileNetworkMenu extends React.Component {
                         tile: classes.tile
                       }}
                     >
-                      <ProfileHeader
-                        profilePhoto={follower.profilePhoto}
-                        displayName={follower.displayName}
-                        joined={follower.joined}
-                      />
+                      <Link
+                        className={classes.aTag}
+                        to={`/profile/${follower.displayName}`}
+                      >
+                        <ProfileHeader
+                          profilePhoto={follower.profilePhoto}
+                          displayName={follower.displayName}
+                          joined={follower.joined}
+                        />
+                      </Link>
                     </GridListTile>
                   ))}
                 </GridList>
@@ -242,11 +248,16 @@ class ProfileNetworkMenu extends React.Component {
                         tile: classes.tile
                       }}
                     >
-                      <ProfileHeader
-                        profilePhoto={following.profilePhoto}
-                        displayName={following.displayName}
-                        joined={following.joined}
-                      />
+                      <Link
+                        className={classes.aTag}
+                        to={`/profile/${following.displayName}`}
+                      >
+                        <ProfileHeader
+                          profilePhoto={following.profilePhoto}
+                          displayName={following.displayName}
+                          joined={following.joined}
+                        />
+                      </Link>
                     </GridListTile>
                   ))}
                 </GridList>
@@ -328,6 +339,10 @@ const styles = theme => ({
   // Inner div that wraps children
   tile: {
     overflow: "initial"
+  },
+  aTag: {
+    color: "inherit",
+    textDecoration: "none"
   },
   circularProgress: {
     margin: "16px auto",

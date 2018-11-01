@@ -1,5 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
@@ -11,7 +12,6 @@ import MainPageLoader from "../components/loaders/MainPageLoader";
 import Search from "../components/mainpage/Search";
 import MainPageMenu from "../components/mainpage/MainPageMenu";
 import HeroUnit from "../components/mainpage/HeroUnit";
-import Grid from "../components/grid/Grid";
 import PostCard from "../components/post/PostCard";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import NavToTopButton from "../components/buttons/NavToTopButton";
@@ -211,11 +211,16 @@ export class MainPage extends React.Component {
               tile: classes.tile
             }}
           >
-            <ProfileHeader
-              profilePhoto={profile.profilePhoto}
-              displayName={profile.displayName}
-              joined={profile.joined}
-            />
+            <Link
+              className={classes.aTag}
+              to={`/profile/${profile.displayName}`}
+            >
+              <ProfileHeader
+                profilePhoto={profile.profilePhoto}
+                displayName={profile.displayName}
+                joined={profile.joined}
+              />
+            </Link>
           </GridListTile>
         ));
         break;
@@ -299,6 +304,10 @@ const styles = theme => ({
   // Inner div that wraps children
   tile: {
     overflow: "initial"
+  },
+  aTag: {
+    color: "inherit",
+    textDecoration: "none"
   },
   circularProgress: {
     margin: "16px auto",
