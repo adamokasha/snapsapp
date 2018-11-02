@@ -150,7 +150,7 @@ class PostLightbox extends React.Component {
                   imgUrl={imgUrl}
                   faveCount={faveCount}
                   isFave={isFave}
-                  canFave={this.props.auth}
+                  canFave={this.props.auth && this.props.auth.registered}
                   onFavePost={this.onFavePost}
                   isFaving={this.state.isFaving}
                 />

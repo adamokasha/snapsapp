@@ -30,6 +30,7 @@ export const ProfileNetwork = props => {
         </div>
       </div>
       {auth &&
+        auth.registered &&
         !ownProfile && (
           <div
             className={

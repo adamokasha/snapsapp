@@ -40,7 +40,7 @@ export const PostActions = props => {
         </Button>
       )}
       {!canFave && (
-        <Tooltip title={"You need to signup or login to fave this post."}>
+        <Tooltip title={"You need to be registered to fave this post."}>
           <Button size="small" className={classes.buttons}>
             <FavoriteTwoToneIcon
               className={

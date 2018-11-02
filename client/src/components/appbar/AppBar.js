@@ -67,8 +67,12 @@ class AppBar extends React.Component {
   };
 
   selectPostFormView = () => {
-    const { auth } = this.props;
-    if (window.screen.width < 600 || window.innerWidth < 600) {
+    const { auth, classes } = this.props;
+    if (
+      window.screen.width < 600 ||
+      window.innerWidth < 600 ||
+      !auth.registered
+    ) {
       return (
         <DisabledIconButtonWrapper
           component={Link}
@@ -83,9 +87,9 @@ class AppBar extends React.Component {
     return (
       <ModalView
         togglerComponent={
-          <DisabledIconButtonWrapper isDisabled={!auth.registered}>
-            <CloudUploadIcon />
-          </DisabledIconButtonWrapper>
+          <IconButton>
+            <CloudUploadIcon classes={{ root: classes.iconRoot }} />
+          </IconButton>
         }
         modalComponent={<AddPostForm view="modal" />}
       />
@@ -103,17 +107,17 @@ class AppBar extends React.Component {
 
         {auth.registered ? (
           <Link to="/mbox">
-            <IconButton className={classes.iconButton}>
+            <IconButton>
               <Badge badgeContent={auth.mBoxNotif || 0} color="secondary">
-                <InboxIcon />
+                <InboxIcon classes={{ root: classes.iconRoot }} />
               </Badge>
             </IconButton>
           </Link>
         ) : (
           <div className={classes.disabledNavButton}>
-            <IconButton className={classes.iconButton} disabled>
+            <IconButton disabled>
               <Badge badgeContent={auth.mBoxNotif || 0} color="secondary">
-                <InboxIcon />
+                <InboxIcon classes={{ root: classes.iconRoot }} />
               </Badge>
             </IconButton>
           </div>
@@ -264,10 +268,6 @@ AppBar.propTypes = {
   updateMboxNotif: PropTypes.func
 };
 
-const mapStateToProps = auth => ({
-  auth
-});
-
 const styles = theme => ({
   root: {
     flexGrow: 1
@@ -283,8 +283,8 @@ const styles = theme => ({
     marginLeft: "auto",
     alignItems: "center"
   },
-  iconButton: {
-    color: "#fff !important"
+  iconRoot: {
+    color: "#fff"
   },
   disabledNavButton: {
     opacity: "0.54"
@@ -294,6 +294,10 @@ const styles = theme => ({
     color: "inherit",
     textDecoration: "none"
   }
+});
+
+const mapStateToProps = auth => ({
+  auth
 });
 
 export default compose(

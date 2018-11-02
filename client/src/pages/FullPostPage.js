@@ -252,7 +252,7 @@ export class FullPostPage extends React.Component {
                 postId={post._id}
                 imgUrl={post.imgUrl}
                 commentCount={post.commentCount}
-                canFave={auth ? true : false}
+                canFave={auth && auth.registered}
                 onFavePost={this.onFavePost}
                 isFaving={isFaving}
                 isFave={post.isFave}
@@ -281,6 +281,7 @@ export class FullPostPage extends React.Component {
             />
           )}
           {auth &&
+            auth.registered &&
             !fetchingComments && (
               <CommentForm
                 onAddComment={this.onAddComment}

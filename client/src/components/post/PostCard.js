@@ -156,7 +156,11 @@ class PostCard extends React.Component {
                   aria-label="Add to favorites"
                   onClick={this.onFavePost}
                   color={this.props.post.isFave ? "secondary" : "default"}
-                  disabled={this.state.isFaving || !this.props.auth}
+                  disabled={
+                    this.state.isFaving ||
+                    !this.props.auth ||
+                    !this.props.auth.registered
+                  }
                 >
                   <FavoriteTwoToneIcon />
                 </IconButton>
