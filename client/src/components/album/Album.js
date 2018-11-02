@@ -1,32 +1,28 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
+import classNames from "classnames";
+import PropTypes from "prop-types";
 import IconButton from "@material-ui/core/IconButton";
 import Bar from "@material-ui/core/GridListTileBar";
 
-import SettingsIcon from "../icons/Settings";
+import SettingsIcon from "@material-ui/icons/Settings";
 import ModalView from "../modal/ModalView";
 import AlbumMaker from "./AlbumMaker";
 
 class Album extends React.Component {
   state = {
-    albumName: this.props.album.name
+    albumName: this.props.album.name,
+    showSettingsIcon: false
   };
-  toggleEditIcon = e => {
-    const actionIcon = e.currentTarget.querySelectorAll(
-      'button[class*="MuiIconButton"]'
-    )[0];
 
-    if (actionIcon && e.type === "mouseenter") {
-      actionIcon.style.visibility = "visible";
-      actionIcon.style.opacity = "1";
-      return;
+  toggleSettingsIcon = e => {
+    if (e.type === "mouseenter") {
+      return this.setState({ showSettingsIcon: true }, () => {});
     }
-    if (actionIcon && e.type === "mouseleave") {
-      actionIcon.style.visibility = "hidden";
-      actionIcon.style.opacity = "0";
-      return;
+
+    if (e.type === "mouseleave") {
+      return this.setState({ showSettingsIcon: false }, () => {});
     }
   };
 
@@ -39,8 +35,8 @@ class Album extends React.Component {
 
     return (
       <div
-        onMouseLeave={this.toggleEditIcon}
-        onMouseEnter={this.toggleEditIcon}
+        onMouseLeave={this.toggleSettingsIcon}
+        onMouseEnter={this.toggleSettingsIcon}
         className={classes.root}
       >
         <Link
@@ -60,25 +56,35 @@ class Album extends React.Component {
         <Bar
           title={this.state.albumName}
           actionIcon={
-            <ModalView
-              togglerComponent={
-                <IconButton
-                  albumid={album._id}
-                  classes={{ root: classes.icon }}
-                >
-                  <SettingsIcon classes={{ root: classes.settingsIcon }} />
-                </IconButton>
-              }
-              modalComponent={
-                <AlbumMaker
-                  albumId={album._id}
-                  albumName={album.name}
-                  withSnackbar={true}
-                  method="patch"
-                  onAlbumNameSet={this.onAlbumNameSet}
-                />
-              }
-            />
+            this.props.ownAlbum && (
+              <ModalView
+                togglerComponent={
+                  <IconButton
+                    ref={node => {
+                      this.iconButtonRef = node;
+                    }}
+                    albumid={album._id}
+                    className={
+                      this.state.showSettingsIcon
+                        ? classNames(classes.visibleSettingsIcon)
+                        : classes.icon
+                    }
+                    classes={{ root: classes.iconButtonRoot }}
+                  >
+                    <SettingsIcon classes={{ root: classes.settingsIcon }} />
+                  </IconButton>
+                }
+                modalComponent={
+                  <AlbumMaker
+                    albumId={album._id}
+                    albumName={album.name}
+                    withSnackbar={true}
+                    method="patch"
+                    onAlbumNameSet={this.onAlbumNameSet}
+                  />
+                }
+              />
+            )
           }
         />
       </div>
@@ -88,7 +94,8 @@ class Album extends React.Component {
 
 Album.propTypes = {
   classes: PropTypes.object.isRequired,
-  album: PropTypes.object.isRequired
+  album: PropTypes.object.isRequired,
+  ownAlbum: PropTypes.bool.isRequired
 };
 
 const styles = theme => ({
@@ -97,15 +104,24 @@ const styles = theme => ({
     width: "200px",
     position: "relative"
   },
+  iconButtonRoot: {
+    color: "rgba(255, 255, 255, 0.54)"
+  },
   icon: {
-    color: "rgba(255, 255, 255, 0.54)",
     visibility: "hidden",
-    opacity: "0",
-    transition: "visibility 0s, opacity .3s ease"
+    opacity: "0"
   },
   settingsIcon: {
     height: "24px",
     width: "24px"
+  },
+  visibleSettingsIcon: {
+    visibility: "visible",
+    opacity: 1,
+    transition: "visibility 0s, opacity .3s ease"
+  },
+  hiddenSettingsIcon: {
+    visibility: "hidden"
   }
 });
 

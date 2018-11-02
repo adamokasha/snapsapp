@@ -1,7 +1,9 @@
 import React from "react";
-import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router";
+import compose from "recompose/compose";
+import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
@@ -228,22 +230,27 @@ export class SingleAlbumPage extends React.Component {
                   </IconButton>
                 }
               />
-              <ModalView
-                togglerComponent={
-                  <IconButton>
-                    <SettingsIcon />
-                  </IconButton>
-                }
-                modalComponent={
-                  <AlbumMaker
-                    albumId={this.state.albumId}
-                    albumName={this.state.albumName}
-                    onAlbumUpdate={this.onAlbumUpdate}
-                    method="patch"
+
+              {this.props.auth &&
+                this.props.auth.displayName ===
+                  this.props.match.params.user && (
+                  <ModalView
+                    togglerComponent={
+                      <IconButton>
+                        <SettingsIcon />
+                      </IconButton>
+                    }
+                    modalComponent={
+                      <AlbumMaker
+                        albumId={this.state.albumId}
+                        albumName={this.state.albumName}
+                        onAlbumUpdate={this.onAlbumUpdate}
+                        method="patch"
+                      />
+                    }
+                    withSnackbar={true}
                   />
-                }
-                withSnackbar={true}
-              />
+                )}
             </div>
           </div>
         )}
@@ -290,6 +297,10 @@ export class SingleAlbumPage extends React.Component {
     );
   }
 }
+
+const mapStateToProps = auth => ({
+  auth
+});
 
 SingleAlbumPage.propTypes = {
   albumId: PropTypes.string
@@ -338,4 +349,7 @@ const styles = theme => ({
   }
 });
 
-export default withStyles(styles)(withRouter(SingleAlbumPage));
+export default compose(
+  withStyles(styles),
+  connect(mapStateToProps)
+)(withRouter(SingleAlbumPage));

@@ -249,11 +249,11 @@ class ProfileActivity extends React.Component {
                       tile: classes.tile
                     }}
                   >
-                    <Album album={album} />
+                    <Album ownAlbum={this.props.ownProfile} album={album} />
                   </GridListTile>
                 ))}
               </GridList>
-              {
+              {this.props.ownProfile && (
                 <ModalView
                   togglerComponent={
                     <Button
@@ -266,7 +266,7 @@ class ProfileActivity extends React.Component {
                   }
                   modalComponent={<AlbumMaker withSnackbar={true} />}
                 />
-              }
+              )}
             </React.Fragment>
           )}
         {this.state.isFetching && (

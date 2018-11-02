@@ -187,7 +187,7 @@ module.exports = app => {
     }
   });
 
-  // Get all user posts (protected)
+  // Get all user posts (protected) for AlbumMaker
   app.get("/api/posts/myposts/all/:page", requireAuth, async (req, res) => {
     try {
       const userId = req.user.id;
@@ -195,8 +195,8 @@ module.exports = app => {
 
       const posts = await Post.find({ _owner: userId })
         .sort({ createdAt: -1 })
-        .skip(6 * page)
-        .limit(6)
+        .skip(50 * page)
+        .limit(50)
         .select("imgUrl")
         .exec();
 
