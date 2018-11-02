@@ -1,19 +1,19 @@
-const AWS = require('aws-sdk');
-const uuid = require('uuid');
-const multer = require('multer');
-const multerS3 = require('multer-s3');
-const mongoose = require('mongoose');
+const AWS = require("aws-sdk");
+const uuid = require("uuid");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const mongoose = require("mongoose");
 
-const Post = mongoose.model('Post');
-const keys = require('../config/keys');
-const requireAuth = require('../middlewares/requireAuth');
+const Post = mongoose.model("Post");
+const keys = require("../config/keys");
+const requireRegistration = require("../middlewares/requireRegistration");
 
 const s3 = new AWS.S3({
   accessKeyId: keys.accessKeyId,
   secretAccessKey: keys.secretAccessKey,
-  endpoint: 's3.amazonaws.com',
-  signatureVersion: 'v4',
-  region: 'us-east-1'
+  endpoint: "s3.amazonaws.com",
+  signatureVersion: "v4",
+  region: "us-east-1"
 });
 
 const upload = multer({
@@ -22,7 +22,7 @@ const upload = multer({
   },
   storage: multerS3({
     s3,
-    bucket: 'img-share-kasho',
+    bucket: "img-share-kasho",
     metadata: function(req, file, cb) {
       cb(null, { fieldName: file.fieldname });
     },
@@ -32,7 +32,7 @@ const upload = multer({
   }),
   fileFilter: (req, file, cb) => {
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-      return cb(new Error('Only image files are allowed!'));
+      return cb(new Error("Only image files are allowed!"));
     }
     cb(null, true);
   }
@@ -40,9 +40,9 @@ const upload = multer({
 
 module.exports = app => {
   app.post(
-    '/api/upload',
-    requireAuth,
-    upload.single('image'),
+    "/api/upload",
+    requireRegistration,
+    upload.single("image"),
     async (req, res) => {
       try {
         let data = JSON.parse(req.body.data);
@@ -58,11 +58,17 @@ module.exports = app => {
           tags
         });
         await post.save();
-        res.status(200).send({ success: 'Post has been added!', postData: post });
+        res
+          .status(200)
+          .send({ success: "Post has been added!", postData: post });
       } catch (e) {
-        res.status(200).send({error: 'Could not add post. Please check html form input and upload file.'})
+        res
+          .status(200)
+          .send({
+            error:
+              "Could not add post. Please check html form input and upload file."
+          });
       }
-      
     }
   );
 };

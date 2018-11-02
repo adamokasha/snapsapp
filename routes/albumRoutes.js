@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const requireAuth = require("../middlewares/requireAuth");
+const requireRegistration = require("../middlewares/requireRegistration");
 
 const Album = mongoose.model("Album");
 const Post = mongoose.model("Post");
@@ -9,7 +9,7 @@ const User = mongoose.model("User");
 
 module.exports = app => {
   // Add new album
-  app.post("/api/albums", requireAuth, async (req, res) => {
+  app.post("/api/albums", requireRegistration, async (req, res) => {
     try {
       const { albumName, albumPosts } = req.body;
 
@@ -58,7 +58,7 @@ module.exports = app => {
   });
 
   // Get a user's albums (protected)
-  app.get("/api/albums/myalbums", requireAuth, async (req, res) => {
+  app.get("/api/albums/myalbums", requireRegistration, async (req, res) => {
     try {
       const userId = req.user.id;
       const albums = await Album.find(
@@ -100,7 +100,7 @@ module.exports = app => {
         })
         .exec();
 
-      if (req.user && album.posts.length) {
+      if (req.user && req.user.registered && album.posts.length) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
           "_faves",
@@ -124,7 +124,7 @@ module.exports = app => {
   });
 
   // Update an album
-  app.patch("/api/albums/update/:id", requireAuth, async (req, res) => {
+  app.patch("/api/albums/update/:id", requireRegistration, async (req, res) => {
     try {
       const { albumName, albumPosts } = req.body;
       if (albumPosts.length > 100) {

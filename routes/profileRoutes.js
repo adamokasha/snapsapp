@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
-const requireAuth = require("../middlewares/requireAuth");
+const requireRegistration = require("../middlewares/requireRegistration");
 const User = mongoose.model("User");
 const Follows = mongoose.model("Follows");
 const Followers = mongoose.model("Followers");
 
 module.exports = app => {
   // Update Profile
-  app.post("/api/profile/update", requireAuth, async (req, res) => {
+  app.post("/api/profile/update", requireRegistration, async (req, res) => {
     try {
       const user = await User.findByIdAndUpdate(
         { _id: req.user.id },
@@ -150,52 +150,60 @@ module.exports = app => {
   });
 
   // Follow a user
-  app.post("/api/profile/follows/add/:id", requireAuth, async (req, res) => {
-    try {
-      const clientId = req.user.id;
-      const { id } = req.params;
-      if (clientId === id) {
-        return res.status(400).send({ error: "Can't add self." });
+  app.post(
+    "/api/profile/follows/add/:id",
+    requireRegistration,
+    async (req, res) => {
+      try {
+        const clientId = req.user.id;
+        const { id } = req.params;
+        if (clientId === id) {
+          return res.status(400).send({ error: "Can't add self." });
+        }
+        const follows = await Follows.findOneAndUpdate(
+          { _owner: clientId },
+          { $addToSet: { follows: id } }
+        );
+
+        // Update the followed users Followers docs
+        await Followers.findOneAndUpdate(
+          { _owner: id },
+          { $addToSet: { followers: clientId } }
+        );
+
+        res.status(200).send(follows);
+      } catch (e) {
+        console.log(e);
       }
-      const follows = await Follows.findOneAndUpdate(
-        { _owner: clientId },
-        { $addToSet: { follows: id } }
-      );
-
-      // Update the followed users Followers docs
-      await Followers.findOneAndUpdate(
-        { _owner: id },
-        { $addToSet: { followers: clientId } }
-      );
-
-      res.status(200).send(follows);
-    } catch (e) {
-      console.log(e);
     }
-  });
+  );
 
   // Unfollow a user
-  app.delete("/api/profile/follows/unf/:id", requireAuth, async (req, res) => {
-    try {
-      const clientId = req.user.id;
-      const { id } = req.params;
-      if (clientId === id) {
-        return res.status(400).send({ error: "Can't unfollow self." });
+  app.delete(
+    "/api/profile/follows/unf/:id",
+    requireRegistration,
+    async (req, res) => {
+      try {
+        const clientId = req.user.id;
+        const { id } = req.params;
+        if (clientId === id) {
+          return res.status(400).send({ error: "Can't unfollow self." });
+        }
+        const follows = await Follows.findOneAndUpdate(
+          { _owner: clientId },
+          { $pull: { follows: id } }
+        );
+
+        // Update the followed users Followers docs
+        await Followers.findOneAndUpdate(
+          { _owner: id },
+          { $pull: { followers: clientId } }
+        );
+
+        res.status(200).send(follows);
+      } catch (e) {
+        console.log(e);
       }
-      const follows = await Follows.findOneAndUpdate(
-        { _owner: clientId },
-        { $pull: { follows: id } }
-      );
-
-      // Update the followed users Followers docs
-      await Followers.findOneAndUpdate(
-        { _owner: id },
-        { $pull: { followers: clientId } }
-      );
-
-      res.status(200).send(follows);
-    } catch (e) {
-      console.log(e);
     }
-  });
+  );
 };

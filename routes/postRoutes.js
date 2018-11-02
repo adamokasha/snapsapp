@@ -1,4 +1,4 @@
-const requireAuth = require("../middlewares/requireAuth");
+const requireRegistration = require("../middlewares/requireRegistration");
 const mongoose = require("mongoose");
 
 const Post = mongoose.model("Post");
@@ -22,7 +22,7 @@ module.exports = app => {
         })
         .exec();
 
-      if (req.user) {
+      if (req.user && req.user.registered) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
           "_faves",
@@ -62,7 +62,7 @@ module.exports = app => {
         select: "displayName profilePhoto"
       });
 
-      if (req.user) {
+      if (req.user && req.user.registered) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
           "_faves",
@@ -86,7 +86,7 @@ module.exports = app => {
   });
 
   // ScrollView context: Follows Feed
-  app.get("/api/posts/follows/:page", requireAuth, async (req, res) => {
+  app.get("/api/posts/follows/:page", requireRegistration, async (req, res) => {
     try {
       const { page } = req.params;
       const follows = await Follows.find({ _owner: req.user.id }, "follows");
@@ -121,7 +121,7 @@ module.exports = app => {
         .skip(12 * page)
         .exec();
 
-      if (req.user) {
+      if (req.user && req.user.registered) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
           "_faves",
@@ -164,7 +164,7 @@ module.exports = app => {
         .skip(12 * page)
         .exec();
 
-      if (req.user) {
+      if (req.user && req.user.registered) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
           "_faves",
@@ -188,23 +188,27 @@ module.exports = app => {
   });
 
   // Get all user posts (protected) for AlbumMaker
-  app.get("/api/posts/myposts/all/:page", requireAuth, async (req, res) => {
-    try {
-      const userId = req.user.id;
-      const { page } = req.params;
+  app.get(
+    "/api/posts/myposts/all/:page",
+    requireRegistration,
+    async (req, res) => {
+      try {
+        const userId = req.user.id;
+        const { page } = req.params;
 
-      const posts = await Post.find({ _owner: userId })
-        .sort({ createdAt: -1 })
-        .skip(50 * page)
-        .limit(50)
-        .select("imgUrl")
-        .exec();
+        const posts = await Post.find({ _owner: userId })
+          .sort({ createdAt: -1 })
+          .skip(50 * page)
+          .limit(50)
+          .select("imgUrl")
+          .exec();
 
-      res.status(200).send(posts);
-    } catch (e) {
-      console.log(e);
+        res.status(200).send(posts);
+      } catch (e) {
+        console.log(e);
+      }
     }
-  });
+  );
 
   // Get single post
   app.get("/api/posts/single/:id", async (req, res) => {
@@ -213,7 +217,7 @@ module.exports = app => {
         { _id: req.params.id },
         "-comments"
       ).populate({ path: "_owner", select: "displayName profilePhoto" });
-      if (req.user) {
+      if (req.user && req.user.registered) {
         const favesDoc = await Faves.findOne(
           { _owner: req.user.id },
           "_faves",
@@ -274,24 +278,28 @@ module.exports = app => {
   });
 
   // Add a comment
-  app.post("/api/posts/comments/add/:postId", requireAuth, async (req, res) => {
-    try {
-      const { commentBody } = req.body;
-      const comment = {
-        _owner: req.user.id,
-        createdAt: Date.now(),
-        body: commentBody
-      };
-      await Post.findOneAndUpdate(
-        { _id: req.params.postId },
-        { $push: { comments: comment }, $inc: { commentCount: 1 } },
-        { new: true }
-      );
-      res.status(200).send({ success: "Comment added" });
-    } catch (e) {
-      console.log(e);
+  app.post(
+    "/api/posts/comments/add/:postId",
+    requireRegistration,
+    async (req, res) => {
+      try {
+        const { commentBody } = req.body;
+        const comment = {
+          _owner: req.user.id,
+          createdAt: Date.now(),
+          body: commentBody
+        };
+        await Post.findOneAndUpdate(
+          { _id: req.params.postId },
+          { $push: { comments: comment }, $inc: { commentCount: 1 } },
+          { new: true }
+        );
+        res.status(200).send({ success: "Comment added" });
+      } catch (e) {
+        console.log(e);
+      }
     }
-  });
+  );
 
   // Search by tag or title
   app.post("/api/posts/search/:page", async (req, res) => {
@@ -317,7 +325,7 @@ module.exports = app => {
   });
 
   // Fave
-  app.post("/api/posts/fave/:id", requireAuth, async (req, res) => {
+  app.post("/api/posts/fave/:id", requireRegistration, async (req, res) => {
     try {
       const postId = mongoose.Types.ObjectId(req.params.id);
       const fave = await Faves.findOne(
