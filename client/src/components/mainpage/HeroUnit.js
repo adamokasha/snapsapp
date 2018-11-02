@@ -1,9 +1,10 @@
 import React from "react";
+import { withStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { withStyles } from "@material-ui/core/styles";
 
 export const HeroUnit = props => {
   const { classes } = props;
@@ -18,7 +19,7 @@ export const HeroUnit = props => {
             color="textPrimary"
             gutterBottom
           >
-            Landing page
+            SnapsApp Demo
           </Typography>
           <Typography
             variant="title"
@@ -26,21 +27,34 @@ export const HeroUnit = props => {
             color="textSecondary"
             paragraph
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
-            congue orci sit amet tortor semper, sit amet pretium odio dignissim.
-            Quisque odio lacus, ullamcorper sit amet ultrices sed, placerat a
-            orci odio lacus.
+            SnapsApp is an image-sharing app built with the MERN stack and
+            styled with the Material-UI library. SnapsApp includes a gamut of
+            features typical of a social app: A follower system, direct
+            messaging, profile pages, albums, faves, infinite scroll, sharing
+            and more. This is an on-going project with improvements added on a
+            semi-regular basis.
           </Typography>
           <div className={classes.heroButtons}>
             <Grid container spacing={16} justify="center">
               <Grid item>
-                <Button variant="contained" color="primary">
-                  Main call to action
+                <Button
+                  to="/signup"
+                  component={Link}
+                  variant="contained"
+                  color="primary"
+                >
+                  Sign Up To Get Started
                 </Button>
               </Grid>
               <Grid item>
-                <Button variant="outlined" color="primary">
-                  Secondary action
+                <Button
+                  href="https://github.com/samokasha/snapsapp"
+                  target="_blank"
+                  component={"a"}
+                  variant="outlined"
+                  color="primary"
+                >
+                  GitHub Repository
                 </Button>
               </Grid>
             </Grid>
