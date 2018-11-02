@@ -117,8 +117,8 @@ module.exports = app => {
           path: "_owner",
           select: "profilePhoto displayName"
         })
-        .limit(6)
-        .skip(6 * page)
+        .limit(12)
+        .skip(12 * page)
         .exec();
 
       if (req.user) {
@@ -160,8 +160,8 @@ module.exports = app => {
 
       const posts = await Post.find({ _id: { $in: favesArray } })
         .populate({ path: "_owner", select: "profilePhoto displayName" })
-        .limit(6)
-        .skip(6 * page)
+        .limit(12)
+        .skip(12 * page)
         .exec();
 
       if (req.user) {

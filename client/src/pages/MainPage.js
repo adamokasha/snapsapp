@@ -108,6 +108,7 @@ export class MainPage extends React.Component {
 
   deriveGridContext = context => {
     let gridContext;
+    // searchUsers will be profiles, rest are posts
     if (["searchUsers"].includes(context)) {
       gridContext = "profiles";
     } else {
@@ -178,58 +179,47 @@ export class MainPage extends React.Component {
     this.setState({ showNavToTop: bool });
   };
 
-  renderGridTiles = data => {
+  renderGrid = data => {
     const gridContext = this.deriveGridContext(this.state.context);
     const { classes } = this.props;
-    let tiles;
-    switch (gridContext) {
-      case "posts":
-        tiles = data.map(post => (
+
+    return (
+      <GridList className={classes.gridList} cols={3}>
+        {data.map(item => (
           <GridListTile
-            key={post._id}
+            key={item._id}
             cols={1}
             classes={{
               root: classes.gridTileRoot,
               tile: classes.tile
             }}
           >
-            <PostCard
-              toggleShowNavToTopButton={this.toggleShowNavToTopButton}
-              onFavePost={this.onFavePost}
-              slideData={this.state.pages}
-              post={post}
-              cardContext="post"
-            />
-          </GridListTile>
-        ));
-        break;
-      case "profiles":
-        tiles = data.map(profile => (
-          <GridListTile
-            key={profile._id}
-            cols={1}
-            classes={{
-              root: classes.gridTileRoot,
-              tile: classes.tile
-            }}
-          >
-            <Link
-              className={classes.aTag}
-              to={`/profile/${profile.displayName}`}
-            >
-              <ProfileHeader
-                profilePhoto={profile.profilePhoto}
-                displayName={profile.displayName}
-                joined={profile.joined}
+            {gridContext === "posts" && (
+              <PostCard
+                toggleShowNavToTopButton={this.toggleShowNavToTopButton}
+                onFavePost={this.onFavePost}
+                slideData={this.state.pages}
+                post={item}
+                cardContext="post"
               />
-            </Link>
+            )}
+
+            {gridContext === "profiles" && (
+              <Link
+                className={classes.aTag}
+                to={`/profile/${item.displayName}`}
+              >
+                <ProfileHeader
+                  profilePhoto={item.profilePhoto}
+                  displayName={item.displayName}
+                  joined={item.joined}
+                />
+              </Link>
+            )}
           </GridListTile>
-        ));
-        break;
-      default:
-        tiles = [];
-    }
-    return tiles;
+        ))}
+      </GridList>
+    );
   };
 
   render() {
@@ -249,9 +239,7 @@ export class MainPage extends React.Component {
                 onSwitchContext={this.onSwitchContext}
               />
             </div>
-            <GridList className={classes.gridList} cols={3}>
-              {this.renderGridTiles(this.state.pages)}
-            </GridList>
+            {this.state.pages && this.renderGrid(this.state.pages)}
           </React.Fragment>
         )}
         {this.state.isFetching && (

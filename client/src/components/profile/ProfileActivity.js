@@ -166,6 +166,42 @@ class ProfileActivity extends React.Component {
     });
   };
 
+  renderGrid = data => {
+    const { classes } = this.props;
+
+    // Derive gridContext by tab value (0, 1 = posts, 2 = albums)
+    const gridContext = this.state.value === 2 ? "albums" : "posts";
+
+    return (
+      <GridList className={classes.gridList} cols={3}>
+        {data.map(item => (
+          <GridListTile
+            key={item._id}
+            cols={1}
+            classes={{
+              root: classes.gridTileRoot,
+              tile: classes.tile
+            }}
+          >
+            {gridContext === "posts" && (
+              <PostCard
+                toggleShowNavToTopButton={this.toggleShowNavToTopButton}
+                post={item}
+                slideData={this.state.pages}
+                cardContext="post"
+                onFavePost={this.onFavePost}
+              />
+            )}
+
+            {gridContext === "albums" && (
+              <Album ownAlbum={this.props.ownProfile} album={item} />
+            )}
+          </GridListTile>
+        ))}
+      </GridList>
+    );
+  };
+
   render() {
     const { classes } = this.props;
     console.log("ProfileActivity RENDERED", this.props);
@@ -190,84 +226,22 @@ class ProfileActivity extends React.Component {
           </Tabs>
         </AppBar>
 
-        {this.state.value === 0 &&
-          this.state.pages && (
-            <GridList className={classes.gridList} cols={3}>
-              {this.state.pages.map(post => (
-                <GridListTile
-                  key={post._id}
-                  cols={1}
-                  classes={{
-                    root: classes.gridTileRoot,
-                    tile: classes.tile
-                  }}
-                >
-                  <PostCard
-                    toggleShowNavToTopButton={this.toggleShowNavToTopButton}
-                    post={post}
-                    slideData={this.state.pages}
-                    cardContext="post"
-                    onFavePost={this.onFavePost}
-                  />
-                </GridListTile>
-              ))}
-            </GridList>
-          )}
-        {this.state.value === 1 &&
-          this.state.pages && (
-            <GridList className={classes.gridList} cols={3}>
-              {this.state.pages.map(post => (
-                <GridListTile
-                  key={post._id}
-                  cols={1}
-                  classes={{
-                    root: classes.gridTileRoot,
-                    tile: classes.tile
-                  }}
-                >
-                  <PostCard
-                    toggleShowNavToTopButton={this.toggleShowNavToTopButton}
-                    post={post}
-                    slideData={this.state.pages}
-                    cardContext="post"
-                    onFavePost={this.onFavePost}
-                  />
-                </GridListTile>
-              ))}
-            </GridList>
-          )}
+        {this.state.pages && this.renderGrid(this.state.pages)}
+
         {this.state.value === 2 &&
-          this.state.pages && (
-            <React.Fragment>
-              <GridList className={classes.gridList} cols={3}>
-                {this.state.pages.map(album => (
-                  <GridListTile
-                    key={album._id}
-                    cols={1}
-                    classes={{
-                      root: classes.gridTileRoot,
-                      tile: classes.tile
-                    }}
-                  >
-                    <Album ownAlbum={this.props.ownProfile} album={album} />
-                  </GridListTile>
-                ))}
-              </GridList>
-              {this.props.ownProfile && (
-                <ModalView
-                  togglerComponent={
-                    <Button
-                      className={classes.fabAddAlbum}
-                      variant="fab"
-                      color="secondary"
-                    >
-                      <AddPhotoAlternateOutlinedIcon />
-                    </Button>
-                  }
-                  modalComponent={<AlbumMaker withSnackbar={true} />}
-                />
-              )}
-            </React.Fragment>
+          this.props.ownProfile && (
+            <ModalView
+              togglerComponent={
+                <Button
+                  className={classes.fabAddAlbum}
+                  variant="fab"
+                  color="secondary"
+                >
+                  <AddPhotoAlternateOutlinedIcon />
+                </Button>
+              }
+              modalComponent={<AlbumMaker withSnackbar={true} />}
+            />
           )}
         {this.state.isFetching && (
           <CircularProgress className={classes.circularProgress} size={50} />
