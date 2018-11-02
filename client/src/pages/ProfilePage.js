@@ -11,6 +11,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
+import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
 import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import MailOutlinedIcon from "@material-ui/icons/MailOutlined";
@@ -21,6 +22,7 @@ import ProfileNetwork from "../components/profile/ProfileNetwork";
 import ProfileNetworkMenu from "../components/profile/ProfileNetworkMenu";
 import ProfileMessageForm from "../components/profile/ProfileMessageForm";
 import ProfileForm from "../components/profile/ProfileForm";
+import PostShare from "../components/post/PostShare";
 import ProfileActivity from "../components/profile/ProfileActivity";
 import ModalView from "../components/modal/ModalView";
 import CustomSnackbar from "../components/snackbar/CustomSnackbar";
@@ -109,13 +111,6 @@ export class ProfilePage extends React.Component {
         fetchFollows(this.signal.token, this.props.match.params.user)
       ]);
 
-      let ownProfile;
-
-      this.props.auth &&
-      this.props.auth.displayName === this.props.match.params.user
-        ? (ownProfile = true)
-        : (ownProfile = false);
-
       const { profilePhoto, joined, displayName, profile, _id } = userData;
       const { followsCount, followersCount, clientFollows } = userNetwork;
 
@@ -127,7 +122,7 @@ export class ProfilePage extends React.Component {
           displayName,
           joined,
           profile,
-          ownProfile,
+          ownProfile: this.props.ownProfile,
           network: {
             clientFollows,
             followersCount,
@@ -414,6 +409,24 @@ export class ProfilePage extends React.Component {
                   information yet!
                 </Typography>
               )}
+              {!this.state.editEnabled && (
+                <PostShare
+                  context="profile"
+                  user={this.props.match.params.user}
+                  classes={{ popper: classes.popper }}
+                  button={
+                    <Button
+                      className={classes.shareButton}
+                      fullWidth
+                      variant="text"
+                      color="primary"
+                    >
+                      <ShareTwoToneIcon className={classes.leftIcon} /> Share{" "}
+                      {this.state.ownProfile ? "your" : "this"} Profile
+                    </Button>
+                  }
+                />
+              )}
             </Paper>
 
             <ProfileActivity
@@ -526,11 +539,20 @@ const styles = theme => ({
   },
   buttonRoot: {
     minWidth: "56px"
+  },
+  shareButton: {
+    marginTop: `${theme.spacing.unit * 2}px`
+  },
+  leftIcon: {
+    marginRight: `${theme.spacing.unit}px`
+  },
+  popper: {
+    transform: "translate(75%, -75%)"
   }
 });
 
-const mapStateToProps = auth => ({
-  auth
+const mapStateToProps = (auth, ownProps) => ({
+  ownProfile: (auth && auth.displayName === ownProps.match.params.user) || false
 });
 
 export default compose(
