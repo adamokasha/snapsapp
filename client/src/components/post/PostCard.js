@@ -18,7 +18,7 @@ import Divider from "@material-ui/core/Divider";
 import moment from "moment";
 
 import ModalView from "../modal/ModalView";
-import PostShare from "./PostShare";
+import ShareButton from "../buttons/ShareButton";
 import PostLightbox from "../post/PostLightbox";
 
 class PostCard extends React.Component {
@@ -160,7 +160,7 @@ class PostCard extends React.Component {
                 >
                   <FavoriteTwoToneIcon />
                 </IconButton>
-                <PostShare
+                <ShareButton
                   context="post"
                   postId={_id}
                   imgUrl={imgUrl}

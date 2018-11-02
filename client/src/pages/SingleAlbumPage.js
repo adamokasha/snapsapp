@@ -18,7 +18,7 @@ import MainPageLoader from "../components/loaders/MainPageLoader";
 import PostCard from "../components/post/PostCard";
 import ModalView from "../components/modal/ModalView";
 import AlbumMaker from "../components/album/AlbumMaker";
-import PostShare from "../components/post/PostShare";
+import ShareButton from "../components/buttons/ShareButton";
 import NavToTopButton from "../components/buttons/NavToTopButton";
 import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 
@@ -219,7 +219,7 @@ export class SingleAlbumPage extends React.Component {
               </Typography>
             </div>
             <div className={classes.actions}>
-              <PostShare
+              <ShareButton
                 context="album"
                 imgUrl={this.state.pages[0].imgUrl}
                 user={this.state.albumOwner}

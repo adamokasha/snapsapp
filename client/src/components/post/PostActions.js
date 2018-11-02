@@ -8,7 +8,7 @@ import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
 import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
 import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
 
-import PostShare from "./PostShare";
+import ShareButton from "../buttons/ShareButton";
 
 export const PostActions = props => {
   const {
@@ -58,7 +58,7 @@ export const PostActions = props => {
         <CommentOutlinedIcon className={classes.leftIcon} color="inherit" />
         {commentCount}
       </Button>
-      <PostShare
+      <ShareButton
         context="post"
         postId={props.postId}
         imgUrl={props.imgUrl}

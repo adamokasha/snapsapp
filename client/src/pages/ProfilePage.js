@@ -22,7 +22,7 @@ import ProfileNetwork from "../components/profile/ProfileNetwork";
 import ProfileNetworkMenu from "../components/profile/ProfileNetworkMenu";
 import ProfileMessageForm from "../components/profile/ProfileMessageForm";
 import ProfileForm from "../components/profile/ProfileForm";
-import PostShare from "../components/post/PostShare";
+import ShareButton from "../components/buttons/ShareButton";
 import ProfileActivity from "../components/profile/ProfileActivity";
 import ModalView from "../components/modal/ModalView";
 import CustomSnackbar from "../components/snackbar/CustomSnackbar";
@@ -410,7 +410,7 @@ export class ProfilePage extends React.Component {
                 </Typography>
               )}
               {!this.state.editEnabled && (
-                <PostShare
+                <ShareButton
                   context="profile"
                   user={this.props.match.params.user}
                   classes={{ popper: classes.popper }}

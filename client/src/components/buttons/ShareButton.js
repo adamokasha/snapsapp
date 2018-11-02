@@ -49,12 +49,12 @@ export class ShareButton extends React.Component {
     const url =
       (this.props.context === "post" &&
         `https://snapsapp.herokuapp.com/post/${this.props.postId}`) ||
-      ((this.props.context === "album" &&
+      (this.props.context === "album" &&
         `https://snapsapp.herokuapp.com/albums/${this.props.user}/${
           this.props.albumId
         }`) ||
-        (this.props.context === "profile" &&
-          `https://snapsapp.herokuapp.com/profile/${this.props.user}`));
+      (this.props.context === "profile" &&
+        `https://snapsapp.herokuapp.com/profile/${this.props.user}`);
     const imgUrl = `https://s3.amazonaws.com/img-share-kasho/${
       this.props.imgUrl
     }`;
@@ -128,7 +128,7 @@ export class ShareButton extends React.Component {
                       classes={{ root: classes.menuListItemRoot }}
                       onClick={this.handleClose}
                     >
-                      {!this.props.context === "profile" && (
+                      {this.props.context !== "profile" && (
                         <PinterestShareButton
                           media={imgUrl}
                           children={
