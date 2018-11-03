@@ -1,5 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
 import IconButton from "@material-ui/core/IconButton";
 import Grow from "@material-ui/core/Grow";
 import Paper from "@material-ui/core/Paper";
@@ -87,10 +88,13 @@ export class MainPageMenu extends React.Component {
               >
                 <Paper className={classes.paper}>
                   <MenuList className={classes.menuList}>
-                    <MenuItem onClick={this.onFollowing}>
-                      <PeopleOutlinedIcon className={classes.leftIcon} />
-                      Following
-                    </MenuItem>
+                    {this.props.auth &&
+                      this.props.auth.registered && (
+                        <MenuItem onClick={this.onFollowing}>
+                          <PeopleOutlinedIcon className={classes.leftIcon} />
+                          Following
+                        </MenuItem>
+                      )}
                     <MenuItem onClick={this.onNew}>
                       <FiberNew className={classes.leftIcon} />
                       New
@@ -109,6 +113,11 @@ export class MainPageMenu extends React.Component {
     );
   }
 }
+
+MainPageMenu.propTypes = {
+  classes: PropTypes.object.isRequired,
+  auth: PropTypes.object.isRequired
+};
 
 const styles = theme => ({
   root: {},

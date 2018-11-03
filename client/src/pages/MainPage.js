@@ -232,7 +232,10 @@ export class MainPage extends React.Component {
         {!this.state.initialFetch && (
           <React.Fragment>
             <div className={classes.menuContainer}>
-              <MainPageMenu onSwitchContext={this.onSwitchContext} />
+              <MainPageMenu
+                auth={this.props.auth}
+                onSwitchContext={this.onSwitchContext}
+              />
               <Search
                 className={classes.search}
                 classes={{ root: classes.searchRoot }}
