@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import Grid from "@material-ui/core/Grid";
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import PostCard from "../post/PostCard";
@@ -173,15 +174,34 @@ class ProfileActivity extends React.Component {
     const gridContext = this.state.value === 2 ? "albums" : "posts";
 
     return (
-      <GridList className={classes.gridList} cols={3}>
+      <Grid
+        classes={{ "spacing-xs-24": classes.spacingXs24 }}
+        direction="row"
+        wrap="wrap"
+        justify={
+          (gridContext === "albums" && "center") ||
+          (gridContext === "posts" && "space-evenly")
+        }
+        container
+        spacing={
+          (gridContext === "albums" && 0) || (gridContext === "posts" && 24)
+        }
+      >
         {data.map(item => (
-          <GridListTile
+          <Grid
+            item
             key={item._id}
-            cols={1}
             classes={{
-              root: classes.gridTileRoot,
-              tile: classes.tile
+              item: gridContext === "albums" ? classes.albumItem : classes.item
             }}
+            xs={
+              (gridContext === "albums" && "auto") ||
+              (gridContext === "posts" && 12)
+            }
+            sm={gridContext === "posts" && 12}
+            md={gridContext === "posts" && 6}
+            lg={gridContext === "posts" && 4}
+            xl={gridContext === "posts" && 4}
           >
             {gridContext === "posts" && (
               <PostCard
@@ -196,9 +216,9 @@ class ProfileActivity extends React.Component {
             {gridContext === "albums" && (
               <Album ownAlbum={this.props.ownProfile} album={item} />
             )}
-          </GridListTile>
+          </Grid>
         ))}
-      </GridList>
+      </Grid>
     );
   };
 
@@ -270,28 +290,35 @@ const styles = theme => ({
   appBarRoot: {
     marginBottom: `${theme.spacing.unit}px`
   },
-  gridList: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
+  spacingXs24: {
     width: "100%",
-    overflowY: "unset"
+    margin: 0
   },
-  gridTileRoot: {
-    height: "auto !important",
-    width: "100% !important",
-    [theme.breakpoints.up("sm")]: {
-      width: "45% !important",
-      margin: "0 auto"
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "30% !important",
-      margin: "0 auto"
-    }
-  },
-  // Inner div that wraps children
-  tile: {
-    overflow: "initial"
+  // gridList: {
+  //   display: "flex",
+  //   flexWrap: "wrap",
+  //   justifyContent: "space-around",
+  //   width: "100%",
+  //   overflowY: "unset"
+  // },
+  // gridTileRoot: {
+  //   height: "auto !important",
+  //   width: "100% !important",
+  //   [theme.breakpoints.up("sm")]: {
+  //     width: "45% !important",
+  //     margin: "0 auto"
+  //   },
+  //   [theme.breakpoints.up("lg")]: {
+  //     width: "30% !important",
+  //     margin: "0 auto"
+  //   }
+  // },
+  // // Inner div that wraps children
+  // tile: {
+  //   overflow: "initial"
+  // },
+  albumItem: {
+    minWidth: "200px"
   },
   fabAddAlbum: {
     position: "fixed",
