@@ -4,8 +4,7 @@ import compose from "recompose/compose";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import GridList from "@material-ui/core/GridList";
-import GridListTile from "@material-ui/core/GridListTile";
+import Grid from "@material-ui/core/Grid";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 import axios from "axios";
@@ -182,25 +181,47 @@ export class MainPage extends React.Component {
   renderGrid = data => {
     const gridContext = this.deriveGridContext(this.state.context);
     const { classes } = this.props;
-
     return (
-      <GridList className={classes.gridList} cols={3}>
+      <Grid
+        classes={{ "spacing-xs-24": classes.spacingXs24 }}
+        direction="row"
+        wrap="wrap"
+        justify={
+          (gridContext === "profiles" && "center") ||
+          (gridContext === "posts" && "space-evenly")
+        }
+        container
+        spacing={
+          (gridContext === "profiles" && 24) || (gridContext === "posts" && 24)
+        }
+      >
         {data.map(item => (
-          <GridListTile
+          <Grid
+            item
             key={item._id}
-            cols={1}
             classes={{
-              root: classes.gridTileRoot,
-              tile: classes.tile
+              item:
+                gridContext === "profiles" ? classes.albumItem : classes.item
             }}
+            xs={
+              (gridContext === "profiles" && 6) ||
+              (gridContext === "posts" && 12)
+            }
+            sm={
+              (gridContext === "profiles" && 4) ||
+              (gridContext === "posts" && 6)
+            }
+            md={gridContext === "posts" && 6}
+            lg={gridContext === "posts" && 4}
+            xl={gridContext === "posts" && 3}
           >
             {gridContext === "posts" && (
               <PostCard
                 toggleShowNavToTopButton={this.toggleShowNavToTopButton}
-                onFavePost={this.onFavePost}
-                slideData={this.state.pages}
                 post={item}
+                slideData={this.state.pages}
                 cardContext="post"
+                onFavePost={this.onFavePost}
               />
             )}
 
@@ -216,9 +237,9 @@ export class MainPage extends React.Component {
                 />
               </Link>
             )}
-          </GridListTile>
+          </Grid>
         ))}
-      </GridList>
+      </Grid>
     );
   };
 
@@ -276,28 +297,9 @@ const styles = theme => ({
       width: "250px"
     }
   },
-  gridList: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
+  spacingXs24: {
     width: "100%",
-    overflowY: "unset"
-  },
-  gridTileRoot: {
-    height: "auto !important",
-    width: "100% !important",
-    [theme.breakpoints.up("sm")]: {
-      width: "45% !important",
-      margin: "0 auto"
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "30% !important",
-      margin: "0 auto"
-    }
-  },
-  // Inner div that wraps children
-  tile: {
-    overflow: "initial"
+    margin: 0
   },
   aTag: {
     color: "inherit",
