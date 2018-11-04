@@ -1,11 +1,14 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import compose from "recompose/compose";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Grid from "@material-ui/core/Grid";
+import Card from "@material-ui/core/Card";
+import CardMedia from "@material-ui/core/CardMedia";
 import PostCard from "../post/PostCard";
 import Album from "../album/Album";
 import Button from "@material-ui/core/Button";
@@ -13,7 +16,11 @@ import AddPhotoAlternateOutlinedIcon from "@material-ui/icons/AddPhotoAlternateO
 import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from "axios";
 
+import PostCardHeader from "../post/PostCardHeader";
+import PostCardMedia from "../post/PostCardMedia";
+import PostCardActions from "../post/PostCardActions";
 import ModalView from "../modal/ModalView";
+import PostLightbox from "../post/PostLightbox";
 import AlbumMaker from "../album/AlbumMaker";
 import NavToTopButton from "../buttons/NavToTopButton";
 
@@ -29,6 +36,7 @@ class ProfileActivity extends React.Component {
       isFetching: false,
       pages: this.props.pages,
       page: 1,
+      isFaving: false,
       hasMore: true,
       showNavToTop: false
     };
@@ -129,28 +137,30 @@ class ProfileActivity extends React.Component {
     }
   };
 
-  onFavePost = async postId => {
-    try {
-      await favePost(this.signal.token, postId);
-      const updatedPages = this.state.pages.map(post => {
-        if (post._id === postId) {
-          console.log("TRUE");
-          return {
-            ...post,
-            isFave: !post.isFave,
-            faveCount: post.isFave ? post.faveCount - 1 : post.isFave + 1
-          };
+  onFavePost = postId => {
+    this.setState({ isFaving: true }, async () => {
+      try {
+        await favePost(this.signal.token, postId);
+        const updatedPages = this.state.pages.map(post => {
+          if (post._id === postId) {
+            console.log("TRUE");
+            return {
+              ...post,
+              isFave: !post.isFave,
+              faveCount: post.isFave ? post.faveCount - 1 : post.isFave + 1
+            };
+          }
+          return post;
+        });
+        console.log(updatedPages);
+        this.setState({ pages: updatedPages, isFaving: false }, () => {});
+      } catch (e) {
+        if (axios.isCancel()) {
+          return console.log(e.message);
         }
-        return post;
-      });
-      console.log(updatedPages);
-      this.setState({ pages: updatedPages }, () => {});
-    } catch (e) {
-      if (axios.isCancel()) {
-        return console.log(e.message);
+        console.log(e);
       }
-      console.log(e);
-    }
+    });
   };
 
   toggleShowNavToTopButton = bool => {
@@ -202,13 +212,60 @@ class ProfileActivity extends React.Component {
             xl={gridContext === "posts" && 4}
           >
             {gridContext === "posts" && (
-              <PostCard
-                toggleShowNavToTopButton={this.toggleShowNavToTopButton}
-                post={item}
-                slideData={this.state.pages}
-                cardContext="post"
-                onFavePost={this.onFavePost}
-              />
+              <Card classes={classes.card}>
+                <PostCardHeader owner={item._owner} title={item.title} />
+                {window.screen.width < 600 || window.innerWidth < 600 ? (
+                  <Link
+                    to={{
+                      pathname: `/post/${item._id}/`,
+                      state: { post: item }
+                    }}
+                  >
+                    <CardMedia
+                      className={classes.media}
+                      image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${
+                        item.imgUrl
+                      }`}
+                      title={item.title || "Image Title"}
+                    />
+                  </Link>
+                ) : (
+                  <ModalView
+                    togglerComponent={
+                      <CardMedia
+                        onClick={() => this.toggleShowNavToTopButton(false)}
+                        className={classes.media}
+                        image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${
+                          item.imgUrl
+                        }`}
+                        title={item.title || "Untitled"}
+                      />
+                    }
+                    modalComponent={
+                      <PostLightbox
+                        onFavePost={this.onFavePost}
+                        slideData={this.state.pages}
+                        slideIndex={this.state.pages.indexOf(item)}
+                        post={item}
+                        isFirstSlide={this.state.pages.indexOf(item) === 0}
+                        isLastSlide={
+                          this.state.pages.length - 1 ===
+                          this.state.pages.indexOf(item)
+                        }
+                      />
+                    }
+                  />
+                )}
+                <PostCardActions
+                  commentCount={item.commentCount}
+                  faveCount={item.faveCount}
+                  _id={item._id}
+                  imgUrl={item.imgUrl}
+                  onFavePost={() => this.onFavePost(item._id)}
+                  isFave={item.isFave}
+                  isFaving={this.state.isFaving}
+                />
+              </Card>
             )}
 
             {gridContext === "albums" && (
@@ -287,6 +344,15 @@ const styles = theme => ({
   },
   appBarRoot: {
     marginBottom: `${theme.spacing.unit}px`
+  },
+  card: {
+    maxWidth: 400,
+    margin: `${theme.spacing.unit * 3}px auto`
+  },
+  media: {
+    height: 0,
+    paddingTop: "56.25%", // 16:9
+    cursor: "pointer"
   },
   spacingXs24: {
     width: "100%",

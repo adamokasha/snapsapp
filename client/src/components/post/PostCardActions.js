@@ -9,8 +9,20 @@ import Typography from "@material-ui/core/Typography";
 import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
 import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
 
+import ShareButton from "../buttons/ShareButton";
+
 export const PostCardActions = props => {
-  const { isFave, isFaving, auth } = props;
+  const {
+    classes,
+    _id,
+    imgUrl,
+    faveCount,
+    onFavePost,
+    commentCount,
+    isFave,
+    isFaving,
+    auth
+  } = props;
 
   return (
     <CardActions className={classes.actions} disableActionSpacing>
@@ -54,7 +66,12 @@ export const PostCardActions = props => {
 
 PostCardActions.propTypes = {
   classes: PropTypes.object.isRequired,
-  isFaving: PropTypes.bool.isRequired,
+  commentCount: PropTypes.number.isRequired,
+  faveCount: PropTypes.number.isRequired,
+  _id: PropTypes.string.isRequired,
+  imgUrl: PropTypes.string.isRequired,
+  onFavePost: PropTypes.func.isRequired,
+  isFave: PropTypes.bool.isRequired,
   isFaving: PropTypes.bool.isRequired,
   auth: PropTypes.oneOf([PropTypes.bool, PropTypes.object])
 };

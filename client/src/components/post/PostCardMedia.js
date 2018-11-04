@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import CardMedia from "@material-ui/core/CardMedia";
 
 export const PostCardMedia = props => {
-  const { classes, toggleShowNavToTopButton } = props;
+  const { classes, toggleShowNavToTopButton, imgUrl, title } = props;
   return (
     <CardMedia
       onClick={() => toggleShowNavToTopButton(false)}

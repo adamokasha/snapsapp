@@ -5,27 +5,27 @@ import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
 
 export const PostCardHeader = props => {
-  const { _owner, title } = props;
+  const { owner, title } = props;
   return (
     <CardHeader
       avatar={
         <Avatar
-          to={`/profile/${_owner.displayName}`}
+          to={`/profile/${owner.displayName}`}
           component={Link}
           aria-label="Recipe"
         >
-          <img src={_owner.profilePhoto} alt="avatar" />
+          <img src={owner.profilePhoto} alt="avatar" />
         </Avatar>
       }
       title={title || "Untitled"}
-      subheader={_owner.displayName}
+      subheader={owner.displayName}
     />
   );
 };
 
 PostCardHeader.propTypes = {
   classes: PropTypes.object.isRequired,
-  _owner: PropTypes.object.isRequired
+  owner: PropTypes.object.isRequired
 };
 
 export default PostCardHeader;
