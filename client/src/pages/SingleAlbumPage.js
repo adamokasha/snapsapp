@@ -3,20 +3,26 @@ import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router";
 import compose from "recompose/compose";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
 import SettingsIcon from "@material-ui/icons/Settings";
+import Grid from "@material-ui/core/Grid";
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
+import Card from "@material-ui/core/Card";
+import CardMedia from "@material-ui/core/CardMedia";
+import CardActions from "@material-ui/core/CardActions";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from "axios";
 import moment from "moment";
 
 import MainPageLoader from "../components/loaders/MainPageLoader";
-import PostCard from "../components/post/PostCard";
+import PostCardActions from "../components/post/PostCardActions";
 import ModalView from "../components/modal/ModalView";
+import PostLightbox from "../components/post/PostLightbox";
 import AlbumMaker from "../components/album/AlbumMaker";
 import ShareButton from "../components/buttons/ShareButton";
 import NavToTopButton from "../components/buttons/NavToTopButton";
@@ -257,26 +263,85 @@ export class SingleAlbumPage extends React.Component {
         {this.state.initialFetch && <MainPageLoader />}
         {!this.state.initialFetch &&
           this.state.pages && (
-            <GridList className={classes.gridList} cols={3}>
+            <Grid
+              container
+              classes={{ "spacing-xs-24": classes.spacingXs24 }}
+              direction="row"
+              wrap="wrap"
+              justify={"space-evenly"}
+              spacing={24}
+            >
               {this.state.pages.map(post => (
-                <GridListTile
-                  key={post._id}
-                  cols={1}
-                  classes={{
-                    root: classes.gridTileRoot,
-                    tile: classes.tile
-                  }}
-                >
-                  <PostCard
+                <Grid item key={post._id} xs={12} sm={6} md={6} lg={4} xl={4}>
+                  <Card>
+                    {window.screen.width < 600 || window.innerWidth < 600 ? (
+                      <Link
+                        to={{
+                          pathname: `/post/${post._id}/`,
+                          state: { post: post }
+                        }}
+                      >
+                        <CardMedia
+                          className={classes.media}
+                          image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${
+                            post.imgUrl
+                          }`}
+                          title={post.title || "Image Title"}
+                        />
+                      </Link>
+                    ) : (
+                      <ModalView
+                        togglerComponent={
+                          <CardMedia
+                            onClick={() => this.toggleShowNavToTopButton(false)}
+                            className={classes.media}
+                            image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${
+                              post.imgUrl
+                            }`}
+                            title={post.title || "Untitled"}
+                          />
+                        }
+                        modalComponent={
+                          <PostLightbox
+                            onFavePost={this.onFavePost}
+                            slideData={this.state.pages}
+                            slideIndex={this.state.pages.indexOf(post)}
+                            post={post}
+                            isFirstSlide={this.state.pages.indexOf(post) === 0}
+                            isLastSlide={
+                              this.state.pages.length - 1 ===
+                              this.state.pages.indexOf(post)
+                            }
+                          />
+                        }
+                      />
+                    )}
+
+                    <CardActions
+                      className={classes.actions}
+                      disableActionSpacing
+                    >
+                      <PostCardActions
+                        commentCount={post.commentCount}
+                        faveCount={post.faveCount}
+                        _id={post._id}
+                        imgUrl={post.imgUrl}
+                        onFavePost={() => this.onFavePost(post._id)}
+                        isFave={post.isFave}
+                      />
+                    </CardActions>
+                  </Card>
+
+                  {/* <PostCard
                     onFavePost={this.onFavePost}
                     cardContext="album"
                     slideData={this.state.pages}
                     post={post}
                     toggleShowNavToTopButton={this.toggleShowNavToTopButton}
-                  />
-                </GridListTile>
+                  /> */}
+                </Grid>
               ))}
-            </GridList>
+            </Grid>
           )}
         {this.state.showNavToTop && (
           <NavToTopButton scrollToTop={this.scrollToTop} />
@@ -319,28 +384,23 @@ const styles = theme => ({
   actions: {
     display: "flex"
   },
-  gridList: {
+  card: {
+    maxWidth: 400,
+    margin: `${theme.spacing.unit * 3}px auto`
+  },
+  media: {
+    height: 0,
+    paddingTop: "56.25%", // 16:9
+    cursor: "pointer"
+  },
+  actions: {
     display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  spacingXs24: {
     width: "100%",
-    overflowY: "unset"
-  },
-  gridTileRoot: {
-    height: "auto !important",
-    width: "100% !important",
-    [theme.breakpoints.up("sm")]: {
-      width: "45% !important",
-      margin: "0 auto"
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "30% !important",
-      margin: "0 auto"
-    }
-  },
-  // Inner div that wraps children
-  tile: {
-    overflow: "initial"
+    margin: 0
   },
   circularProgressContainer: {
     display: "flex",

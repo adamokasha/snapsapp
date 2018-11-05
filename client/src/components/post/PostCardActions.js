@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import CardActions from "@material-ui/core/CardActions";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
@@ -91,7 +90,7 @@ PostCardActions.propTypes = {
   imgUrl: PropTypes.string.isRequired,
   onFavePost: PropTypes.func.isRequired,
   isFave: PropTypes.bool.isRequired,
-  auth: PropTypes.oneOf([PropTypes.bool, PropTypes.object])
+  auth: PropTypes.oneOfType([PropTypes.bool, PropTypes.object])
 };
 
 const styles = theme => ({
