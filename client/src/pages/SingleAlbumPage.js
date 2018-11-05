@@ -10,11 +10,11 @@ import IconButton from "@material-ui/core/IconButton";
 import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Grid from "@material-ui/core/Grid";
-import GridList from "@material-ui/core/GridList";
-import GridListTile from "@material-ui/core/GridListTile";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
+import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
+import Divider from "@material-ui/core/Divider";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from "axios";
 import moment from "moment";
@@ -317,6 +317,16 @@ export class SingleAlbumPage extends React.Component {
                       />
                     )}
 
+                    <CardContent>
+                      <div>
+                        <Typography variant="body2">{post.title}</Typography>
+                        <Typography variant="caption">
+                          Posted {moment(post.createdAt).format("MMM Do YY")}
+                        </Typography>
+                      </div>
+                    </CardContent>
+                    <Divider />
+
                     <CardActions
                       className={classes.actions}
                       disableActionSpacing
@@ -331,14 +341,6 @@ export class SingleAlbumPage extends React.Component {
                       />
                     </CardActions>
                   </Card>
-
-                  {/* <PostCard
-                    onFavePost={this.onFavePost}
-                    cardContext="album"
-                    slideData={this.state.pages}
-                    post={post}
-                    toggleShowNavToTopButton={this.toggleShowNavToTopButton}
-                  /> */}
                 </Grid>
               ))}
             </Grid>
