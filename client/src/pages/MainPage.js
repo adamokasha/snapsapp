@@ -5,15 +5,21 @@ import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import CardMedia from "@material-ui/core/CardMedia";
+import CardActions from "@material-ui/core/CardActions";
+import Avatar from "@material-ui/core/Avatar";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
 import axios from "axios";
 
 import MainPageLoader from "../components/loaders/MainPageLoader";
 import Search from "../components/mainpage/Search";
 import MainPageMenu from "../components/mainpage/MainPageMenu";
 import HeroUnit from "../components/mainpage/HeroUnit";
-import PostCard from "../components/post/PostCard";
+import PostCardActions from "../components/post/PostCardActions";
+import ModalView from "../components/modal/ModalView";
+import PostLightbox from "../components/post/PostLightbox";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import NavToTopButton from "../components/buttons/NavToTopButton";
 
@@ -216,13 +222,75 @@ export class MainPage extends React.Component {
             xl={gridContext === "posts" && 3}
           >
             {gridContext === "posts" && (
-              <PostCard
-                toggleShowNavToTopButton={this.toggleShowNavToTopButton}
-                post={item}
-                slideData={this.state.pages}
-                cardContext="post"
-                onFavePost={this.onFavePost}
-              />
+              <Card className={classes.card}>
+                <CardHeader
+                  avatar={
+                    <Avatar
+                      to={`/profile/${item._owner.displayName}`}
+                      component={Link}
+                      aria-label="Recipe"
+                    >
+                      <img src={item._owner.profilePhoto} alt="avatar" />
+                    </Avatar>
+                  }
+                  title={item.title || "Untitled"}
+                  subheader={item._owner.displayName}
+                />
+
+                {window.screen.width < 600 || window.innerWidth < 600 ? (
+                  <Link
+                    to={{
+                      pathname: `/post/${item._id}/`,
+                      state: { post: item }
+                    }}
+                  >
+                    <CardMedia
+                      className={classes.media}
+                      image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${
+                        item.imgUrl
+                      }`}
+                      title={item.title || "Image Title"}
+                    />
+                  </Link>
+                ) : (
+                  <ModalView
+                    togglerComponent={
+                      <CardMedia
+                        onClick={() => this.toggleShowNavToTopButton(false)}
+                        className={classes.media}
+                        image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${
+                          item.imgUrl
+                        }`}
+                        title={item.title || "Untitled"}
+                      />
+                    }
+                    modalComponent={
+                      <PostLightbox
+                        onFavePost={this.onFavePost}
+                        slideData={this.state.pages}
+                        slideIndex={this.state.pages.indexOf(item)}
+                        post={item}
+                        isFirstSlide={this.state.pages.indexOf(item) === 0}
+                        isLastSlide={
+                          this.state.pages.length - 1 ===
+                          this.state.pages.indexOf(item)
+                        }
+                      />
+                    }
+                  />
+                )}
+
+                <CardActions className={classes.actions} disableActionSpacing>
+                  <PostCardActions
+                    commentCount={item.commentCount}
+                    faveCount={item.faveCount}
+                    _id={item._id}
+                    imgUrl={item.imgUrl}
+                    onFavePost={() => this.onFavePost(item._id)}
+                    isFave={item.isFave}
+                  />
+                </CardActions>
+              </Card>
             )}
 
             {gridContext === "profiles" && (
@@ -296,6 +364,24 @@ const styles = theme => ({
       justifyContent: "start",
       width: "250px"
     }
+  },
+  spacingXs24: {
+    width: "100%",
+    margin: 0
+  },
+  card: {
+    maxWidth: 400,
+    margin: `${theme.spacing.unit * 3}px auto`
+  },
+  media: {
+    height: 0,
+    paddingTop: "56.25%", // 16:9
+    cursor: "pointer"
+  },
+  actions: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   spacingXs24: {
     width: "100%",
