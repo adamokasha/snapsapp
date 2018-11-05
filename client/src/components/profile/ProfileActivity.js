@@ -8,16 +8,16 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
-import PostCard from "../post/PostCard";
+import CardActions from "@material-ui/core/CardActions";
+import Avatar from "@material-ui/core/Avatar";
 import Album from "../album/Album";
 import Button from "@material-ui/core/Button";
 import AddPhotoAlternateOutlinedIcon from "@material-ui/icons/AddPhotoAlternateOutlined";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from "axios";
 
-import PostCardHeader from "../post/PostCardHeader";
-import PostCardMedia from "../post/PostCardMedia";
 import PostCardActions from "../post/PostCardActions";
 import ModalView from "../modal/ModalView";
 import PostLightbox from "../post/PostLightbox";
@@ -36,7 +36,6 @@ class ProfileActivity extends React.Component {
       isFetching: false,
       pages: this.props.pages,
       page: 1,
-      isFaving: false,
       hasMore: true,
       showNavToTop: false
     };
@@ -137,30 +136,28 @@ class ProfileActivity extends React.Component {
     }
   };
 
-  onFavePost = postId => {
-    this.setState({ isFaving: true }, async () => {
-      try {
-        await favePost(this.signal.token, postId);
-        const updatedPages = this.state.pages.map(post => {
-          if (post._id === postId) {
-            console.log("TRUE");
-            return {
-              ...post,
-              isFave: !post.isFave,
-              faveCount: post.isFave ? post.faveCount - 1 : post.isFave + 1
-            };
-          }
-          return post;
-        });
-        console.log(updatedPages);
-        this.setState({ pages: updatedPages, isFaving: false }, () => {});
-      } catch (e) {
-        if (axios.isCancel()) {
-          return console.log(e.message);
+  onFavePost = async postId => {
+    try {
+      await favePost(this.signal.token, postId);
+      const updatedPages = this.state.pages.map(post => {
+        if (post._id === postId) {
+          console.log("TRUE");
+          return {
+            ...post,
+            isFave: !post.isFave,
+            faveCount: post.isFave ? post.faveCount - 1 : post.isFave + 1
+          };
         }
-        console.log(e);
+        return post;
+      });
+      console.log(updatedPages);
+      this.setState({ pages: updatedPages, isFaving: false }, () => {});
+    } catch (e) {
+      if (axios.isCancel()) {
+        return console.log(e.message);
       }
-    });
+      console.log(e);
+    }
   };
 
   toggleShowNavToTopButton = bool => {
@@ -212,8 +209,21 @@ class ProfileActivity extends React.Component {
             xl={gridContext === "posts" && 4}
           >
             {gridContext === "posts" && (
-              <Card classes={classes.card}>
-                <PostCardHeader owner={item._owner} title={item.title} />
+              <Card className={classes.card}>
+                <CardHeader
+                  avatar={
+                    <Avatar
+                      to={`/profile/${item._owner.displayName}`}
+                      component={Link}
+                      aria-label="Recipe"
+                    >
+                      <img src={item._owner.profilePhoto} alt="avatar" />
+                    </Avatar>
+                  }
+                  title={item.title || "Untitled"}
+                  subheader={item._owner.displayName}
+                />
+
                 {window.screen.width < 600 || window.innerWidth < 600 ? (
                   <Link
                     to={{
@@ -256,15 +266,17 @@ class ProfileActivity extends React.Component {
                     }
                   />
                 )}
-                <PostCardActions
-                  commentCount={item.commentCount}
-                  faveCount={item.faveCount}
-                  _id={item._id}
-                  imgUrl={item.imgUrl}
-                  onFavePost={() => this.onFavePost(item._id)}
-                  isFave={item.isFave}
-                  isFaving={this.state.isFaving}
-                />
+
+                <CardActions className={classes.actions} disableActionSpacing>
+                  <PostCardActions
+                    commentCount={item.commentCount}
+                    faveCount={item.faveCount}
+                    _id={item._id}
+                    imgUrl={item.imgUrl}
+                    onFavePost={() => this.onFavePost(item._id)}
+                    isFave={item.isFave}
+                  />
+                </CardActions>
               </Card>
             )}
 
@@ -353,6 +365,11 @@ const styles = theme => ({
     height: 0,
     paddingTop: "56.25%", // 16:9
     cursor: "pointer"
+  },
+  actions: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   spacingXs24: {
     width: "100%",
