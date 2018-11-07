@@ -413,11 +413,13 @@ export class ProfilePage extends React.Component {
                 <ShareButton
                   context="profile"
                   user={this.props.match.params.user}
-                  classes={{ popper: classes.popper }}
+                  classes={{
+                    root: classes.shareButtonRoot,
+                    popper: classes.popper
+                  }}
                   button={
                     <Button
                       className={classes.shareButton}
-                      fullWidth
                       variant="text"
                       color="primary"
                     >
@@ -540,6 +542,11 @@ const styles = theme => ({
   buttonRoot: {
     minWidth: "56px"
   },
+  shareButtonRoot: {
+    [theme.breakpoints.down("sm")]: {
+      alignSelf: "center"
+    }
+  },
   shareButton: {
     marginTop: `${theme.spacing.unit * 2}px`
   },
@@ -547,7 +554,10 @@ const styles = theme => ({
     marginRight: `${theme.spacing.unit}px`
   },
   popper: {
-    transform: "translate(75%, -75%)"
+    transform: "translate(50%, -75%)",
+    [theme.breakpoints.down("sm")]: {
+      transform: "translate(25%, -75%)"
+    }
   }
 });
 

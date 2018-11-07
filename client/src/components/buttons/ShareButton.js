@@ -60,7 +60,7 @@ export class ShareButton extends React.Component {
     }`;
     const { classes } = this.props;
     return (
-      <div>
+      <div className={classes.root}>
         {React.cloneElement(this.props.button, {
           ref: (node => (this.anchorEl = node))(),
           "aria-owns": this.state.popperOpen ? "menu-list-grow" : undefined,
@@ -212,6 +212,7 @@ ShareButton.propTypes = {
 };
 
 const styles = theme => ({
+  root: {},
   popper: {
     zIndex: "1000",
     transform: "translate(-75%, -75%)"
