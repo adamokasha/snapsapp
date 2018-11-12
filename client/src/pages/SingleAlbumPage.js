@@ -53,12 +53,12 @@ export class SingleAlbumPage extends React.Component {
     };
 
     this.signal = axios.CancelToken.source();
-    this.onScroll = onScroll.bind(this);
+    this.onScroll = onScroll.call(this, this.fetchNextPage);
     this.topRef = React.createRef();
   }
 
   async componentDidMount() {
-    window.addEventListener("scroll", this.onScroll(this.fetchNextPage), false);
+    window.addEventListener("scroll", this.onScroll, false);
     try {
       const { albumid } = this.props.match.params;
       const { data: album } = await fetchAlbumPostsPaginated(
@@ -261,90 +261,86 @@ export class SingleAlbumPage extends React.Component {
           </div>
         )}
         {this.state.initialFetch && <MainPageLoader />}
-        {!this.state.initialFetch &&
-          this.state.pages && (
-            <Grid
-              container
-              classes={{ "spacing-xs-24": classes.spacingXs24 }}
-              direction="row"
-              wrap="wrap"
-              justify={"space-evenly"}
-              spacing={24}
-            >
-              {this.state.pages.map(post => (
-                <Grid item key={post._id} xs={12} sm={6} md={6} lg={4} xl={4}>
-                  <Card>
-                    {window.screen.width < 600 || window.innerWidth < 600 ? (
-                      <Link
-                        to={{
-                          pathname: `/post/${post._id}/`,
-                          state: { post: post }
-                        }}
-                      >
+        {!this.state.initialFetch && this.state.pages && (
+          <Grid
+            container
+            classes={{ "spacing-xs-24": classes.spacingXs24 }}
+            direction="row"
+            wrap="wrap"
+            justify={"space-evenly"}
+            spacing={24}
+          >
+            {this.state.pages.map(post => (
+              <Grid item key={post._id} xs={12} sm={6} md={6} lg={4} xl={4}>
+                <Card>
+                  {window.screen.width < 600 || window.innerWidth < 600 ? (
+                    <Link
+                      to={{
+                        pathname: `/post/${post._id}/`,
+                        state: { post: post }
+                      }}
+                    >
+                      <CardMedia
+                        className={classes.media}
+                        image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${
+                          post.imgUrl
+                        }`}
+                        title={post.title || "Image Title"}
+                      />
+                    </Link>
+                  ) : (
+                    <ModalView
+                      togglerComponent={
                         <CardMedia
+                          onClick={() => this.toggleShowNavToTopButton(false)}
                           className={classes.media}
                           image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${
                             post.imgUrl
                           }`}
-                          title={post.title || "Image Title"}
+                          title={post.title || "Untitled"}
                         />
-                      </Link>
-                    ) : (
-                      <ModalView
-                        togglerComponent={
-                          <CardMedia
-                            onClick={() => this.toggleShowNavToTopButton(false)}
-                            className={classes.media}
-                            image={`https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${
-                              post.imgUrl
-                            }`}
-                            title={post.title || "Untitled"}
-                          />
-                        }
-                        modalComponent={
-                          <PostLightbox
-                            onFavePost={this.onFavePost}
-                            slideData={this.state.pages}
-                            slideIndex={this.state.pages.indexOf(post)}
-                            post={post}
-                            isFirstSlide={this.state.pages.indexOf(post) === 0}
-                            isLastSlide={
-                              this.state.pages.length - 1 ===
-                              this.state.pages.indexOf(post)
-                            }
-                          />
-                        }
-                      />
-                    )}
+                      }
+                      modalComponent={
+                        <PostLightbox
+                          onFavePost={this.onFavePost}
+                          slideData={this.state.pages}
+                          slideIndex={this.state.pages.indexOf(post)}
+                          post={post}
+                          isFirstSlide={this.state.pages.indexOf(post) === 0}
+                          isLastSlide={
+                            this.state.pages.length - 1 ===
+                            this.state.pages.indexOf(post)
+                          }
+                        />
+                      }
+                    />
+                  )}
 
-                    <CardContent>
-                      <div>
-                        <Typography variant="body2">{post.title}</Typography>
-                        <Typography variant="caption">
-                          Posted {moment(post.createdAt).format("MMM Do YY")}
-                        </Typography>
-                      </div>
-                    </CardContent>
-                    <Divider />
+                  <CardContent>
+                    <div>
+                      <Typography variant="body2">{post.title}</Typography>
+                      <Typography variant="caption">
+                        Posted {moment(post.createdAt).format("MMM Do YY")}
+                      </Typography>
+                    </div>
+                  </CardContent>
+                  <Divider />
 
-                    <CardActions
-                      className={classes.actions}
-                      disableActionSpacing
-                    >
-                      <PostCardActions
-                        commentCount={post.commentCount}
-                        faveCount={post.faveCount}
-                        _id={post._id}
-                        imgUrl={post.imgUrl}
-                        onFavePost={() => this.onFavePost(post._id)}
-                        isFave={post.isFave}
-                      />
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          )}
+                  <CardActions className={classes.actions} disableActionSpacing>
+                    <PostCardActions
+                      commentCount={post.commentCount}
+                      faveCount={post.faveCount}
+                      _id={post._id}
+                      imgUrl={post.imgUrl}
+                      onFavePost={() => this.onFavePost(post._id)}
+                      isFave={post.isFave}
+                    />
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
         {this.state.showNavToTop && (
           <NavToTopButton scrollToTop={this.scrollToTop} />
         )}

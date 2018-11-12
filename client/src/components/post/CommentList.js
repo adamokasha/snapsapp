@@ -58,14 +58,15 @@ export const CommentList = props => {
       )}
       {comments &&
         comments.map((comment, i) => <Comment key={i} comment={comment} />)}
-      {!comments &&
-        !fetchingComments && <Typography>No comments yet.</Typography>}
+      {!comments && !fetchingComments && (
+        <Typography>No comments yet.</Typography>
+      )}
     </div>
   );
 };
 
 CommentList.propTypes = {
-  comments: PropTypes.array.isRequired,
+  comments: PropTypes.array,
   commentsPage: PropTypes.number.isRequired,
   fetchingComments: PropTypes.bool.isRequired,
   onLoadNext: PropTypes.func.isRequired,

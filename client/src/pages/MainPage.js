@@ -47,13 +47,13 @@ export class MainPage extends React.Component {
       showNavToTop: false
     };
 
-    this.onScroll = onScroll.bind(this);
+    this.onScroll = onScroll.call(this, this.fetchNextPage);
     this.signal = axios.CancelToken.source();
     this.topRef = React.createRef();
   }
 
   async componentDidMount() {
-    window.addEventListener("scroll", this.onScroll(this.fetchNextPage), false);
+    window.addEventListener("scroll", this.onScroll, false);
 
     try {
       const { data: postData } = await fetchPopular(this.signal.token, 0);

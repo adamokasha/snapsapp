@@ -45,12 +45,12 @@ class ProfileActivity extends React.Component {
     };
 
     this.signal = axios.CancelToken.source();
-    this.onScroll = onScroll.bind(this);
+    this.onScroll = onScroll.call(this, this.fetchNextPage);
     this.topRef = React.createRef();
   }
 
   componentDidMount() {
-    window.addEventListener("scroll", this.onScroll(this.fetchNextPage), false);
+    window.addEventListener("scroll", this.onScroll, false);
   }
 
   componentDidUpdate(prevProps) {
@@ -329,21 +329,20 @@ class ProfileActivity extends React.Component {
 
         {this.state.pages && this.renderGrid(this.state.pages)}
 
-        {this.state.value === 2 &&
-          this.props.ownProfile && (
-            <ModalView
-              togglerComponent={
-                <Button
-                  className={classes.fabAddAlbum}
-                  variant="fab"
-                  color="secondary"
-                >
-                  <AddPhotoAlternateOutlinedIcon />
-                </Button>
-              }
-              modalComponent={<AlbumMaker withSnackbar={true} />}
-            />
-          )}
+        {this.state.value === 2 && this.props.ownProfile && (
+          <ModalView
+            togglerComponent={
+              <Button
+                className={classes.fabAddAlbum}
+                variant="fab"
+                color="secondary"
+              >
+                <AddPhotoAlternateOutlinedIcon />
+              </Button>
+            }
+            modalComponent={<AlbumMaker withSnackbar={true} />}
+          />
+        )}
         {this.state.isFetching && (
           <CircularProgress className={classes.circularProgress} size={50} />
         )}
