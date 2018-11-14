@@ -10,6 +10,7 @@ import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
+import Paper from "@material-ui/core/Paper";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
@@ -308,16 +309,19 @@ export class MainPage extends React.Component {
             )}
 
             {gridContext === "profiles" && (
-              <Link
-                className={classes.aTag}
-                to={`/profile/${item.displayName}`}
-              >
-                <ProfileHeader
-                  profilePhoto={item.profilePhoto}
-                  displayName={item.displayName}
-                  joined={item.joined}
-                />
-              </Link>
+              <Paper>
+                <Link
+                  className={classes.aTag}
+                  to={`/profile/${item.displayName}`}
+                >
+                  <ProfileHeader
+                    classes={{ root: classes.profileHeaderRoot }}
+                    profilePhoto={item.profilePhoto}
+                    displayName={item.displayName}
+                    joined={item.joined}
+                  />
+                </Link>
+              </Paper>
             )}
           </Grid>
         ))}
@@ -397,9 +401,8 @@ const styles = theme => ({
     flexDirection: "row",
     justifyContent: "space-between"
   },
-  spacingXs24: {
-    width: "100%",
-    margin: 0
+  profileHeaderRoot: {
+    padding: `${theme.spacing.unit * 2}px`
   },
   aTag: {
     color: "inherit",
