@@ -402,7 +402,8 @@ const styles = theme => ({
     justifyContent: "space-between"
   },
   profileHeaderRoot: {
-    padding: `${theme.spacing.unit * 2}px`
+    padding: `${theme.spacing.unit * 2}px`,
+    marginBottom: `${theme.spacing.unit}px`
   },
   aTag: {
     color: "inherit",

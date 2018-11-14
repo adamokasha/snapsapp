@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import GridList from "@material-ui/core/GridList";
-import GridListTile from "@material-ui/core/GridListTile";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from "axios";
@@ -196,6 +196,31 @@ class ProfileNetworkMenu extends React.Component {
     }
   };
 
+  renderGrid = profiles => {
+    const { classes } = this.props;
+    return (
+      <Grid direction="column" justify="center" alignItems="center" container>
+        {profiles.map(profile => (
+          <Paper>
+            <Grid xs={12} item>
+              <Link
+                className={classes.aTag}
+                to={`/profile/${profile.displayName}`}
+              >
+                <ProfileHeader
+                  classes={{ root: classes.profileHeaderRoot }}
+                  profilePhoto={profile.profilePhoto}
+                  displayName={profile.displayName}
+                  joined={profile.joined}
+                />
+              </Link>
+            </Grid>
+          </Paper>
+        ))}
+      </Grid>
+    );
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -211,57 +236,11 @@ class ProfileNetworkMenu extends React.Component {
         <div className={classes.layout}>
           <div className={classes.gridContainer}>
             {this.state.value === 0 &&
-              this.state.followers && (
-                <GridList className={classes.gridList} cols={3}>
-                  {this.state.followers.map((follower, i) => (
-                    <GridListTile
-                      key={i}
-                      cols={1}
-                      classes={{
-                        root: classes.gridTileRoot,
-                        tile: classes.tile
-                      }}
-                    >
-                      <Link
-                        className={classes.aTag}
-                        to={`/profile/${follower.displayName}`}
-                      >
-                        <ProfileHeader
-                          profilePhoto={follower.profilePhoto}
-                          displayName={follower.displayName}
-                          joined={follower.joined}
-                        />
-                      </Link>
-                    </GridListTile>
-                  ))}
-                </GridList>
-              )}
+              this.state.followers &&
+              this.renderGrid(this.state.followers)}
             {this.state.value === 1 &&
-              this.state.following && (
-                <GridList className={classes.gridList} cols={3}>
-                  {this.state.following.map((following, i) => (
-                    <GridListTile
-                      key={i}
-                      cols={1}
-                      classes={{
-                        root: classes.gridTileRoot,
-                        tile: classes.tile
-                      }}
-                    >
-                      <Link
-                        className={classes.aTag}
-                        to={`/profile/${following.displayName}`}
-                      >
-                        <ProfileHeader
-                          profilePhoto={following.profilePhoto}
-                          displayName={following.displayName}
-                          joined={following.joined}
-                        />
-                      </Link>
-                    </GridListTile>
-                  ))}
-                </GridList>
-              )}
+              this.state.following &&
+              this.renderGrid(this.state.following)}
             {this.state.isFetching && (
               <CircularProgress
                 className={classes.circularProgress}
@@ -317,28 +296,8 @@ const styles = theme => ({
     paddingTop: `${theme.spacing.unit}px`,
     overflowY: "scroll"
   },
-  gridList: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
-    width: "100%",
-    overflowY: "unset"
-  },
-  gridTileRoot: {
-    height: "auto !important",
-    width: "100% !important",
-    [theme.breakpoints.up("sm")]: {
-      width: "45% !important",
-      margin: "0 auto"
-    },
-    [theme.breakpoints.up("lg")]: {
-      width: "30% !important",
-      margin: "0 auto"
-    }
-  },
-  // Inner div that wraps children
-  tile: {
-    overflow: "initial"
+  profileHeaderRoot: {
+    padding: `${theme.spacing.unit}px`
   },
   aTag: {
     color: "inherit",
