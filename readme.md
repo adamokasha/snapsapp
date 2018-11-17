@@ -4,9 +4,9 @@
 
 SnapsApp is an image-sharing app built with the MERN stack and styled with the Material-UI library.
 
-This is an on-going project with improvements added on a semi-regular basis.
+This is an on-going project that is updated on a semi-regular basis.
 
-# Features
+## Features
 
 - Infinite scroll
 - Faving
@@ -20,7 +20,7 @@ This is an on-going project with improvements added on a semi-regular basis.
 - Profiles
 - Authentication using Google or Facebook
 
-# Getting Started
+## Getting Started
 
 SnapsApp makes use of the following third party services:
 
@@ -28,21 +28,29 @@ SnapsApp makes use of the following third party services:
   - S3, IAM and serverless image handling
 - Google Oauth
 - Facebook Oauth
-- MongoDb (mLab)
+- MongoDB (mLab)
 
-To run the app in development or production mode, you must sign up to these services and configure the necessary keys in the config directory. To view the keys required open /config/prod.js. Note you will have to create your own dev.js file in the config folder.
+To run the app in development or production mode, you must sign up to these services and configure the necessary keys in the config directory.
 
-## Development
+To view the keys required open `/config/prod.js`. Note you will have to create your own `dev.js` file in the config folder.
+
+### Development
 
 `npm run dev`
 
-## Production
+### Production
 
 The app is configured to build for production on Heroku.
 
-##
+## Component Design
 
-# License
+The component design follows the practices recommended in the React docs of having stateful class-based container component that interact with stateless presentational components.
+
+The `client/src/pages` folder houses most of the container components while most of the presentational components are housed in the `client/src/components`.
+
+The nomenclature helps to find component "families". For examples, most of the presentational components used in the `ProfilePage` component are located in `components/profile` folder.
+
+## License
 
 MIT License
 
