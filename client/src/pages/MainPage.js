@@ -128,22 +128,33 @@ export class MainPage extends React.Component {
 
   onSwitchContext = (context, searchTerms = null) => {
     try {
-      this.setState({ isFetching: true, pages: [] }, async () => {
-        const { data } = await fetchForMainPage(
-          this.signal.token,
+      this.setState(
+        {
+          isFetching: true,
+          hasMore: true,
+          page: 0,
+          pages: [],
           context,
-          0,
-          searchTerms
-        );
-        const gridContext = this.deriveGridContext(context);
-        this.setState({
-          context,
-          isFetching: false,
-          page: 1,
-          pages: [...data],
-          gridContext
-        });
-      });
+          searchTerms: null
+        },
+        async () => {
+          const { data } = await fetchForMainPage(
+            this.signal.token,
+            context,
+            0,
+            searchTerms
+          );
+          const gridContext = this.deriveGridContext(context);
+          this.setState({
+            context,
+            isFetching: false,
+            page: 1,
+            pages: [...data],
+            gridContext,
+            searchTerms
+          });
+        }
+      );
     } catch (e) {
       if (axios.isCancel()) {
         return console.log(e.message);
