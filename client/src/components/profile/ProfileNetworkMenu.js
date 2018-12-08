@@ -199,23 +199,31 @@ class ProfileNetworkMenu extends React.Component {
   renderGrid = profiles => {
     const { classes } = this.props;
     return (
-      <Grid direction="column" justify="center" alignItems="center" container>
+      <Grid
+        direction="row"
+        wrap="wrap"
+        justify="center"
+        alignItems="center"
+        container
+      >
         {profiles.map(profile => (
-          <Paper>
-            <Grid xs={12} item>
-              <Link
-                className={classes.aTag}
-                to={`/profile/${profile.displayName}`}
-              >
-                <ProfileHeader
-                  classes={{ root: classes.profileHeaderRoot }}
-                  profilePhoto={profile.profilePhoto}
-                  displayName={profile.displayName}
-                  joined={profile.joined}
-                />
-              </Link>
-            </Grid>
-          </Paper>
+          <Grid xs={4} item>
+            <Link
+              className={classes.aTag}
+              to={`/profile/${profile.displayName}`}
+            >
+              <ProfileHeader
+                classes={{
+                  root: classes.profileHeaderRoot,
+                  avatarContainer: classes.profileHeaderAvatarContainer,
+                  userText: classes.profileHeaderUserText
+                }}
+                profilePhoto={profile.profilePhoto}
+                displayName={profile.displayName}
+                joined={profile.joined}
+              />
+            </Link>
+          </Grid>
         ))}
       </Grid>
     );
@@ -298,6 +306,14 @@ const styles = theme => ({
   },
   profileHeaderRoot: {
     padding: `${theme.spacing.unit}px`
+  },
+  profileHeaderAvatarContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center"
+  },
+  profileHeaderUserText: {
+    margin: 0
   },
   aTag: {
     color: "inherit",

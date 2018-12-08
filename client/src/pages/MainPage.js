@@ -203,7 +203,7 @@ export class MainPage extends React.Component {
         }
         container
         spacing={
-          (gridContext === "profiles" && 24) || (gridContext === "posts" && 24)
+          (gridContext === "profiles" && 8) || (gridContext === "posts" && 24)
         }
       >
         {data.map(item => (
@@ -215,11 +215,11 @@ export class MainPage extends React.Component {
                 gridContext === "profiles" ? classes.albumItem : classes.item
             }}
             xs={
-              (gridContext === "profiles" && 6) ||
+              (gridContext === "profiles" && 3) ||
               (gridContext === "posts" && 12)
             }
             sm={
-              (gridContext === "profiles" && 4) ||
+              (gridContext === "profiles" && 1) ||
               (gridContext === "posts" && 6)
             }
             md={gridContext === "posts" && 6}
@@ -309,19 +309,21 @@ export class MainPage extends React.Component {
             )}
 
             {gridContext === "profiles" && (
-              <Paper>
-                <Link
-                  className={classes.aTag}
-                  to={`/profile/${item.displayName}`}
-                >
-                  <ProfileHeader
-                    classes={{ root: classes.profileHeaderRoot }}
-                    profilePhoto={item.profilePhoto}
-                    displayName={item.displayName}
-                    joined={item.joined}
-                  />
-                </Link>
-              </Paper>
+              <Link
+                className={classes.aTag}
+                to={`/profile/${item.displayName}`}
+              >
+                <ProfileHeader
+                  classes={{
+                    root: classes.profileHeaderRoot,
+                    avatarContainer: classes.profileHeaderAvatarContainer,
+                    userText: classes.profileHeaderUserText
+                  }}
+                  profilePhoto={item.profilePhoto}
+                  displayName={item.displayName}
+                  joined={item.joined}
+                />
+              </Link>
             )}
           </Grid>
         ))}
@@ -402,8 +404,16 @@ const styles = theme => ({
     justifyContent: "space-between"
   },
   profileHeaderRoot: {
-    padding: `${theme.spacing.unit * 2}px`,
+    padding: `${theme.spacing.unit}px`,
     marginBottom: `${theme.spacing.unit}px`
+  },
+  profileHeaderAvatarContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center"
+  },
+  profileHeaderUserText: {
+    margin: 0
   },
   aTag: {
     color: "inherit",
