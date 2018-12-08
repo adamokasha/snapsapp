@@ -44,11 +44,26 @@ The app is configured to build for production on Heroku.
 
 ## Component Design
 
-The component design follows the practices recommended in the React docs of having stateful class-based container component that interact with stateless presentational components.
+### Folder Structure
 
 The `client/src/pages` folder houses most of the container components while most of the presentational components are housed in the `client/src/components`.
 
 The nomenclature helps to find component "families". For examples, most of the presentational components used in the `ProfilePage` component are located in `components/profile` folder.
+
+### Main Components
+
+The main components are given infinite scroll functionality and they can render different data such as profiles, posts and albums. They do so by changing the context managed by their internal state. The following are what are considered to be the main components:
+
+- `MainPage` in `client/src/pages/`
+- `ProfileActivity` in `client/src/components/profile/`
+
+When these components need to fetch data they pass their context to the async functions in `client/src/async/combined.js`. The functions make the corresponding call to the API. This allows the `MainPage`, for example, which can render post and profile data, to know what type of data it should ask for from the API when the user has scrolled to the bottom.
+
+### Special Case Components
+
+- ModalView
+  - Acts as a wrapper that make a component passed to it display as a modal.
+  - Also handles its own error and success messages via `withSnackbar` prop.
 
 ## License
 
