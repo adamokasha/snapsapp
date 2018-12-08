@@ -50,7 +50,7 @@ class MessageBoxAppBar extends React.Component {
         color="primary"
       >
         <Toolbar classes={{ root: classes.toolbarRoot }}>
-          <Typography variant="title" color="inherit">
+          <Typography variant="h6" color="inherit">
             Message Box
           </Typography>
           {view === "list" ? null : (

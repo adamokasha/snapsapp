@@ -88,13 +88,12 @@ export class MainPageMenu extends React.Component {
               >
                 <Paper className={classes.paper}>
                   <MenuList className={classes.menuList}>
-                    {this.props.auth &&
-                      this.props.auth.registered && (
-                        <MenuItem onClick={this.onFollowing}>
-                          <PeopleOutlinedIcon className={classes.leftIcon} />
-                          Following
-                        </MenuItem>
-                      )}
+                    {this.props.auth && this.props.auth.registered && (
+                      <MenuItem onClick={this.onFollowing}>
+                        <PeopleOutlinedIcon className={classes.leftIcon} />
+                        Following
+                      </MenuItem>
+                    )}
                     <MenuItem onClick={this.onNew}>
                       <FiberNew className={classes.leftIcon} />
                       New
@@ -116,7 +115,7 @@ export class MainPageMenu extends React.Component {
 
 MainPageMenu.propTypes = {
   classes: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
 };
 
 const styles = theme => ({

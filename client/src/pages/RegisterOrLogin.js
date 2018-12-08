@@ -11,7 +11,8 @@ export const RegisterOrLogin = props => {
   return (
     <div>
       <Typography
-        variant="display3"
+        variant="h2"
+        style={{ margin: "16px 0" }}
         align="center"
         color="textPrimary"
         gutterBottom

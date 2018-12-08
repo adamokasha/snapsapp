@@ -14,7 +14,7 @@ export const HeroUnit = props => {
       <main>
         <div className={classes.heroContent}>
           <Typography
-            variant="display3"
+            variant="h2"
             align="center"
             color="textPrimary"
             gutterBottom
@@ -22,7 +22,7 @@ export const HeroUnit = props => {
             SnapsApp Demo
           </Typography>
           <Typography
-            variant="title"
+            variant="h6"
             align="center"
             color="textSecondary"
             paragraph

@@ -57,7 +57,7 @@ export class ProfileMessageForm extends React.Component {
           <Avatar className={classes.avatar}>
             <MailOutlinedIcon />
           </Avatar>
-          <Typography align="center" variant="headline">
+          <Typography align="center" variant="h5">
             New Message
           </Typography>
         </div>

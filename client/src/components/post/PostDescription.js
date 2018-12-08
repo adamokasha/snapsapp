@@ -9,7 +9,7 @@ export const PostDescription = props => {
   return (
     <div className={classes.root}>
       <Typography variant="caption">{moment(createdAt).fromNow()}</Typography>
-      <Typography variant="body1">{description}</Typography>
+      <Typography variant="body2">{description}</Typography>
     </div>
   );
 };

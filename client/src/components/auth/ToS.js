@@ -9,10 +9,10 @@ export const ToS = props => {
     <React.Fragment>
       <main className={classes.layout}>
         <Paper className={classes.paper}>
-          <Typography align="center" variant="display1">
+          <Typography align="center" variant="h4">
             Term Of Use
           </Typography>
-          <Typography align="center" variant="subheading">
+          <Typography align="center" variant="subtitle1">
             This app is for demonstration purposes. Your Google+ or Facebook
             Account is used to quickly create your account and populate your
             profile with some initial data. Your information is not distributed

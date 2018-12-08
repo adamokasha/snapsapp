@@ -245,7 +245,7 @@ class AppBar extends React.Component {
             <div>
               <Link to="/" className={classNames(classes.logo, classes.aTag)}>
                 <Typography
-                  variant="title"
+                  variant="h6"
                   color="inherit"
                   className={classes.grow}
                 >
@@ -264,7 +264,7 @@ class AppBar extends React.Component {
 
 AppBar.propTypes = {
   classes: PropTypes.object.isRequired,
-  auth: PropTypes.object,
+  auth: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   updateMboxNotif: PropTypes.func
 };
 

@@ -198,7 +198,7 @@ class AddPostForm extends React.Component {
             <Avatar className={classes.avatar}>
               <AddPhotoAlternate />
             </Avatar>
-            <Typography align="center" variant="headline">
+            <Typography align="center" variant="h5">
               Add Post
             </Typography>
           </div>

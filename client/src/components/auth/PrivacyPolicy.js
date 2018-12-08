@@ -7,18 +7,13 @@ export const ToS = props => {
   const { classes } = props;
   return (
     <React.Fragment>
-      <Typography
-        variant="display3"
-        align="center"
-        color="textPrimary"
-        gutterBottom
-      >
+      <Typography variant="h2" align="center" color="textPrimary" gutterBottom>
         Privacy
       </Typography>
 
       <main className={classes.layout}>
         <Paper className={classes.paper}>
-          <Typography align="center" variant="display1">
+          <Typography align="center" variant="h4">
             Privacy Policy
           </Typography>
           <p>Effective date: September 22, 2018</p>
@@ -48,18 +43,16 @@ export const ToS = props => {
             https://kasho-img-app.herokuapp.com/
           </p>
 
-          <Typography variant="headline">
-            Information Collection And Use
-          </Typography>
+          <Typography variant="h5">Information Collection And Use</Typography>
 
           <p>
             We collect several different types of information for various
             purposes to provide and improve our Service to you.
           </p>
 
-          <Typography variant="subheading">Types of Data Collected</Typography>
+          <Typography variant="subtitle1">Types of Data Collected</Typography>
 
-          <Typography variant="subheading">Personal Data</Typography>
+          <Typography variant="subtitle1">Personal Data</Typography>
 
           <p>
             While using our Service, we may ask you to provide us with certain
@@ -73,9 +66,9 @@ export const ToS = props => {
             <li>Cookies</li>
           </ul>
 
-          <Typography variant="subheading">Usage Data</Typography>
+          <Typography variant="subtitle1">Usage Data</Typography>
 
-          <Typography variant="subheading">Tracking & Cookies Data</Typography>
+          <Typography variant="subtitle1">Tracking & Cookies Data</Typography>
           <p>
             We use cookies and similar tracking technologies to track the
             activity on our Service and hold certain information.
@@ -104,7 +97,7 @@ export const ToS = props => {
             </li>
           </ul>
 
-          <Typography variant="headline">Use of Data</Typography>
+          <Typography variant="h5">Use of Data</Typography>
 
           <p>Kasho Img App uses the collected data for various purposes:</p>
           <ul>
@@ -117,7 +110,7 @@ export const ToS = props => {
             <li>To detect, prevent and address technical issues</li>
           </ul>
 
-          <Typography variant="headline">Transfer Of Data</Typography>
+          <Typography variant="h5">Transfer Of Data</Typography>
           <p>
             Your information, including Personal Data, may be transferred to —
             and maintained on — computers located outside of your state,
@@ -142,9 +135,9 @@ export const ToS = props => {
             information.
           </p>
 
-          <Typography variant="headline">Disclosure Of Data</Typography>
+          <Typography variant="h5">Disclosure Of Data</Typography>
 
-          <Typography variant="subheading">Legal Requirements</Typography>
+          <Typography variant="subtitle1">Legal Requirements</Typography>
           <p>
             Kasho Img App may disclose your Personal Data in the good faith
             belief that such action is necessary to:
@@ -165,7 +158,7 @@ export const ToS = props => {
             <li>To protect against legal liability</li>
           </ul>
 
-          <Typography variant="headline">Security Of Data</Typography>
+          <Typography variant="h5">Security Of Data</Typography>
           <p>
             The security of your data is important to us, but remember that no
             method of transmission over the Internet, or method of electronic
@@ -174,7 +167,7 @@ export const ToS = props => {
             its absolute security.
           </p>
 
-          <Typography variant="headline">Service Providers</Typography>
+          <Typography variant="h5">Service Providers</Typography>
           <p>
             We may employ third party companies and individuals to facilitate
             our Service ("Service Providers"), to provide the Service on our
@@ -187,7 +180,7 @@ export const ToS = props => {
             or use it for any other purpose.
           </p>
 
-          <Typography variant="headline">Links To Other Sites</Typography>
+          <Typography variant="h5">Links To Other Sites</Typography>
           <p>
             Our Service may contain links to other sites that are not operated
             by us. If you click on a third party link, you will be directed to
@@ -200,7 +193,7 @@ export const ToS = props => {
             services.
           </p>
 
-          <Typography variant="headline">Children's Privacy</Typography>
+          <Typography variant="h5">Children's Privacy</Typography>
           <p>
             Our Service does not address anyone under the age of 18
             ("Children").
@@ -214,9 +207,7 @@ export const ToS = props => {
             consent, we take steps to remove that information from our servers.
           </p>
 
-          <Typography variant="headline">
-            Changes To This Privacy Policy
-          </Typography>
+          <Typography variant="h5">Changes To This Privacy Policy</Typography>
           <p>
             We may update our Privacy Policy from time to time. We will notify
             you of any changes by posting the new Privacy Policy on this page.
@@ -232,7 +223,7 @@ export const ToS = props => {
             posted on this page.
           </p>
 
-          <Typography variant="headline">Contact Us</Typography>
+          <Typography variant="h5">Contact Us</Typography>
           <p>
             If you have any questions about this Privacy Policy, please contact
             us:

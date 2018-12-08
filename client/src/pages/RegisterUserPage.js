@@ -78,10 +78,10 @@ class DisplayNameForm extends React.Component {
             <Avatar className={classes.avatar}>
               <HowToReg />
             </Avatar>
-            <Typography variant="headline">Display Name</Typography>
+            <Typography variant="h5">Display Name</Typography>
             <Typography
               align="center"
-              variant="subheading"
+              variant="subtitle1"
               className={classes.subheading}
             >
               Thanks for authenticating. Please choose a display name to
