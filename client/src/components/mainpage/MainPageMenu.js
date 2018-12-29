@@ -24,7 +24,6 @@ export class MainPageMenu extends React.Component {
   }
 
   togglePopper = e => {
-    console.log("toggle");
     this.setState({ popperOpen: !this.state.popperOpen }, () => {});
   };
 

@@ -169,7 +169,6 @@ export class SingleAlbumPage extends React.Component {
       await favePost(this.signal.token, postId);
       const updatedPages = this.state.pages.map(post => {
         if (post._id === postId) {
-          console.log("TRUE");
           return {
             ...post,
             isFave: !post.isFave,
@@ -178,7 +177,6 @@ export class SingleAlbumPage extends React.Component {
         }
         return post;
       });
-      console.log(updatedPages);
       this.setState({ pages: updatedPages }, () => {});
     } catch (e) {
       if (axios.isCancel()) {

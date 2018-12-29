@@ -291,7 +291,6 @@ export class ProfilePage extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log("PROFILEPAGE RENDERED", this.props);
     const { ownProfile } = this.state;
 
     return (

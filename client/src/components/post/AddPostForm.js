@@ -133,7 +133,6 @@ class AddPostForm extends React.Component {
           });
         })
         .catch(e => {
-          console.log("CATCH BLOCK TRIGGERED!!!!");
           this.setState(
             {
               snackbarOpen: true,

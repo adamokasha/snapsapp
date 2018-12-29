@@ -145,7 +145,6 @@ class ProfileActivity extends React.Component {
       await favePost(this.signal.token, postId);
       const updatedPages = this.state.pages.map(post => {
         if (post._id === postId) {
-          console.log("TRUE");
           return {
             ...post,
             isFave: !post.isFave,
@@ -154,7 +153,6 @@ class ProfileActivity extends React.Component {
         }
         return post;
       });
-      console.log(updatedPages);
       this.setState({ pages: updatedPages, isFaving: false }, () => {});
     } catch (e) {
       if (axios.isCancel()) {
@@ -305,7 +303,6 @@ class ProfileActivity extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log("ProfileActivity RENDERED", this.props);
 
     return (
       <div ref={this.topRef} className={classes.root}>

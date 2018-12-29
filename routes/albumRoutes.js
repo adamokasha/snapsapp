@@ -22,7 +22,6 @@ module.exports = app => {
       // Default cover image: last image in array
       const coverImgId = albumPosts[albumPosts.length - 1];
       const coverImgDoc = await Post.findById({ _id: coverImgId }, "imgUrl");
-      console.log(req.user);
 
       const album = await new Album({
         _displayName: req.user.displayName,

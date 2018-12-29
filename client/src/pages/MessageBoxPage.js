@@ -305,7 +305,6 @@ export class MessageBoxPage extends React.Component {
   };
 
   render() {
-    console.log("MESSAGEBOXPAGE RENDERED", this.state);
     const { classes } = this.props;
     return (
       <React.Fragment>

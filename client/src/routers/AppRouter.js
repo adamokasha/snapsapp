@@ -29,7 +29,6 @@ export class AppRouter extends React.Component {
   }
 
   render() {
-    console.log("APP ROUTES RENDERED");
     return (
       <BrowserRouter>
         <React.Fragment>

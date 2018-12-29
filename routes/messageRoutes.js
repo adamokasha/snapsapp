@@ -262,7 +262,6 @@ module.exports = app => {
           message._from.toString(),
           message._to.toString()
         ].filter(owner => owner !== req.user.id)[0];
-        console.log(req.user.id, recipient);
         // Update recipient's unread messages
         await MessageBox.findOneAndUpdate(
           { _owner: recipient },
@@ -279,7 +278,6 @@ module.exports = app => {
   app.delete("/api/message/delete", requireRegistration, async (req, res) => {
     try {
       const { deletions } = req.body;
-      console.log(deletions);
       await MessageBox.findOneAndUpdate(
         { _owner: req.user.id },
         {

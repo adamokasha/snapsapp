@@ -222,7 +222,6 @@ export class FullPostPage extends React.Component {
   };
 
   render() {
-    console.log("FULLPOSTPAGE RENDERED");
     const { classes, auth } = this.props;
     const {
       post,
@@ -237,8 +236,9 @@ export class FullPostPage extends React.Component {
     return (
       <div className={classes.root}>
         {!this.state.post &&
-          (!this.props.location.state &&
-            this.state.initialFetch && <div>Loading...</div>)}
+          (!this.props.location.state && this.state.initialFetch && (
+            <div>Loading...</div>
+          ))}
         {this.state.post && (
           <React.Fragment>
             <FullPostImage imgUrl={post.imgUrl} title={post.title} />
@@ -280,14 +280,12 @@ export class FullPostPage extends React.Component {
               onLoadPrevious={this.onLoadPrevious}
             />
           )}
-          {auth &&
-            auth.registered &&
-            !fetchingComments && (
-              <CommentForm
-                onAddComment={this.onAddComment}
-                addingComment={addingComment}
-              />
-            )}
+          {auth && auth.registered && !fetchingComments && (
+            <CommentForm
+              onAddComment={this.onAddComment}
+              addingComment={addingComment}
+            />
+          )}
         </div>
       </div>
     );

@@ -66,7 +66,6 @@ class ProfileNetworkMenu extends React.Component {
   }
 
   fetchNextPage = () => {
-    console.log("called next page");
     if (
       this.state.value === 0 &&
       (this.state.isFetching || !this.state.hasMoreFollowers)
