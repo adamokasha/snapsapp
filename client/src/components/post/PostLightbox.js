@@ -153,7 +153,7 @@ class PostLightbox extends React.Component {
                       component={Link}
                       to={{
                         pathname: `/post/${this.props.post._id}/`,
-                        state: { post: this.props.post }
+                        state: { post: this.state.currentSlide }
                       }}
                       size="small"
                       className={classes.commentButton}

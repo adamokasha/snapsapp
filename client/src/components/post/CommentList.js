@@ -58,7 +58,7 @@ export const CommentList = props => {
       )}
       {comments &&
         comments.map((comment, i) => <Comment key={i} comment={comment} />)}
-      {!comments && !fetchingComments && (
+      {!comments.length && !fetchingComments && (
         <Typography>No comments yet.</Typography>
       )}
     </div>

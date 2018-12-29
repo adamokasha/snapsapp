@@ -30,7 +30,7 @@ export class FullPostPage extends React.Component {
       initialFetch: true,
       post: this.props.location.state ? this.props.location.state.post : null,
       commentsPage: 0,
-      comments: null,
+      comments: [],
       fetchingComments: true,
       hasMoreComments: true,
       addingComment: false,
@@ -186,10 +186,13 @@ export class FullPostPage extends React.Component {
             profilePhoto
           }
         };
-        this.setState({
-          comments: [...this.state.comments, { ...comment }],
-          addingComment: false
-        });
+        this.setState(
+          {
+            comments: [...this.state.comments, { ...comment }],
+            addingComment: false
+          },
+          () => {}
+        );
       } catch (e) {
         if (axios.isCancel(e)) {
           return console.log(e.message);
