@@ -7,7 +7,7 @@ const Faves = mongoose.model("Faves");
 const Follows = mongoose.model("Follows");
 
 module.exports = app => {
-  // ScrollView context: New
+  // MainPage context: New
   app.get("/api/posts/new/:page", async (req, res) => {
     try {
       const { page } = req.params;
@@ -45,7 +45,7 @@ module.exports = app => {
     }
   });
 
-  // ScrollView context: Popular
+  // MainPage context: Popular
   app.get("/api/posts/popular/:page", async (req, res) => {
     try {
       const { page } = req.params;
@@ -85,7 +85,7 @@ module.exports = app => {
     }
   });
 
-  // ScrollView context: Follows Feed
+  // MainPage context: Follows Feed
   app.get("/api/posts/follows/:page", requireRegistration, async (req, res) => {
     try {
       const { page } = req.params;
@@ -104,7 +104,7 @@ module.exports = app => {
     }
   });
 
-  // ScrollView context: User posts all
+  // ProfilePage context: User posts all
   app.get("/api/posts/user/all/:user/:page", async (req, res) => {
     try {
       const { page, user } = req.params;
@@ -144,7 +144,7 @@ module.exports = app => {
     }
   });
 
-  // ScrollView context: User faves all
+  // ProfilePage context: User faves all
   app.get("/api/posts/user/faves/:user/:page", async (req, res) => {
     try {
       const { page, user } = req.params;

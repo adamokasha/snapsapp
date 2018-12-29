@@ -2,6 +2,9 @@ import React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import compose from "recompose/compose";
+import { Link } from "react-router-dom";
+import Button from "@material-ui/core/Button";
+import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
 import PropTypes from "prop-types";
 import axios from "axios";
 
@@ -145,7 +148,23 @@ class PostLightbox extends React.Component {
                   title={title}
                 />
                 <PostActions
-                  commentCount={commentCount}
+                  commentButton={
+                    <Button
+                      component={Link}
+                      to={{
+                        pathname: `/post/${this.props.post._id}/`,
+                        state: { post: this.props.post }
+                      }}
+                      size="small"
+                      className={classes.commentButton}
+                    >
+                      <CommentOutlinedIcon
+                        className={classes.leftIcon}
+                        color="inherit"
+                      />
+                      {commentCount}
+                    </Button>
+                  }
                   postId={_id}
                   imgUrl={imgUrl}
                   faveCount={faveCount}
@@ -223,6 +242,13 @@ const styles = theme => ({
     [theme.breakpoints.up("sm")]: {
       marginLeft: `${theme.spacing.unit}px`
     }
+  },
+  leftIcon: {
+    marginRight: `${theme.spacing.unit}px`
+  },
+  commentButton: {
+    marginLeft: `${theme.spacing.unit}px`,
+    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`
   },
   postFooter: {
     display: "none",

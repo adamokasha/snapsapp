@@ -2,6 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
 import { withStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
@@ -252,6 +254,15 @@ export class FullPostPage extends React.Component {
                 postId={post._id}
                 imgUrl={post.imgUrl}
                 commentCount={post.commentCount}
+                commentButton={
+                  <Button size="small" className={classes.commentButton}>
+                    <CommentOutlinedIcon
+                      className={classes.leftIcon}
+                      color="inherit"
+                    />
+                    {post.commentCount}
+                  </Button>
+                }
                 canFave={auth && auth.registered}
                 onFavePost={this.onFavePost}
                 isFaving={isFaving}
@@ -303,6 +314,13 @@ const styles = theme => ({
     flexDirection: "column",
     alignItems: "flex-start",
     background: "#f9f9f9"
+  },
+  leftIcon: {
+    marginRight: `${theme.spacing.unit}px`
+  },
+  commentButton: {
+    marginLeft: `${theme.spacing.unit}px`,
+    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`
   },
   postInfo: {
     width: "95%",
