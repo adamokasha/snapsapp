@@ -38,7 +38,10 @@ export const HeroUnit = props => {
             <Grid container spacing={16} justify="center">
               <Grid item>
                 <Button
-                  to="/signup"
+                  to={{
+                    pathname: "/register",
+                    state: { registerOrLogin: "register" }
+                  }}
                   component={Link}
                   variant="contained"
                   color="primary"

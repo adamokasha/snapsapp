@@ -187,7 +187,7 @@ class ProfileActivity extends React.Component {
         wrap="wrap"
         justify={
           (gridContext === "albums" && "center") ||
-          (gridContext === "posts" && "space-evenly")
+          (gridContext === "posts" && "flex-start")
         }
         container
         spacing={

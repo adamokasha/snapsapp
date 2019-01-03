@@ -20,7 +20,7 @@ export const ToS = props => {
 
           <p>
             Kasho Img App ("us", "we", or "our") operates the
-            https://kasho-img-app.herokuapp.com/ website (the "Service").
+            https://snapsapp.herokuapp.com/ website (the "Service").
           </p>
 
           <p>
@@ -40,7 +40,7 @@ export const ToS = props => {
             accordance with this policy. Unless otherwise defined in this
             Privacy Policy, terms used in this Privacy Policy have the same
             meanings as in our Terms and Conditions, accessible from
-            https://kasho-img-app.herokuapp.com/
+            https://snapsapp.herokuapp.com/
           </p>
 
           <Typography variant="h5">Information Collection And Use</Typography>

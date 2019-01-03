@@ -209,7 +209,7 @@ export class MainPage extends React.Component {
         wrap="wrap"
         justify={
           (gridContext === "profiles" && "center") ||
-          (gridContext === "posts" && "space-evenly")
+          (gridContext === "posts" && "flex-start")
         }
         container
         spacing={

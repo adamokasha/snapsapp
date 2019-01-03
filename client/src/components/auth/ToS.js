@@ -22,7 +22,7 @@ export const ToS = props => {
           <div>
             <p>
               Please read these Terms of Use ("Terms", "Terms of Use") carefully
-              before using the http://kasho-img-app.herokuapp.com website (the
+              before using the http://snapsapp.herokuapp.com website (the
               "Service") operated by Kasho Img App ("us", "we", or "our"). Your
               access to and use of the Service is conditioned on your acceptance
               of and compliance with these Terms. These Terms apply to all
