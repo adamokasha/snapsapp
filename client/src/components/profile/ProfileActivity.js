@@ -28,6 +28,7 @@ import ModalView from "../modal/ModalView";
 import PostLightbox from "../post/PostLightbox";
 import AlbumMaker from "../album/AlbumMaker";
 import NavToTopButton from "../buttons/NavToTopButton";
+import CustomSnackbar from "../snackbar/CustomSnackbar";
 
 import { onScroll } from "../../utils/utils";
 import { fetchForProfilePage } from "../../async/combined";
@@ -42,7 +43,10 @@ class ProfileActivity extends React.Component {
       pages: this.props.pages,
       page: 1,
       hasMore: true,
-      showNavToTop: false
+      showNavToTop: false,
+      snackbarOpen: false,
+      snackbarVar: null,
+      snackbarMessage: null
     };
 
     this.signal = axios.CancelToken.source();
@@ -179,7 +183,15 @@ class ProfileActivity extends React.Component {
     try {
       await axios.delete(`/api/delete?img=${imgUrl}&id=${id}`);
       const filteredPages = this.state.pages.filter(post => post._id !== id);
-      this.setState({ pages: filteredPages }, () => {});
+      this.setState(
+        {
+          pages: filteredPages,
+          snackbarOpen: true,
+          snackbarVar: "success",
+          snackbarMessage: "Post deleted successfully."
+        },
+        () => {}
+      );
     } catch (e) {
       console.log(e);
     }
@@ -194,11 +206,22 @@ class ProfileActivity extends React.Component {
         }
         return post;
       });
-
-      this.setState({ pages: [...mappedPages] }, () => {});
+      this.setState(
+        {
+          pages: [...mappedPages],
+          snackbarOpen: true,
+          snackbarVar: "success",
+          snackbarMessage: "Post updated successfully."
+        },
+        () => {}
+      );
     } catch (e) {
       return console.log(e);
     }
+  };
+
+  onSnackbarClose = () => {
+    this.setState({ snackbarOpen: false }, () => {});
   };
 
   renderGrid = data => {
@@ -383,6 +406,13 @@ class ProfileActivity extends React.Component {
         {this.state.showNavToTop && (
           <NavToTopButton scrollToTop={this.scrollToTop} />
         )}
+        <CustomSnackbar
+          variant={this.state.snackbarVar}
+          message={this.state.snackbarOpen && this.state.snackbarMessage}
+          onSnackbarOpen={this.onSnackbarOpen}
+          onSnackbarClose={this.onSnackbarClose}
+          snackbarOpen={this.state.snackbarOpen}
+        />
       </div>
     );
   }
