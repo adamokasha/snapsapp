@@ -22,6 +22,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from "axios";
 import moment from "moment";
 
+import PostMenu from "../post/PostMenu";
 import PostCardActions from "../post/PostCardActions";
 import ModalView from "../modal/ModalView";
 import PostLightbox from "../post/PostLightbox";
@@ -174,8 +175,19 @@ class ProfileActivity extends React.Component {
     });
   };
 
+  onDeletePost = async (imgUrl, id) => {
+    try {
+      await axios.delete(`/api/delete?img=${imgUrl}&id=${id}`);
+      const filteredPages = this.state.pages.filter(post => post._id !== id);
+      this.setState({ pages: filteredPages }, () => {});
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   renderGrid = data => {
-    const { classes } = this.props;
+    const { classes, ownProfile } = this.props;
+    const { anchorEl } = this.state;
 
     // Derive gridContext by tab value (0, 1 = posts, 2 = albums)
     const gridContext = this.state.value === 2 ? "albums" : "posts";
@@ -221,6 +233,16 @@ class ProfileActivity extends React.Component {
                     >
                       <img src={item._owner.profilePhoto} alt="avatar" />
                     </Avatar>
+                  }
+                  action={
+                    ownProfile &&
+                    this.state.value === 1 && (
+                      <PostMenu
+                        onDeletePost={this.onDeletePost}
+                        imgUrl={item.imgUrl}
+                        id={item._id}
+                      />
+                    )
                   }
                   title={item.title || "Untitled"}
                   subheader={item._owner.displayName}

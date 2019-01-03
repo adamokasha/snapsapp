@@ -1,3 +1,4 @@
+const path = require("path");
 const AWS = require("aws-sdk");
 const uuid = require("uuid");
 const multer = require("multer");
@@ -18,7 +19,7 @@ const s3 = new AWS.S3({
 
 const upload = multer({
   limits: {
-    fileSize: 1000000
+    fileSize: 2000000
   },
   storage: multerS3({
     s3,
@@ -27,7 +28,7 @@ const upload = multer({
       cb(null, { fieldName: file.fieldname });
     },
     key: function(req, file, cb) {
-      cb(null, `${req.user.id}/${uuid()}.jpeg`);
+      cb(null, `${req.user.id}/${uuid()}${path.extname(file.originalname)}`);
     }
   }),
   fileFilter: (req, file, cb) => {
@@ -62,13 +63,42 @@ module.exports = app => {
           .status(200)
           .send({ success: "Post has been added!", postData: post });
       } catch (e) {
-        res
-          .status(200)
-          .send({
-            error:
-              "Could not add post. Please check html form input and upload file."
-          });
+        res.status(200).send({
+          error:
+            "Could not add post. Please check html form input and upload file."
+        });
       }
     }
   );
+
+  app.delete("/api/delete", async (req, res) => {
+    try {
+      const { img: imgUrl, id: postId } = req.query;
+      const userId = imgUrl.split("/")[0];
+      console.log("postId: ", postId);
+      console.log("imgUrl: ", imgUrl);
+
+      // Check if user owns post
+      if (req.user.id === userId) {
+        await Post.findByIdAndDelete(postId);
+        const params = {
+          Bucket: "img-share-kasho",
+          Key: `${imgUrl}`
+        };
+        await s3.deleteObject(params, (err, data) => {
+          if (err) {
+            console.log(err);
+          } else {
+            res.status(200).send({ success: "Post deleted" });
+          }
+        });
+      } else {
+        return res
+          .status(401)
+          .send({ error: "You are not authorized to delete this post." });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  });
 };

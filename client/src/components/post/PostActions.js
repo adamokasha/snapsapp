@@ -6,7 +6,6 @@ import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import FavoriteTwoToneIcon from "@material-ui/icons/FavoriteTwoTone";
 import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
-import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
 
 import ShareButton from "../buttons/ShareButton";
 
