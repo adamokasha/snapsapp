@@ -144,6 +144,33 @@ module.exports = app => {
     }
   });
 
+  app.put("/api/posts/edit/:id", async (req, res) => {
+    try {
+      const { title, tags, description } = req.body;
+      const { id } = req.params;
+
+      console.log(title, tags, description);
+
+      const post = await Post.findById(id);
+      console.log(post._owner, req.user.id);
+      if (post && post._owner.toHexString() === req.user.id) {
+        await post.updateOne({
+          title,
+          title_lower: title,
+          tags,
+          description
+        });
+        res.status(200).send({ success: "Update post successfully" });
+      } else {
+        res
+          .status(401)
+          .send({ error: "You are not authorized to alter this post" });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
   // ProfilePage context: User faves all
   app.get("/api/posts/user/faves/:user/:page", async (req, res) => {
     try {

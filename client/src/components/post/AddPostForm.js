@@ -20,15 +20,16 @@ import Chip from "@material-ui/core/Chip";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import filesize from "filesize";
 import withStyles from "@material-ui/core/styles/withStyles";
+import axios from "axios";
 
 import CustomSnackbar from "../snackbar/CustomSnackbar";
 
 class AddPostForm extends React.Component {
   state = {
     post: {
-      title: "",
-      tags: [],
-      description: ""
+      title: this.props.post ? this.props.post.title : "",
+      tags: this.props.post ? this.props.post.tags : [],
+      description: this.props.post ? this.props.post.description : ""
     },
     previewImage: "",
     file: null,
@@ -80,8 +81,27 @@ class AddPostForm extends React.Component {
     });
   };
 
-  onSubmit = e => {
+  onSubmit = async e => {
     e.preventDefault();
+
+    if (this.props.editMode) {
+      const { _id } = this.props.post;
+      const { title, description, tags } = this.state.post;
+
+      this.props.onEditPost(_id, title, tags, description);
+      this.props.closeMenu();
+      return this.props.handleClose();
+      // try {
+      //   const { _id } = this.props.post;
+      //   const { title, description, tags } = this.state.post;
+      //   await axios.put(`/api/posts/edit/${_id}`, { title, description, tags });
+      //   console.log("updated");
+      //   this.props.handleClose();
+      //   return this.props.closeMenu();
+      // } catch (e) {
+      //   return console.log(e);
+      // }
+    }
 
     this.setState({ isLoading: true }, async () => {
       const { post, file } = this.state;
@@ -198,7 +218,7 @@ class AddPostForm extends React.Component {
               <AddPhotoAlternate />
             </Avatar>
             <Typography align="center" variant="h5">
-              Add Post
+              {this.props.editMode ? "Edit Post" : "Add Post"}
             </Typography>
           </div>
           {view === "modal" && (
@@ -216,9 +236,15 @@ class AddPostForm extends React.Component {
             onSubmit={this.onSubmit}
           >
             <div>
-              {this.state.previewImage ? (
+              {this.state.previewImage || this.props.editMode ? (
                 <img
-                  src={this.state.previewImage}
+                  src={
+                    this.props.editMode
+                      ? `https://d14ed1d2q7cc9f.cloudfront.net/400x300/smart/${
+                          this.props.post.imgUrl
+                        }`
+                      : this.state.previewImage
+                  }
                   alt="preview"
                   className={classes.previewImage}
                 />
@@ -227,43 +253,48 @@ class AddPostForm extends React.Component {
                   <InsertDriveFileOutlinedIcon className={classes.blankIcon} />
                 </div>
               )}
-              <div>
-                <Typography variant="caption">Limit: 2 MB</Typography>
-                <Typography
-                  color={
-                    this.state.fileSize > 2097152 ? "secondary" : "default"
-                  }
-                  variant="caption"
-                >
-                  File size:{" "}
-                  {this.state.file &&
-                    filesize(this.state.file.size, { exponent: 2 })}
-                </Typography>
-              </div>
+
+              {!this.props.editMode && (
+                <div>
+                  <Typography variant="caption">Limit: 2 MB</Typography>
+                  <Typography
+                    color={
+                      this.state.fileSize > 2097152 ? "secondary" : "default"
+                    }
+                    variant="caption"
+                  >
+                    File size:{" "}
+                    {this.state.file &&
+                      filesize(this.state.file.size, { exponent: 2 })}
+                  </Typography>
+                </div>
+              )}
             </div>
-            <div className={classes.fileInputContainer}>
-              <Input
-                className={classes.fileInput}
-                id="hidden-file-input"
-                name="image"
-                type="file"
-                onChange={this.onFileSelect}
-                inputProps={{ accept: "image/*" }}
-              />
-              <label htmlFor="hidden-file-input">
-                <Button
-                  variant="raised"
-                  component="span"
-                  className={classes.button}
-                >
-                  Browse for an Image File
-                </Button>
-              </label>
-            </div>{" "}
+            {!this.props.editMode && (
+              <div className={classes.fileInputContainer}>
+                <Input
+                  className={classes.fileInput}
+                  id="hidden-file-input"
+                  name="image"
+                  type="file"
+                  onChange={this.onFileSelect}
+                  inputProps={{ accept: "image/*" }}
+                />
+                <label htmlFor="hidden-file-input">
+                  <Button
+                    variant="raised"
+                    component="span"
+                    className={classes.button}
+                  >
+                    Browse for an Image File
+                  </Button>
+                </label>
+              </div>
+            )}
             <TextField
               id="full-width"
               label="Title"
-              placeholder="Give your photo a title"
+              placeholder="Give your post a title"
               margin="normal"
               className={classes.textField}
               onChange={this.onTitleChange}
@@ -298,8 +329,7 @@ class AddPostForm extends React.Component {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    {this.state.post.tags.length}
-                    /5 Tags
+                    {this.state.post.tags.length}/5 Tags
                   </InputAdornment>
                 )
               }}
@@ -320,6 +350,7 @@ class AddPostForm extends React.Component {
                   </InputAdornment>
                 )
               }}
+              value={this.state.post.description}
             />
             <Button
               color="primary"
@@ -328,10 +359,12 @@ class AddPostForm extends React.Component {
               className={classes.button}
               type="submit"
               disabled={
-                this.state.file &&
-                this.state.fileSize < 2097152 &&
-                this.state.post.title.length > 4 &&
-                !this.state.isLoading
+                this.props.editMode
+                  ? false
+                  : this.state.file &&
+                    this.state.fileSize < 2097152 &&
+                    this.state.post.title.length > 4 &&
+                    !this.state.isLoading
                   ? false
                   : true
               }
@@ -358,7 +391,9 @@ class AddPostForm extends React.Component {
 AddPostForm.propTypes = {
   classes: PropTypes.object.isRequired,
   handleClose: PropTypes.func,
-  view: PropTypes.oneOf(["modal", "page"])
+  view: PropTypes.oneOf(["modal", "page"]),
+  editMode: PropTypes.bool,
+  post: PropTypes.object
 };
 
 const styles = theme => ({

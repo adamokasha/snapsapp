@@ -185,9 +185,24 @@ class ProfileActivity extends React.Component {
     }
   };
 
+  onEditPost = async (id, title, tags, description) => {
+    try {
+      await axios.put(`/api/posts/edit/${id}`, { title, description, tags });
+      const mappedPages = this.state.pages.map(post => {
+        if (post._id === id) {
+          return { ...post, title, description, tags };
+        }
+        return post;
+      });
+
+      this.setState({ pages: [...mappedPages] }, () => {});
+    } catch (e) {
+      return console.log(e);
+    }
+  };
+
   renderGrid = data => {
     const { classes, ownProfile } = this.props;
-    const { anchorEl } = this.state;
 
     // Derive gridContext by tab value (0, 1 = posts, 2 = albums)
     const gridContext = this.state.value === 2 ? "albums" : "posts";
@@ -238,9 +253,9 @@ class ProfileActivity extends React.Component {
                     ownProfile &&
                     this.state.value === 1 && (
                       <PostMenu
+                        onEditPost={this.onEditPost}
                         onDeletePost={this.onDeletePost}
-                        imgUrl={item.imgUrl}
-                        id={item._id}
+                        post={item}
                       />
                     )
                   }

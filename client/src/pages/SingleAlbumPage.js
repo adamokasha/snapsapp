@@ -225,7 +225,6 @@ export class SingleAlbumPage extends React.Component {
             <div className={classes.actions}>
               <ShareButton
                 context="album"
-                imgUrl={this.state.pages[0].imgUrl}
                 user={this.state.albumOwner}
                 albumId={this.state.albumId}
                 button={

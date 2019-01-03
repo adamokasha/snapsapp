@@ -3,8 +3,10 @@ import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-
 import PropTypes from "prop-types";
+
+import ModalView from "../modal/ModalView";
+import AddPostForm from "./AddPostForm";
 
 class PostMenu extends Component {
   state = {
@@ -20,8 +22,8 @@ class PostMenu extends Component {
   };
 
   onDeletePost = () => {
-    const { imgUrl, id } = this.props;
-    this.props.onDeletePost(imgUrl, id);
+    const { imgUrl, _id } = this.props.post;
+    this.props.onDeletePost(imgUrl, _id);
     this.handleClose();
   };
 
@@ -44,7 +46,18 @@ class PostMenu extends Component {
           open={open}
           onClose={this.handleClose}
         >
-          <MenuItem onClick={this.handleClose}>Edit</MenuItem>
+          <ModalView
+            togglerComponent={<MenuItem>Edit</MenuItem>}
+            modalComponent={
+              <AddPostForm
+                view="modal"
+                editMode={true}
+                post={this.props.post}
+                closeMenu={this.handleClose}
+                onEditPost={this.props.onEditPost}
+              />
+            }
+          />
           <MenuItem onClick={this.onDeletePost}>Delete</MenuItem>
         </Menu>
       </div>
