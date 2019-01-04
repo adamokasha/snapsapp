@@ -75,8 +75,6 @@ module.exports = app => {
     try {
       const { img: imgUrl, id: postId } = req.query;
       const userId = imgUrl.split("/")[0];
-      console.log("postId: ", postId);
-      console.log("imgUrl: ", imgUrl);
 
       // Check if user owns post
       if (req.user.id === userId) {

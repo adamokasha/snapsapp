@@ -144,28 +144,23 @@ module.exports = app => {
     }
   });
 
-  app.put("/api/posts/edit/:id", async (req, res) => {
+  app.patch("/api/posts/edit/:id", async (req, res) => {
     try {
       const { title, tags, description } = req.body;
       const { id } = req.params;
 
       console.log(title, tags, description);
 
-      const post = await Post.findById(id);
-      console.log(post._owner, req.user.id);
-      if (post && post._owner.toHexString() === req.user.id) {
-        await post.updateOne({
+      await Post.findOneAndUpdate(
+        { _id: id, _owner: req.user.id },
+        {
           title,
           title_lower: title,
           tags,
           description
-        });
-        res.status(200).send({ success: "Update post successfully" });
-      } else {
-        res
-          .status(401)
-          .send({ error: "You are not authorized to alter this post" });
-      }
+        }
+      );
+      res.status(200).send({ success: "Update post successfully" });
     } catch (e) {
       console.log(e);
     }

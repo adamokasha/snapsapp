@@ -32,7 +32,7 @@ import CustomSnackbar from "../snackbar/CustomSnackbar";
 
 import { onScroll } from "../../utils/utils";
 import { fetchForProfilePage } from "../../async/combined";
-import { deletePost, favePost } from "../../async/posts";
+import { deletePost, updatePost, favePost } from "../../async/posts";
 
 class ProfileActivity extends React.Component {
   constructor(props) {
@@ -203,7 +203,8 @@ class ProfileActivity extends React.Component {
 
   onEditPost = async (id, title, tags, description) => {
     try {
-      await axios.put(`/api/posts/edit/${id}`, { title, description, tags });
+      // await axios.patch(`/api/posts/edit/${id}`, { title, description, tags });
+      await updatePost(this.signal.token, id, title, tags, description);
       const mappedPages = this.state.pages.map(post => {
         if (post._id === id) {
           return { ...post, title, description, tags };

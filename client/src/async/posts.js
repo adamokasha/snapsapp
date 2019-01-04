@@ -7,6 +7,15 @@ export const deletePost = async (cancelToken, imgUrl, id) => {
   return res;
 };
 
+export const updatePost = async (cancelToken, id, title, description, tags) => {
+  const res = await axios.patch(
+    `/api/posts/edit/${id}`,
+    { title, description, tags },
+    { cancelToken }
+  );
+  return res;
+};
+
 export const fetchAllUserPosts = async (cancelToken, page) => {
   const res = await axios.get(`/api/posts/myposts/all/${page}`, {
     cancelToken

@@ -80,79 +80,83 @@ class AddPostForm extends React.Component {
     });
   };
 
-  onSubmit = async e => {
+  onSubmit = e => {
     e.preventDefault();
 
     if (this.props.editMode) {
-      const { _id } = this.props.post;
-      const { title, description, tags } = this.state.post;
+      this.setState({ isLoading: true }, async () => {
+        const { _id } = this.props.post;
+        const { title, description, tags } = this.state.post;
 
-      this.props.onEditPost(_id, title, tags, description);
-      this.props.closeMenu();
-      return this.props.handleClose();
-    }
+        await this.props.onEditPost(_id, title, tags, description);
+        this.setState({ isLoading: false }, () => {
+          this.props.closeMenu();
+          return this.props.handleClose();
+        });
+      });
+    } else {
+      this.setState({ isLoading: true }, async () => {
+        const { post, file } = this.state;
 
-    this.setState({ isLoading: true }, async () => {
-      const { post, file } = this.state;
+        const data = new FormData();
+        // name must match multer upload('name')
+        data.append("image", file);
+        data.append("data", JSON.stringify(post));
 
-      const data = new FormData();
-      // name must match multer upload('name')
-      data.append("image", file);
-      data.append("data", JSON.stringify(post));
+        fetch("/api/upload", {
+          mode: "no-cors",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            Accept: "application/json; charset=utf-8"
+          },
+          body: data
+        })
+          .then(res => res.json())
+          .then(data => {
+            const { postData } = data;
+            // Profile info pulled out of redux store to avoid a populate call to mongodb. To keep upload process faster.
+            const { _id, displayName, profilePhoto } = this.props.auth;
+            postData._owner = {
+              _id,
+              displayName,
+              profilePhoto
+            };
 
-      fetch("/api/upload", {
-        mode: "no-cors",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          Accept: "application/json; charset=utf-8"
-        },
-        body: data
-      })
-        .then(res => res.json())
-        .then(data => {
-          const { postData } = data;
-          // Profile info pulled out of redux store to avoid a populate call to mongodb. To keep upload process faster.
-          const { _id, displayName, profilePhoto } = this.props.auth;
-          postData._owner = {
-            _id,
-            displayName,
-            profilePhoto
-          };
-
-          this.setState({ isLoading: false }, () => {
+            this.setState({ isLoading: false }, () => {
+              this.setState(
+                {
+                  postLinkObj: {
+                    pathname: `/post/${postData._id}`,
+                    state: { post: postData }
+                  }
+                },
+                () => {
+                  this.setState(
+                    {
+                      snackbarOpen: true,
+                      snackbarVar: "success",
+                      snackbarMessage: "Click here to see your post!"
+                    },
+                    () => {}
+                  );
+                }
+              );
+            });
+          })
+          .catch(e => {
             this.setState(
               {
-                postLinkObj: {
-                  pathname: `/post/${postData._id}`,
-                  state: { post: postData }
-                }
+                snackbarOpen: true,
+                snackbarVar: "error",
+                snackbarMessage: "Could not add post! Try again.",
+                isLoading: false
               },
-              () => {
-                this.setState(
-                  {
-                    snackbarOpen: true,
-                    snackbarVar: "success",
-                    snackbarMessage: "Click here to see your post!"
-                  },
-                  () => {}
-                );
-              }
+              () => {}
             );
           });
-        })
-        .catch(e => {
-          this.setState(
-            {
-              snackbarOpen: true,
-              snackbarVar: "error",
-              snackbarMessage: "Could not add post! Try again.",
-              isLoading: false
-            },
-            () => {}
-          );
-        });
-    });
+      });
+    }
   };
 
   onSnackbarOpen = () => {
@@ -350,7 +354,7 @@ class AddPostForm extends React.Component {
               className={classes.button}
               type="submit"
               disabled={
-                this.props.editMode
+                this.props.editMode && !this.state.isLoading
                   ? false
                   : this.state.file &&
                     this.state.fileSize < 2097152 &&
