@@ -24,7 +24,7 @@ class PostMenu extends Component {
 
   onDeletePost = async () => {
     const { imgUrl, _id } = this.props.post;
-    const deletePromise = () =>
+    const deletePost = () =>
       new Promise(async (resolve, reject) => {
         try {
           await this.props.onDeletePost(imgUrl, _id);
@@ -33,10 +33,9 @@ class PostMenu extends Component {
           reject();
         }
       });
-    // this.props.onDeletePost(imgUrl, _id);
     try {
-      await deletePromise();
-      this.handleClose();
+      await deletePost();
+      // this.handleClose();
     } catch (e) {
       console.log(e);
     }
@@ -84,9 +83,7 @@ class PostMenu extends Component {
 }
 
 PostMenu.propTypes = {
-  classes: PropTypes.object.isRequired,
-  imgUrl: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired
+  post: PropTypes.object.isRequired
 };
 
 export default PostMenu;

@@ -23,12 +23,6 @@ class ModalView extends React.Component {
     this.setState({ open: false });
   };
 
-  // onSnackbarSet = (variant, message) => {
-  //   this.setState({ snackbarVar: variant, snackbarMessage: message }, () => {
-  //     this.onSnackbarOpen();
-  //   });
-  // };
-
   onSnackbarOpen = (variant, message) => {
     this.setState(
       { snackbarOpen: true, snackbarVar: variant, snackbarMessage: message },

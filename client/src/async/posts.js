@@ -1,5 +1,12 @@
 import axios from "axios";
 
+export const deletePost = async (cancelToken, imgUrl, id) => {
+  const res = await axios.delete(`/api/delete?img=${imgUrl}&id=${id}`, {
+    cancelToken
+  });
+  return res;
+};
+
 export const fetchAllUserPosts = async (cancelToken, page) => {
   const res = await axios.get(`/api/posts/myposts/all/${page}`, {
     cancelToken

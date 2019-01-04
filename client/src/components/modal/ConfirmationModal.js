@@ -53,14 +53,13 @@ class ConfirmationModal extends React.Component {
   }
 }
 
-ConfirmationModal.propTypes = {};
+ConfirmationModal.propTypes = {
+  classes: PropTypes.object.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired
+};
 
 const styles = theme => ({
-  // linearLoader: {
-  //   position: "fixed",
-  //   top: "0",
-  //   width: "100%"
-  // },
   paperModal: {
     position: "relative",
     padding: `${theme.spacing.unit * 2}px`,

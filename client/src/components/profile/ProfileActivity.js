@@ -32,7 +32,7 @@ import CustomSnackbar from "../snackbar/CustomSnackbar";
 
 import { onScroll } from "../../utils/utils";
 import { fetchForProfilePage } from "../../async/combined";
-import { favePost } from "../../async/posts";
+import { deletePost, favePost } from "../../async/posts";
 
 class ProfileActivity extends React.Component {
   constructor(props) {
@@ -46,7 +46,7 @@ class ProfileActivity extends React.Component {
       showNavToTop: false,
       snackbarOpen: false,
       snackbarVar: null,
-      snackbarMessage: null
+      snackbarMessage: ""
     };
 
     this.signal = axios.CancelToken.source();
@@ -181,7 +181,8 @@ class ProfileActivity extends React.Component {
 
   onDeletePost = async (imgUrl, id) => {
     try {
-      await axios.delete(`/api/delete?img=${imgUrl}&id=${id}`);
+      // await axios.delete(`/api/delete?img=${imgUrl}&id=${id}`);
+      await deletePost(this.signal.token, imgUrl, id);
       const filteredPages = this.state.pages.filter(post => post._id !== id);
       this.setState(
         {
@@ -193,6 +194,9 @@ class ProfileActivity extends React.Component {
         () => {}
       );
     } catch (e) {
+      if (axios.isCancel()) {
+        return console.log(e.message);
+      }
       console.log(e);
     }
   };
@@ -241,7 +245,9 @@ class ProfileActivity extends React.Component {
         }
         container
         spacing={
-          (gridContext === "albums" && 0) || (gridContext === "posts" && 24)
+          (gridContext === "albums" && 0) ||
+          (gridContext === "posts" && 24) ||
+          0
         }
       >
         {data.map(item => (
@@ -408,7 +414,7 @@ class ProfileActivity extends React.Component {
         )}
         <CustomSnackbar
           variant={this.state.snackbarVar}
-          message={this.state.snackbarOpen && this.state.snackbarMessage}
+          message={this.state.snackbarMessage}
           onSnackbarOpen={this.onSnackbarOpen}
           onSnackbarClose={this.onSnackbarClose}
           snackbarOpen={this.state.snackbarOpen}
@@ -420,7 +426,6 @@ class ProfileActivity extends React.Component {
 
 ProfileActivity.propTypes = {
   classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
   profileTabPos: PropTypes.number,
   ownProfile: PropTypes.bool.isRequired
 };
@@ -466,4 +471,4 @@ const styles = theme => ({
   }
 });
 
-export default compose(withStyles(styles))(ProfileActivity);
+export default withStyles(styles)(ProfileActivity);

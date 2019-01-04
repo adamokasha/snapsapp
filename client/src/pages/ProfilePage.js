@@ -63,7 +63,7 @@ export class ProfilePage extends React.Component {
         : null,
       snackbarMessage: this.props.location.state
         ? this.props.location.state.snackbarMessage
-        : null
+        : ""
     };
 
     this.signal = axios.CancelToken.source();

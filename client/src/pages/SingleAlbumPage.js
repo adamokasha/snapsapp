@@ -50,7 +50,7 @@ export class SingleAlbumPage extends React.Component {
       hasMore: true,
       showNavToTop: false,
       snackbarVar: null,
-      snackbarMessage: null,
+      snackbarMessage: "",
       snackbarOpen: false
     };
 

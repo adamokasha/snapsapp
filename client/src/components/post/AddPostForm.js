@@ -20,7 +20,6 @@ import Chip from "@material-ui/core/Chip";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import filesize from "filesize";
 import withStyles from "@material-ui/core/styles/withStyles";
-import axios from "axios";
 
 import CustomSnackbar from "../snackbar/CustomSnackbar";
 
@@ -38,7 +37,7 @@ class AddPostForm extends React.Component {
     postLinkObj: null,
     snackbarOpen: false,
     snackbarVar: null,
-    snackbarMessage: null
+    snackbarMessage: ""
   };
 
   onFileSelect = e => {
@@ -91,16 +90,6 @@ class AddPostForm extends React.Component {
       this.props.onEditPost(_id, title, tags, description);
       this.props.closeMenu();
       return this.props.handleClose();
-      // try {
-      //   const { _id } = this.props.post;
-      //   const { title, description, tags } = this.state.post;
-      //   await axios.put(`/api/posts/edit/${_id}`, { title, description, tags });
-      //   console.log("updated");
-      //   this.props.handleClose();
-      //   return this.props.closeMenu();
-      // } catch (e) {
-      //   return console.log(e);
-      // }
     }
 
     this.setState({ isLoading: true }, async () => {
@@ -282,7 +271,7 @@ class AddPostForm extends React.Component {
                 />
                 <label htmlFor="hidden-file-input">
                   <Button
-                    variant="raised"
+                    variant="contained"
                     component="span"
                     className={classes.button}
                   >
@@ -312,11 +301,13 @@ class AddPostForm extends React.Component {
             />{" "}
             <div className={classes.tagContainer}>
               {this.state.post.tags &&
-                this.state.post.tags.map(tag => {
+                this.state.post.tags.map((tag, i) => {
                   if (tag === "") {
                     return null;
                   }
-                  return <Chip className={classes.chipTag} label={tag} />;
+                  return (
+                    <Chip key={i} className={classes.chipTag} label={tag} />
+                  );
                 })}
             </div>
             <TextField
