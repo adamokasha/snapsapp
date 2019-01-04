@@ -280,7 +280,10 @@ export class SingleAlbumPage extends React.Component {
                         </IconButton>
                       }
                       modalComponent={
-                        <ConfirmationModal onDelete={this.onAlbumDelete} />
+                        <ConfirmationModal
+                          itemType="album"
+                          onDelete={this.onAlbumDelete}
+                        />
                       }
                     />
                   </React.Fragment>
@@ -406,9 +409,6 @@ const styles = theme => ({
   info: {
     display: "flex",
     flexDirection: "column"
-  },
-  actions: {
-    display: "flex"
   },
   card: {
     maxWidth: 400,

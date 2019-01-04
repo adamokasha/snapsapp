@@ -74,7 +74,9 @@ class PostMenu extends Component {
           />
           <ModalView
             togglerComponent={<MenuItem>Delete</MenuItem>}
-            modalComponent={<ConfirmationModal onDelete={this.onDeletePost} />}
+            modalComponent={
+              <ConfirmationModal itemType="post" onDelete={this.onDeletePost} />
+            }
           />
         </Menu>
       </div>

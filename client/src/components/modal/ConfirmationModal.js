@@ -39,7 +39,10 @@ class ConfirmationModal extends React.Component {
             Confirmation
           </Typography>
         </div>
-        <p>Are you sure you want to permanently delete?</p>
+        <Typography variant="body2" gutterBottom>
+          Are you sure you want to permanently delete this {this.props.itemType}
+          ?
+        </Typography>
         <div>
           <Button onClick={this.onDelete} disabled={this.state.isSubmitting}>
             Yes
@@ -56,14 +59,14 @@ class ConfirmationModal extends React.Component {
 ConfirmationModal.propTypes = {
   classes: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired
+  onDelete: PropTypes.func.isRequired,
+  itemType: PropTypes.string.isRequired
 };
 
 const styles = theme => ({
   paperModal: {
-    position: "relative",
-    padding: `${theme.spacing.unit * 2}px`,
     position: "absolute",
+    padding: `${theme.spacing.unit * 2}px`,
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)"
