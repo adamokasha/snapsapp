@@ -145,4 +145,20 @@ module.exports = app => {
       console.log(e);
     }
   });
+
+  // Delete an album
+  app.delete("/api/albums/delete", async (req, res, next) => {
+    try {
+      const { id: albumId } = req.query;
+      await Album.findOneAndDelete({
+        _id: albumId,
+        _owner: req.user.id
+      });
+
+      res.status(200).send({ success: "Album deleted successfully." });
+    } catch (e) {
+      res.status(400).send({ error: "Album could not be deleted." });
+      console.log(e);
+    }
+  });
 };

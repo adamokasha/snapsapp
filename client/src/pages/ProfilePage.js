@@ -55,9 +55,15 @@ export class ProfilePage extends React.Component {
       profileTabPos: this.props.location.state
         ? this.props.location.state.profileTabPos
         : 1,
-      snackbarVar: null,
-      snackbarMessage: null,
-      snackbarOpen: false
+      snackbarOpen: this.props.location.state.snackbarOpen
+        ? this.props.location.state.snackbarOpen
+        : false,
+      snackbarVar: this.props.location.state.snackbarVar
+        ? this.props.location.state.snackbarVar
+        : null,
+      snackbarMessage: this.props.location.state.snackbarMessage
+        ? this.props.location.state.snackbarMessage
+        : null
     };
 
     this.signal = axios.CancelToken.source();

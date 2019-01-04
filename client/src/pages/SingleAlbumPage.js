@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import ShareTwoToneIcon from "@material-ui/icons/ShareTwoTone";
 import SettingsIcon from "@material-ui/icons/Settings";
+import DeleteIcon from "@material-ui/icons/Delete";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -26,6 +27,7 @@ import PostLightbox from "../components/post/PostLightbox";
 import AlbumMaker from "../components/album/AlbumMaker";
 import ShareButton from "../components/buttons/ShareButton";
 import NavToTopButton from "../components/buttons/NavToTopButton";
+import ConfirmationModal from "../components/modal/ConfirmationModal";
 import CustomSnackbar from "../components/snackbar/CustomSnackbar";
 
 import { favePost } from "../async/posts";
@@ -124,6 +126,23 @@ export class SingleAlbumPage extends React.Component {
         }
       }
     );
+  };
+
+  onAlbumDelete = async () => {
+    try {
+      await axios.delete(`/api/albums/delete?id=${this.state.albumId}`);
+      this.props.history.push({
+        pathname: `/profile/${this.props.auth.displayName}`,
+        state: {
+          snackbarOpen: true,
+          snackbarVar: "success",
+          snackbarMessage: "Album deleted successfully",
+          profileTabPos: 2
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   fetchNextPage = () => {
@@ -237,22 +256,34 @@ export class SingleAlbumPage extends React.Component {
               {this.props.auth &&
                 this.props.auth.displayName ===
                   this.props.match.params.user && (
-                  <ModalView
-                    togglerComponent={
-                      <IconButton>
-                        <SettingsIcon />
-                      </IconButton>
-                    }
-                    modalComponent={
-                      <AlbumMaker
-                        albumId={this.state.albumId}
-                        albumName={this.state.albumName}
-                        onAlbumUpdate={this.onAlbumUpdate}
-                        method="patch"
-                      />
-                    }
-                    withSnackbar={true}
-                  />
+                  <React.Fragment>
+                    <ModalView
+                      togglerComponent={
+                        <IconButton>
+                          <SettingsIcon />
+                        </IconButton>
+                      }
+                      modalComponent={
+                        <AlbumMaker
+                          albumId={this.state.albumId}
+                          albumName={this.state.albumName}
+                          onAlbumUpdate={this.onAlbumUpdate}
+                          method="patch"
+                        />
+                      }
+                      withSnackbar={true}
+                    />
+                    <ModalView
+                      togglerComponent={
+                        <IconButton>
+                          <DeleteIcon />
+                        </IconButton>
+                      }
+                      modalComponent={
+                        <ConfirmationModal onDelete={this.onAlbumDelete} />
+                      }
+                    />
+                  </React.Fragment>
                 )}
             </div>
           </div>
@@ -391,7 +422,8 @@ const styles = theme => ({
   actions: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    alignItems: "center"
   },
   spacingXs24: {
     width: "100%",
