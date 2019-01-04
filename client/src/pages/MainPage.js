@@ -50,6 +50,7 @@ export class MainPage extends React.Component {
     this.onScroll = onScroll.call(this, this.fetchNextPage);
     this.signal = axios.CancelToken.source();
     this.topRef = React.createRef();
+    this.contentRef = React.createRef();
   }
 
   async componentDidMount() {
@@ -346,7 +347,10 @@ export class MainPage extends React.Component {
     const { classes } = this.props;
     return (
       <div ref={this.topRef}>
-        {!this.state.initialFetch && !this.props.auth && <HeroUnit />}
+        {!this.state.initialFetch && !this.props.auth && (
+          <HeroUnit contentRef={this.contentRef} />
+        )}
+        <div ref={this.contentRef} />
         {this.state.initialFetch && <MainPageLoader />}
         {!this.state.initialFetch && (
           <React.Fragment>

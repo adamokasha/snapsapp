@@ -5,13 +5,23 @@ import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 
 export const HeroUnit = props => {
   const { classes } = props;
 
+  const scrollToContent = () => {
+    console.log("called");
+    props.contentRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest"
+    });
+  };
+
   return (
     <React.Fragment>
-      <main>
+      <main className={classes.main}>
         <div className={classes.heroContent}>
           <Typography
             variant="h2"
@@ -19,7 +29,7 @@ export const HeroUnit = props => {
             color="textPrimary"
             gutterBottom
           >
-            SnapsApp Demo
+            Snaps App
           </Typography>
           <Typography
             variant="h6"
@@ -28,13 +38,9 @@ export const HeroUnit = props => {
             paragraph
           >
             SnapsApp is an image-sharing app built with the MERN stack and
-            styled with the Material-UI library. SnapsApp includes a gamut of
-            features typical of a social app: A follower system, direct
-            messaging, profile pages, albums, faves, infinite scroll, sharing
-            and more. This is an on-going project with improvements added on a
-            semi-regular basis.
+            styled with the Material-UI library.
           </Typography>
-          <div className={classes.heroButtons}>
+          <div>
             <Grid container spacing={16} justify="center">
               <Grid item>
                 <Button
@@ -43,10 +49,10 @@ export const HeroUnit = props => {
                     state: { registerOrLogin: "register" }
                   }}
                   component={Link}
-                  variant="contained"
-                  color="primary"
+                  variant="outlined"
+                  className={classes.heroButtons}
                 >
-                  Sign Up To Get Started
+                  Sign Up
                 </Button>
               </Grid>
               <Grid item>
@@ -55,14 +61,18 @@ export const HeroUnit = props => {
                   target="_blank"
                   component={"a"}
                   variant="outlined"
-                  color="primary"
+                  className={classes.heroButtons}
                 >
-                  GitHub Repository
+                  GitHub
                 </Button>
               </Grid>
             </Grid>
           </div>
         </div>
+        <ArrowBackIosIcon
+          onClick={scrollToContent}
+          className={classes.scrollDownIcon}
+        />
       </main>
     </React.Fragment>
   );
@@ -73,19 +83,33 @@ HeroUnit.propTypes = {
 };
 
 const styles = theme => ({
+  main: {
+    position: "relative",
+    background:
+      "url(https://s3.amazonaws.com/img-share-kasho/static/sid-zhao-297176-unsplash.jpg)",
+    height: "100vh",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat"
+  },
   icon: {
     marginRight: theme.spacing.unit * 2
   },
-  heroUnit: {
-    backgroundColor: theme.palette.background.paper
-  },
   heroContent: {
     maxWidth: 600,
+    position: "absolute",
+    top: "60%",
+    left: "50%",
+    transform: "translateX(-50%)",
     margin: "0 auto",
-    padding: `${theme.spacing.unit * 8}px 0 ${theme.spacing.unit * 6}px`
+    "& > *": {
+      color: "#fff"
+    }
+    // padding: `${theme.spacing.unit * 8}px 0 ${theme.spacing.unit * 6}px`
   },
   heroButtons: {
-    marginTop: theme.spacing.unit * 4
+    // marginTop: theme.spacing.unit * 4
+    color: "#fff",
+    border: "1px solid #fff"
   },
   layout: {
     width: "auto",
@@ -95,6 +119,31 @@ const styles = theme => ({
       width: 1100,
       marginLeft: "auto",
       marginRight: "auto"
+    }
+  },
+  scrollDownIcon: {
+    fontSize: "48px",
+    position: "absolute",
+    bottom: "24px",
+    left: "50%",
+    color: "#fff",
+    cursor: "pointer",
+    // transform: "translateX(-50%) rotateZ(-90deg)",
+    animation: `sd-animation 2500ms ${
+      theme.transitions.easing.easeInOut
+    } 200ms infinite`
+  },
+  "@keyframes sd-animation": {
+    "0%": {
+      transform: "translateX(-50%) rotateZ(-90deg)",
+      opacity: 0
+    },
+    "50%": {
+      opacity: 1
+    },
+    "100%": {
+      transform: "translate(-50%, 20px) rotateZ(-90deg)",
+      opacity: 0
     }
   }
 });

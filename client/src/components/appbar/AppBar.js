@@ -223,14 +223,6 @@ class AppBar extends React.Component {
         <Button to="/login" component={Link} variant="text" color="inherit">
           &nbsp;Sign In
         </Button>
-        <Button
-          to="/register"
-          component={Link}
-          variant="contained"
-          color="secondary"
-        >
-          &nbsp;Sign Up
-        </Button>
       </div>
     );
   }
@@ -240,7 +232,10 @@ class AppBar extends React.Component {
 
     return (
       <div className={classes.root}>
-        <MuiAppBar position="static">
+        <MuiAppBar
+          className={!this.props.auth ? classes.heroStylesAppBar : ""}
+          position="static"
+        >
           <Toolbar>
             <div>
               <Link to="/" className={classNames(classes.logo, classes.aTag)}>
@@ -265,12 +260,20 @@ class AppBar extends React.Component {
 AppBar.propTypes = {
   classes: PropTypes.object.isRequired,
   auth: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
-  updateMboxNotif: PropTypes.func
+  updateMboxNotif: PropTypes.func,
+  useHeroStyles: PropTypes.bool
 };
 
 const styles = theme => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
+    position: "absolute",
+    zIndex: "1000",
+    width: "100%"
+  },
+  heroStylesAppBar: {
+    backgroundColor: "transparent",
+    boxShadow: "none"
   },
   grow: {
     flexGrow: 1
