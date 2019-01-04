@@ -55,13 +55,13 @@ export class ProfilePage extends React.Component {
       profileTabPos: this.props.location.state
         ? this.props.location.state.profileTabPos
         : 1,
-      snackbarOpen: this.props.location.state.snackbarOpen
+      snackbarOpen: this.props.location.state
         ? this.props.location.state.snackbarOpen
         : false,
-      snackbarVar: this.props.location.state.snackbarVar
+      snackbarVar: this.props.location.state
         ? this.props.location.state.snackbarVar
         : null,
-      snackbarMessage: this.props.location.state.snackbarMessage
+      snackbarMessage: this.props.location.state
         ? this.props.location.state.snackbarMessage
         : null
     };

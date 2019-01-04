@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 
 import ModalView from "../modal/ModalView";
 import AddPostForm from "./AddPostForm";
+import ConfirmationModal from "../modal/ConfirmationModal";
 
 class PostMenu extends Component {
   state = {
@@ -21,10 +22,24 @@ class PostMenu extends Component {
     this.setState({ anchorEl: null });
   };
 
-  onDeletePost = () => {
+  onDeletePost = async () => {
     const { imgUrl, _id } = this.props.post;
-    this.props.onDeletePost(imgUrl, _id);
-    this.handleClose();
+    const deletePromise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          await this.props.onDeletePost(imgUrl, _id);
+          resolve();
+        } catch (e) {
+          reject();
+        }
+      });
+    // this.props.onDeletePost(imgUrl, _id);
+    try {
+      await deletePromise();
+      this.handleClose();
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   render() {
@@ -58,7 +73,10 @@ class PostMenu extends Component {
               />
             }
           />
-          <MenuItem onClick={this.onDeletePost}>Delete</MenuItem>
+          <ModalView
+            togglerComponent={<MenuItem>Delete</MenuItem>}
+            modalComponent={<ConfirmationModal onDelete={this.onDeletePost} />}
+          />
         </Menu>
       </div>
     );
