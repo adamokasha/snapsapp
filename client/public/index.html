@@ -28,7 +28,32 @@
     -->
     <title>SnapsApp</title>
   </head>
+  <style>
+    @media screen and(max-width: 599px) {
+      body::after {
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+        z-index: -1;
+        content: url(https://s3.amazonaws.com/img-share-kasho/static/mobile/001_900.jpg.png)
+          url(https://s3.amazonaws.com/img-share-kasho/static/mobile/011_900.jpg)
+          url(https://s3.amazonaws.com/img-share-kasho/static/mobile/030_900.jpg)
+          url(https://s3.amazonaws.com/img-share-kasho/static/mobile/015_900.jpg)
+          url(https://s3.amazonaws.com/img-share-kasho/static/mobile/005_900.jpg);
+      }
+    }
 
+    @media screen and(min-width: 600px) {
+      body::after {
+        content: url(https://s3.amazonaws.com/img-share-kasho/static/landscape/010_1920.jpg)
+          url(https://s3.amazonaws.com/img-share-kasho/static/landscape/002_1920.jpg)
+          url(https://s3.amazonaws.com/img-share-kasho/static/landscape/007_1920.jpg)
+          url(https://s3.amazonaws.com/img-share-kasho/static/landscape/011_1920.jpg)
+          url(https://s3.amazonaws.com/img-share-kasho/static/landscape/011_1920.jpg);
+      }
+    }
+  </style>
   <body>
     <noscript> You need to enable JavaScript to run this app. </noscript>
     <div id="root"></div>

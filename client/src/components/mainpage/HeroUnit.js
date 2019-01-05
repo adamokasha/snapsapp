@@ -35,6 +35,7 @@ export const HeroUnit = props => {
               variant="h2"
               align="center"
               color="textPrimary"
+              className={classes.heroMainTxt}
               gutterBottom
             >
               Snaps App
@@ -43,6 +44,7 @@ export const HeroUnit = props => {
               variant="h6"
               align="center"
               color="textSecondary"
+              className={classes.heroSecText}
               paragraph
             >
               SnapsApp is an image-sharing app built with the MERN stack and
@@ -115,32 +117,57 @@ const styles = theme => ({
       zIndex: "0"
     },
     "& figure:nth-child(1)": {
+      [theme.breakpoints.down("sm")]: {
+        background:
+          "url(https://s3.amazonaws.com/img-share-kasho/static/mobile/001_900.jpg)",
+        backgroundSize: "cover"
+      },
       background:
-        "url(https://s3.amazonaws.com/img-share-kasho/static/john-lee-1102721-unsplash_1920.jpg)",
+        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/010_1920.jpg)",
       backgroundSize: "cover"
     },
     "& figure:nth-child(2)": {
+      [theme.breakpoints.down("sm")]: {
+        background:
+          "url(https://s3.amazonaws.com/img-share-kasho/static/mobile/011_900.jpg)",
+        backgroundSize: "cover"
+      },
       background:
-        "url(https://s3.amazonaws.com/img-share-kasho/static/mckenzie-toyne-747170-unsplash_1920.jpg)",
+        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/002_1920.jpg)",
 
       animationDelay: "6s",
       backgroundSize: "cover"
     },
     "& figure:nth-child(3)": {
+      [theme.breakpoints.down("sm")]: {
+        background:
+          "url(https://s3.amazonaws.com/img-share-kasho/static/mobile/030_900.jpg)",
+        backgroundSize: "cover"
+      },
       background:
-        "url(https://s3.amazonaws.com/img-share-kasho/static/salome-alexa-473445-unsplash_1920.jpg)",
+        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/007_1920.jpg)",
       animationDelay: "12s",
       backgroundSize: "cover"
     },
     "& figure:nth-child(4)": {
+      [theme.breakpoints.down("sm")]: {
+        background:
+          "url(https://s3.amazonaws.com/img-share-kasho/static/mobile/015_900.jpg)",
+        backgroundSize: "cover"
+      },
       background:
-        "url(https://s3.amazonaws.com/img-share-kasho/static/scott-webb-181364-unsplash_1920.jpg)",
+        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/011_1920.jpg)",
       animationDelay: "18s",
       backgroundSize: "cover"
     },
     "& figure:nth-child(5)": {
+      [theme.breakpoints.down("sm")]: {
+        background:
+          "url(https://s3.amazonaws.com/img-share-kasho/static/mobile/005_900.jpg)",
+        backgroundSize: "cover"
+      },
       background:
-        "url(https://s3.amazonaws.com/img-share-kasho/static/xan-griffin-417108-unsplash_1920.jpg)",
+        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/011_1920.jpg)",
       animationDelay: "24s",
       backgroundSize: "cover"
     }
@@ -176,8 +203,24 @@ const styles = theme => ({
     margin: "0 auto",
     "& > *": {
       color: "#fff"
+    },
+    [theme.breakpoints.down("sm")]: {
+      width: "90%",
+      top: "60%",
+      transform: "translate(-50%, -6px)"
     }
     // padding: `${theme.spacing.unit * 8}px 0 ${theme.spacing.unit * 6}px`
+  },
+  heroMainTxt: {
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "2.75rem",
+      marginBottom: "8px"
+    }
+  },
+  heroSecText: {
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "1rem"
+    }
   },
   heroButtons: {
     // marginTop: theme.spacing.unit * 4
