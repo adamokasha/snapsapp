@@ -347,9 +347,7 @@ export class MainPage extends React.Component {
     const { classes } = this.props;
     return (
       <div ref={this.topRef}>
-        {!this.state.initialFetch && !this.props.auth && (
-          <HeroUnit contentRef={this.contentRef} />
-        )}
+        {!this.props.auth && <HeroUnit contentRef={this.contentRef} />}
         <div ref={this.contentRef} />
         {this.state.initialFetch && <MainPageLoader />}
         {!this.state.initialFetch && (
@@ -439,11 +437,11 @@ const styles = theme => ({
   }
 });
 
-const mapStateToProps = auth => ({
-  auth
-});
+// const mapStateToProps = auth => ({
+//   auth
+// });
 
 export default compose(
-  withStyles(styles),
-  connect(mapStateToProps)
+  withStyles(styles)
+  // connect(mapStateToProps)
 )(MainPage);

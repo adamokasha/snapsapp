@@ -92,13 +92,8 @@ HeroUnit.propTypes = {
 };
 
 const styles = theme => ({
-  bgOverlay: {
-    backgroundColor: "rgba(0,0,0,.5)",
-    zIndex: 2000
-  },
   main: {
     backgroundColor: "rgb(0,0,0)",
-
     position: "relative",
     height: "100vh"
   },
@@ -106,7 +101,7 @@ const styles = theme => ({
     height: "100%",
     "& > figure": {
       margin: 0,
-      animation: "imageAnimation 30s linear infinite 0s",
+      animation: "bg-animation 30s linear infinite 0s",
       backfaceVisibility: "hidden",
       backgroundSize: "cover",
       backgroundPosition: "center center",
@@ -124,7 +119,6 @@ const styles = theme => ({
         "url(https://s3.amazonaws.com/img-share-kasho/static/john-lee-1102721-unsplash_1920.jpg)",
       backgroundSize: "cover"
     },
-
     "& figure:nth-child(2)": {
       background:
         "url(https://s3.amazonaws.com/img-share-kasho/static/mckenzie-toyne-747170-unsplash_1920.jpg)",
@@ -151,16 +145,16 @@ const styles = theme => ({
       backgroundSize: "cover"
     }
   },
-  "@keyframes imageAnimation": {
+  "@keyframes bg-animation": {
     "0%": {
       animationTimingFunction: "ease-in",
       opacity: 0
     },
-    "8%": {
+    "10%": {
       animationTimingFunction: "ease-out",
       opacity: 1
     },
-    "17%": {
+    "20%": {
       opacity: 1
     },
     "25%": {

@@ -19,10 +19,14 @@ import { fetchUser } from "../async/auth";
 import { setUser } from "../actions/auth";
 
 export class AppRouter extends React.Component {
+  state = {
+    fetchingUser: true
+  };
   async componentDidMount() {
     try {
       const { data: userData } = await fetchUser();
       this.props.setUser(userData);
+      this.setState({ fetchingUser: false });
     } catch (e) {
       console.log(e);
     }
@@ -34,7 +38,15 @@ export class AppRouter extends React.Component {
         <React.Fragment>
           <AppBar />
           <Switch>
-            <Route exact path="/" component={MainPage} />
+            {this.state.fetchingUser ? (
+              <div>LOADING</div>
+            ) : (
+              <Route
+                exact
+                path="/"
+                component={() => <MainPage auth={this.props.auth} />}
+              />
+            )}
             <Route path="/profile/:user" component={ProfilePage} />
             <Route path="/albums/:user/:albumid" component={SingleAlbumPage} />
             <Route path="/post/:id" component={FullPostPage} />
@@ -58,7 +70,11 @@ export class AppRouter extends React.Component {
   }
 }
 
+const mapStateToProps = auth => ({
+  auth
+});
+
 export default connect(
-  null,
+  mapStateToProps,
   { setUser }
 )(AppRouter);

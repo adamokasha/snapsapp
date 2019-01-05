@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import compose from "recompose/compose";
 import classNames from "classnames";
 import PropTypes from "prop-types";
@@ -223,6 +224,16 @@ class AppBar extends React.Component {
         <Button to="/login" component={Link} variant="text" color="inherit">
           &nbsp;Sign In
         </Button>
+        {this.props.location.pathname !== "/" && (
+          <Button
+            to="/register"
+            component={Link}
+            variant="contained"
+            color="secondary"
+          >
+            &nbsp;Sign Up
+          </Button>
+        )}
       </div>
     );
   }
@@ -233,7 +244,11 @@ class AppBar extends React.Component {
     return (
       <div className={classes.root}>
         <MuiAppBar
-          className={!this.props.auth ? classes.heroStylesAppBar : ""}
+          className={
+            !this.props.auth &&
+            this.props.location.pathname === "/" &&
+            classes.heroStylesAppBar
+          }
           position="static"
         >
           <Toolbar>
@@ -266,14 +281,14 @@ AppBar.propTypes = {
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
-    position: "absolute",
-    zIndex: "1000",
-    width: "100%"
+    flexGrow: 1
   },
   heroStylesAppBar: {
     backgroundColor: "transparent",
-    boxShadow: "none"
+    boxShadow: "none",
+    position: "absolute",
+    zIndex: "1000",
+    width: "100%"
   },
   grow: {
     flexGrow: 1
@@ -304,6 +319,7 @@ const mapStateToProps = auth => ({
 });
 
 export default compose(
+  withRouter,
   withStyles(styles),
   connect(
     mapStateToProps,
