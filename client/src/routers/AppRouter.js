@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
+import LaunchScreen from "../components/loaders/LaunchScreen";
 import AppBar from "../components/appbar/AppBar";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
@@ -36,10 +37,10 @@ export class AppRouter extends React.Component {
     return (
       <BrowserRouter>
         <React.Fragment>
-          <AppBar />
+          {!this.state.fetchingUser && <AppBar />}
           <Switch>
             {this.state.fetchingUser ? (
-              <div>LOADING</div>
+              <LaunchScreen />
             ) : (
               <Route
                 exact
