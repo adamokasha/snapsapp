@@ -123,13 +123,13 @@ const styles = theme => ({
         backgroundSize: "cover"
       },
       background:
-        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/010_1920.jpg)",
+        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/001_1920.jpg)",
       backgroundSize: "cover"
     },
     "& figure:nth-child(2)": {
       [theme.breakpoints.down("sm")]: {
         background:
-          "url(https://s3.amazonaws.com/img-share-kasho/static/mobile/011_900.jpg)",
+          "url(https://s3.amazonaws.com/img-share-kasho/static/mobile/002_900.jpg)",
         backgroundSize: "cover"
       },
       background:
@@ -141,22 +141,22 @@ const styles = theme => ({
     "& figure:nth-child(3)": {
       [theme.breakpoints.down("sm")]: {
         background:
-          "url(https://s3.amazonaws.com/img-share-kasho/static/mobile/030_900.jpg)",
+          "url(https://s3.amazonaws.com/img-share-kasho/static/mobile/003_900.jpg)",
         backgroundSize: "cover"
       },
       background:
-        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/007_1920.jpg)",
+        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/003_1920.jpg)",
       animationDelay: "12s",
       backgroundSize: "cover"
     },
     "& figure:nth-child(4)": {
       [theme.breakpoints.down("sm")]: {
         background:
-          "url(https://s3.amazonaws.com/img-share-kasho/static/mobile/015_900.jpg)",
+          "url(https://s3.amazonaws.com/img-share-kasho/static/mobile/004_900.jpg)",
         backgroundSize: "cover"
       },
       background:
-        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/011_1920.jpg)",
+        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/004_1920.jpg)",
       animationDelay: "18s",
       backgroundSize: "cover"
     },
@@ -167,7 +167,7 @@ const styles = theme => ({
         backgroundSize: "cover"
       },
       background:
-        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/011_1920.jpg)",
+        "url(https://s3.amazonaws.com/img-share-kasho/static/landscape/005_1920.jpg)",
       animationDelay: "24s",
       backgroundSize: "cover"
     }
