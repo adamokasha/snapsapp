@@ -37,7 +37,7 @@ module.exports = app => {
     }
   });
 
-  // ScrollView context: User albums
+  // ProfileActivity context: User albums
   app.get("/api/albums/all/:user/:page", async (req, res) => {
     try {
       const { user, page } = req.params;

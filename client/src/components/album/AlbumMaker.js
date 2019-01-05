@@ -186,7 +186,17 @@ class AlbumMaker extends React.Component {
             }
           );
         }
-        await createAlbum(this.signal.token, selected, albumName);
+        const { data: albumData } = await createAlbum(
+          this.signal.token,
+          selected,
+          albumName
+        );
+        // Update ProfileActivity albums after creating album
+        this.props.onNewAlbum(
+          albumData._id,
+          albumData.name,
+          albumData.coverImg
+        );
         this.setState(
           {
             isSaving: false
@@ -194,6 +204,7 @@ class AlbumMaker extends React.Component {
           () => {
             this.props.onSnackbarOpen &&
               this.props.onSnackbarOpen("success", "Album added successfully!");
+
             this.props.handleClose();
           }
         );
@@ -201,6 +212,7 @@ class AlbumMaker extends React.Component {
         if (axios.isCancel(e)) {
           return console.log(e.message);
         }
+        console.log(e, e);
         this.setState(
           {
             isSaving: false
@@ -340,6 +352,7 @@ AlbumMaker.propTypes = {
   method: PropTypes.string,
   onAlbumNameChange: PropTypes.func,
   onAlbumUpdate: PropTypes.func,
+  onNewAlbum: PropTypes.func,
   onSnackbarOpen: PropTypes.func
 };
 

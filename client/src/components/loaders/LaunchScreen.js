@@ -18,7 +18,9 @@ const LaunchScreen = ({ classes }) => (
   </div>
 );
 
-LaunchScreen.propTypes = {};
+LaunchScreen.propTypes = {
+  classes: PropTypes.object.isRequired
+};
 
 const styles = theme => ({
   root: {

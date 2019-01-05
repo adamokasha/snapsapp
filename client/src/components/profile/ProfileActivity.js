@@ -224,6 +224,20 @@ class ProfileActivity extends React.Component {
     }
   };
 
+  onNewAlbum = (id, name, coverImg) => {
+    console.log("called");
+    console.log(id, name, coverImg, this.props.user);
+    const newAlbum = {
+      _id: id,
+      name,
+      _owner: {
+        displayName: this.props.user
+      },
+      coverImg
+    };
+    this.setState({ pages: [...this.state.pages, newAlbum] });
+  };
+
   onSnackbarClose = () => {
     this.setState({ snackbarOpen: false }, () => {});
   };
@@ -403,7 +417,9 @@ class ProfileActivity extends React.Component {
                 <AddPhotoAlternateOutlinedIcon />
               </Button>
             }
-            modalComponent={<AlbumMaker withSnackbar={true} />}
+            modalComponent={
+              <AlbumMaker onNewAlbum={this.onNewAlbum} withSnackbar={true} />
+            }
           />
         )}
         {this.state.isFetching && (

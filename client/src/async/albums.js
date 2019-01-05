@@ -6,7 +6,12 @@ export const fetchAlbumPosts = async (cancelToken, albumId) => {
 };
 
 export const createAlbum = async (cancelToken, albumPosts, albumName) => {
-  await axios.post("/api/albums", { albumPosts, albumName }, { cancelToken });
+  const res = await axios.post(
+    "/api/albums",
+    { albumPosts, albumName },
+    { cancelToken }
+  );
+  return res;
 };
 
 export const updateAlbum = async (

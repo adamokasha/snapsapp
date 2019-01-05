@@ -134,6 +134,11 @@ class AddPostForm extends React.Component {
                 () => {
                   this.setState(
                     {
+                      post: { title: "", description: "", tags: [] },
+                      previewImage: "",
+                      file: null,
+                      fileSize: null,
+                      isLoading: false,
                       snackbarOpen: true,
                       snackbarVar: "success",
                       snackbarMessage: "Click here to see your post!"
