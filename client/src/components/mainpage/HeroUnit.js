@@ -21,59 +21,68 @@ export const HeroUnit = props => {
 
   return (
     <React.Fragment>
-      <main className={classes.main}>
-        <div className={classes.heroContent}>
-          <Typography
-            variant="h2"
-            align="center"
-            color="textPrimary"
-            gutterBottom
-          >
-            Snaps App
-          </Typography>
-          <Typography
-            variant="h6"
-            align="center"
-            color="textSecondary"
-            paragraph
-          >
-            SnapsApp is an image-sharing app built with the MERN stack and
-            styled with the Material-UI library.
-          </Typography>
-          <div>
-            <Grid container spacing={16} justify="center">
-              <Grid item>
-                <Button
-                  to={{
-                    pathname: "/register",
-                    state: { registerOrLogin: "register" }
-                  }}
-                  component={Link}
-                  variant="outlined"
-                  className={classes.heroButtons}
-                >
-                  Sign Up
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button
-                  href="https://github.com/samokasha/snapsapp"
-                  target="_blank"
-                  component={"a"}
-                  variant="outlined"
-                  className={classes.heroButtons}
-                >
-                  GitHub
-                </Button>
-              </Grid>
-            </Grid>
+      <div className={classes.bgOverlay}>
+        <main className={classes.main}>
+          <div className={classes.slides}>
+            <figure />
+            <figure />
+            <figure />
+            <figure />
+            <figure />
           </div>
-        </div>
-        <ArrowBackIosIcon
-          onClick={scrollToContent}
-          className={classes.scrollDownIcon}
-        />
-      </main>
+          <div className={classes.heroContent}>
+            <Typography
+              variant="h2"
+              align="center"
+              color="textPrimary"
+              gutterBottom
+            >
+              Snaps App
+            </Typography>
+            <Typography
+              variant="h6"
+              align="center"
+              color="textSecondary"
+              paragraph
+            >
+              SnapsApp is an image-sharing app built with the MERN stack and
+              styled with the Material-UI library.
+            </Typography>
+            <div>
+              <Grid container spacing={16} justify="center">
+                <Grid item>
+                  <Button
+                    to={{
+                      pathname: "/register",
+                      state: { registerOrLogin: "register" }
+                    }}
+                    component={Link}
+                    variant="outlined"
+                    className={classes.heroButtons}
+                  >
+                    Sign Up
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    href="https://github.com/samokasha/snapsapp"
+                    target="_blank"
+                    component={"a"}
+                    variant="outlined"
+                    className={classes.heroButtons}
+                  >
+                    GitHub
+                  </Button>
+                </Grid>
+              </Grid>
+            </div>
+          </div>
+          <ArrowBackIosIcon
+            onClick={scrollToContent}
+            className={classes.scrollDownIcon}
+          />
+        </main>
+      </div>
     </React.Fragment>
   );
 };
@@ -83,13 +92,83 @@ HeroUnit.propTypes = {
 };
 
 const styles = theme => ({
+  bgOverlay: {
+    backgroundColor: "rgba(0,0,0,.5)",
+    zIndex: 2000
+  },
   main: {
+    backgroundColor: "rgb(0,0,0)",
+
     position: "relative",
-    background:
-      "url(https://s3.amazonaws.com/img-share-kasho/static/sid-zhao-297176-unsplash.jpg)",
-    height: "100vh",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat"
+    height: "100vh"
+  },
+  slides: {
+    height: "100%",
+    "& > figure": {
+      margin: 0,
+      animation: "imageAnimation 30s linear infinite 0s",
+      backfaceVisibility: "hidden",
+      backgroundSize: "cover",
+      backgroundPosition: "center center",
+      color: "transparent",
+      height: "100%",
+      left: "0px",
+      opacity: "0",
+      position: "absolute",
+      top: "0px",
+      width: "100%",
+      zIndex: "0"
+    },
+    "& figure:nth-child(1)": {
+      background:
+        "url(https://s3.amazonaws.com/img-share-kasho/static/john-lee-1102721-unsplash_1920.jpg)",
+      backgroundSize: "cover"
+    },
+
+    "& figure:nth-child(2)": {
+      background:
+        "url(https://s3.amazonaws.com/img-share-kasho/static/mckenzie-toyne-747170-unsplash_1920.jpg)",
+
+      animationDelay: "6s",
+      backgroundSize: "cover"
+    },
+    "& figure:nth-child(3)": {
+      background:
+        "url(https://s3.amazonaws.com/img-share-kasho/static/salome-alexa-473445-unsplash_1920.jpg)",
+      animationDelay: "12s",
+      backgroundSize: "cover"
+    },
+    "& figure:nth-child(4)": {
+      background:
+        "url(https://s3.amazonaws.com/img-share-kasho/static/scott-webb-181364-unsplash_1920.jpg)",
+      animationDelay: "18s",
+      backgroundSize: "cover"
+    },
+    "& figure:nth-child(5)": {
+      background:
+        "url(https://s3.amazonaws.com/img-share-kasho/static/xan-griffin-417108-unsplash_1920.jpg)",
+      animationDelay: "24s",
+      backgroundSize: "cover"
+    }
+  },
+  "@keyframes imageAnimation": {
+    "0%": {
+      animationTimingFunction: "ease-in",
+      opacity: 0
+    },
+    "8%": {
+      animationTimingFunction: "ease-out",
+      opacity: 1
+    },
+    "17%": {
+      opacity: 1
+    },
+    "25%": {
+      opacity: 0
+    },
+    "100%": {
+      opacity: 0
+    }
   },
   icon: {
     marginRight: theme.spacing.unit * 2
