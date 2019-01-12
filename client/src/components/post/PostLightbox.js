@@ -243,7 +243,8 @@ const styles = theme => ({
     width: "100%",
     display: "flex",
     justifyContent: "space-between",
-    padding: `${theme.spacing.unit}px`
+    alignItems: "center",
+    margin: `${theme.spacing.unit}px`
   },
   leftIcon: {
     marginRight: `${theme.spacing.unit}px`
