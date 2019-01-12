@@ -326,13 +326,10 @@ const styles = theme => ({
     padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`
   },
   postInfo: {
-    width: "95%",
+    width: "100%",
     display: "flex",
     justifyContent: "space-between",
-    padding: `${theme.spacing.unit}px 0`,
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: `${theme.spacing.unit}px`
-    }
+    padding: `${theme.spacing.unit}px`
   },
   commentsContainer: {
     width: "95%",

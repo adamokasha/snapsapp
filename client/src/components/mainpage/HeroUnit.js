@@ -205,10 +205,8 @@ const styles = theme => ({
     "& > *": {
       color: "#fff"
     },
-    [theme.breakpoints.up("sm")]: {
-      width: "90%",
-      top: "75%",
-      transform: "translate(-50%, -6px)"
+    [theme.breakpoints.up("xl")]: {
+      top: "65%"
     }
   },
   heroMainTxt: {

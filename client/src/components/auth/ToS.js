@@ -151,6 +151,9 @@ const styles = theme => ({
   layout: {
     width: "90%",
     margin: "0 auto",
+    [theme.breakpoints.up("sm")]: {
+      width: "70%"
+    },
     [theme.breakpoints.up("md")]: {
       width: "60%"
     },

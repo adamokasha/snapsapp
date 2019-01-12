@@ -245,9 +245,9 @@ class AppBar extends React.Component {
       <div className={classes.root}>
         <MuiAppBar
           className={
-            !this.props.auth &&
-            this.props.location.pathname === "/" &&
-            classes.heroStylesAppBar
+            !this.props.auth && this.props.location.pathname === "/"
+              ? classes.heroStylesAppBar
+              : classes.root
           }
           position="static"
         >

@@ -210,8 +210,8 @@ PostLightbox.propTypes = {
 
 const styles = theme => ({
   root: {
-    width: "90%",
-    height: "97%",
+    width: "95%",
+    height: "70%",
     position: "absolute",
     top: "50%",
     left: "50%",
@@ -220,9 +220,12 @@ const styles = theme => ({
     margin: "0 auto",
     overflowY: "auto",
     borderRadius: "8px",
-    [theme.breakpoints.down("md")]: {
-      width: "95%",
-      height: "70%"
+    [theme.breakpoints.up("md")]: {
+      height: "80%"
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "90%",
+      height: "97%"
     }
   },
   content: {
@@ -236,13 +239,11 @@ const styles = theme => ({
     overflow: "hidden"
   },
   postHeader: {
-    width: "95%",
+    height: "10%",
+    width: "100%",
     display: "flex",
     justifyContent: "space-between",
-    padding: `${theme.spacing.unit}px 0`,
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: `${theme.spacing.unit}px`
-    }
+    padding: `${theme.spacing.unit}px`
   },
   leftIcon: {
     marginRight: `${theme.spacing.unit}px`
@@ -253,16 +254,8 @@ const styles = theme => ({
   },
   postFooter: {
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     [theme.breakpoints.up("md")]: {
-      display: "flex",
-      justifyContent: "space-around",
-      height: "20%",
-      padding: `${theme.spacing.unit * 2}px`
-    },
-    [theme.breakpoints.up("lg")]: {
-      display: "flex",
-      justifyContent: "space-around",
       height: "10%",
       padding: `${theme.spacing.unit * 2}px`
     }
