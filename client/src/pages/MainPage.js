@@ -43,6 +43,7 @@ export class MainPage extends React.Component {
       initialFetch: true,
       isFetching: false,
       hasMore: true,
+      addVerticalSpace: false,
       showNavToTop: false
     };
 
@@ -135,7 +136,8 @@ export class MainPage extends React.Component {
           page: 0,
           pages: [],
           context,
-          searchTerms: null
+          searchTerms: null,
+          addVerticalSpace: true
         },
         async () => {
           const { data } = await fetchForMainPage(
@@ -151,7 +153,8 @@ export class MainPage extends React.Component {
             page: 1,
             pages: [...data],
             gridContext,
-            searchTerms
+            searchTerms,
+            addVerticalSpace: false
           });
         }
       );
@@ -368,6 +371,10 @@ export class MainPage extends React.Component {
         {this.state.isFetching && (
           <CircularProgress className={classes.circularProgress} size={50} />
         )}
+        {/* Adds Vertical Space to avoid jolting up when HeroUnit displayed and switching context */}
+        {this.state.addVerticalSpace && !this.props.auth && (
+          <div className={classes.verticalSpace} />
+        )}
         {this.state.showNavToTop && (
           <NavToTopButton scrollToTop={this.scrollToTop} />
         )}
@@ -433,12 +440,12 @@ const styles = theme => ({
   circularProgress: {
     margin: "16px auto",
     display: "block"
+  },
+  // Adds Vertical Space to avoid jolting up when HeroUnit displayed and switching context
+  verticalSpace: {
+    height: "100vh"
   }
 });
-
-// const mapStateToProps = auth => ({
-//   auth
-// });
 
 export default compose(
   withStyles(styles)
