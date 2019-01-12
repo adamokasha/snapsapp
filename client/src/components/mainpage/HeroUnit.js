@@ -195,26 +195,21 @@ const styles = theme => ({
     marginRight: theme.spacing.unit * 2
   },
   heroContent: {
+    width: "90%",
     maxWidth: 600,
     position: "absolute",
     top: "60%",
     left: "50%",
-    transform: "translateX(-50%)",
+    transform: "translate(-50%, -8px)",
     margin: "0 auto",
     "& > *": {
       color: "#fff"
     },
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.up("sm")]: {
       width: "90%",
-      top: "60%",
-      transform: "translate(-50%, -6px)"
-    },
-    [theme.breakpoints.up("xl")]: {
-      width: "90%",
-      top: "70%",
+      top: "75%",
       transform: "translate(-50%, -6px)"
     }
-    // padding: `${theme.spacing.unit * 8}px 0 ${theme.spacing.unit * 6}px`
   },
   heroMainTxt: {
     [theme.breakpoints.down("sm")]: {
@@ -228,7 +223,6 @@ const styles = theme => ({
     }
   },
   heroButtons: {
-    // marginTop: theme.spacing.unit * 4
     color: "#fff",
     border: "1px solid #fff"
   },

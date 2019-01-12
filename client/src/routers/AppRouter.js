@@ -17,7 +17,6 @@ import ProfilePage from "../pages/ProfilePage";
 import MessageBoxPage from "../pages/MessageBoxPage";
 import axios from "axios";
 
-import { fetchUser } from "../async/auth";
 import { setUser } from "../actions/auth";
 
 export class AppRouter extends React.Component {

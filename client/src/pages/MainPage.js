@@ -345,7 +345,6 @@ export class MainPage extends React.Component {
   };
 
   render() {
-    console.log("MAINPAGE RENDERED");
     const { classes } = this.props;
     return (
       <div ref={this.topRef}>
