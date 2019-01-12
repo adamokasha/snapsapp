@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 import compose from "recompose/compose";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";

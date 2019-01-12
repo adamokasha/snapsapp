@@ -208,6 +208,11 @@ const styles = theme => ({
       width: "90%",
       top: "60%",
       transform: "translate(-50%, -6px)"
+    },
+    [theme.breakpoints.up("xl")]: {
+      width: "90%",
+      top: "70%",
+      transform: "translate(-50%, -6px)"
     }
     // padding: `${theme.spacing.unit * 8}px 0 ${theme.spacing.unit * 6}px`
   },

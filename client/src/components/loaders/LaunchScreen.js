@@ -24,7 +24,11 @@ LaunchScreen.propTypes = {
 
 const styles = theme => ({
   root: {
-    background: `linear-gradient(336deg, #2c387e,#3f51b5 , #6573c3)`,
+    background: `linear-gradient(to right bottom, ${
+      theme.palette.primary.light
+    } 0%, ${theme.palette.primary.main} 33% , ${
+      theme.palette.primary.dark
+    } 67%)`,
     height: "100vh",
     position: "relative"
   },
@@ -33,7 +37,10 @@ const styles = theme => ({
     top: "60%",
     left: "50%",
     transform: "translateX(-50%)",
-    color: "#fff"
+    color: "#fff",
+    [theme.breakpoints.up("xl")]: {
+      top: "70%"
+    }
   },
   linearProgress: {
     width: "100%",

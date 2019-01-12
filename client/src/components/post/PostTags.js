@@ -25,6 +25,7 @@ const styles = theme => ({
     display: "flex",
     flexWrap: "wrap",
     justifyContent: "flex-start",
+    alignItems: "center",
     padding: `8px 8px 8px 0`
   },
   chip: {

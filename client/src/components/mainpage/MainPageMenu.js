@@ -7,7 +7,7 @@ import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import FiberNew from "@material-ui/icons/FiberNew";
 import PeopleOutlinedIcon from "@material-ui/icons/PeopleOutlined";
@@ -67,7 +67,7 @@ export class MainPageMenu extends React.Component {
               className={classes.button}
               onClick={this.togglePopper}
             >
-              <MoreVertIcon />
+              <ArrowDropDownIcon />
             </IconButton>
           </ClickAwayListener>
 
