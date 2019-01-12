@@ -221,14 +221,15 @@ const styles = theme => ({
     overflowY: "auto",
     borderRadius: "8px",
     [theme.breakpoints.down("md")]: {
-      height: "60%"
+      width: "95%",
+      height: "70%"
     }
   },
   content: {
     position: "relative",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "space-around",
     height: "100%",
     width: "100%",
     margin: "0 auto",
@@ -251,7 +252,8 @@ const styles = theme => ({
     padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`
   },
   postFooter: {
-    display: "none",
+    display: "flex",
+    justifyContent: "space-between",
     [theme.breakpoints.up("md")]: {
       display: "flex",
       justifyContent: "space-around",
