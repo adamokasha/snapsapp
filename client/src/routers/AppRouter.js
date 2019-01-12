@@ -15,6 +15,7 @@ import SingleAlbumPage from "../pages/SingleAlbumPage";
 import FullPostPage from "../pages/FullPostPage";
 import ProfilePage from "../pages/ProfilePage";
 import MessageBoxPage from "../pages/MessageBoxPage";
+import axios from "axios";
 
 import { fetchUser } from "../async/auth";
 import { setUser } from "../actions/auth";
@@ -25,11 +26,15 @@ export class AppRouter extends React.Component {
   };
   async componentDidMount() {
     try {
-      const { data: userData } = await fetchUser();
+      const auth = axios.create();
+      auth.defaults.timeout = 5000;
+      const { data: userData } = await auth.get("/api/current_user");
       this.props.setUser(userData);
-      this.setState({ fetchingUser: false });
+      this.setState({ fetchingUser: false }, () => {});
     } catch (e) {
-      console.log(e);
+      this.setState({ fetchingUser: false }, () => {
+        console.log(e);
+      });
     }
   }
 
