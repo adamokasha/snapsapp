@@ -87,8 +87,9 @@ class AddPostForm extends React.Component {
       this.setState({ isLoading: true }, async () => {
         const { _id } = this.props.post;
         const { title, description, tags } = this.state.post;
+        const filteredTags = tags.filter(tag => tag.length); // Filter if empty string
 
-        await this.props.onEditPost(_id, title, tags, description);
+        await this.props.onEditPost(_id, title, filteredTags, description);
         this.setState({ isLoading: false }, () => {
           this.props.closeMenu();
           return this.props.handleClose();
