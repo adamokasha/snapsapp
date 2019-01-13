@@ -11,6 +11,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from "axios";
@@ -379,9 +380,19 @@ export class MainPage extends React.Component {
           this.state.context === "searchPosts") &&
           this.state.pages.length === 0 && (
             <div className={classes.noResults}>
-              <Typography className={classes.noResultsText} variant="body2">
+              <Typography
+                className={classes.noResultsText}
+                variant="body2"
+                gutterBottom
+              >
                 No results were found.
               </Typography>
+              <Button
+                variant="outlined"
+                onClick={() => this.onSwitchContext("popular")}
+              >
+                Back
+              </Button>
             </div>
           )}
         {this.state.showNavToTop && (
@@ -451,12 +462,16 @@ const styles = theme => ({
     display: "block"
   },
   noResults: {
-    height: "100vh"
+    height: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center"
   },
   noResultsText: {
-    marginTop: `${theme.spacing.unit * 2}px`,
-    display: "flex",
-    justifyContent: "center"
+    marginTop: `${theme.spacing.unit * 2}px`
+  },
+  goBackBtn: {
+    textTransform: "capitalize"
   },
   // Adds Vertical Space to avoid jolting up when HeroUnit displayed and switching context
   verticalSpace: {
