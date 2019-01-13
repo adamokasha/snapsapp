@@ -374,6 +374,16 @@ export class MainPage extends React.Component {
         {this.state.addVerticalSpace && !this.props.auth && (
           <div className={classes.verticalSpace} />
         )}
+        {/* No results are found => display message */}
+        {(this.state.context === "searchUsers" ||
+          this.state.context === "searchPosts") &&
+          this.state.pages.length === 0 && (
+            <div className={classes.noResults}>
+              <Typography className={classes.noResultsText} variant="body2">
+                No results were found.
+              </Typography>
+            </div>
+          )}
         {this.state.showNavToTop && (
           <NavToTopButton scrollToTop={this.scrollToTop} />
         )}
@@ -439,6 +449,14 @@ const styles = theme => ({
   circularProgress: {
     margin: "16px auto",
     display: "block"
+  },
+  noResults: {
+    height: "100vh"
+  },
+  noResultsText: {
+    marginTop: `${theme.spacing.unit * 2}px`,
+    display: "flex",
+    justifyContent: "center"
   },
   // Adds Vertical Space to avoid jolting up when HeroUnit displayed and switching context
   verticalSpace: {
