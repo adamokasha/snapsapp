@@ -45,24 +45,27 @@ export const ToS = props => {
               rules pertain to User Content. By transmitting and submitting any
               User Content while using the Service, you agree as follows: · You
               are solely responsible for your account and the activity that
-              occurs while signed in to or while using your account; · You will
-              not post information that is malicious, false or inaccurate; · You
-              will not submit content that is copyrighted or subject to third
-              party proprietary rights, including privacy, publicity, trade
-              secret, etc., unless you are the owner of such rights or have the
-              appropriate permission from their rightful owner to specifically
-              submit such content; and · You hereby affirm we have the right to
-              determine whether any of your User Content submissions are
-              appropriate and comply with these Terms of Service, remove any
-              and/or all of your submissions, and terminate your account with or
-              without prior notice. You understand and agree that any liability,
-              loss or damage that occurs as a result of the use of any User
-              Content that you make available or access through your use of the
-              Service is solely your responsibility. Kasho Img App is not
-              responsible for any public display or misuse of your User Content.
-              Kasho Img App does not, and cannot, pre-screen or monitor all User
-              Content. However, at our discretion, we, or technology we employ,
-              may monitor and/or record your interactions with the Service.
+              occurs while signed in to or while using your account;
+              <br /> · You will not post information that is malicious, false or
+              inaccurate;
+              <br /> · You will not submit content that is copyrighted or
+              subject to third party proprietary rights, including privacy,
+              publicity, trade secret, etc., unless you are the owner of such
+              rights or have the appropriate permission from their rightful
+              owner to specifically submit such content; and
+              <br /> · You hereby affirm we have the right to determine whether
+              any of your User Content submissions are appropriate and comply
+              with these Terms of Service, remove any and/or all of your
+              submissions, and terminate your account with or without prior
+              notice.
+              <br /> You understand and agree that any liability, loss or damage
+              that occurs as a result of the use of any User Content that you
+              make available or access through your use of the Service is solely
+              your responsibility. Kasho Img App is not responsible for any
+              public display or misuse of your User Content. Kasho Img App does
+              not, and cannot, pre-screen or monitor all User Content. However,
+              at our discretion, we, or technology we employ, may monitor and/or
+              record your interactions with the Service.
             </p>
             <Typography variant="body2">Termination</Typography>
             <p>

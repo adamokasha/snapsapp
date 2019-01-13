@@ -9,11 +9,13 @@ import Bar from "@material-ui/core/GridListTileBar";
 import SettingsIcon from "@material-ui/icons/Settings";
 import ModalView from "../modal/ModalView";
 import AlbumMaker from "./AlbumMaker";
+import AlbumLoader from "../loaders/AlbumLoader";
 
 class Album extends React.Component {
   state = {
     albumName: this.props.album.name,
-    showSettingsIcon: false
+    showSettingsIcon: false,
+    loadingImage: true
   };
 
   toggleSettingsIcon = e => {
@@ -28,6 +30,10 @@ class Album extends React.Component {
 
   onAlbumNameSet = albumName => {
     this.setState({ albumName }, () => {});
+  };
+
+  onImgLoad = () => {
+    this.setState({ loadingImage: false }, () => {});
   };
 
   render() {
@@ -46,12 +52,14 @@ class Album extends React.Component {
           }}
         >
           <img
+            onLoad={this.onImgLoad}
             src={`https://d14ed1d2q7cc9f.cloudfront.net/200x200/smart/${
               album.coverImg
             }`}
             className={classes.image}
             alt={this.state.albumName}
           />
+          {this.state.loadingImage && <AlbumLoader />}
         </Link>
         <Bar
           title={this.state.albumName}
