@@ -3,3 +3,4 @@ dev.js
 todos.md
 .vscode
 prod.js
+.env

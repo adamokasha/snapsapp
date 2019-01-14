@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
 const bodyParser = require("body-parser");
-const keys = require("./config/keys");
+require("dotenv").config();
 
 require("./models/User");
 require("./models/Faves");
@@ -18,7 +18,7 @@ require("./services/passport");
 
 mongoose.Promise = global.Promise;
 mongoose.connect(
-  keys.mongoURI,
+  process.env.mongoURI,
   { useNewUrlParser: true }
 );
 
@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   cookieSession({
     maxAge: 1000 * 60 * 60 * 24 * 15,
-    keys: [keys.cookieKey]
+    keys: [process.env.cookieKey]
   })
 );
 app.use(passport.initialize());

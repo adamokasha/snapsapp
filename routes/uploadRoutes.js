@@ -6,12 +6,11 @@ const multerS3 = require("multer-s3");
 const mongoose = require("mongoose");
 
 const Post = mongoose.model("Post");
-const keys = require("../config/keys");
 const requireRegistration = require("../middlewares/requireRegistration");
 
 const s3 = new AWS.S3({
-  accessKeyId: keys.accessKeyId,
-  secretAccessKey: keys.secretAccessKey,
+  accessKeyId: process.env.accessKeyId,
+  secretAccessKey: process.env.secretAccessKey,
   endpoint: "s3.amazonaws.com",
   signatureVersion: "v4",
   region: "us-east-1"
