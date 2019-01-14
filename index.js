@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
 const bodyParser = require("body-parser");
+const helmet = require("helmet");
 require("dotenv").config();
 
 require("./models/User");
@@ -24,6 +25,7 @@ mongoose.connect(
 
 const app = express();
 
+app.use(helmet());
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
