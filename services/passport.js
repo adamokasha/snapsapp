@@ -32,7 +32,7 @@ passport.use(
         }
         const user = await new User({
           googleId: profile.id,
-          profilePhoto: profile.photos[0].value
+          profilePhoto: `${profile.photos[0].value}?sz=50`
         }).save();
         done(null, user);
       } catch (err) {
