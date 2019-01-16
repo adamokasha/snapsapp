@@ -78,8 +78,8 @@ export class Search extends React.Component {
           placeholder="#tags, posts, user..."
           aria-owns={this.state.popperOpen ? "menu-list-grow" : null}
           aria-haspopup="true"
-          startAdornment={
-            <InputAdornment position="start">
+          endAdornment={
+            <InputAdornment position="end">
               <IconButton>
                 <SearchIcon className={classes.searchIcon} />
               </IconButton>
@@ -131,17 +131,20 @@ export class Search extends React.Component {
 
 const styles = theme => ({
   root: {
-    width: "300px",
-    zIndex: "1000"
-    // backgroundColor: `${theme.palette.background.paper}`,
-    // display: "flex",
-    // justifyContent: "center"
+    width: "250px",
+    zIndex: "1000",
+    [theme.breakpoints.up("sm")]: {
+      width: "300px"
+    }
   },
   input: {
     margin: `${theme.spacing.unit * 2}px 0`
   },
   popper: {
-    left: "-67px !important"
+    width: "250px",
+    [theme.breakpoints.up("sm")]: {
+      width: "285px"
+    }
   },
   paper: {
     width: "100%",

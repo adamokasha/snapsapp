@@ -361,7 +361,6 @@ export class MainPage extends React.Component {
               />
               <Search
                 className={classes.search}
-                classes={{ root: classes.searchRoot }}
                 onSwitchContext={this.onSwitchContext}
               />
             </div>
@@ -416,12 +415,6 @@ const styles = theme => ({
     // add with of icon button as padding to center search
     paddingRight: "48px",
     zIndex: 1000
-  },
-  searchRoot: {
-    [theme.breakpoints.down("sm")]: {
-      justifyContent: "start",
-      width: "250px"
-    }
   },
   spacingXs24: {
     width: "100%",
