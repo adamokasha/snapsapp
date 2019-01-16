@@ -18,7 +18,7 @@ passport.deserializeUser((id, done) => {
 passport.use(
   new GoogleStrategy(
     {
-      callbackURL: "/auth/google/callback",
+      callbackURL: process.env.googleCallbackURI,
       clientID: process.env.googleClientID,
       clientSecret: process.env.googleClientSecret,
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
@@ -47,7 +47,7 @@ passport.use(
     {
       clientID: process.env.facebookAppId,
       clientSecret: process.env.facebookAppSecret,
-      callbackURL: "/auth/facebook/callback",
+      callbackURL: process.env.facebookCallbackURI,
       profileFields: ["id", "picture", "email"],
       proxy: true
     },

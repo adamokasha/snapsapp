@@ -23,7 +23,7 @@ export const ToS = props => {
             <p>
               Please read these Terms of Use ("Terms", "Terms of Use") carefully
               before using the http://snapsapp.herokuapp.com website (the
-              "Service") operated by Kasho Img App ("us", "we", or "our"). Your
+              "Service") operated by SnapsApp ("us", "we", or "our"). Your
               access to and use of the Service is conditioned on your acceptance
               of and compliance with these Terms. These Terms apply to all
               visitors, users and others who access or use the Service. By
@@ -40,12 +40,12 @@ export const ToS = props => {
               Content that you post, upload, link to or otherwise make available
               via the Service. You agree that we are only acting as a passive
               conduit for your online distribution and publication of your User
-              Content. Kasho Img App, however, reserves the right to remove any
-              User Content from the Service at its discretion. The following
-              rules pertain to User Content. By transmitting and submitting any
-              User Content while using the Service, you agree as follows: · You
-              are solely responsible for your account and the activity that
-              occurs while signed in to or while using your account;
+              Content. SnapsApp, however, reserves the right to remove any User
+              Content from the Service at its discretion. The following rules
+              pertain to User Content. By transmitting and submitting any User
+              Content while using the Service, you agree as follows: · You are
+              solely responsible for your account and the activity that occurs
+              while signed in to or while using your account;
               <br /> · You will not post information that is malicious, false or
               inaccurate;
               <br /> · You will not submit content that is copyrighted or
@@ -61,11 +61,11 @@ export const ToS = props => {
               <br /> You understand and agree that any liability, loss or damage
               that occurs as a result of the use of any User Content that you
               make available or access through your use of the Service is solely
-              your responsibility. Kasho Img App is not responsible for any
-              public display or misuse of your User Content. Kasho Img App does
-              not, and cannot, pre-screen or monitor all User Content. However,
-              at our discretion, we, or technology we employ, may monitor and/or
-              record your interactions with the Service.
+              your responsibility. SnapsApp is not responsible for any public
+              display or misuse of your User Content. SnapsApp does not, and
+              cannot, pre-screen or monitor all User Content. However, at our
+              discretion, we, or technology we employ, may monitor and/or record
+              your interactions with the Service.
             </p>
             <Typography variant="body2">Termination</Typography>
             <p>
@@ -80,17 +80,17 @@ export const ToS = props => {
             <Typography variant="body2">Links To Other Web Sites</Typography>
             <p>
               Our Service may contain links to thirdparty web sites or services
-              that are not owned or controlled by Kasho Img App . Kasho Img App
-              has no control over, and assumes no responsibility for, the
-              content, privacy policies, or practices of any third party web
-              sites or services. You further acknowledge and agree that Kasho
-              Img App shall not be responsible or liable, directly or
-              indirectly, for any damage or loss caused or alleged to be caused
-              by or in connection with use of or reliance on any such content,
-              goods or services available on or through any such web sites or
-              services. We strongly advise you to read the terms and conditions
-              and privacy policies of any third party web sites or services that
-              you visit.
+              that are not owned or controlled by SnapsApp . SnapsApp has no
+              control over, and assumes no responsibility for, the content,
+              privacy policies, or practices of any third party web sites or
+              services. You further acknowledge and agree that Kasho Img App
+              shall not be responsible or liable, directly or indirectly, for
+              any damage or loss caused or alleged to be caused by or in
+              connection with use of or reliance on any such content, goods or
+              services available on or through any such web sites or services.
+              We strongly advise you to read the terms and conditions and
+              privacy policies of any third party web sites or services that you
+              visit.
             </p>
             <Typography variant="body2">Governing Law</Typography>
             <p>

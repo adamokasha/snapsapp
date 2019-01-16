@@ -19,7 +19,7 @@ export const ToS = props => {
           <p>Effective date: September 22, 2018</p>
 
           <p>
-            Kasho Img App ("us", "we", or "our") operates the
+            SnapsApp ("us", "we", or "our") operates the
             https://snapsapp.herokuapp.com/ website (the "Service").
           </p>
 
@@ -27,7 +27,7 @@ export const ToS = props => {
             This page informs you of our policies regarding the collection, use,
             and disclosure of personal data when you use our Service and the
             choices you have associated with that data. Our Privacy Policy for
-            Kasho Img App is managed through{" "}
+            SnapsApp is managed through{" "}
             <a href="https://www.freeprivacypolicy.com/free-privacy-policy-generator.php">
               Free Privacy Policy
             </a>
@@ -99,7 +99,7 @@ export const ToS = props => {
 
           <Typography variant="h5">Use of Data</Typography>
 
-          <p>Kasho Img App uses the collected data for various purposes:</p>
+          <p>SnapsApp uses the collected data for various purposes:</p>
           <ul>
             <li>To provide and maintain the Service</li>
             <li>
@@ -127,11 +127,11 @@ export const ToS = props => {
             such information represents your agreement to that transfer.
           </p>
           <p>
-            Kasho Img App will take all steps reasonably necessary to ensure
-            that your data is treated securely and in accordance with this
-            Privacy Policy and no transfer of your Personal Data will take place
-            to an organization or a country unless there are adequate controls
-            in place including the security of your data and other personal
+            SnapsApp will take all steps reasonably necessary to ensure that
+            your data is treated securely and in accordance with this Privacy
+            Policy and no transfer of your Personal Data will take place to an
+            organization or a country unless there are adequate controls in
+            place including the security of your data and other personal
             information.
           </p>
 
@@ -139,14 +139,12 @@ export const ToS = props => {
 
           <Typography variant="subtitle1">Legal Requirements</Typography>
           <p>
-            Kasho Img App may disclose your Personal Data in the good faith
-            belief that such action is necessary to:
+            SnapsApp may disclose your Personal Data in the good faith belief
+            that such action is necessary to:
           </p>
           <ul>
             <li>To comply with a legal obligation</li>
-            <li>
-              To protect and defend the rights or property of Kasho Img App
-            </li>
+            <li>To protect and defend the rights or property of SnapsApp</li>
             <li>
               To prevent or investigate possible wrongdoing in connection with
               the Service
