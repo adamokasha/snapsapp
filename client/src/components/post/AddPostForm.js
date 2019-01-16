@@ -28,6 +28,7 @@ class AddPostForm extends React.Component {
     post: {
       title: this.props.post ? this.props.post.title : "",
       tags: this.props.post ? this.props.post.tags : [],
+      tagsText: this.props.post ? this.props.post.tags.join(" ") : "",
       description: this.props.post ? this.props.post.description : ""
     },
     previewImage: "",
@@ -60,18 +61,24 @@ class AddPostForm extends React.Component {
 
   onTagsChange = e => {
     const textInput = e.target.value;
+    // clean special chars and split into array
     const tagsArr = textInput
       .replace(/[^\w\s]/gi, "")
       .trim()
       .replace(/\s\s+/g, " ")
       .split(" ");
 
+    // limit number of tags and tag character count
     const cleanedTagsArr = tagsArr
       .map(tag => tag.slice(0, 12))
       .slice(0, 5)
       .filter(tag => tag.length); // Edge case: empty string remains after clearing input
 
-    this.setState({ post: { ...this.state.post, tags: cleanedTagsArr } });
+    // tags = array that is saved in db
+    // tagsText = acts as input display text only
+    this.setState({
+      post: { ...this.state.post, tags: cleanedTagsArr, tagsText: textInput }
+    });
   };
 
   onDescChange = e => {
@@ -135,7 +142,12 @@ class AddPostForm extends React.Component {
                 () => {
                   this.setState(
                     {
-                      post: { title: "", description: "", tags: [] },
+                      post: {
+                        title: "",
+                        description: "",
+                        tags: [],
+                        tagsText: ""
+                      },
                       previewImage: "",
                       file: null,
                       fileSize: null,
@@ -334,6 +346,7 @@ class AddPostForm extends React.Component {
                   </InputAdornment>
                 )
               }}
+              value={this.state.post.tagsText}
             />{" "}
             <TextField
               id="full-width"
