@@ -7,10 +7,10 @@ export const deletePost = async (cancelToken, imgUrl, id) => {
   return res;
 };
 
-export const updatePost = async (cancelToken, id, title, description, tags) => {
+export const updatePost = async (cancelToken, id, title, tags, description) => {
   const res = await axios.patch(
     `/api/posts/edit/${id}`,
-    { title, description, tags },
+    { title, tags, description },
     { cancelToken }
   );
   return res;

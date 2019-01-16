@@ -202,7 +202,6 @@ class ProfileActivity extends React.Component {
 
   onEditPost = async (id, title, tags, description) => {
     try {
-      // await axios.patch(`/api/posts/edit/${id}`, { title, description, tags });
       await updatePost(this.signal.token, id, title, tags, description);
       const mappedPages = this.state.pages.map(post => {
         if (post._id === id) {
