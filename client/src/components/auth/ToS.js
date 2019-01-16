@@ -22,8 +22,8 @@ export const ToS = props => {
           <div>
             <p>
               Please read these Terms of Use ("Terms", "Terms of Use") carefully
-              before using the http://snapsapp.herokuapp.com website (the
-              "Service") operated by SnapsApp ("us", "we", or "our"). Your
+              before using the {process.env.REACT_APP_POLICY_DOMAIN} website
+              (the "Service") operated by SnapsApp ("us", "we", or "our"). Your
               access to and use of the Service is conditioned on your acceptance
               of and compliance with these Terms. These Terms apply to all
               visitors, users and others who access or use the Service. By
