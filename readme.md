@@ -45,6 +45,10 @@ Create a `.env` file in the root directory. The following keys are required:
 - accessKeyId (AWS)
 - secretAccessKey (AWS)
 
+Create a `.env` file in the client directory. The following keys are required:
+
+- REACT_APP_POLICY_DOMAIN (Domain name shown in the privacy policy and ToS agreement)
+
 ### Development
 
 `npm run dev`
