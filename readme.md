@@ -28,11 +28,22 @@ SnapsApp makes use of the following third party services:
   - S3, IAM and serverless image handling
 - Google Oauth
 - Facebook Oauth
-- MongoDB (mLab)
 
 To run the app in development or production mode, you must sign up to these services and configure the necessary keys in the config directory.
 
-To view the keys required open `/config/prod.js`. Note you will have to create your own `dev.js` file in the config folder.
+Create a `.env` file in the root directory. The following keys are required:
+
+- googleClientID
+- googleClientSecret
+- googleCallbackURI
+- facebookAppId
+- facebookAppSecret
+- facebookCallbackURI
+- mongoURI
+- cookieKey
+- bucketName (AWS)
+- accessKeyId (AWS)
+- secretAccessKey (AWS)
 
 ### Development
 
@@ -40,7 +51,9 @@ To view the keys required open `/config/prod.js`. Note you will have to create y
 
 ### Production
 
-The app is configured to build for production on Heroku.
+The app is configured to build for production on Heroku after being deployed.
+
+Otherwise, first navigate to `client` directory and run `npm run build`. Then cd back to the root directory and start the server by running `npm run start` or optionally you can configure pm2 on your server.
 
 ## Component Design
 
@@ -59,11 +72,22 @@ The main components are given infinite scroll functionality and they can render 
 
 When these components need to fetch data they pass their context to the async functions in `client/src/async/combined.js`. The functions make the corresponding call to the API. This allows the `MainPage`, for example, which can render post and profile data, to know what type of data it should ask for from the API when the user has scrolled to the bottom.
 
+Other components behave similarily (but may be paginated instead of having infinite scroll):
+
+- `SingleAlbumPage` in `client/src/pages/`
+- Message box related components
+- Profile network (followers/following) related components
+- Comment components
+
 ### Special Case Components
 
 - ModalView
   - Acts as a wrapper that make a component passed to it display as a modal.
   - Also handles its own error and success messages via `withSnackbar` prop.
+
+### Redux
+
+Authentication state and user profile information is handled by Redux.
 
 ## License
 
