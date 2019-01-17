@@ -44,7 +44,7 @@ export class MainPage extends React.Component {
       initialFetch: true,
       isFetching: false,
       hasMore: true,
-      addVerticalSpace: false,
+      switchingContext: false,
       showNavToTop: false
     };
 
@@ -138,7 +138,7 @@ export class MainPage extends React.Component {
           pages: [],
           context,
           searchTerms: null,
-          addVerticalSpace: true
+          switchingContext: true
         },
         async () => {
           const { data } = await fetchForMainPage(
@@ -155,7 +155,7 @@ export class MainPage extends React.Component {
             pages: [...data],
             gridContext,
             searchTerms,
-            addVerticalSpace: false
+            switchingContext: false
           });
         }
       );
@@ -208,6 +208,7 @@ export class MainPage extends React.Component {
     const { classes } = this.props;
     return (
       <Grid
+        className={classes.gridContainer}
         classes={{ "spacing-xs-24": classes.spacingXs24 }}
         direction="row"
         wrap="wrap"
@@ -345,55 +346,71 @@ export class MainPage extends React.Component {
     );
   };
 
+  renderNotFound = () => {
+    const { classes } = this.props;
+    return (
+      <div className={classes.noResults}>
+        <Typography
+          className={classes.noResultsText}
+          variant="body2"
+          gutterBottom
+        >
+          {this.state.context === "following"
+            ? "You are not following anyone."
+            : "No results were found."}
+        </Typography>
+        <Button
+          variant="outlined"
+          onClick={() => this.onSwitchContext("popular")}
+        >
+          Back
+        </Button>
+      </div>
+    );
+  };
+
   render() {
     const { classes } = this.props;
     return (
       <div ref={this.topRef}>
         {!this.props.auth && <HeroUnit contentRef={this.contentRef} />}
         <div ref={this.contentRef} />
-        {this.state.initialFetch && <MainPageLoader />}
+
+        <div className={classes.menuContainer}>
+          <MainPageMenu
+            auth={this.props.auth}
+            onSwitchContext={this.onSwitchContext}
+          />
+          <Search
+            className={classes.search}
+            onSwitchContext={this.onSwitchContext}
+          />
+        </div>
+
+        {(this.state.initialFetch || this.state.switchingContext) &&
+          this.state.context !== "searchUsers" && <MainPageLoader />}
+
+        {this.state.switchingContext &&
+          this.state.context === "searchUsers" && (
+            <CircularProgress className={classes.circularProgress} size={50} />
+          )}
+
+        {(this.state.context === "searchUsers" ||
+          this.state.context === "searchPosts" ||
+          this.state.context === "following") &&
+          this.state.pages.length === 0 &&
+          this.renderNotFound()}
+
         {!this.state.initialFetch && (
           <React.Fragment>
-            <div className={classes.menuContainer}>
-              <MainPageMenu
-                auth={this.props.auth}
-                onSwitchContext={this.onSwitchContext}
-              />
-              <Search
-                className={classes.search}
-                onSwitchContext={this.onSwitchContext}
-              />
-            </div>
             {this.state.pages && this.renderGrid(this.state.pages)}
           </React.Fragment>
         )}
+
         {this.state.isFetching && (
           <CircularProgress className={classes.circularProgress} size={50} />
         )}
-        {/* Adds Vertical Space to avoid jolting up when HeroUnit displayed and switching context */}
-        {this.state.addVerticalSpace && !this.props.auth && (
-          <div className={classes.verticalSpace} />
-        )}
-        {/* No results are found => display message */}
-        {(this.state.context === "searchUsers" ||
-          this.state.context === "searchPosts") &&
-          this.state.pages.length === 0 && (
-            <div className={classes.noResults}>
-              <Typography
-                className={classes.noResultsText}
-                variant="body2"
-                gutterBottom
-              >
-                No results were found.
-              </Typography>
-              <Button
-                variant="outlined"
-                onClick={() => this.onSwitchContext("popular")}
-              >
-                Back
-              </Button>
-            </div>
-          )}
+
         {this.state.showNavToTop && (
           <NavToTopButton scrollToTop={this.scrollToTop} />
         )}
@@ -415,6 +432,9 @@ const styles = theme => ({
     // add with of icon button as padding to center search
     paddingRight: "48px",
     zIndex: 1000
+  },
+  gridContainer: {
+    minHeight: "100vh"
   },
   spacingXs24: {
     width: "100%",
@@ -472,7 +492,4 @@ const styles = theme => ({
   }
 });
 
-export default compose(
-  withStyles(styles)
-  // connect(mapStateToProps)
-)(MainPage);
+export default compose(withStyles(styles))(MainPage);

@@ -9,8 +9,9 @@ export const MainPageLoader = props => {
   const { classes } = props;
   return (
     <Grid
-      justify="center"
+      justify="flex-start"
       alignItems="center"
+      wrap="wrap"
       className={classes.root}
       container
       spacing={24}
@@ -39,8 +40,8 @@ export const MainPageLoader = props => {
 
 const styles = theme => ({
   root: {
-    width: "80%",
-    margin: "0 auto"
+    width: "95%",
+    margin: "24px auto"
   }
 });
 
